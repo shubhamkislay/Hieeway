@@ -484,7 +484,7 @@ public class LiveMessageFragment extends Fragment {
 
     private void refreshReceiverText() {
 
-        Log.v("Refresh TextView called","called!");
+        //Log.v("Refresh TextView called","called!");
 
 
         if(receiverTextView.getText().toString().length()>0) {
@@ -493,7 +493,7 @@ public class LiveMessageFragment extends Fragment {
 
             final String receiverText = receiverTextView.getText().toString();
 
-            Log.v("Refresh TextView called", receiverText);
+           // Log.v("Refresh TextView called", receiverText);
 
             new Handler().postDelayed(new Runnable() {
 
