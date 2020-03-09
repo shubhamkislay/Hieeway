@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".PhotoEditToolsActivity"
+    tools:showIn="@layout/activity_photo_edit_tools">
+
+
+
+    <ja.burhanrashid52.photoeditor.PhotoEditorView
+        android:id="@+id/image_preview"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+
+    <HorizontalScrollView
+        android:layout_alignParentBottom="true"
+        android:fillViewport="true"
+        android:alpha="0.85"
+        android:elevation="20dp"
+        android:measureAllChildren="true"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_filters_list"
+                android:padding="16dp"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/card_background_color"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_filter_white_24dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp" />
+
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:text="Filters"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_edit"
+                android:padding="16dp"
+                android:layout_marginLeft="8dp"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/card_background_color"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_edit_white_24dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp" />
+
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:text="Edits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_brush"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="18dp"
+                android:layout_marginLeft="8dp"
+                android:padding="16dp"
+                app:cardBackgroundColor="@color/card_background_color">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_brush_white_24dp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Brush"
+                        android:visibility="gone"
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_emoji"
+                android:padding="16dp"
+                android:layout_marginLeft="8dp"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/card_background_color"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_insert_emoticon_white_24dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp" />
+
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:text="Emoji"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_add_text"
+                android:padding="16dp"
+                android:layout_marginLeft="8dp"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/card_background_color"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_text_fields_white_24dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp" />
+
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:text="Text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_add_image"
+                android:padding="16dp"
+                android:layout_marginLeft="8dp"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/card_background_color"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_add_to_photos_white24dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp" />
+
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:text="Image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/btn_crop"
+                android:padding="16dp"
+                android:layout_marginLeft="8dp"
+                app:cardCornerRadius="18dp"
+                app:cardBackgroundColor="@color/card_background_color"
+                android:layout_width="50dp"
+                android:layout_height="50dp">
+
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_crop_black_24dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp" />
+
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:text="Crop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
+
+
+
+            </android.support.v7.widget.CardView>
+
+
+
+
+
+
+        </LinearLayout>
+
+
+    </HorizontalScrollView>
+
+
+</RelativeLayout>

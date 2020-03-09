@@ -1,0 +1,1267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/app_context_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColorTheme"
+    tools:context=".VerticalPageActivity">
+
+
+    <com.jgabrielfreitas.core.BlurImageView
+        android:id="@+id/profile_pic"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_width="match_parent"
+
+        android:layout_below="@id/top_swipe_msg"
+
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.0"
+        android:transitionName="imageTransition"
+        android:background="@color/backgroundColorTheme"
+        >
+
+
+
+    </com.jgabrielfreitas.core.BlurImageView>
+
+    <ImageView
+        android:id="@+id/read_message_back"
+        android:alpha="0.0"
+        android:visibility="gone"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-100dp"
+        android:layout_marginBottom="-100dp"
+        android:layout_marginLeft="-100dp"
+        android:layout_marginStart="-100dp"
+        android:layout_marginEnd="-100dp"
+        android:layout_marginRight="-100dp"
+        android:background="@drawable/hieeway_background_blurred"
+        android:backgroundTint="#2E2E2E"/>
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="1.0"
+
+        android:layout_above="@id/bottom_panel"
+        android:background="@drawable/bottom_fade_dark_background"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:alpha="1.0"
+        android:layout_below="@id/top_swipe_msg"
+        android:layout_height="300dp"
+        android:background="@drawable/top_fade_dark_background"/>
+
+
+    <RelativeLayout
+        android:id="@+id/top_swipe_msg"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_alignParentTop="true"
+        android:background="#000"
+        >
+
+        <TextView
+
+            android:layout_toLeftOf="@id/top_txt_swipe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipe_down"
+
+
+            android:textSize="10sp"
+            android:layout_alignParentTop="true"
+            android:text="Swipe Down"
+            android:layout_marginTop="4dp"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+
+            android:textColor="#fff"
+            android:fontFamily="sans-serif"/>
+        <RelativeLayout
+            android:id="@+id/top_txt_swipe_two"
+            android:layout_width="28dp"
+            android:rotation="-90"
+            android:visibility="gone"
+            android:layout_marginTop="-8dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="#fff"
+            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
+            android:layout_height="28dp"/>
+
+
+        <com.github.ybq.android.spinkit.SpinKitView
+
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/message_log_pulse"
+            style="@style/SpinKitView.Large.PulseRing"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginTop="-1dp"
+            android:padding="2dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            app:SpinKit_Color="#fff"
+            android:visibility="invisible"/>
+        <RelativeLayout
+            android:id="@+id/top_txt_swipe"
+            android:layout_width="18dp"
+            android:rotation="180"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/layer_list_swipe_up_button"
+            android:layout_height="18dp"/>
+
+        <TextView
+
+            android:layout_toRightOf="@id/top_txt_swipe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="4dp"
+
+            android:id="@+id/message_log_text"
+            android:textSize="10sp"
+            android:layout_alignParentTop="true"
+            android:text="Message Logs"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-black"/>
+        <ToggleButton
+            android:id="@+id/toggle_msg_highlight"
+            android:layout_width="75dp"
+            android:visibility="gone"
+            android:textOn="Hint on"
+            android:textOff="Hint off"
+            android:textAllCaps="false"
+            android:layout_height="30dp"
+            android:layout_alignParentTop="true"
+            android:layout_margin="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="0dp"
+            android:background="@drawable/send_message_back_highlight_drawable"
+            android:button="@drawable/button_selector"
+
+
+            />
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/top_bar"
+        android:layout_marginTop="-16dp"
+        android:layout_below="@id/top_swipe_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1dp">
+
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="50dp"
+            android:layout_centerVertical="true"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="-4dp"
+            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"/>
+
+
+        <TextView
+            android:id="@+id/username"
+            android:alpha="1.0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:transitionName="nameTransitionCancel"
+            android:layout_toRightOf="@id/back_button"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@color/textThemeColor"
+            android:textSize="22dp"
+            tools:text="username" />
+
+        <ImageView
+            android:id="@+id/online_ring"
+            android:layout_width="10dp"
+            android:visibility="visible"
+            android:layout_height="10dp"
+            android:alpha="0.0"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/username"
+            android:layout_marginLeft="4dp"
+            android:src="@drawable/online_circle"/>
+
+        <TextView
+            android:id="@+id/online_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/username"
+            android:layout_toLeftOf="@id/online_ring"
+            android:text="online"
+            android:alpha="0.0"
+            android:visibility="visible"
+            android:textSize="12sp"
+            android:textColor="#5AEC00"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="16dp"
+            />
+
+
+        <Button
+            android:id="@+id/photo_btn_bg"
+            android:visibility="visible"
+            android:layout_width="33dp"
+            android:layout_centerVertical="true"
+            android:layout_height="33dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="14dp"
+            android:backgroundTint="#383838"
+            android:background="@drawable/home_background_oval"/>
+
+        <Button
+            android:id="@+id/photo_btn"
+            android:visibility="visible"
+            android:layout_width="22dp"
+            android:layout_centerVertical="true"
+            android:layout_height="22dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/ic_image_white_24dp"/>
+
+
+
+        <Button
+            android:id="@+id/photo_notification"
+            android:layout_width="10dp"
+            android:visibility="invisible"
+            android:layout_centerVertical="false"
+            android:layout_height="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="18dp"
+            android:background="@drawable/archive_notification_dot"/>
+
+
+        <Button
+            android:id="@+id/archive"
+            android:layout_width="26dp"
+            android:visibility= "invisible"
+            android:layout_centerVertical="true"
+            android:layout_height="26dp"
+            android:rotation="180"
+            android:layout_toLeftOf="@id/photo_btn"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/ic_archive_white_24dp"/>
+        <com.github.ybq.android.spinkit.SpinKitView
+            style="@style/SpinKitView.Small.FadingCircle"
+            android:id="@+id/send_pending"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="11dp"
+            android:padding="2dp"
+            android:layout_toLeftOf="@id/photo_btn"
+            android:layout_centerVertical="true"
+            app:SpinKit_Color="@color/textThemeColor"
+            android:visibility="invisible"/>
+
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_bar"
+        android:fitsSystemWindows="true"
+        android:layout_above="@id/message_counter_layout">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <RelativeLayout
+                android:id="@+id/reply_tag"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@color/offbackgroundtheme"
+                android:visibility="gone">
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="1.0"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="visible"
+                    android:breakStrategy="simple"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMaxTextSize="14dp"
+                    android:autoSizeMinTextSize="7dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/textThemeColor"
+                    tools:ignore="UnusedAttribute"
+                    android:text="You are replying to the last message that you read" />
+
+                <Button
+                    android:id="@+id/cancel_message_reply_btn"
+                    android:layout_width="24dp"
+                    android:background="@drawable/ic_cancel_white_24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"/>
+
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/sender_reply_tag"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:background="@color/offbackgroundtheme"
+                android:visibility="gone">
+
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alpha="1.0"
+                    android:paddingLeft="16dp"
+                    android:gravity="center"
+                    android:paddingRight="16dp"
+                    android:layout_centerVertical="true"
+                    android:visibility="visible"
+                    android:breakStrategy="simple"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMaxTextSize="14dp"
+                    android:autoSizeMinTextSize="7dp"
+                    android:autoSizeStepGranularity="1dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/textThemeColor"
+                    tools:ignore="UnusedAttribute"
+                    android:text="You have got a reply for the message you sent earlier" />
+
+
+
+            </RelativeLayout>
+
+
+
+
+            <RelativeLayout
+                android:id="@+id/message_space"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:gravity="center">
+
+
+
+
+                <Button
+                    android:id="@+id/message_bar"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="-2dp"
+                    android:background="@drawable/message_identifier_no_message" />
+
+                <LinearLayout
+
+                    android:layout_toEndOf="@id/message_bar"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:animateLayoutChanges="true"
+                    android:layout_height="match_parent">
+
+                    <TextView
+
+
+                        android:id="@+id/message_text_sender_dummy"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:visibility="visible"
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColorSemiDark"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        tools:ignore="UnusedAttribute"
+                        tools:text=". . ."
+                        />
+
+                    <TextView
+
+
+                        android:id="@+id/message_text_sender"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="20"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:textColorHint="@color/offbackgroundtheme"
+
+
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColor"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        tools:ignore="UnusedAttribute"
+                        tools:text="Hi"
+                        />
+
+                    <TextView
+
+                        android:id="@+id/message_text_two_sender"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="0dp"
+                        android:layout_weight="40"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="gone"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:hint="Type..."
+                        android:textColorHint="@color/offbackgroundtheme"
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColor"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        tools:ignore="UnusedAttribute"
+                        tools:text="Hi"
+                        />
+                    <TextView
+
+                        android:id="@+id/message_text_three_sender"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="0dp"
+                        android:layout_weight="120"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="gone"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:hint="Type..."
+                        android:textColorHint="@color/offbackgroundtheme"
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColor"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeTextType="uniform"
+                        tools:ignore="UnusedAttribute"
+                        tools:text="Hi"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_toEndOf="@id/message_bar"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:animateLayoutChanges="true"
+                    android:layout_height="match_parent">
+
+                    <TextView
+
+
+                        android:id="@+id/message_text_dummy"
+                        android:visibility="visible"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColorSemiDark"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        app:autoSizeTextType="uniform"
+
+                        tools:ignore="UnusedAttribute"
+                        tools:text="Hi"
+
+                        />
+
+                    <TextView
+                        android:animateLayoutChanges="true"
+                        android:id="@+id/message_text"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="0dp"
+                        android:layout_weight="20"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+
+                        android:alpha="0.0"
+                        android:fontFamily="sans-serif-black"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:hyphenationFrequency="full"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        android:gravity="center"
+                        android:textColor="@color/textThemeColor"
+                        tools:ignore="UnusedAttribute"
+                        android:textStyle="bold"
+                        tools:text="Hi"
+                        />
+
+
+                    <TextView
+                        android:animateLayoutChanges="true"
+                        android:id="@+id/message_text_two"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="0dp"
+                        android:layout_weight="40"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="gone"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColor"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        tools:ignore="UnusedAttribute"
+                        tools:text="Hi"
+                        />
+                    <TextView
+                        android:animateLayoutChanges="true"
+                        android:id="@+id/message_text_three"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="0dp"
+                        android:layout_weight="120"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="gone"
+                        android:alpha="0.0"
+                        android:autoSizeMinTextSize="1dp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:breakStrategy="simple"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-black"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:hyphenationFrequency="full"
+                        android:textColor="@color/textThemeColor"
+                        app:autoSizeMaxTextSize="@dimen/message_text_size"
+                        app:autoSizeTextType="uniform"
+                        android:autoSizeMaxTextSize="@dimen/message_text_size"
+                        android:autoSizeTextType="uniform"
+                        tools:ignore="UnusedAttribute"
+                        tools:text="Hi"
+                        />
+                </LinearLayout>
+
+                <!---->
+
+
+                <com.shubhamkislay.jetpacklogin.TypeWriter
+                    android:id="@+id/message_text_type_writer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_toEndOf="@id/message_bar"
+                    android:alpha="0.0"
+                    android:breakStrategy="simple"
+                    android:fontFamily="sans-serif-black"
+                    android:hyphenationFrequency="full"
+                    android:textStyle="bold"
+                    android:textColor="@color/textThemeColor"
+                    android:visibility="gone"
+                    tools:ignore="UnusedAttribute"
+                    tools:text="Hi"
+                    tools:textSize="60sp" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/sender_reply_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="4dp"
+
+        android:layout_below="@id/top_bar"
+        android:background="@drawable/layer_message_reply_drawable"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/you_name_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textSize="12dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+
+            android:text="You"/>
+
+
+
+
+        <TextView
+            android:id="@+id/your_sent_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1.0"
+            android:layout_marginTop="8dp"
+            android:paddingLeft="16dp"
+            android:layout_below="@id/you_name_tag"
+            android:paddingRight="16dp"
+            android:gravity="right"
+            android:layout_marginBottom="8dp"
+            android:visibility="visible"
+            android:breakStrategy="simple"
+            android:textSize="14dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/textThemeColor"
+            tools:ignore="UnusedAttribute"
+            android:text="" />
+
+
+
+        <RelativeLayout
+            android:id="@+id/read_message_reply_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/show_reply_box_drawable"
+            android:layout_marginTop="12dp"
+            android:padding="5dp"
+            android:visibility="gone"
+            android:layout_below="@id/your_sent_msg">
+
+            <Button
+                android:id="@+id/read_message_reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:text="Show reply"
+                android:textSize="16dp"
+
+                android:layout_centerHorizontal="true"
+
+                android:background="@color/offbackgroundtheme"
+                />
+
+
+            <com.github.ybq.android.spinkit.SpinKitView
+
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                style="@style/SpinKitView.Small.Wave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:padding="2dp"
+                android:layout_toRightOf="@id/read_message_reply"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                app:SpinKit_Color="@color/gradientStart"
+                android:visibility="visible"/>
+
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/message_counter_layout"
+        android:layout_marginTop="8dp"
+
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_above="@id/bottom_panel"
+        android:layout_height="130dp">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/message_pulse"
+            style="@style/SpinKitView.Large.PulseRing"
+            android:layout_width="108dp"
+            android:layout_height="108dp"
+            android:layout_marginLeft="2dp"
+            android:padding="2dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+
+            app:SpinKit_Color="@color/gradientStart"
+            android:visibility="invisible"/>
+
+        <com.github.ybq.android.spinkit.SpinKitView
+
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/message_running"
+            style="@style/SpinKitView.Small.FadingCircle"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginLeft="2dp"
+            android:padding="2dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+
+            app:SpinKit_Color="@color/textThemeColor"
+            android:visibility="invisible"/>
+
+
+        <TextView
+
+            android:id="@+id/message_no_message_counter_background"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:text=""
+            android:visibility="invisible"
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:textColor="@color/gradientStart"
+            android:background="@drawable/message_counter_no_message_background"
+
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
+
+
+
+        <TextView
+
+            android:id="@+id/message_counter_background"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:gravity="center"
+            android:text=""
+            android:textStyle="bold"
+            android:textSize="24dp"
+            android:textColor="@color/gradientStart"
+            android:background="@drawable/message_counter_drawable_background"
+
+            android:visibility="invisible"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
+        <SeekBar
+            android:id="@+id/text_size_seekbar"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="-10dp"
+            android:thumb="@drawable/layer_text_size_icon"
+            android:max="250"
+            android:min="34"
+            android:background="@drawable/message_send_seeing_background"
+
+            android:splitTrack="false"
+            android:progressDrawable="@drawable/seek_style"
+            android:layout_width="80dp"
+            android:rotation="-90"
+            android:padding="5dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/reply_message_btn"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/message_counter"
+            android:layout_marginRight="28dp"
+            android:gravity="center"
+            android:layout_marginLeft="54dp"
+            android:background="@drawable/layer_list_reply_button"
+
+            android:visibility="gone"
+            android:layout_width="55dp"
+            android:layout_height="55dp" />
+
+
+
+        <com.github.ybq.android.spinkit.SpinKitView
+
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/chain_pulse"
+            style="@style/SpinKitView.Large.PulseRing"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginRight="8.5dp"
+            android:padding="2dp"
+
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+
+            app:SpinKit_Color="@color/textThemeColor"
+            android:visibility="gone"/>
+
+
+        <Button
+            android:id="@+id/chain_message_btn"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:rotation="90"
+            android:alpha="1.0"
+            android:layout_marginRight="13.5dp"
+            android:background="@drawable/chain_message_button_drawable"
+            android:visibility="gone"
+            android:layout_width="55dp"
+            android:layout_height="55dp" />
+
+
+
+
+
+        <TextView
+            android:id="@+id/button_exterior"
+            android:layout_width="86dp"
+            android:gravity="center"
+            android:text=""
+
+            android:textStyle="bold"
+
+            android:visibility="invisible"
+            android:textSize="32dp"
+            android:textColor="#fff"
+            android:background="@drawable/button_exterior"
+            android:layout_height="86dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+        <Button
+            android:id="@+id/message_counter"
+            android:layout_width="58dp"
+            android:gravity="center"
+            android:text=""
+
+            android:visibility="invisible"
+            android:textStyle="bold"
+            android:textSize="32dp"
+            android:textColor="#fff"
+            android:background="@drawable/message_counter_drawable"
+            android:layout_height="58dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"/>
+
+        <Switch
+            android:id="@+id/switch_btn"
+
+            android:layout_width="wrap_content"
+            android:switchMinWidth="40dp"
+            android:visibility="gone"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/button_exterior"
+            android:thumb="@drawable/layer_list_switch_button"
+            android:layout_centerVertical="true"
+            android:theme="@style/SCBSwitch"
+            android:rotation="90"
+            android:layout_height="wrap_content" />
+
+        <com.ebanx.swipebtn.SwipeButton
+            android:id="@+id/swipeBtn"
+            android:layout_marginStart="4dp"
+            android:layout_width="85dp"
+            app:inner_text_size="12dp"
+            android:layout_toEndOf="@id/button_exterior"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            app:inner_text_top_padding="18dp"
+            app:inner_text=" "
+            android:visibility="gone"
+            app:inner_text_color="#fff"
+            android:rotation="90"
+            app:inner_text_bottom_padding="18dp"
+            app:button_image_disabled="@drawable/ic_fast_forward_white_24dp"
+
+            app:button_image_enabled="@drawable/ic_stop_black_24dp"
+
+            app:button_bottom_padding="12dp"
+            app:button_left_padding="12dp"
+            app:button_right_padding="12dp"
+            app:button_top_padding="12dp"
+            app:inner_text_background="@drawable/message_swipe_bg"
+            app:button_background="@drawable/message_swipe_active_bg"
+
+            />
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_swipe_msg"
+        android:id="@+id/bottom_panel"
+        android:animateLayoutChanges="false"
+        android:orientation="vertical">
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bottom_bar"
+            android:fitsSystemWindows="true"
+            android:paddingRight="8dp"
+            android:background="@color/backgroundColorTheme"
+            android:layout_alignParentBottom="true">
+
+
+            <Button
+                android:layout_width="28dp"
+                android:id="@+id/send_button"
+                android:layout_height="28dp"
+                android:enabled="false"
+                android:alpha="0.15"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/nav_hieeway_send_btn"/>
+
+            <EditText
+                android:id="@+id/message_box_behind"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:minHeight="42dp"
+                android:maxHeight="150dp"
+                android:textColor="@color/textThemeColor"
+
+                android:layout_centerInParent="true"
+                android:alpha="0.0"
+                android:layout_toRightOf="@id/camera_background"
+                android:layout_marginRight="7dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginStart="7dp"
+                android:maxLength="80"
+                android:textSize="17dp"
+                android:inputType="textNoSuggestions"
+                android:paddingTop="12dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="12dp"
+                android:windowSoftInputMode="adjustPan|stateHidden"
+                android:focusable="false"
+                android:focusedByDefault="false"
+                android:focusableInTouchMode="true"
+                android:hint=""
+                android:textColorHint="#505050"
+                android:layout_toLeftOf="@id/send_button"
+                android:layout_centerVertical="true"
+                android:background="@drawable/message_box_reply_drawable"
+                />
+
+            <EditText
+                android:id="@+id/message_box"
+                android:layout_width="wrap_content"
+                android:layout_height="46dp"
+                android:minHeight="42dp"
+                android:maxHeight="150dp"
+                android:textColor="@color/textThemeColor"
+
+                android:layout_centerInParent="true"
+
+
+                android:layout_toRightOf="@id/camera_background"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:maxLength="80"
+                android:textSize="17dp"
+                android:inputType="textNoSuggestions"
+                android:paddingTop="12dp"
+                android:paddingLeft="32dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="12dp"
+                android:windowSoftInputMode="adjustPan|stateHidden"
+
+                android:focusedByDefault="false"
+                android:focusableInTouchMode="true"
+                android:hint="Chat here..."
+                android:textColorHint="#505050"
+                android:layout_toLeftOf="@id/send_button"
+                android:layout_centerVertical="true"
+                android:background="@drawable/message_box_drawable"
+
+                />
+
+            <Button
+                android:id="@+id/emoji"
+                android:visibility="gone"
+                android:layout_width="36dp"
+                android:layout_toRightOf="@id/camera_background"
+                android:layout_height="36dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+
+                android:background="@drawable/ic_insert_emoticon_white_24dp"
+
+                android:layout_centerVertical="true"/>
+
+            <Button
+                android:id="@+id/camera_background"
+                android:layout_width="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_height="40dp"
+                android:layout_marginLeft="12dp"
+                android:background="@drawable/camera_background_drawable"
+                android:layout_centerVertical="true"/>
+            <Button
+                android:id="@+id/camera"
+                android:layout_width="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_height="30dp"
+                android:layout_marginLeft="17.5dp"
+                android:backgroundTint="#fff"
+                android:background="@drawable/ic_camera_alt_white_24dp"
+                android:layout_centerVertical="true"/>
+
+
+
+        </RelativeLayout>
+
+
+        <br.com.instachat.emojilibrary.model.layout.EmojiKeyboardLayout
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:id="@+id/emoji_keyboard_layout"
+            android:layout_alignParentBottom="true"
+            android:layout_height="263dip"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/send_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-700dp"
+            android:layout_marginLeft="-100dp"
+            android:layout_marginRight="-100dp"
+            android:backgroundTint="@color/textThemeColor"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0"
+            android:src="@drawable/hiewaylogomessageback"
+            />
+
+        <TextView
+            android:id="@+id/send_arrow_two"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="-410dp"
+            android:layout_alignParentBottom="true"
+            android:alpha="0.0"
+            android:background="@drawable/arrowback"
+            android:backgroundTint="@color/gradientEnd" />
+        <ImageView
+            android:id="@+id/receive_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-700dp"
+            android:rotation="180"
+            android:layout_marginLeft="-100dp"
+            android:layout_marginRight="-100dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0"
+
+            android:src="@drawable/hiewaylogomessageback"
+
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_swipe_msg"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/go_live_swipe_drawable"
+        >
+
+        <TextView
+
+            android:layout_toLeftOf="@id/bottom_txt_swipe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:id="@+id/swipe_up"
+
+            android:textSize="10sp"
+            android:layout_alignParentBottom="true"
+            android:text="Swipe Up"
+            android:layout_marginBottom="4dp"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+
+            android:textColor="#fff"
+            android:fontFamily="sans-serif"/>
+        <RelativeLayout
+            android:id="@+id/bottom_txt_swipe"
+            android:layout_width="20dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/layer_list_swipe_up_button"
+            android:layout_height="20dp"/>
+
+        <RelativeLayout
+            android:id="@+id/bottom_txt_swipe_two"
+            android:layout_width="28dp"
+            android:rotation="-270"
+            android:visibility="gone"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginBottom="-8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="#fff"
+            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
+            android:layout_height="28dp"/>
+        <TextView
+
+            android:layout_toRightOf="@id/bottom_txt_swipe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/go_live_txt"
+
+
+            android:textSize="10sp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="4dp"
+            android:text="Go Live"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-black"/>
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+
+    <!-- home_background_oval -->

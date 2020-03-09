@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@id/bottom_panel"
+
+    android:layout_below="@id/top_panel"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.SendMessageFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sent_messages_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/send_message_seen_layout"/>
+
+
+</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/bottom_panel"
+        android:layout_width="match_parent"
+        android:background="#131313"
+        android:layout_centerHorizontal="true"
+        android:alpha="1.0"
+        android:layout_alignParentBottom="true"
+        android:layout_height="40dp">
+
+        <TextView
+            android:gravity="center"
+
+            android:text="Swipe"
+            android:visibility="gone"
+            android:textAllCaps="false"
+            android:layout_toLeftOf="@id/right_arrow"
+            android:textSize="10sp"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+        <TextView
+            android:gravity="center"
+
+            android:id="@+id/bottom_msg"
+            android:text="Unsend"
+            android:textAllCaps="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="10sp"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/right_arrow"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_toRightOf="@id/bottom_msg"
+            android:layout_centerVertical="true"
+            android:backgroundTint="#fff"
+
+            android:rotation="180"
+            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"/>
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/top_panel"
+        android:layout_width="match_parent"
+        android:alpha="1.0"
+        android:layout_centerHorizontal="true"
+
+
+        android:layout_alignParentTop="true"
+        android:layout_height="50dp">
+        <RelativeLayout
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:background="@drawable/message_box_drawable"
+            android:backgroundTint="#1A1A1A"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/gems_size"
+            android:gravity="center"
+
+            android:text="3"
+            android:textAllCaps="true"
+            android:layout_centerVertical="true"
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:fontFamily="sans-serif-black"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+            <TextView
+                android:gravity="center"
+                android:layout_toRightOf="@id/gems_size"
+                android:text=""
+                android:layout_marginLeft="4dp"
+                android:textAllCaps="false"
+                android:layout_centerVertical="true"
+                android:textSize="16sp"
+                android:background="@drawable/ic_book_24dp"
+                android:textColor="#fff"
+                android:fontFamily="sans-serif-black"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+
+
+            android:visibility="visible"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+
+            android:backgroundTint="#1A1A1A"
+            android:layout_alignParentRight="true">
+
+
+            <Button
+                android:id="@+id/recharge_gems"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_short_text_black_24dp"/>
+
+        </RelativeLayout>
+
+
+
+
+    </RelativeLayout>
+
+    </RelativeLayout>

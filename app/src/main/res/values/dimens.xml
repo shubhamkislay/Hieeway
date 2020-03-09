@@ -1,0 +1,14 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="message_text_size">34sp</dimen>
+    <dimen name="seek_bar_thickness">12dp</dimen>
+    <dimen name="seek_bar_thumb_size">20dp</dimen>
+    <dimen name="nav_button_active_size">24dp</dimen>
+    <dimen name="nav_button_prof_active_size">42dp</dimen>
+    <dimen name="nav_button_prof_inactive_size">42dp</dimen>
+    <dimen name="nav_button_inactive_size">24dp</dimen>
+    <dimen name="timestampsize">10sp</dimen>
+</resources>

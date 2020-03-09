@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <RelativeLayout
+
+        android:layout_marginTop="2dp"
+        android:layout_width="300dp"
+        android:layout_marginBottom="2dp"
+        android:layout_alignParentLeft="true"
+
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/message_photo_receive_background"
+            android:paddingLeft="20dp"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="8dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="8dp"
+            android:layout_marginLeft="5dp">
+
+
+            <TextView
+
+
+                android:id="@+id/message_view"
+                android:layout_toLeftOf="@id/progress"
+                android:textColor="#fff"
+                android:text="photo"
+                android:layout_marginRight="8dp"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/progress"
+                android:layout_centerVertical="true"
+                style="@style/SpinKitView.Small.FoldingCube"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_alignParentRight="true"
+                app:SpinKit_Color="#FFFFFF"
+                android:visibility="visible"/>
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

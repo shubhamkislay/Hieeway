@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Hieeway</string>
+    <string name="title_activity_alpha">AlphaActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_image_upload">ImageUploadActivity</string>
+    <string name="title_activity_archive">ArchiveActivity</string>
+
+
+    <string name="home">Chats</string>
+    <string name="big_text">This sample demonstrates the basic use of Camera2 API. Check the source code to see how
+            you can display camera preview and take pictures. This sample demonstrates the basic use of Camera2 API. Check the source code to see how
+            you can display camera preview and take pictures. This sample demonstrates the basic use of Camera2 API. Check the source code to see how
+            you can display camera preview and take pictures.</string>
+
+    <string name="agora_app_id">c479e5a8a9b94ea69e746eaea6334411</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+    <string name="notification">Notify</string>
+    <string name="likes">Favs</string>
+    <string name="happy">Happy</string>
+    <string name="room">Room</string>
+    <string name="restaurant">Food</string>
+    <string name="shop">Shop</string>
+    <string name="photos">Pics</string>
+    <string name="call">Call</string>
+
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="intro_message">
+        <![CDATA[
+
+
+            This sample demonstrates the basic use of Camera2 API. Check the source code to see how
+            you can display camera preview and take pictures.
+
+
+        ]]>
+    </string>
+    <string name="replytomsg">You replied to this message</string>
+    <string name="gotreplymsg">This is a reply to your message</string>
+    <string name="highlighttxt">Next Message context!</string>
+
+
+</resources>

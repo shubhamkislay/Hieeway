@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/chatbox_tem"
+    android:layout_marginTop="16dp"
+    android:layout_height="240dp"
+    android:layout_margin="0.75dp"
+    android:padding="0.75dp"
+
+    android:gravity="center"
+    android:layout_centerHorizontal="true"
+
+    android:layout_gravity="center_horizontal"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <RelativeLayout
+
+        android:id="@+id/chat_back_parent_layout"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:alpha="1"
+        android:padding="3.0dp"
+        android:gravity="center"
+        android:layout_margin="2.5dp"
+
+        android:foregroundGravity="center"
+        android:background="@drawable/chatlist_item_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <com.shubhamkislay.jetpacklogin.CustomImageView
+            android:id="@+id/user_photo"
+            android:layout_width="match_parent"
+            android:foregroundGravity="center"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:transitionName="imageTransitionnot"
+            android:layout_centerHorizontal="true"
+            android:src="@color/darkBack"/>
+
+        <RelativeLayout
+            android:background="@drawable/chat_user_gradient"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.8"
+            android:scaleType="centerCrop">
+        </RelativeLayout>
+
+
+
+
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:shadowColor="#75FFFFFF"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:alpha="1.0"
+            android:textColor="#fff"
+            android:shadowRadius="50"
+            android:layout_alignParentBottom="true"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingTop="4dp"
+            android:layout_marginBottom="0dp"
+            android:paddingBottom="12dp"
+            android:fontFamily="sans-serif-thin"
+            android:transitionName="nameTransition"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            tools:text='sky'/>
+
+
+        <RelativeLayout
+            android:id="@+id/bottom_panel"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="6dp"
+            android:layout_alignParentBottom="false"
+            android:layout_above="@id/username"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+
+                <Button
+                    android:id="@+id/delete_chat_head_btn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:shadowColor="#759E9E9E"
+                    android:shadowDx="0"
+                    android:visibility="visible"
+                    android:shadowDy="0"
+                    android:shadowRadius="30"
+
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/ic_delete_white_24dp"
+                    />
+
+
+                <Button
+                    android:id="@+id/archive_btn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+
+                    android:layout_marginEnd="16dp"
+
+                    android:shadowColor="#759E9E9E"
+                    android:shadowDx="0"
+                    android:visibility="visible"
+                    android:shadowDy="0"
+                    android:shadowRadius="30"
+                    android:rotation="-180"
+
+                    android:layout_marginRight="0dp"
+                    android:background="@drawable/ic_archive_white_24dp"
+                    />
+
+                <Button
+
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/long_msg_btn"
+                    android:shadowColor="#759E9E9E"
+                    android:shadowDx="0"
+                    android:visibility="visible"
+                    android:shadowDy="0"
+                    android:shadowRadius="30"
+                    android:background="@drawable/ic_short_text_black_24dp"
+                    />
+
+
+            </LinearLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:id="@+id/count_message_layout"
+        android:visibility="invisible"
+        android:layout_margin="15dp"
+        android:background="@drawable/chat_message_count_back"
+        android:layout_width="28dp"
+        android:layout_height="28dp">
+
+        <TextView
+            android:id="@+id/count_message_text"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            android:layout_height="wrap_content"
+            tools:text="99"/>
+
+
+
+
+
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/loading_image_progress_bar"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_centerInParent="true"/>
+
+
+</RelativeLayout>

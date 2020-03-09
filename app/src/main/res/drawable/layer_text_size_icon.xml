@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#fff"/>
+            <stroke android:color="#fff"
+                android:width="1dp"/>
+
+        </shape>
+    </item>
+
+
+
+    <item
+        android:gravity="left"
+        android:right="4dp"
+        android:top="4dp"
+        android:bottom="4dp"
+        android:left="4dp">
+
+    <rotate
+        android:gravity="left"
+        android:fromDegrees="90" android:toDegrees="0"
+        android:drawable="@drawable/ic_zoom_text_24dp"/>
+
+    </item>
+
+</layer-list>

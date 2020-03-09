@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sent_messages"
+        android:icon="@drawable/ic_send_vector"
+        android:title="Sent" />
+
+
+    <item
+        android:id="@+id/pinned_messages"
+        android:icon="@drawable/ic_short_text_black_24dp"
+        android:title="Pinned" />
+
+</menu>

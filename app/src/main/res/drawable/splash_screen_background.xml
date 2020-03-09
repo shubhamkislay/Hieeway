@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/colorBlack"/>
+
+
+
+
+    <item android:drawable="@drawable/hieeway_background_blurred"
+        />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</layer-list>
+
+
+<!--
+<item android:drawable="@drawable/hieeway_background_blurred"/>
+
+    <item android:drawable="@drawable/top_fade_dark_background"
+        android:gravity="top"/>
+    <item android:drawable="@drawable/bottom_fade_dark_background"
+        android:gravity="bottom"/>
+        <item android:drawable="@drawable/hieeway_background_blurred" />
+-->

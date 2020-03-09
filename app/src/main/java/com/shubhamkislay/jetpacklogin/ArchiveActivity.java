@@ -1,0 +1,151 @@
+package com.shubhamkislay.jetpacklogin;
+
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.PinnedMessagesFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.SendMessageFragment;
+import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ArchiveActivity extends AppCompatActivity {
+    private TextView mTextMessage;
+    private List<ChatMessage> messageList;
+    private ArchiveActivityViewModel archiveActivityViewModel;
+    public  String userIdChattingWith;
+    private ArchiveActivityViewModelFactory archiveActivityViewModelFactory;
+    FrameLayout frameLayout;
+    Button back_button;
+    SendMessageFragment sendMessageFragment;
+    PinnedMessagesFragment pinnedMessagesFragment;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.sent_messages:
+                  //  mTextMessage.setText(R.string.title_home);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container_layout, sendMessageFragment).commit();
+                    return true;
+                case R.id.pinned_messages:
+                 //   mTextMessage.setText(R.string.title_notifications);
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.container_layout, pinnedMessagesFragment).commit();
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_archive);
+
+
+
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+
+
+
+
+
+        Intent intent = getIntent();
+        userIdChattingWith = intent.getStringExtra("userIdChattingWith");
+
+
+        back_button = findViewById(R.id.back_button);
+
+
+        frameLayout = findViewById(R.id.container_layout);
+
+
+        Bundle bundle = new Bundle();
+        bundle.putString("userIdChattingWith", userIdChattingWith);
+
+        sendMessageFragment = new SendMessageFragment();
+
+        sendMessageFragment.setArguments(bundle);
+
+        pinnedMessagesFragment = new PinnedMessagesFragment();
+        pinnedMessagesFragment.setArguments(bundle);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container_layout, sendMessageFragment).commit();
+
+
+
+
+        messageList = new ArrayList<>();
+
+
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+
+
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        mTextMessage = findViewById(R.id.message);
+        navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+
+
+
+        archiveActivityViewModelFactory = new ArchiveActivityViewModelFactory(userIdChattingWith);
+        archiveActivityViewModel = ViewModelProviders.of(this, archiveActivityViewModelFactory).get(ArchiveActivityViewModel.class);
+        archiveActivityViewModel.getChatList().observe(this, new Observer<List<ChatMessage>>() {
+            @Override
+            public void onChanged(@Nullable List<ChatMessage> chatMessageList) {
+
+                messageList = chatMessageList;
+
+                filterList(messageList);
+
+            }
+        });
+
+
+
+
+
+
+
+
+    }
+
+    private void filterList(List<ChatMessage> messageList) {
+
+        //
+
+    }
+
+}

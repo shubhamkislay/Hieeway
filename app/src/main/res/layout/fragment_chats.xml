@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/transparent"
+    tools:context=".Fragments.ChatsFragment">
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/app_title_layout"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="-4dp"
+            android:layout_marginRight="-4dp"
+            android:layout_marginTop="-4dp"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/top_title_back"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+
+                android:alpha="0.8"
+                android:background="@android:color/transparent" />
+
+
+            <RelativeLayout
+
+                android:layout_width="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="18dp"
+                android:layout_marginStart="18dp"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+
+                    android:layout_alignParentTop="true"
+                    android:id="@+id/app_title"
+                    android:visibility="visible"
+                    android:text="Hieeway"
+                    android:src="@drawable/app_title_logo"
+                    android:textColor="@color/textThemeColor"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    android:textSize="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp" />
+
+                <ImageView
+                    android:layout_marginLeft="4dp"
+                    android:layout_width="40dp"
+                    android:visibility="gone"
+                    android:layout_height="40dp"
+                    android:layout_toRightOf="@id/app_title"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/hieeway_arrow_title_bar"
+                    android:backgroundTint="@color/textThemeColor"/>
+            </RelativeLayout>
+
+
+
+            <Button
+                android:id="@+id/search_chat_btn_back"
+                android:layout_width="40dp"
+                android:layout_centerVertical="true"
+                android:layout_height="40dp"
+                android:elevation="8dp"
+                android:visibility="visible"
+                android:layout_marginRight="12dp"
+                android:background="@drawable/home_background_oval"
+                android:layout_alignParentRight="true"
+                />
+
+
+            <Button
+                android:id="@+id/search_chat_btn"
+                android:layout_width="24dp"
+                android:layout_centerVertical="true"
+                android:layout_height="24dp"
+                android:elevation="10dp"
+                android:visibility="visible"
+                android:layout_marginRight="19dp"
+                android:background="@drawable/ic_search_black_24dp"
+                android:backgroundTint="@color/textThemeColor"
+                android:layout_alignParentRight="true"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/darkTheme"
+            android:alpha="1.0"/>
+
+        <TextView
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/email"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='email'/>
+
+
+        <Button
+            android:id="@+id/refresh"
+            android:background="#000"
+            android:visibility="gone"
+            android:textColor="#fff"
+            android:text="Refresh List"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <TextView
+            android:layout_width="200dp"
+            android:layout_centerInParent="true"
+            android:layout_height="match_parent"
+            android:id="@+id/no_items_text"
+            android:visibility="gone"
+
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:foregroundGravity="center"
+            android:text="You don't have any chats. Search for people to chat in the search tab."/>
+
+
+        <android.support.v7.widget.RecyclerView
+
+            android:layout_marginTop="2dp"
+            android:foregroundGravity="center"
+           android:id="@+id/chats_recyclerview"
+            android:layout_below="@id/app_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/edge_to_edge"
+            />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:alpha="0.0"
+            android:layout_alignParentBottom="true"
+            android:rotation="180"
+            android:src="@drawable/gradiant_top"/>
+
+        <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:alpha="0.0"
+        android:layout_below="@id/chat_search_box"
+        android:src="@drawable/gradiant_top"/>
+
+
+
+
+
+
+        <EditText
+            android:id="@+id/chat_search_box"
+            android:alpha="1"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:minHeight="16dp"
+            android:inputType="textPersonName"
+            android:background="@drawable/chat_search_box_back"
+            android:textColorHint="#8D8D8D"
+            android:textColor="#000"
+            android:layout_marginRight="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
+            android:paddingTop="10dp"
+            android:textSize="14dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="24dp"
+            android:hint="Search chats"/>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/SpinKitView.Large.Wave"
+            android:indeterminateTint="#fff"
+            android:padding="16dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_centerInParent="true"/>
+
+        <ProgressBar
+            android:id="@+id/progressTwo"
+            android:indeterminateTint="#fff"
+            android:padding="16dp"
+            android:rotation="180"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+
+</FrameLayout>

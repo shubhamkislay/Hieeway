@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <RelativeLayout
+
+        android:layout_marginTop="2dp"
+        android:layout_width="300dp"
+        android:layout_marginBottom="2dp"
+        android:layout_alignParentLeft="true"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/message_receive_background"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp">
+
+        <TextView
+
+            android:id="@+id/message_view"
+            android:background="@drawable/message_receive_background"
+            android:paddingLeft="20dp"
+            android:layout_alignParentLeft="true"
+            android:paddingTop="8dp"
+
+            android:paddingBottom="8dp"
+            android:textColor="#fff"
+            android:visibility="gone"
+            android:paddingRight="20dp"
+            tools:text="this is a message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/progress"
+            style="@style/SpinKitView.Small.Wave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_centerVertical="true"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            app:SpinKit_Color="#FFFFFF"
+            android:visibility="visible"/>
+
+    </RelativeLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

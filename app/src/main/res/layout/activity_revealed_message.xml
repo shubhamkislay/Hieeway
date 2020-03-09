@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context=".RevealedMessageActivity">
+
+    <RelativeLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+
+
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:animateLayoutChanges="true"
+        android:layout_height="match_parent">
+
+        <TextView
+
+
+            android:id="@+id/message_text_dummy"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:alpha="0.0"
+            android:autoSizeMinTextSize="1dp"
+            android:autoSizeStepGranularity="1sp"
+            android:breakStrategy="simple"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:hyphenationFrequency="full"
+            android:textColor="@color/textThemeColorSemiDark"
+            app:autoSizeMaxTextSize="@dimen/message_text_size"
+            android:autoSizeMaxTextSize="@dimen/message_text_size"
+            android:autoSizeTextType="uniform"
+            app:autoSizeTextType="uniform"
+
+            tools:ignore="UnusedAttribute"
+            tools:text="Hi"
+
+            />
+
+        <TextView
+            android:animateLayoutChanges="true"
+            android:id="@+id/message_text"
+            android:layout_width="match_parent"
+
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+
+            android:alpha="0.0"
+            android:fontFamily="sans-serif-black"
+            app:autoSizeMaxTextSize="@dimen/message_text_size"
+            android:autoSizeMinTextSize="1dp"
+            android:autoSizeStepGranularity="1sp"
+            android:hyphenationFrequency="full"
+            android:breakStrategy="simple"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="@dimen/message_text_size"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:textColor="@color/textThemeColor"
+            tools:ignore="UnusedAttribute"
+            android:textStyle="bold"
+            tools:text="Hi"
+            />
+        <TextView
+            android:animateLayoutChanges="true"
+            android:id="@+id/message_text_two"
+            android:layout_width="match_parent"
+
+            android:layout_height="0dp"
+            android:layout_weight="40"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            android:alpha="0.0"
+            android:autoSizeMinTextSize="1dp"
+            android:autoSizeStepGranularity="1sp"
+            android:breakStrategy="simple"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:hyphenationFrequency="full"
+            android:textColor="@color/textThemeColor"
+            app:autoSizeMaxTextSize="@dimen/message_text_size"
+            app:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="@dimen/message_text_size"
+            android:autoSizeTextType="uniform"
+            tools:ignore="UnusedAttribute"
+            tools:text="Hi"
+            />
+        <TextView
+            android:animateLayoutChanges="true"
+            android:id="@+id/message_text_three"
+            android:layout_width="match_parent"
+
+            android:layout_height="0dp"
+            android:layout_weight="120"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:visibility="gone"
+            android:alpha="0.0"
+            android:autoSizeMinTextSize="1dp"
+            android:autoSizeStepGranularity="1sp"
+            android:breakStrategy="simple"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:hyphenationFrequency="full"
+            android:textColor="@color/textThemeColor"
+            app:autoSizeMaxTextSize="@dimen/message_text_size"
+            app:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="@dimen/message_text_size"
+            android:autoSizeTextType="uniform"
+            tools:ignore="UnusedAttribute"
+            tools:text="Hi"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/change_activity"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+</RelativeLayout>

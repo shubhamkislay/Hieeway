@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="2dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <RelativeLayout
+
+        android:layout_margin="4dp"
+        android:layout_width="match_parent"
+
+        android:background="@drawable/layer_message_box_drawable"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/relative_layout"
+            android:layout_width="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+
+            android:paddingTop="4dp"
+            android:paddingRight="24dp"
+            android:paddingLeft="24dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/reply_tag"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/replytomsg"
+                android:padding="4dp"
+                android:textAllCaps="false"
+                android:textColor="@color/replyTagColor"
+                android:textSize="10sp"
+                android:background="@drawable/layer_replied_message_box"
+                android:gravity="center"/>
+
+            <TextView
+
+                android:id="@+id/message_view"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/reply_tag"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="16dp"
+                android:text="Hello"
+                android:textColor="#fff"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/timestamp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:paddingBottom="4dp"
+                android:textSize="@dimen/timestampsize"
+                android:gravity="center_horizontal"
+                android:layout_below="@id/message_view"/>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/got_reply_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You got a reply for this message"
+                android:gravity="center"
+                android:padding="4dp"
+                android:textSize="10sp"
+                android:textColor="@color/replyTagColor"
+                android:background="@drawable/layer_got_reply_message_box"
+                android:layout_below="@id/timestamp"/>
+
+            <Button
+                android:id="@+id/message_identifier"
+                android:layout_width="8dp"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="0dp"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"
+                android:background="@drawable/message_bar_ticker"/>
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_below="@id/relative_layout"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/acceptBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Accept"
+
+                android:layout_margin="2dp"
+                android:backgroundTint="#1D1D1D"
+                android:background="@drawable/layer_message_box_drawable"/>
+            <Button
+                android:id="@+id/rejectBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Reject"
+                android:layout_margin="2dp"
+                android:backgroundTint="#0E0E0E"
+                android:background="@drawable/layer_message_box_drawable"/>
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

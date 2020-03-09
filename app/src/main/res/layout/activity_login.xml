@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context=".LoginActivity">
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginBottom="15dp"
+        android:ems="10"
+        android:layout_above="@id/password"
+        android:layout_centerHorizontal="true"
+        android:inputType="textEmailAddress"
+        android:hint="email" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:ems="10"
+        android:layout_centerHorizontal="true"
+        android:inputType="textPassword"
+        android:layout_centerVertical="true"
+        android:text="qwerty1234"
+        app:layout_constraintEnd_toEndOf="@id/login"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/message_receive_background"
+        android:backgroundTint="#fff"
+        android:textColor="#000"
+        android:paddingStart="32dp"
+        android:paddingLeft="32dp"
+        android:paddingEnd="32dp"
+        android:paddingRight="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/password">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/login_btn"
+            android:layout_centerVertical="true"
+            android:padding="0dp"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:id="@+id/progress_one"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl"
+                android:rotation="180"
+                android:visibility="gone"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:indeterminateTint="@color/colorBlack"/>
+
+            <ProgressBar
+                android:id="@+id/progress_two"
+                android:layout_width="30dp"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl"
+                android:indeterminateTint="@color/colorBlack"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
+
+
+        </RelativeLayout>
+
+
+
+        <Button
+            android:id="@+id/login_btn"
+            android:visibility="visible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="#000"
+            android:backgroundTint="#fff"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="login" />
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

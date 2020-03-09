@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00eac6</color>
+    <color name="colorPrimaryDark">#09bbf5</color>
+    <color name="colorAccent">#29c3cf</color>
+    <color name="colorPending">#636363</color>
+
+    <color name="colorBlack">#000000</color>
+    <color name="colorRed">#A70000</color>
+    <color name="colorGreen">#009900</color>
+    <color name="colorWhite">#fff</color>
+
+    <color name="gradientEnd">#09bbf5</color>
+    <color name="gradientStart">#00eac6</color>
+
+
+    <color name="gradientStartDark">#acb6e5</color>
+    <color name="gradientEndDark">#86fde8</color>
+
+    <!--<color name="darkTheme">#2a2d36</color>
+
+    <color name="darkThemeOval">#1C1E24</color>-->
+
+
+    <!--<color name="darkTheme">#1C1E24</color>
+
+    <color name="darkThemeOval">#22252C</color>-->
+
+    <color name="navButtonInactiveColor">#494949</color>
+
+    <color name="replyTagColor">#464646</color>
+
+    <color name="navButtonInactiveColortwo">#646464</color>
+
+
+    <!--<color name="darkTheme">#1B1B1B</color>
+
+    <color name="darkBack">#161616</color>-->
+
+
+    <!-- Overall theme -->
+
+    <color name="darkTheme">#000</color>
+
+    <color name="darkBack">#000</color>
+
+
+    <color name="darkThemeOval">#111111</color>
+
+    <color name="darkGrey">#1F1F1F</color>
+
+    <color name="darkButtonBackground">#161616</color>
+
+    <color name="lightPrimary">#3FAA01</color>
+
+    <color name="nav_button_inactive">#C4C4C4</color>
+
+
+
+    <color name="textThemeColor">#fff</color>
+
+    <color name="textThemeColorDark">#505050</color>
+    <color name="textThemeColorSemiDark">#A2A2A2</color>
+
+    <color name="backgroundColorTheme">#000</color>
+
+    <color name="offbackgroundtheme">#111111</color>
+
+
+
+    <color name="red_active">#f44336</color>
+    <color name="purple_active">#9c27b0</color>
+    <color name="blue_active">#03a9f4</color>
+    <color name="green_active">#4caf50</color>
+    <color name="blue_grey_active">#607d8b</color>
+    <color name="yellow_active">#ffeb3b</color>
+    <color name="orange_active">#ff9800</color>
+    <color name="grey_active">#9e9e9e</color>
+
+    <color name="gery_inactive">#e0e0e0</color>
+
+    <color name="default_inactive">#78909c</color>
+
+    <color name="red_bg_light">#ffebee</color>
+    <color name="purple_bg_light">#f3e5f5</color>
+    <color name="blue_bg_light">#e3f2fd</color>
+    <color name="green_bg_light">#e8f5e9</color>
+    <color name="blue_grey_bg_light">#eceff1</color>
+    <color name="yellow_bg_light">#fffde7</color>
+    <color name="orange_bg_light">#fff3e0</color>
+    <color name="grey_bg_light">#fafafa</color>
+    <color name="selected_filter">#221f20</color>
+    <color name="normal_filter">#8a8889</color>
+
+    <color name="white">#ffffff</color>
+
+    <color name="red_inactive">#e57373</color>
+    <color name="purple_inactive">#ba68c8</color>
+    <color name="blue_inactive">#64b5f6</color>
+    <color name="green_inactive">#81c784</color>
+    <color name="blue_grey_inactive">#90a4ae</color>
+    <color name="yellow_inactive">#fff176</color>
+    <color name="orange_inactive">#ffb74d</color>
+
+
+    <color name="color_option_menu">#FF3990</color>
+    <color name="card_background_color">#333639</color>
+
+    <color name="seek_bar_background">#4D4D4D</color>
+    <color name="seek_bar_progress">#ffb600</color>
+    <color name="seek_bar_secondary_progress">#3399CC</color>
+
+
+</resources>
+
+
+<!---->
+
+
+<!--
+<color name="gradientStart">#3cd3ad</color>
+<color name="gradientEnd">#4cb8c4</color>-->
+<!--
+<color name="gradientStart">#0cf9d1</color>
+<color name="gradientEnd">#586ccb</color>-->
+
+
+<!-- Dark Theme
+<color name="darkTheme">#000</color>
+
+    <color name="darkBack">#000</color>
+
+    <color name="darkThemeOval">#181818</color>
+
+    <color name="nav_button_inactive">#C4C4C4</color>
+
+
+
+    <color name="textThemeColor">#fff</color>
+
+    <color name="backgroundColorTheme">#000</color>
+
+    <color name="offbackgroundtheme">#111111</color> -->
+
+
+
+<!-- White theme
+    <color name="darkTheme">#fff</color>
+
+        <color name="darkBack">#fff</color>
+
+        <color name="darkThemeOval">#DDDDDD</color>
+
+        <color name="nav_button_inactive">#3A3A3A</color>
+
+
+
+        <color name="textThemeColor">#000</color>
+
+        <color name="backgroundColorTheme">#fff</color>
+
+        <color name="offbackgroundtheme">#F0F0F0</color> -->

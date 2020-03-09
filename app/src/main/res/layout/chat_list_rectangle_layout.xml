@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+
+    <RelativeLayout
+
+        android:alpha="1"
+        android:padding="10dp"
+
+
+        android:background="@drawable/chatlist_item_back"
+        android:layout_width="180dp"
+        android:layout_height="400dp">
+
+
+
+
+
+        <ImageView
+            android:id="@+id/user_photo"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:minHeight="280dp"
+
+            android:scaleType="centerCrop"
+            android:transitionName="imageTransition"
+            android:layout_centerHorizontal="true"
+            android:minWidth="160dp"
+            android:src="@drawable/no_profile"/>
+
+
+
+
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:shadowColor="#75FFFFFF"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:textColor="#fff"
+            android:shadowRadius="50"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginStart="16dp"
+            android:transitionName="nameTransition"
+            android:layout_below="@id/user_photo"
+            android:background="@drawable/chats_username_back_drawable"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            tools:text='sky'/>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_marginBottom="12dp"
+            android:layout_alignParentBottom="true"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content">
+
+
+                <Button
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/ic_archive_white_24dp"
+                    />
+
+                <Button
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:background="@drawable/ic_delete_white_24dp"
+                    />
+
+            </LinearLayout>
+
+
+
+
+
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:minHeight="400dp"
+        android:scaleType="centerCrop"
+        android:transitionName="imageTransition"
+        android:layout_centerHorizontal="true"
+        android:minWidth="180dp"
+        android:src="@drawable/frame" />
+
+</FrameLayout>
+
+</RelativeLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/chatbox_tem"
+    android:layout_marginTop="16dp"
+    android:layout_height="56dp"
+    android:layout_margin="2.0dp"
+    android:gravity="center"
+    android:background="@color/darkTheme"
+    android:layout_centerHorizontal="true"
+
+    android:layout_gravity="center_horizontal"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+
+
+</RelativeLayout>

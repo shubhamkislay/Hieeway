@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fitsSystemWindows="true"
+    tools:context=".AlphaActivity">
+
+
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/nav_view"
+
+
+        android:src="@drawable/gradiant_top" />
+
+    <com.jgabrielfreitas.core.BlurImageView
+        android:id="@+id/blurr_profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/nav_view"
+        android:layout_below="@id/top_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/hiewaylogobackground"
+        android:visibility="gone"
+
+
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/gradient_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:alpha="1.0"
+        android:background="#000000" />
+
+    <ImageView
+        android:id="@+id/app_title"
+        android:layout_width="105dp"
+        android:layout_height="55dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/app_title_logo" />
+
+    <ImageView
+        android:id="@+id/app_title_logo"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/app_title"
+        android:src="@drawable/hieeway_arrow_latest_white"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_title">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="#fff"
+            android:hint="Seach chat"
+            android:paddingStart="24dp"
+            android:textColor="#000"
+            android:textColorHint="#D3D3D3"
+            android:visibility="gone" />
+
+
+        <Button
+            android:id="@+id/search_chat_btn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="36dp"
+            android:background="@drawable/ic_search_black_24dp"
+            android:visibility="visible" />
+
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:gravity="start"
+            android:paddingStart="4dp"
+            android:shadowColor="#759E9E9E"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="30"
+            android:text="Chats"
+            android:textSize="22dp"
+            android:textStyle="bold"
+
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/nav_view"
+        android:layout_below="@id/top_bar"
+        android:background="@android:color/transparent"
+        android:foregroundGravity="center" />
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-8dp"
+        android:layout_marginEnd="-8dp"
+        android:layout_marginBottom="-0dp"
+        android:background="#070707"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="100"
+        app:itemIconSize="22dp"
+        app:itemIconTint="@drawable/nav_item_color_state"
+        app:itemTextColor="@drawable/nav_item_text_title_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+
+</RelativeLayout>
+
+
+
+
+

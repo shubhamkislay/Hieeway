@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:orientation="vertical"
+    android:background="#fff"
+
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--rest of the code-->
+
+
+    <com.jgabrielfreitas.core.BlurImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:src="@drawable/profile_pic"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="1.0"
+        android:background="#F1F1F1"
+        android:padding="8dp"/>
+
+
+
+    <RelativeLayout
+        android:layout_marginTop="16dp"
+        android:id="@+id/top_bar"
+        android:paddingLeft="16dp"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="50sp"
+            android:textColor="#310A5E"
+            android:text="Chats"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            />
+
+    </RelativeLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_bar"
+        android:layout_above="@id/bottom_bar"
+        tools:itemCount="5"
+        tools:listitem="@layout/chat_list_item">
+
+
+
+
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+
+
+
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/bottom_bar"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_height="86dp"
+            android:elevation="8dp"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0.0px"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            android:layout_marginBottom="-36dp"
+            card_view:cardCornerRadius="20dp"
+            card_view:cardElevation="12dp"
+
+            card_view:cardPreventCornerOverlap="false">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+
+                <ImageButton
+                    android:id="@+id/button"
+                    android:layout_width="30dp"
+
+
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="55dp"
+                    android:layout_marginBottom="46dp"
+                    android:background="@drawable/ic_message_white_24dp"
+                    android:backgroundTint="#026454"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintEnd_toStartOf="@+id/button2"
+                    card_view:layout_constraintHorizontal_bias="0.5"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/button2"
+                    android:layout_width="30dp"
+
+
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="55dp"
+                    android:layout_marginBottom="46dp"
+                    android:background="@drawable/ic_people_black_24dp"
+                    android:backgroundTint="#057285"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintEnd_toStartOf="@+id/button3"
+                    card_view:layout_constraintHorizontal_bias="0.5"
+                    card_view:layout_constraintStart_toEndOf="@+id/button"
+                    card_view:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/button3"
+                    android:layout_width="30dp"
+
+
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="55dp"
+                    android:layout_marginBottom="46dp"
+                    android:background="@drawable/ic_notifications_black_24dp"
+                    android:backgroundTint="#044563"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintEnd_toStartOf="@+id/button4"
+                    card_view:layout_constraintHorizontal_bias="0.5"
+                    card_view:layout_constraintStart_toEndOf="@+id/button2"
+                    card_view:layout_constraintTop_toTopOf="parent" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/button4"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="46dp"
+                    android:src="@drawable/profile_pic"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintHorizontal_bias="0.5"
+                    card_view:layout_constraintStart_toEndOf="@+id/button3"
+                    card_view:layout_constraintTop_toTopOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+
+
+
+
+
+
+</RelativeLayout>

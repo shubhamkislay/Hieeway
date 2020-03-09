@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="#000"
+    tools:context=".AlphaActivity">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:src="@drawable/hieeway_background_blurred"
+        android:scaleType="centerCrop"/>
+
+
+
+
+
+
+    <ImageView
+        android:id="@+id/top_gradiant"
+        android:visibility="gone"
+
+        android:layout_width="match_parent"
+        android:layout_above="@id/nav_view"
+        android:layout_below="@id/top_bar"
+        android:src="@drawable/gradiant_top"
+        android:layout_height="80dp"/>
+
+    <ImageView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.65"
+        android:background="#000"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/top_fade_dark_background"/>
+
+
+
+
+
+    <com.jgabrielfreitas.core.BlurImageView
+        android:id="@+id/blurr_profile_pic"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="12dp"
+        android:layout_below="@id/top_bar"
+        android:layout_above="@id/nav_view"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:src="@drawable/hiewaylogobackground"
+
+
+        />
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/gradient_back"
+        android:alpha="0.50"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:background="@color/darkTheme"
+        android:layout_height="match_parent"
+        />
+
+
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:id="@+id/app_title_img"
+        android:visibility="gone"
+        android:src="@drawable/app_title_logo"
+        android:layout_centerHorizontal="true"
+        android:backgroundTint="@color/textThemeColor"
+        android:layout_marginStart="10dp"
+        android:layout_width="105dp"
+        android:layout_height="55dp" />
+
+    <FrameLayout
+        android:layout_below="@id/app_title_layout"
+        android:id="@+id/container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/bottom_navigation_view_linear"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-2dp"
+        android:background="@android:color/transparent"
+
+        android:foregroundGravity="center" />
+
+    <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/app_title_layout"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginRight="-4dp"
+        android:layout_marginTop="-4dp"
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/top_title_back"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+
+            android:alpha="0.8"
+            android:background="@android:color/transparent" />
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="18dp"
+            android:layout_marginStart="18dp"
+            android:layout_height="wrap_content">
+
+
+        <TextView
+
+            android:layout_alignParentTop="true"
+            android:id="@+id/app_title"
+            android:visibility="visible"
+            android:text="Hieeway"
+            android:src="@drawable/app_title_logo"
+            android:textColor="@color/textThemeColor"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:textSize="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp" />
+
+        <ImageView
+            android:layout_marginLeft="4dp"
+            android:layout_width="40dp"
+            android:visibility="gone"
+            android:layout_height="40dp"
+            android:layout_toRightOf="@id/app_title"
+            android:layout_centerVertical="true"
+            android:background="@drawable/hieeway_arrow_title_bar"
+            android:backgroundTint="@color/textThemeColor"/>
+        </RelativeLayout>
+
+
+
+        <Button
+            android:id="@+id/search_chat_btn_back"
+            android:layout_width="40dp"
+            android:layout_centerVertical="true"
+            android:layout_height="40dp"
+            android:elevation="8dp"
+            android:visibility="visible"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/home_background_oval"
+            android:layout_alignParentRight="true"
+            />
+
+
+        <Button
+            android:id="@+id/search_chat_btn"
+            android:layout_width="24dp"
+            android:layout_centerVertical="true"
+            android:layout_height="24dp"
+            android:elevation="10dp"
+            android:visibility="visible"
+            android:layout_marginRight="19dp"
+            android:background="@drawable/ic_search_black_24dp"
+            android:backgroundTint="@color/textThemeColor"
+            android:layout_alignParentRight="true"
+            />
+
+
+    </RelativeLayout>
+
+
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:id="@+id/app_title_logo"
+        android:visibility="gone"
+
+        android:src="@drawable/hieeway_arrow_latest_white"
+        android:layout_toRightOf="@id/app_title_layout"
+        android:layout_width="45dp"
+        android:layout_height="45dp" />
+
+    <RelativeLayout
+        android:layout_below="@id/app_title_layout"
+        android:id="@+id/top_bar"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/textThemeColor"
+            android:textColor="#000"
+            android:visibility="gone"
+            android:paddingStart="24dp"
+            android:hint="Seach chat"
+            android:textColorHint="#D3D3D3"/>
+
+
+
+
+
+
+
+
+
+
+        <TextView
+            android:id="@+id/message"
+            android:shadowDx="0"
+            android:visibility="visible"
+            android:textColor="@color/textThemeColor"
+            android:shadowDy="0"
+            android:shadowRadius="30"
+            android:layout_width="wrap_content"
+            android:gravity="start"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:textSize="26dp"
+            android:layout_marginStart="12dp"
+            android:paddingStart="4dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Chats"
+
+            android:layout_alignParentTop="true" />
+
+    </RelativeLayout>
+
+
+
+
+    <RelativeLayout
+        android:id="@+id/bottom_back"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginRight="-4dp"
+        android:alpha="1.0"
+        android:background="#000"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"/>
+
+    <RelativeLayout
+        android:layout_above="@id/bottom_back"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginRight="-4dp"
+        android:alpha="1.0"
+        android:background="@drawable/bottom_fade_dark_background"
+
+        android:layout_width="match_parent"
+        android:layout_height="64dp"/>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="-8dp"
+        android:paddingTop="8dp"
+        app:itemIconSize="22dp"
+        android:paddingBottom="4dp"
+        android:layout_marginEnd="-8dp"
+        android:layout_marginBottom="-0dp"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="100"
+        android:background="#070707"
+        app:itemTextColor="@drawable/nav_item_text_title_color"
+        app:itemIconTint="@drawable/nav_item_color_state"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+
+
+
+
+    <com.gauravk.bubblenavigation.BubbleNavigationConstraintView
+        android:id="@+id/bottom_navigation_view_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:bnc_mode="spread"
+
+
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:layout_marginLeft="-4dp"
+        android:layout_marginRight="-4dp"
+        android:layout_marginBottom="-4dp"
+        android:layout_alignParentBottom="true">
+
+
+
+        <com.gauravk.bubblenavigation.BubbleToggleView
+            android:id="@+id/l_item_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bnc_mode="spread"
+            app:bt_active="true"
+            android:paddingRight="8dp"
+            android:paddingEnd="8dp"
+            app:bt_colorActive="@color/textThemeColor"
+            app:bt_colorInactive="@color/textThemeColor"
+            app:bt_icon="@drawable/ic_action_chat_bubble"
+            app:bt_shape="@drawable/transition_background_drawable_home"
+            app:bt_title="@string/home"
+            android:layout_alignParentTop="true"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_centerVertical="true"/>
+
+
+        <com.gauravk.bubblenavigation.BubbleToggleView
+            android:id="@+id/l_item_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bt_badgeBackgroundColor="@color/green_active"
+            app:bt_colorActive="@color/textThemeColor"
+            app:bt_colorInactive="@color/textThemeColor"
+
+            android:paddingRight="8dp"
+            android:paddingEnd="8dp"
+            app:bt_icon="@drawable/ic_search_black_24dp"
+            app:bt_shape="@drawable/transition_background_drawable_search"
+            app:bt_title="@string/search"
+            android:layout_centerVertical="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+
+
+        <com.gauravk.bubblenavigation.BubbleToggleView
+            android:id="@+id/l_item_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:bt_colorActive="@color/textThemeColor"
+            app:bt_colorInactive="@color/textThemeColor"
+            android:paddingRight="8dp"
+            android:paddingEnd="8dp"
+            app:bt_icon="@drawable/ic_action_account_circle"
+            app:bt_badgeBackgroundColor="#fff"
+            app:bt_shape="@drawable/transition_background_drawable_person"
+            app:bt_title="@string/profile"
+            android:layout_alignParentTop="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
+            />
+
+
+
+    </com.gauravk.bubblenavigation.BubbleNavigationConstraintView>
+
+
+
+
+
+
+</RelativeLayout>
+
+
+
+
+
