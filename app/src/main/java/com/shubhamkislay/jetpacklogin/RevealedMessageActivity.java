@@ -94,7 +94,7 @@ public class RevealedMessageActivity extends AppCompatActivity {
         chatMessageId = intent.getStringExtra("chatMessageId");
         tagType = intent.getStringExtra("tagType");
 
-        change_activity = findViewById(R.id.change_activity);
+
 
         messageID = searchMessageId;
 
@@ -109,12 +109,7 @@ public class RevealedMessageActivity extends AppCompatActivity {
         revealMessageActivity();
 
 
-        change_activity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(RevealedMessageActivity.this,EncryptionActivity.class));
-            }
-        });
+
     }
 
     private void findViews()
