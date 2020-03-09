@@ -506,7 +506,7 @@ public class LiveMessageFragment extends Fragment {
                     refreshReceiverText();
 
                 }
-            }, 2000);
+            }, 1000);
         }
         else
         {
@@ -515,7 +515,7 @@ public class LiveMessageFragment extends Fragment {
                 public void run() {
                     refreshReceiverText();
                 }
-            },1000);
+            },500);
         }
 
 
