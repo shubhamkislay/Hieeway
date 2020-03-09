@@ -223,7 +223,7 @@ public class RevealedMessageActivity extends AppCompatActivity {
 
 
                 if(messageTextTwo.equals(messageID)&&messageTextThree.equals(messageID)) {
-                    // finish();
+                    finish();
                 }
                 else
                 {
@@ -245,13 +245,13 @@ public class RevealedMessageActivity extends AppCompatActivity {
                                                               new Handler().postDelayed(new Runnable() {
                                                                   @Override
                                                                   public void run() {
-                                                                      // finish();
+                                                                      finish();
                                                                   }
                                                               }, messageTextThree.length()* 75 + 750);
                                                           }
                                                           else
                                                           {
-                                                             // finish();
+                                                             finish();
                                                           }
 
                                                       }
@@ -268,13 +268,13 @@ public class RevealedMessageActivity extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // finish();
+                                    finish();
                                 }
                             }, messageTextThree.length()* 75 + 750);
                         }
                         else
                         {
-                            // finish();
+                            finish();
                         }
                     }
 
@@ -343,21 +343,21 @@ public class RevealedMessageActivity extends AppCompatActivity {
 
                             Toast.makeText(RevealedMessageActivity.this, "Message doesn't exist", Toast.LENGTH_SHORT).show();
                             reportReferenceOne.removeEventListener(reportValueEventListener);
-                            // finish();
+                            finish();
                         }*/
                   //  }
 /*                    if(found==0)
                     {
                         Toast.makeText(RevealedMessageActivity.this, "Message doesn't exist", Toast.LENGTH_SHORT).show();
                         //reportReferenceOne.removeEventListener(reportValueEventListener);
-                        // finish();
+                        finish();
                     }*/
                 }
                 else
                 {
                     Toast.makeText(RevealedMessageActivity.this, "Message unavailable", Toast.LENGTH_SHORT).show();
                     //reportReferenceOne.removeEventListener(reportValueEventListener);
-                    // finish();
+                    finish();
                 }
             }
 
