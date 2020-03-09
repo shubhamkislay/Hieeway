@@ -271,16 +271,25 @@ public class LiveMessageFragment extends Fragment {
 
                 else
                 {
-                    setupSignalling(userChattingWithId);
-                    flagActivityClosure = true;
-                    startLiveVideo.setVisibility(View.GONE);
-
-
-                    liveMessagingViewModel.iConnect();
 
                     firstPersonVideo.setVisibility(View.VISIBLE);
-                    //userChattingPersonVideo.setVisibility(View.VISIBLE);
-                    connectingUserVideo.setVisibility(View.VISIBLE);
+                    userChattingPersonVideo.setVisibility(View.VISIBLE);
+                    startLiveVideo.setVisibility(View.GONE);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            setupSignalling(userChattingWithId);
+                            flagActivityClosure = true;
+
+                            liveMessagingViewModel.iConnect();
+
+                        }
+                    },1000);
+
+
+
                 }
                 ///////
 
@@ -370,13 +379,21 @@ public class LiveMessageFragment extends Fragment {
             public void onClick(View v) {
 
                 firstPersonVideo.setVisibility(View.GONE);
-                // userChattingPersonVideo.setVisibility(View.GONE);
+                userChattingPersonVideo.setVisibility(View.GONE);
                 connectingUserVideo.setVisibility(View.GONE);
                 connectedUserVideo.setVisibility(View.GONE);
-                stopSignalling();
                 startLiveVideo.setVisibility(View.GONE);
                 stopLiveVideo.setVisibility(View.GONE);
-                getActivity().finish();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        stopSignalling();
+                        getActivity().finish();
+
+                    }
+                },300);
+                //getActivity().finish();
 
             }
         });
@@ -774,6 +791,7 @@ public class LiveMessageFragment extends Fragment {
             mRtcEngine = RtcEngine.create(getContext(), getString(R.string.agora_app_id), mRtcEventHandler);
             joinChannel();
             setupVideoProfile();
+            connectingUserVideo.setVisibility(View.VISIBLE);
 
 
         } catch (Exception e) {
