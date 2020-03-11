@@ -42,6 +42,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.shubhamkislay.jetpacklogin.CameraActivity;
 import com.shubhamkislay.jetpacklogin.FireVideo;
+import com.shubhamkislay.jetpacklogin.Interface.LiveMessageEventListener;
 import com.shubhamkislay.jetpacklogin.LiveMessagingViewModel;
 import com.shubhamkislay.jetpacklogin.LiveMessagingViewModelFactory;
 import com.shubhamkislay.jetpacklogin.LiveVideoViewModel;
@@ -80,6 +81,7 @@ public class LiveMessageFragment extends Fragment {
     private Boolean flagActivityClosure = false;
     private LiveVideoViewModel liveVideoViewModel;
 
+    private LiveMessageEventListener liveMessageEventListener;
    // public String userIdChattingWith;
     public String usernameChattingWith;
     public String photo;
@@ -99,6 +101,7 @@ public class LiveMessageFragment extends Fragment {
     public FrameLayout frameLocalContainer;
     public FrameLayout frameRemoteContainer;
     public Boolean checkResult = false;
+    LiveMessage checkMessage;
     int beforetextChangeCounter = 0;
     int textChangeCounter = 0;
     int aftertextChangeCounter = 0;
@@ -383,13 +386,25 @@ public class LiveMessageFragment extends Fragment {
                 connectingUserVideo.setVisibility(View.GONE);
                 connectedUserVideo.setVisibility(View.GONE);
                 startLiveVideo.setVisibility(View.GONE);
+
+
+                firstPersonVideo.setVisibility(View.GONE);
+                userChattingPersonVideo.setVisibility(View.GONE);
+                startLiveVideo.setVisibility(View.VISIBLE);
+
+                startLiveVideoTextView.setText("Live Expressions");
+                start = true;
                 stopLiveVideo.setVisibility(View.GONE);
+
+
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         stopSignalling();
-                        getActivity().finish();
+
+                        liveMessageEventListener.changeFragment();
+                       // getActivity().finish();
 
                     }
                 },300);
@@ -404,7 +419,7 @@ public class LiveMessageFragment extends Fragment {
             @Override
             public void onChanged(@Nullable LiveMessage liveMessage) {
 
-                LiveMessage checkMessage = liveMessage;
+                checkMessage = liveMessage;
 
 
 
@@ -446,10 +461,10 @@ public class LiveMessageFragment extends Fragment {
 
 
                     }
-
-
                     else
                     {
+
+                        Toast.makeText(getContext(),"chatMessage: "+checkMessage.getMessageKey(),Toast.LENGTH_SHORT).show();
                             /*if(!flagActivityClosure)
                                 Toast.makeText(FireVideo.this,"This person is calling you!",Toast.LENGTH_SHORT).show();
                             else
@@ -535,8 +550,8 @@ public class LiveMessageFragment extends Fragment {
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                 HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("messageKey", "");
-                hashMap.put("messageLive", "");
+                hashMap.put("messageKey","");
+                hashMap.put("messageLive","");
                 hashMap.put("iConnect", 0);
                 hashMap.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -548,6 +563,11 @@ public class LiveMessageFragment extends Fragment {
         {
 //            Toast.makeText(getContext(),"Null pointer on current user in liveVideoChat Fragment",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener)
+    {
+        this.liveMessageEventListener = liveMessageEventListener;
     }
 
     private void requestAllPermissions() {
@@ -600,7 +620,7 @@ public class LiveMessageFragment extends Fragment {
             @Override
             public void onChanged(@Nullable LiveMessage liveMessage) {
 
-                LiveMessage checkMessage = liveMessage;
+                 checkMessage = liveMessage;
 
 
 
@@ -651,6 +671,7 @@ public class LiveMessageFragment extends Fragment {
                                 Toast.makeText(FireVideo.this,"This person is calling you!",Toast.LENGTH_SHORT).show();
                             else
                                 Toast.makeText(FireVideo.this,"Calling...",Toast.LENGTH_SHORT).show();*/
+                        Toast.makeText(getContext(),"chatMessage: "+checkMessage.getMessageKey(),Toast.LENGTH_SHORT).show();
                         key = liveMessage.getMessageKey();
                         startLiveVideoTextView.setText("JOIN");
                         start = false;
@@ -669,7 +690,7 @@ public class LiveMessageFragment extends Fragment {
         return checkResult;
     }
 
-    private void checkForRequest() {
+   /* private void checkForRequest() {
 
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
@@ -716,7 +737,7 @@ public class LiveMessageFragment extends Fragment {
             }
         });
 
-    }
+    }*/
 
 
     private void stopSignalling(){
@@ -736,6 +757,7 @@ public class LiveMessageFragment extends Fragment {
 
         databaseReferenceUserChattingWith.removeValue();
         databaseReferenceUser.removeValue();
+       // checkMessage.setMessageKey("");
 
        // getActivity().finish();
 
@@ -842,8 +864,10 @@ public class LiveMessageFragment extends Fragment {
 
         stopSignalling();
 
+
         receiverTextView.setText("");
         senderTextView.setText("");
+
 
         /**
          * Don't put this code here!
@@ -868,7 +892,7 @@ public class LiveMessageFragment extends Fragment {
     public void onResume() {
         super.onResume();
         try {
-            initializeAgoraEngine();
+            //initializeAgoraEngine();
 
             stopObservingLiveMessaging = false;
         }

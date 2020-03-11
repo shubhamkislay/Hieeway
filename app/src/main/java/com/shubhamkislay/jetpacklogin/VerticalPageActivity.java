@@ -23,6 +23,7 @@ import com.shubhamkislay.jetpacklogin.Fragments.ArchiveMessageFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.EphemeralMessagingFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.LiveMessageFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.SendMessageFragment;
+import com.shubhamkislay.jetpacklogin.Interface.LiveMessageEventListener;
 import com.shubhamkislay.jetpacklogin.Interface.MessageHighlightListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.User;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class VerticalPageActivity extends AppCompatActivity implements MessageHighlightListener {
+public class VerticalPageActivity extends AppCompatActivity implements MessageHighlightListener , LiveMessageEventListener {
 
 
     private VerticalViewPager verticalViewPager;
@@ -50,6 +51,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private Bundle bundleSendMessage;
     private int pageSelected = 1;
     private int chatStampSize = 0;
+    LiveMessageFragment liveMessageFragment;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
     public static final String PUBLIC_KEY = "publicKey";
@@ -136,7 +138,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         sendMessageFragment.setMessageHighlightListener(this);
         sendMessageFragment.setArguments(bundleSendMessage);
 
-        final LiveMessageFragment liveMessageFragment = new LiveMessageFragment();
+        liveMessageFragment = new LiveMessageFragment();
         liveMessageFragment.setArguments(bundle);
 
 
@@ -179,6 +181,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
        // observeLiveChatList();
         viewPager.setOffscreenPageLimit(2);
 
+
+
         viewPager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -197,6 +201,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 if(i==2)
                 {
 
+
+                    liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
                     liveMessageFragment.createLiveMessageDbInstance();
                     sendMessageFragment.removeListeners();
                   //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
@@ -360,5 +366,13 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         publicKeyText = sharedPreferences.getString(PUBLIC_KEY,null);
 
 
+    }
+
+    @Override
+    public void changeFragment() {
+        viewPager.setCurrentItem(1);
+        liveMessageFragment = null;
+        liveMessageFragment = new LiveMessageFragment();
+        liveMessageFragment.setArguments(bundle);
     }
 }
