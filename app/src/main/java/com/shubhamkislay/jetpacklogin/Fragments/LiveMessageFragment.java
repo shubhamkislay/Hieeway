@@ -278,6 +278,8 @@ public class LiveMessageFragment extends Fragment {
                     firstPersonVideo.setVisibility(View.VISIBLE);
                     userChattingPersonVideo.setVisibility(View.VISIBLE);
                     startLiveVideo.setVisibility(View.GONE);
+                    stopLiveVideo.setVisibility(View.VISIBLE);
+                    connectingUserVideo.setVisibility(View.VISIBLE);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -287,7 +289,6 @@ public class LiveMessageFragment extends Fragment {
                             flagActivityClosure = true;
 
                             liveMessagingViewModel.iConnect();
-
                         }
                     },1000);
 
@@ -813,7 +814,7 @@ public class LiveMessageFragment extends Fragment {
             mRtcEngine = RtcEngine.create(getContext(), getString(R.string.agora_app_id), mRtcEventHandler);
             joinChannel();
             setupVideoProfile();
-            connectingUserVideo.setVisibility(View.VISIBLE);
+
 
 
         } catch (Exception e) {
