@@ -744,9 +744,16 @@ public class LiveMessageFragment extends Fragment {
     private void stopSignalling(){
 
         leaveChannel();
-        RtcEngine.destroy();
 
-        mRtcEngine.disableVideo();
+
+        try {
+            RtcEngine.destroy();
+
+            mRtcEngine.disableVideo();
+        }catch (NullPointerException e)
+        {
+            //
+        }
 
         databaseReferenceUser = FirebaseDatabase.getInstance().getReference("LiveMessages")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -879,14 +886,19 @@ public class LiveMessageFragment extends Fragment {
     }
 
     private void leaveChannel() {
-        mRtcEngine.leaveChannel();
-        mRtcEngine.disableVideo();
-        mRtcEngine.disableAudio();
-        mRtcEngine.stopPreview();
+        try {
+            mRtcEngine.leaveChannel();
+            mRtcEngine.disableVideo();
+            mRtcEngine.disableAudio();
+            mRtcEngine.stopPreview();
 
-        mRtcEngine.clearVideoWatermarks();
-        mRtcEngine.stopPreview();
-        RtcEngine.destroy();
+            mRtcEngine.clearVideoWatermarks();
+            mRtcEngine.stopPreview();
+            RtcEngine.destroy();
+        }catch (NullPointerException e)
+        {
+            //
+        }
     }
 
     @Override

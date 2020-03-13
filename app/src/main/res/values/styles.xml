@@ -17,7 +17,8 @@
 
     <style name="SplashScreen" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+       <!-- <item name="android:windowBackground">@drawable/splash_screen_background</item>-->
+        <item name="android:windowBackground">@color/colorBlack</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="colorPrimary">@color/colorBlack</item>
