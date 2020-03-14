@@ -34,8 +34,8 @@
         android:maxLines="1"
         android:gravity="center"
         android:textColor="#fff"
-        android:padding="24dp"
-        android:autoSizeMaxTextSize="150sp"
+        android:padding="48dp"
+        android:autoSizeMaxTextSize="1000sp"
         android:autoSizeTextType="uniform"
         android:text="Hieeway"/>
 
@@ -52,6 +52,16 @@
         android:alpha="0.0"
         android:src="@drawable/hiewaylogomessageback"
         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textSize="11.5sp"
+        android:gravity="center"
+        android:textColor="#DDDDDD"
+        android:layout_marginBottom="12dp"
+        android:text="Hieeway Inc.\n Designed and created by Shubham Kislay."/>
 
 
 

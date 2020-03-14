@@ -19,7 +19,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     float displayHeight;
-    ObjectAnimator animatorY, alphaArrow;
+    ObjectAnimator animatorY, alphaArrow, animateTextLogo;
     AnimatorSet animatorSet;
     private int arrowAnimDuration = 600;
     TypeWriter typeWriter;
@@ -31,7 +31,7 @@ public class SplashScreen extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+       // getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
 
         splash_logo = findViewById(R.id.splash_logo);
@@ -59,7 +59,7 @@ public class SplashScreen extends AppCompatActivity {
 
         typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-        typeWriter.setCharacterDelay(75);
+        typeWriter.setCharacterDelay(35);
         typeWriter.animateText("Hieeway");
 
 
@@ -70,9 +70,10 @@ public class SplashScreen extends AppCompatActivity {
 
 
         animatorY = ObjectAnimator.ofFloat(send_arrow,"translationY",-displayHeight -(displayHeight)/3);
+        animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 
 
-        alphaArrow = ObjectAnimator.ofFloat(send_arrow,"alpha",1.0f,0.02f);
+        alphaArrow = ObjectAnimator.ofFloat(send_arrow,"alpha",1.0f,0.0f);
         animatorSet = new AnimatorSet();
 
         animatorSet.setDuration(arrowAnimDuration);
@@ -89,19 +90,21 @@ public class SplashScreen extends AppCompatActivity {
                 final Animation accelFaster = AnimationUtils.loadAnimation(SplashScreen.this, R.anim.accelerate_image_faster);
 
                 accel.setRepeatMode(Animation.INFINITE);
+                accelFaster.setRepeatMode(Animation.INFINITE);
 
-               // splash_logo_gradient.setAnimation(accel);
-                typeWriter.setAnimation(accelFaster);
+
+                // splash_logo_gradient.setAnimation(accel);
+               // typeWriter.setAnimation(accelFaster);
 
 
                 typeWriter.animate().alpha(0.0f).setDuration(arrowAnimDuration);
                // splash_logo_gradient.animate().alpha(0.0f).setDuration(750);
 
-                animatorSet.playTogether(animatorY,alphaArrow);
+                animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/);
                 animatorSet.start();
 
             }
-        },1000);
+        },1250);
 
 
 
@@ -114,7 +117,7 @@ public class SplashScreen extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        },2000);
+        },1850);
 
     }
 }
