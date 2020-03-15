@@ -64,7 +64,7 @@ public class SplashScreen extends AppCompatActivity {
         typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
-        typeWriter.setCharacterDelay(35);
+        typeWriter.setCharacterDelay(75);
         typeWriter.animateText("Hieeway");
 
 
@@ -100,6 +100,17 @@ public class SplashScreen extends AppCompatActivity {
 
                 // splash_logo_gradient.setAnimation(accel);
                // typeWriter.setAnimation(accelFaster);
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        typeWriter.animate().translationYBy(-displayHeight/2).setDuration(arrowAnimDuration/2);
+
+
+                    }
+                },arrowAnimDuration/2);
 
 
                 typeWriter.animate().alpha(0.0f).setDuration(arrowAnimDuration);

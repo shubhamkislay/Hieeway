@@ -24,7 +24,8 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WebRTCActivity"></activity>
+        <activity android:name=".VerticalRegisterationActivity"></activity>
+        <activity android:name=".WebRTCActivity" />
         <activity android:name=".RevealReplyActivity" />
         <activity android:name=".RevealedMessageActivity" />
         <activity android:name=".EncryptionActivity" />
