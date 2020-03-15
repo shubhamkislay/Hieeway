@@ -54,12 +54,13 @@
         />
 
     <TextView
+        android:id="@+id/master_head"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:textSize="11.5sp"
+        android:textSize="10sp"
         android:gravity="center"
-        android:textColor="#DDDDDD"
+        android:textColor="#A8A8A8"
         android:layout_marginBottom="12dp"
         android:text="Hieeway Inc.\n Designed and created by Shubham Kislay."/>
 

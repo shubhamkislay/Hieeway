@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -23,6 +24,7 @@ public class SplashScreen extends AppCompatActivity {
     AnimatorSet animatorSet;
     private int arrowAnimDuration = 600;
     TypeWriter typeWriter;
+    TextView master_head;
 
 
     @Override
@@ -42,6 +44,8 @@ public class SplashScreen extends AppCompatActivity {
 
         typeWriter = findViewById(R.id.logo_txt);
 
+        master_head = findViewById(R.id.master_head);
+
 
        // overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right);
 
@@ -58,6 +62,7 @@ public class SplashScreen extends AppCompatActivity {
         displayHeight = size.y;
 
         typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
         typeWriter.setCharacterDelay(35);
         typeWriter.animateText("Hieeway");

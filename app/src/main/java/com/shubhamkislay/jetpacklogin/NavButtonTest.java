@@ -494,10 +494,21 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         text_friends.setVisibility(View.VISIBLE);
 
+        if(fragmentId>2) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                    .replace(R.id.container_layout, friendListFagment).commit();
+        }
+
+        else {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                    .replace(R.id.container_layout, friendListFagment).commit();
+        }
+
         fragmentId=2;
-        getSupportFragmentManager().beginTransaction()
-                //  .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                .replace(R.id.container_layout, friendListFagment).commit();
     }
 
     public void deactivateFriendsBNtn()
@@ -548,7 +559,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         getSupportFragmentManager().beginTransaction()
-                //   .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                   .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                 .replace(R.id.container_layout, chatsFragment).commit();
 
         fragmentId=1;
@@ -600,9 +611,25 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         text_search.setVisibility(View.VISIBLE);
 
-        getSupportFragmentManager().beginTransaction()
-                // .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
-                .replace(R.id.container_layout, peopleFragment).commit();
+/*        getSupportFragmentManager().beginTransaction()
+                 .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
+                .replace(R.id.container_layout, peopleFragment).commit();*/
+
+
+
+        if(fragmentId>3) {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                    .replace(R.id.container_layout, peopleFragment).commit();
+        }
+
+        else {
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                    .replace(R.id.container_layout, peopleFragment).commit();
+        }
         fragmentId=3;
     }
 
@@ -651,7 +678,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         getSupportFragmentManager().beginTransaction()
-                //  .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
                 .replace(R.id.container_layout, profileFragment).commit();
         fragmentId=4;
     }
