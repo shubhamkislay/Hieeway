@@ -48,6 +48,5 @@ public class VerticalRegisterationActivity extends AppCompatActivity {
 
 
 
-
     }
 }
