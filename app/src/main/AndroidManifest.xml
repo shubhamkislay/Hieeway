@@ -38,7 +38,8 @@
         <activity android:name=".AutoTextSizeChangeActivity" />
         <activity
             android:name=".VerticalPageActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            />
         <activity android:name=".PhotoTreatmentActivity" />
         <activity
             android:name=".TestJavaEmojiKeyBoard"
@@ -64,7 +65,7 @@
         <activity
             android:name=".EphemeralChainMessageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".SwipeButtonActivity" />
         <activity
             android:name=".ArchiveActivity"

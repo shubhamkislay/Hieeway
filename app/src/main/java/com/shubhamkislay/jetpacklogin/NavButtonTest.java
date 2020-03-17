@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -62,12 +64,17 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     PeopleFragment peopleFragment;
     ProfileFragment profileFragment;
     FriendListFagment friendListFagment;
+    RelativeLayout splash_layout;
 
-    ImageView sendArrow;
-    ObjectAnimator animatorY, alphaArrow;
-    AnimatorSet animatorSet;
-    float displayHeight;
+    ImageView sendArrow, background_screen;
     float buttonSizeAlpha = 1.30f;
+    float displayHeight;
+    ObjectAnimator animatorY, alphaArrow, animateTextLogo, alphaBackgroundScreen, alphaMasterHead;
+    AnimatorSet animatorSet;
+    TypeWriter typeWriter;
+    TextView master_head;
+    private ImageView splash_logo, splash_logo_gradient, send_arrow;
+    private int arrowAnimDuration = 600;
 
     RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
 
@@ -79,16 +86,44 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_button_test);
 
+        splash_layout = findViewById(R.id.splash_layout);
+        background_screen = findViewById(R.id.background_screen);
+
+        profileBtnPressed = findViewById(R.id.profile_button_pressed);
+        profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);
+
+        getUserImageIntoNavButton();
+
+
+
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+
+
+        startSplash();
+/*        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                splash_layout.setVisibility(View.GONE);
+                initiateNavActivity();
+            }
+        },2000);*/
+
+
+    }
+
+    private void initiateNavActivity() {
+
+        //setContentView(R.layout.activity_nav_button_test);
 
         frameLayout = findViewById(R.id.container_layout);
 
         sendArrow = findViewById(R.id.send_arrow);
 
 
-        text_home = findViewById(R.id.text_home);
+       // text_home = findViewById(R.id.text_home);
         homeBtnPressed = findViewById(R.id.home_button_pressed);
         homeBtnUnpressed = findViewById(R.id.home_button_unpressed);
 
@@ -102,8 +137,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         searchBtnUnpressed = findViewById(R.id.search_button_unpressed);
 
         text_profile = findViewById(R.id.text_profile);
-        profileBtnPressed = findViewById(R.id.profile_button_pressed);
-        profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);
+/*        profileBtnPressed = findViewById(R.id.profile_button_pressed);
+        profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);*/
 
         home_button_layout = findViewById(R.id.home_button_layout);
         friends_button_layout = findViewById(R.id.relativeLayout);
@@ -112,7 +147,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         try {
-            text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+           // text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
             text_friends.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
             text_search.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
             text_profile.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -431,9 +466,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             }
         });
 
-        getUserImageIntoNavButton();
-
-
+       // getUserImageIntoNavButton();
     }
 
 
@@ -714,7 +747,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         imageView.setAnimation(hyperspaceJump);
     }
 
-    public void animateArrow() {
+    /*public void animateArrow() {
         // sendArrow.setAlpha(1.0f);
 
         try {
@@ -771,6 +804,124 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
             }
         });
+
+    }*/
+
+    private void startSplash() {
+
+        splash_logo = findViewById(R.id.splash_logo);
+
+        splash_logo_gradient = findViewById(R.id.splash_logo_gradient);
+
+        send_arrow = findViewById(R.id.send_arrow_splash);
+
+        typeWriter = findViewById(R.id.logo_txt);
+
+        master_head = findViewById(R.id.master_head);
+
+        text_home = findViewById(R.id.text_home);
+
+        text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+
+
+        // overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right);
+
+
+        final Animation hyperspaceJump = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.image_bounce);
+
+        hyperspaceJump.setRepeatMode(Animation.INFINITE);
+
+        splash_logo.setAnimation(hyperspaceJump);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        displayHeight = size.y;
+
+        typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
+
+        typeWriter.setCharacterDelay(75);
+        typeWriter.animateText("Hieeway");
+
+
+
+
+
+
+
+
+        animatorY = ObjectAnimator.ofFloat(send_arrow,"translationY",-displayHeight -(displayHeight)/3);
+        animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
+
+
+        alphaArrow = ObjectAnimator.ofFloat(send_arrow,"alpha",1.0f,0.0f);
+
+        alphaBackgroundScreen = ObjectAnimator.ofFloat(background_screen,"alpha",1.0f,0.0f);
+
+      //  alphaMasterHead = ObjectAnimator.ofFloat(master_head,"alpha",1.0f,0.0f);
+
+        animatorSet = new AnimatorSet();
+
+        animatorSet.setDuration(arrowAnimDuration);
+
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                send_arrow.setAlpha(1.0f);
+
+                final Animation accel = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.accelerate_image);
+                final Animation accelFaster = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.accelerate_image_faster);
+
+                accel.setRepeatMode(Animation.INFINITE);
+                accelFaster.setRepeatMode(Animation.INFINITE);
+
+
+                // splash_logo_gradient.setAnimation(accel);
+                // typeWriter.setAnimation(accelFaster);
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        typeWriter.animate().translationYBy(-displayHeight/2).setDuration(arrowAnimDuration/2);
+
+
+                    }
+                },arrowAnimDuration/2);
+
+
+                typeWriter.animate().alpha(0.0f).setDuration(arrowAnimDuration);
+                // splash_logo_gradient.animate().alpha(0.0f).setDuration(750);
+
+                master_head.setVisibility(View.GONE);
+
+                animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/,alphaBackgroundScreen/*,alphaMasterHead*/);
+                animatorSet.start();
+
+            }
+        },1250);
+
+
+
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                /*Intent intent = new Intent(NavButtonTest.this,MainActivity.class);
+                startActivity(intent);
+                finish();*/
+                splash_layout.setVisibility(View.GONE);
+                initiateNavActivity();
+            }
+        },1850);
 
     }
 

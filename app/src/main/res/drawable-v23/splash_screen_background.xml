@@ -4,8 +4,10 @@
     <item android:drawable="@color/colorBlack"/>
 
 
+    <!--
+
     <item android:drawable="@drawable/hieeway_background_blurred"
-        />
+        />-->
 
 
 
@@ -13,7 +15,11 @@
 
 
 
-
+        <item android:width="200dp"
+            android:height="200dp"
+            android:drawable="@drawable/splash_logo"
+            android:gravity="center_horizontal|top"
+            android:top="300dp"/>
 
 
 

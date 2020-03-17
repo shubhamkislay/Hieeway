@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {
@@ -27,14 +28,24 @@ public class SplashScreen extends AppCompatActivity {
     TextView master_head;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
+      //  setContentView(R.layout.activity_splash_screen);
 
 
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
+        Intent intent = new Intent(SplashScreen.this,MainActivity.class);
+        startActivity(intent);
+        finish();
+
+      //  startSplash();
+
+    }
+
+    private void startSplash() {
 
         splash_logo = findViewById(R.id.splash_logo);
 
@@ -47,7 +58,7 @@ public class SplashScreen extends AppCompatActivity {
         master_head = findViewById(R.id.master_head);
 
 
-       // overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right);
+        // overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right);
 
 
         final Animation hyperspaceJump = AnimationUtils.loadAnimation(SplashScreen.this, R.anim.image_bounce);
@@ -99,7 +110,7 @@ public class SplashScreen extends AppCompatActivity {
 
 
                 // splash_logo_gradient.setAnimation(accel);
-               // typeWriter.setAnimation(accelFaster);
+                // typeWriter.setAnimation(accelFaster);
 
 
                 new Handler().postDelayed(new Runnable() {
@@ -114,7 +125,7 @@ public class SplashScreen extends AppCompatActivity {
 
 
                 typeWriter.animate().alpha(0.0f).setDuration(arrowAnimDuration);
-               // splash_logo_gradient.animate().alpha(0.0f).setDuration(750);
+                // splash_logo_gradient.animate().alpha(0.0f).setDuration(750);
 
                 animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/);
                 animatorSet.start();
@@ -136,4 +147,6 @@ public class SplashScreen extends AppCompatActivity {
         },1850);
 
     }
+
+
 }

@@ -90,6 +90,7 @@ import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.RevealReplyActivity;
 import com.shubhamkislay.jetpacklogin.SwipeButtonActivity;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
+import com.shubhamkislay.jetpacklogin.VerticalRegisterationActivity;
 import com.shubhamkislay.jetpacklogin.WebRTCActivity;
 
 import java.io.IOException;
@@ -299,7 +300,7 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
                  * Uncomment the below snippet to get the final version
                   */
 
-                new Handler().postDelayed(new Runnable() {
+/*                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
@@ -314,7 +315,7 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
                         mContext.startActivity(intent);
 
                     }
-                }, 200);
+                }, 200);*/
 
 
                 /**
@@ -323,6 +324,7 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
                 /*Intent intent = new Intent(mContext, WebRTCActivity.class);
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
                 mContext.startActivity(intent);*/
+                mContext.startActivity(new Intent(mContext, VerticalRegisterationActivity.class));
 
 
             }
