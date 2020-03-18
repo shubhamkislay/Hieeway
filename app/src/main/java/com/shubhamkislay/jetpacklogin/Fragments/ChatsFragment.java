@@ -51,6 +51,7 @@ import com.shubhamkislay.jetpacklogin.ChatsFragmentViewModel;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageActivityViewModelFactory;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
 import com.shubhamkislay.jetpacklogin.GridSpacingItemDecoration;
+import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
 import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
@@ -95,6 +96,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     StaggeredGridLayoutManager staggeredGridLayoutManager;
     private int chatStampSize =0;
     private List<ChatStamp> chatStampsListtwo;
+    AnimationArrowListener animationArrowListener;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -370,6 +374,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                             chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity);
                             chats_recyclerview.setAdapter(chatMessageAdapter);
                             chatMessageAdapter.notifyDataSetChanged();
+                            animationArrowListener.playArrowAnimation();
 
                             //chatStampSize = chatStamps.size();
                         }
@@ -538,6 +543,11 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         imageView.setAnimation(hyperspaceJumpImg);
 
 
+    }
+
+    public void setAnimationArrowListener(AnimationArrowListener animationArrowListener)
+    {
+        this.animationArrowListener = animationArrowListener;
     }
 
     private  class SearchUserAsyncTask extends AsyncTask<String,Void,List<ChatStamp>>{

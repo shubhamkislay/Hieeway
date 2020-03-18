@@ -37,6 +37,7 @@ import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.FriendListFagment;
 import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
+import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
 import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
@@ -44,7 +45,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener {
+public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener {
 
     private TextView text_home;
     private ImageView homeBtnPressed, homeBtnUnpressed;
@@ -65,6 +66,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     ProfileFragment profileFragment;
     FriendListFagment friendListFagment;
     RelativeLayout splash_layout;
+    private Bundle bundle;
 
     ImageView sendArrow, background_screen;
     float buttonSizeAlpha = 1.30f;
@@ -103,6 +105,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         startSplash();
+        initiateNavActivity();
 /*        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -137,6 +140,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         searchBtnUnpressed = findViewById(R.id.search_button_unpressed);
 
         text_profile = findViewById(R.id.text_profile);
+
+        bundle = new Bundle();
+
 /*        profileBtnPressed = findViewById(R.id.profile_button_pressed);
         profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);*/
 
@@ -158,6 +164,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         chatsFragment = new ChatsFragment();
+        chatsFragment.setAnimationArrowListener(NavButtonTest.this);
+
+
         peopleFragment = new PeopleFragment();
         profileFragment = new ProfileFragment();
         friendListFagment = new FriendListFagment();
@@ -847,10 +856,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         typeWriter.animateText("Hieeway");
 
 
+       // animateArrow();
 
 
 
 
+
+    }
+
+    public void animateArrow() {
 
 
         animatorY = ObjectAnimator.ofFloat(send_arrow,"translationY",-displayHeight -(displayHeight)/3);
@@ -859,9 +873,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         alphaArrow = ObjectAnimator.ofFloat(send_arrow,"alpha",1.0f,0.0f);
 
-        alphaBackgroundScreen = ObjectAnimator.ofFloat(background_screen,"alpha",1.0f,0.0f);
+        alphaBackgroundScreen = ObjectAnimator.ofFloat(background_screen,"translationY", -(displayHeight)/3);
 
-      //  alphaMasterHead = ObjectAnimator.ofFloat(master_head,"alpha",1.0f,0.0f);
+        //  alphaMasterHead = ObjectAnimator.ofFloat(master_head,"alpha",1.0f,0.0f);
 
         animatorSet = new AnimatorSet();
 
@@ -919,10 +933,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 startActivity(intent);
                 finish();*/
                 splash_layout.setVisibility(View.GONE);
-                initiateNavActivity();
+                //initiateNavActivity();
             }
         },1850);
-
     }
 
 
@@ -965,4 +978,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         chatsFragment.setChatStampSizeFragment(chatstampSize);
     }
 
+    @Override
+    public void playArrowAnimation() {
+
+        animateArrow();
+    }
 }
