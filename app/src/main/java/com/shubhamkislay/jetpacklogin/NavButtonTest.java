@@ -105,7 +105,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         startSplash();
-        initiateNavActivity();
+        //initiateNavActivity();
 /*        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -858,6 +858,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
        // animateArrow();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                initiateNavActivity();
+            }
+        },1250);
 
 
 
@@ -874,7 +880,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         alphaArrow = ObjectAnimator.ofFloat(send_arrow,"alpha",1.0f,0.0f);
 
-        alphaBackgroundScreen = ObjectAnimator.ofFloat(background_screen,"translationY", -(displayHeight)/3);
+        alphaBackgroundScreen = ObjectAnimator.ofFloat(background_screen,"alpha",1.0f,0.0f);
 
         //  alphaMasterHead = ObjectAnimator.ofFloat(master_head,"alpha",1.0f,0.0f);
 
