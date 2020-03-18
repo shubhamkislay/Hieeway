@@ -117,6 +117,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initiateNavActivity() {
 
         //setContentView(R.layout.activity_nav_button_test);
