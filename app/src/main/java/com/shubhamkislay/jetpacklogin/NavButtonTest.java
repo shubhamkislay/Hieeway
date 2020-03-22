@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,10 +69,13 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     RelativeLayout splash_layout;
     private Bundle bundle;
 
+    ConstraintLayout nav_bar;
+    Boolean playFrameAnimation = true;
+
     ImageView sendArrow, background_screen;
     float buttonSizeAlpha = 1.30f;
     float displayHeight;
-    ObjectAnimator animatorY, alphaArrow, animateTextLogo, alphaBackgroundScreen, alphaMasterHead;
+    ObjectAnimator animatorY, alphaArrow, animateTextLogo, alphaBackgroundScreen, alphaMasterHead, alphaNavBar, alphaFrameLayout;
     AnimatorSet animatorSet;
     TypeWriter typeWriter;
     TextView master_head;
@@ -93,6 +97,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         profileBtnPressed = findViewById(R.id.profile_button_pressed);
         profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);
+
+        nav_bar = findViewById(R.id.nav_bar);
 
         getUserImageIntoNavButton();
 
@@ -836,6 +842,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
 
+
+
         // overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right);
 
 
@@ -882,22 +890,31 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         alphaBackgroundScreen = ObjectAnimator.ofFloat(background_screen,"alpha",1.0f,0.0f);
 
+        alphaNavBar = ObjectAnimator.ofFloat(nav_bar,"alpha",0.0f,1.0f);
+
+        alphaFrameLayout = ObjectAnimator.ofFloat(frameLayout,"alpha",0.0f,1.0f);
+
         //  alphaMasterHead = ObjectAnimator.ofFloat(master_head,"alpha",1.0f,0.0f);
 
         animatorSet = new AnimatorSet();
 
         animatorSet.setDuration(arrowAnimDuration);
 
+        AnimatorSet visibleAnimate =  new AnimatorSet();
+
+        visibleAnimate.setDuration(arrowAnimDuration*3);
 
 
-        new Handler().postDelayed(new Runnable() {
+
+/*        new Handler().postDelayed(new Runnable() {
             @Override
-            public void run() {
+            public void run() {*/
 
                 send_arrow.setAlpha(1.0f);
 
                 final Animation accel = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.accelerate_image);
                 final Animation accelFaster = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.accelerate_image_faster);
+
 
                 accel.setRepeatMode(Animation.INFINITE);
                 accelFaster.setRepeatMode(Animation.INFINITE);
@@ -923,11 +940,20 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                 master_head.setVisibility(View.GONE);
 
-                animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/,alphaBackgroundScreen/*,alphaMasterHead*/);
+                animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/,alphaBackgroundScreen/*,alphaMasterHead*//*,alphaNavBar, alphaFrameLayout*/);
                 animatorSet.start();
 
-            }
-        },1250);
+                if(playFrameAnimation) {
+
+                visibleAnimate.playTogether(alphaNavBar, alphaFrameLayout);
+                visibleAnimate.start();
+
+                    playFrameAnimation = false;
+
+                }
+
+/*            }
+        },1250);*/
 
 
 
@@ -942,13 +968,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 splash_layout.setVisibility(View.GONE);
                 //initiateNavActivity();
             }
-        },1850);
+        },arrowAnimDuration);
     }
 
 
     @Override
     protected void onPause()
     {
+        playFrameAnimation = false;
 
         try {
 
@@ -968,6 +995,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     protected void onResume()
     {
         super.onResume();
+
         try {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -978,6 +1006,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         {
 
         }
+
+
     }
 
     @Override

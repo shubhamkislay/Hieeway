@@ -374,7 +374,13 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                             chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity);
                             chats_recyclerview.setAdapter(chatMessageAdapter);
                             chatMessageAdapter.notifyDataSetChanged();
-                            animationArrowListener.playArrowAnimation();
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    animationArrowListener.playArrowAnimation();
+                                }
+                            },700);
+
 
                             //chatStampSize = chatStamps.size();
                         }

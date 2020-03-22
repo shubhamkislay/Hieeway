@@ -119,7 +119,7 @@ public class ProfileFragment extends Fragment {
                 email.setText(user.getEmail());
 
                 try{
-                    Glide.with(getContext()).load(user.getPhoto()).into(profile_pic_background);
+                    Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
                 }
                 catch (Exception e)
                 {

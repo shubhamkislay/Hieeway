@@ -507,7 +507,7 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
 
                // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
                 try {
-                    Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).listener(new RequestListener<Drawable>() {
+                    Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto().replace("s96-c", "s384-c")).listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             return false;
