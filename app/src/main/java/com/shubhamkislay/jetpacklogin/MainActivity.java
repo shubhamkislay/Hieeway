@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.List;
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_2_ID;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleButtonListener {
 
 
     Button loginBtn, registerBtn, get_started, get_started_back;
@@ -114,24 +115,30 @@ public class MainActivity extends AppCompatActivity {
                 {
                     case 0: fragment_number =1;
                         animateArrow();
-                        /*getSupportFragmentManager().beginTransaction()
+                        get_started.setVisibility(View.GONE);
+                        getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerEmailEntryFragment).commit();*/
+                                .replace(R.id.framelayout, registerEmailEntryFragment).commit();
+                        registerEmailEntryFragment.setGoogleButtonListener(MainActivity.this);
                         break;
 
                     case 1: fragment_number =2;
+                        animateArrow();
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
                         break;
 
                     case 2: fragment_number =3;
+                        animateArrow();
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerAuthenticateActivity).commit();
                         break;
 
                     case 3: fragment_number =1;
+                       // animateArrow();
+                        get_started.setVisibility(View.GONE);
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                                 .replace(R.id.framelayout, registerEmailEntryFragment).commit();
@@ -255,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 //initiateNavActivity();
                // animateArrow();
                 get_started.setVisibility(View.VISIBLE);
-                get_started_back.setVisibility(View.VISIBLE);
+                //get_started_back.setVisibility(View.VISIBLE);
 
                 animateBottomNavMenuText(get_started,get_started_back);
             }
@@ -331,7 +338,11 @@ public class MainActivity extends AppCompatActivity {
 
         master_head.setVisibility(View.GONE);
 
-        animatorSet.playTogether(animatorY,alphaArrow,alphaFrameLayout/*, animateTextLogo*/,alphaBackgroundScreen/*,alphagetStartedBtnBack,alphagetStartedBtn*/);
+        if(fragment_number==1)
+            animatorSet.playTogether(animatorY,alphaArrow,alphaFrameLayout/*, animateTextLogo*/,alphaBackgroundScreen/*,alphagetStartedBtnBack,alphagetStartedBtn*/);
+        else
+            animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/,alphaBackgroundScreen/*,alphagetStartedBtnBack,alphagetStartedBtn*/);
+
         animatorSet.start();
 
 
@@ -339,9 +350,7 @@ public class MainActivity extends AppCompatActivity {
         get_started_back.setText("Change Fragment");
         get_started.setText("Change Fragment");
 
-        getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                .replace(R.id.framelayout, registerEmailEntryFragment).commit();
+
 
 
 
@@ -364,6 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();*/
                 splash_layout.setVisibility(View.GONE);
+                send_arrow.setTranslationY(0);
                 //initiateNavActivity();
             }
         },arrowAnimDuration);
@@ -383,6 +393,20 @@ public class MainActivity extends AppCompatActivity {
         hyperspaceJumpImg.setRepeatMode(Animation.INFINITE);
 
         imageView.setAnimation(hyperspaceJump);
+    }
+
+    @Override
+    public void onGoogleButtonPressed(String email, String name, String photourl) {
+
+        fragment_number =2;
+        animateArrow();
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+        get_started.setVisibility(View.VISIBLE);
+
+        registerUsernameEntryFragment.setUserData(email,name,photourl);
+
     }
 
 /*
