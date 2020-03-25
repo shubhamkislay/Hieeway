@@ -187,12 +187,17 @@ public class LoginActivity extends AppCompatActivity {
                                                 // Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
                                                 databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-
                                                 HashMap<String, Object> hashMap = new HashMap<>();
 
-                                                hashMap.put("token",device_token);
-                                                hashMap.put("photo",acct.getPhotoUrl().toString());
+                                                try {
+                                                    hashMap.put("token", device_token);
+                                                    hashMap.put("photo", acct.getPhotoUrl().toString());
+                                                }
+                                                catch (NullPointerException ne)
+                                                {
+                                                    hashMap = new HashMap<>();
+                                                    hashMap.put("token", device_token);
+                                                }
 
                                                 //acct.getPhotoUrl().
 
@@ -212,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     });
 
-                            Toast.makeText(LoginActivity.this,/*name+" "+surname+*/acct.getPhotoUrl()+", your login is Successful",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this,name+" "+surname+", your login is Successful",Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             /*Log.w(TAG, "signInWithCredential:failure", task.getException());

@@ -609,7 +609,7 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
                             databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
 
                             try {
-                                Glide.with(mContext).load(user.getPhoto()).into(user_photo);
+                                Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
                             }
                             catch (Exception e)
                             {
