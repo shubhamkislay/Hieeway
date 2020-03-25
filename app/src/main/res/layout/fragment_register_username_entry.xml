@@ -52,12 +52,22 @@
             android:id="@+id/email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginBottom="16dp"
+            android:layout_above="@id/intent_change_btn"
             tools:text="email"
             />
+        <Button
+            android:id="@+id/intent_change_btn"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/message_send_sent_background"
+            android:backgroundTint="#131313"
+            android:text="Continue"/>
 
         <EditText
             android:id="@+id/username"

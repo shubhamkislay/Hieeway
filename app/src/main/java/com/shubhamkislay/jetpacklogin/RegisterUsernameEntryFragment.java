@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 
 
 /**
@@ -19,11 +20,14 @@ import com.bumptech.glide.Glide;
  */
 public class RegisterUsernameEntryFragment extends Fragment {
 
-    EditText username;
+    EditText usernameTextView;
+    String username ="xyz";
     Button enter_btn;
     ImageView profile_pic_background;
     TextView emailTextView, nameTextView;
     String email, name, photourl;
+    UsernameListener usernameListener;
+    Button intent_change_btn;
 
     public RegisterUsernameEntryFragment() {
         // Required empty public constructor
@@ -41,12 +45,14 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
         emailTextView = view.findViewById(R.id.email);
 
+        intent_change_btn = view.findViewById(R.id.intent_change_btn);
+
 
         enter_btn = view.findViewById(R.id.enter_btn);
 
         nameTextView = view.findViewById(R.id.name);
 
-        username = view.findViewById(R.id.username);
+        usernameTextView = view.findViewById(R.id.username);
 
 
         try {
@@ -60,16 +66,23 @@ public class RegisterUsernameEntryFragment extends Fragment {
             //
         }
 
+        intent_change_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                usernameListener.onUsernameListener(username,photourl);
+            }
+        });
+
 
         return view;
     }
 
-    public void setUserData(String email, String name, String photourl)
+    public void setUserData(String email, String name, String photourl, UsernameListener usernameListener)
     {
         this.email = email;
         this.name = name;
         this.photourl = photourl;
-
+        this.usernameListener = usernameListener;
     }
 
 }

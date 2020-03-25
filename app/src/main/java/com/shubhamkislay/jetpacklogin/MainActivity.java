@@ -32,6 +32,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
+import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.List;
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_2_ID;
 
-public class MainActivity extends AppCompatActivity implements GoogleButtonListener {
+public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener {
 
 
     Button loginBtn, registerBtn, get_started, get_started_back;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     int fragment_number=0;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
+    String email,  name,  photourl, username;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -398,14 +400,29 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     @Override
     public void onGoogleButtonPressed(String email, String name, String photourl) {
 
+        this.email = email;
+        this.name = name;
+        this.photourl = photourl;
+
         fragment_number =2;
         animateArrow();
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
-        get_started.setVisibility(View.VISIBLE);
+       // get_started.setVisibility(View.VISIBLE);
 
-        registerUsernameEntryFragment.setUserData(email,name,photourl);
+        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this);
+
+    }
+
+    @Override
+    public void onUsernameListener(String username, String photourl) {
+
+        this.username = username;
+        this.photourl = photourl;
+
+        startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+        finish();
 
     }
 
