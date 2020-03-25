@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         HashMap<String, Object> registerMap = new HashMap<>();
         registerMap.put("email", email);
         registerMap.put("phonenumber", "default");
-        registerMap.put("photo","default");
+        registerMap.put("photo",photourl);
         registerMap.put("username", username);
         registerMap.put("userid", firebaseAuth.getCurrentUser().getUid());
         registerMap.put("token",device_token);
@@ -438,14 +438,15 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         });
 
 
-        startActivity(new Intent(MainActivity.this,NavButtonTest.class));
-        finish();
+        /*startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+        finish();*/
 
     }
 
     @Override
     public void onGoogleButtonPressed(String email, String name, String photourl, DatabaseReference reference, String device_token) {
 
+        //databaseReference.updateChildren(hashMap);
         startActivity(new Intent(MainActivity.this,NavButtonTest.class));
         finish();
 

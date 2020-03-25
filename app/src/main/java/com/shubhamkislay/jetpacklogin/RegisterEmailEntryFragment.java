@@ -247,7 +247,7 @@ public class RegisterEmailEntryFragment extends Fragment {
 
                                                 //acct.getPhotoUrl().
 
-                                                //databaseReference.updateChildren(hashMap);
+                                                databaseReference.updateChildren(hashMap);
 
                                                 /*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
                                                 *//*progressBarOne.setVisibility(View.GONE);
@@ -320,7 +320,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         hashMap.put(PUBLIC_KEY,publicKey);
         hashMap.put("publicKeyId",publicKeyId);
 
-        databaseReference.updateChildren(hashMap);
+       // databaseReference.updateChildren(hashMap);
 
         google_signin.setVisibility(View.GONE);
         googleButtonListener.onGoogleButtonPressedKeyAvailable(email,name,photourl,databaseReference,device_token,publicKey,publicKeyId);

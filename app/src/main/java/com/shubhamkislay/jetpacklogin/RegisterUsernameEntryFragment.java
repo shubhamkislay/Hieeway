@@ -107,16 +107,16 @@ public class RegisterUsernameEntryFragment extends Fragment {
             public void onClick(View v) {
                 username = usernameTextView.getText().toString();
 
-                if(TextUtils.isEmpty(username)||username.length()<6||username.startsWith("[0-9]"))
+                if(TextUtils.isEmpty(username)||username.length()<6/*||username.startsWith("[0-9]")*/)
                 {
                     usernameTextView.setError("Username should have alteast 6 characters, and should start with alphabets");
                 }
                 else
                 {
-                    Query findUsernameRef = FirebaseDatabase.getInstance().getReference("Users")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("username")
+                    DatabaseReference findUsernameRef = FirebaseDatabase.getInstance().getReference("Users");
+/*                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("username")
                             .startAt(username)
-                            .endAt(username + "\uf8ff");
+                            .endAt(username + "\uf8ff");*/
                           //  .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                     findUsernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -124,15 +124,28 @@ public class RegisterUsernameEntryFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if(dataSnapshot.exists())
                             {
-                                /*for(DataSnapshot snapshot:dataSnapshot.getChildren())
+                                int count=0;
+                                for(DataSnapshot snapshot:dataSnapshot.getChildren())
                                 {
                                     User user = snapshot.getValue(User.class);
+                                    if(user.getUsername().equals(username))
+                                    {
+                                        count+=1;
+                                        Toast.makeText(getContext(),"Username unvailable",Toast.LENGTH_SHORT).show();
+                                        break;
+                                       // intent_change_btn.setVisibility(View.VISIBLE);
+                                    }
 
 
-                                }*/
+                                }
+                                if(count==0)
+                                {
+                                    Toast.makeText(getContext(),"Username available",Toast.LENGTH_SHORT).show();
+
+                                     intent_change_btn.setVisibility(View.VISIBLE);
+                                }
                               //  usernameTextView.set
-                                Toast.makeText(getContext(),"Username Available",Toast.LENGTH_SHORT).show();
-                                intent_change_btn.setVisibility(View.VISIBLE);
+
                             }
                         }
 
