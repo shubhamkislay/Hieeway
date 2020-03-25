@@ -247,7 +247,7 @@ public class RegisterEmailEntryFragment extends Fragment {
 
                                                 //acct.getPhotoUrl().
 
-                                                databaseReference.updateChildren(hashMap);
+                                                //databaseReference.updateChildren(hashMap);
 
                                                 /*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
                                                 *//*progressBarOne.setVisibility(View.GONE);
@@ -255,7 +255,7 @@ public class RegisterEmailEntryFragment extends Fragment {
                                                 finish();*/
 
                                                 google_signin.setVisibility(View.GONE);
-                                                googleButtonListener.onGoogleButtonPressed(acct.getEmail(),name+" "+surname,acct.getPhotoUrl().toString());
+                                                googleButtonListener.onGoogleButtonPressed(acct.getEmail(),name+" "+surname,acct.getPhotoUrl().toString(),databaseReference,device_token);
                                             }
                                             else
                                             {
@@ -323,7 +323,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         databaseReference.updateChildren(hashMap);
 
         google_signin.setVisibility(View.GONE);
-        googleButtonListener.onGoogleButtonPressed(email,name,photourl);
+        googleButtonListener.onGoogleButtonPressedKeyAvailable(email,name,photourl,databaseReference,device_token,publicKey,publicKeyId);
 
         /*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
                                                 *//*progressBarOne.setVisibility(View.GONE);

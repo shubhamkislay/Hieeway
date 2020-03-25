@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -30,11 +31,19 @@ import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
@@ -64,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     RegisterAuthenticateActivity registerAuthenticateActivity;
     RegisterUsernameEntryFragment registerUsernameEntryFragment;
     Button change_frag_btn;
+    public static final String PUBLIC_KEY = "publicKey";
     int fragment_number=0;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
@@ -397,32 +407,97 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         imageView.setAnimation(hyperspaceJump);
     }
 
+
+
     @Override
-    public void onGoogleButtonPressed(String email, String name, String photourl) {
+    public void onUsernameListener(String username, String photourl,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid) {
+
+        this.username = username;
+        this.photourl = photourl;
+
+
+        HashMap<String, Object> registerMap = new HashMap<>();
+        registerMap.put("email", email);
+        registerMap.put("phonenumber", "default");
+        registerMap.put("photo","default");
+        registerMap.put("username", username);
+        registerMap.put("userid", firebaseAuth.getCurrentUser().getUid());
+        registerMap.put("token",device_token);
+        registerMap.put(PUBLIC_KEY,public_key);
+        registerMap.put("publicKeyId",publickeyid);
+
+        reference.setValue(registerMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                //pg.dismiss();
+                startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+                finish();
+
+            }
+        });
+
+
+        startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+        finish();
+
+    }
+
+    @Override
+    public void onGoogleButtonPressed(String email, String name, String photourl, DatabaseReference reference, String device_token) {
+
+        startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+        finish();
+
+    }
+
+    @Override
+    public void onGoogleButtonPressedKeyAvailable(final String email,final  String name,final  String photourl,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid) {
 
         this.email = email;
         this.name = name;
         this.photourl = photourl;
 
-        fragment_number =2;
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+                    finish();
+                }
+                else
+                {
+                    fragment_number =2;
+                    animateArrow();
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                            .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+                    // get_started.setVisibility(View.VISIBLE);
+
+                    registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,reference, device_token,public_key,publickeyid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+/*        fragment_number =2;
         animateArrow();
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
-       // get_started.setVisibility(View.VISIBLE);
+        // get_started.setVisibility(View.VISIBLE);
 
-        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this);
+        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this);*/
 
-    }
 
-    @Override
-    public void onUsernameListener(String username, String photourl) {
-
-        this.username = username;
-        this.photourl = photourl;
-
-        startActivity(new Intent(MainActivity.this,NavButtonTest.class));
-        finish();
 
     }
 

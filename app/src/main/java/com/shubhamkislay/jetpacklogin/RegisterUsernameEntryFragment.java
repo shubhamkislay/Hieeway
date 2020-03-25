@@ -2,7 +2,11 @@ package com.shubhamkislay.jetpacklogin;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +14,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
+import com.shubhamkislay.jetpacklogin.Model.User;
 
 
 /**
@@ -28,6 +41,10 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String email, name, photourl;
     UsernameListener usernameListener;
     Button intent_change_btn;
+    DatabaseReference reference;
+    String device_token;
+    String public_key;
+    String publickeyid;
 
     public RegisterUsernameEntryFragment() {
         // Required empty public constructor
@@ -48,6 +65,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
 
+
+
         enter_btn = view.findViewById(R.id.enter_btn);
 
         nameTextView = view.findViewById(R.id.name);
@@ -66,23 +85,96 @@ public class RegisterUsernameEntryFragment extends Fragment {
             //
         }
 
-        intent_change_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                usernameListener.onUsernameListener(username,photourl);
-            }
-        });
+
+
+        setUpListener();
 
 
         return view;
     }
 
-    public void setUserData(String email, String name, String photourl, UsernameListener usernameListener)
+    private void setUpListener() {
+
+        intent_change_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                usernameListener.onUsernameListener(username,photourl, reference,device_token,public_key,publickeyid);
+            }
+        });
+
+        enter_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                username = usernameTextView.getText().toString();
+
+                if(TextUtils.isEmpty(username)||username.length()<6||username.startsWith("[0-9]"))
+                {
+                    usernameTextView.setError("Username should have alteast 6 characters, and should start with alphabets");
+                }
+                else
+                {
+                    Query findUsernameRef = FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("username")
+                            .startAt(username)
+                            .endAt(username + "\uf8ff");
+                          //  .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    findUsernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists())
+                            {
+                                /*for(DataSnapshot snapshot:dataSnapshot.getChildren())
+                                {
+                                    User user = snapshot.getValue(User.class);
+
+
+                                }*/
+                              //  usernameTextView.set
+                                Toast.makeText(getContext(),"Username Available",Toast.LENGTH_SHORT).show();
+                                intent_change_btn.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        });
+
+        usernameTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                intent_change_btn.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+    }
+
+    public void setUserData(String email, String name, String photourl, UsernameListener usernameListener,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid)
     {
         this.email = email;
         this.name = name;
         this.photourl = photourl;
         this.usernameListener = usernameListener;
+        this.reference = reference;
+        this.device_token = device_token;
+        this.public_key = public_key;
+        this.publickeyid = publickeyid;
     }
 
 }

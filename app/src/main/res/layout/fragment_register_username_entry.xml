@@ -41,6 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@id/email"
+            android:gravity="center|bottom"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginBottom="16dp"
@@ -50,15 +51,18 @@
 
         <TextView
             android:id="@+id/email"
+            android:gravity="center|bottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:visibility="gone"
             android:layout_marginBottom="16dp"
             android:layout_above="@id/intent_change_btn"
             tools:text="email"
             />
         <Button
+            android:visibility="invisible"
             android:id="@+id/intent_change_btn"
             android:layout_width="200dp"
             android:layout_height="60dp"

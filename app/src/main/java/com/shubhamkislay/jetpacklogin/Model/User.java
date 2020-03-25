@@ -3,6 +3,7 @@ package com.shubhamkislay.jetpacklogin.Model;
 public class User {
 
     private String email;
+    private String name;
     private String phonenumber;
     private String username;
     private String userid;
@@ -16,7 +17,7 @@ public class User {
     public User() {
     }
 
-    public User(String email, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId) {
+    public User(String email,String name, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -100,5 +101,13 @@ public class User {
 
     public void setPublicKeyId(String publicKeyId) {
         this.publicKeyId = publicKeyId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
