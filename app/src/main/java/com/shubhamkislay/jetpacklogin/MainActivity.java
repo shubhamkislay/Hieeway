@@ -198,9 +198,32 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         if(firebaseAuth.getCurrentUser()!=null)
         {
+
+            DatabaseReference databaseReference =  FirebaseDatabase.getInstance().getReference("Users")
+                    .child(firebaseAuth.getCurrentUser().getUid());
+
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists())
+                    {
+                        startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+                        finish();
+                    }
+                    else
+                    {
+                        firebaseAuth.signOut();
+                        startSplash();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
             //startActivity(new Intent(MainActivity.this,AlphaActivity.class));
-            startActivity(new Intent(MainActivity.this,NavButtonTest.class));
-            finish();
+
         }
         else
         {

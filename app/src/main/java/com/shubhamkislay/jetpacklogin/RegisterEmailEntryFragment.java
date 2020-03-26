@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
@@ -58,6 +59,7 @@ public class RegisterEmailEntryFragment extends Fragment {
     FirebaseAuth firebaseAuth;
     String device_token;
     DatabaseReference databaseReference;
+    Button email_login;
     ProgressBar progressBarOne, progressBarTwo;
     // [END declare_auth]
     RelativeLayout relativeLayout;
@@ -66,6 +68,7 @@ public class RegisterEmailEntryFragment extends Fragment {
     GoogleButtonListener googleButtonListener;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    TypeWriter greet_text;
 
 
     public RegisterEmailEntryFragment() {
@@ -99,6 +102,17 @@ public class RegisterEmailEntryFragment extends Fragment {
             }
         });
 
+        email_login = view.findViewById(R.id.email_login);
+
+        greet_text = view.findViewById(R.id.greet_text);
+
+        email_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),LoginActivity.class));
+            }
+        });
+
         google_signin.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -121,6 +135,36 @@ public class RegisterEmailEntryFragment extends Fragment {
                 return false;
             }
         });
+
+        greet_text.animateText("Hi!");
+        greet_text.setCharacterDelay(100);
+
+        greet_text.setTextSize(60);
+        greet_text.animate();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                greet_text.setText(" ");
+                greet_text.setTextSize(24);
+                greet_text.setCharacterDelay(75);
+                greet_text.animateText("Let's set up your account!");
+                greet_text.animate();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        greet_text.setText(" ");
+                        greet_text.setTextSize(24);
+                        greet_text.setCharacterDelay(25);
+                        greet_text.animateText("Click the google sign in button below to continue");
+                        greet_text.animate();
+
+                        google_signin.setVisibility(View.VISIBLE);
+                    }
+                },3000);
+            }
+        }, 2000);
 
 
         return view;

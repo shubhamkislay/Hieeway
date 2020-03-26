@@ -1148,7 +1148,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         try {
             if (!photo.equals("default")) {
-                Glide.with(getActivity()).load(photo)/*.transition(withCrossFade())*/.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
+                Glide.with(getActivity()).load(photo.replace("s96-c", "s384-c"))/*.transition(withCrossFade())*/.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         return false;

@@ -7,21 +7,35 @@
     tools:context=".RegisterEmailEntryFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <Button
+        android:id="@+id/email_login"
         android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="4dp"
         android:textColor="#fff"
-        android:textSize="32sp"
+        android:background="#141414"
         android:textStyle="bold"
-        android:text="Write you email here" />
+        android:text="E" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.shubhamkislay.jetpacklogin.TypeWriter
+            android:id="@+id/greet_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center"
+            android:textColor="#fff"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            tools:text="Hi there!"/>
+
         <LinearLayout
             android:id="@+id/google_signin"
             android:layout_width="300dp"
+            android:visibility="gone"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
