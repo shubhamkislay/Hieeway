@@ -4,6 +4,7 @@ package com.shubhamkislay.jetpacklogin;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -136,35 +137,69 @@ public class RegisterEmailEntryFragment extends Fragment {
             }
         });
 
-        greet_text.animateText("Hi!");
-        greet_text.setCharacterDelay(100);
-
-        greet_text.setTextSize(60);
-        greet_text.animate();
+        greet_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
 
-                greet_text.setText(" ");
-                greet_text.setTextSize(24);
-                greet_text.setCharacterDelay(75);
-                greet_text.animateText("Let's set up your account!");
+                greet_text.animateText("Hi");
+                greet_text.setCharacterDelay(100);
+
+                greet_text.setTextSize(72);
                 greet_text.animate();
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
+
                         greet_text.setText(" ");
                         greet_text.setTextSize(24);
-                        greet_text.setCharacterDelay(25);
-                        greet_text.animateText("Click the google sign in button below to continue");
+                        greet_text.setCharacterDelay(60);
+                        greet_text.animateText("Welcome to the next generation of messaging.");
                         greet_text.animate();
 
-                        google_signin.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        greet_text.setText(" ");
+                        greet_text.setTextSize(24);
+                        greet_text.setCharacterDelay(75);
+                        greet_text.animateText("Let's set up your account!");
+                        greet_text.animate();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                greet_text.setText(" ");
+                                greet_text.setTextSize(24);
+                                greet_text.setCharacterDelay(50);
+                                greet_text.animateText("Click the google sign in button below to continue");
+                                greet_text.animate();
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        google_signin.setVisibility(View.VISIBLE);
+                                        google_signin.animate().alpha(1.0f).setDuration(500);
+                                        google_signin.animate().translationYBy(-50).setDuration(500);
+                                    }
+                                },2500);
+
+
+                            }
+                        },3000);
                     }
-                },3000);
+                }, 4000);
+
+                    }
+                },2000);
+
             }
-        }, 2000);
+        },1000);
+
 
 
         return view;

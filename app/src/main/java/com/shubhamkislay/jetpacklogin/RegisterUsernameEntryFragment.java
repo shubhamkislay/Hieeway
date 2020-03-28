@@ -45,6 +45,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String device_token;
     String public_key;
     String publickeyid;
+    CustomImageView profile_image;
 
     public RegisterUsernameEntryFragment() {
         // Required empty public constructor
@@ -65,6 +66,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
 
+        profile_image = view.findViewById(R.id.profile_image);
 
 
         enter_btn = view.findViewById(R.id.enter_btn);
@@ -79,6 +81,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
             emailTextView.setText(email);
             nameTextView.setText(name);
             Glide.with(getActivity()).load(photourl.replace("s96-c", "s384-c")).into(profile_pic_background);
+            Glide.with(getActivity()).load(photourl.replace("s96-c", "s384-c")).into(profile_image);
+
         }
         catch (Exception e)
         {
