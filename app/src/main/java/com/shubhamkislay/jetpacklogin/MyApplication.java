@@ -34,7 +34,7 @@ public class MyApplication extends Application {
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             databaseReference.keepSynced(true);
-            checkPresence();
+           // checkPresence();
         }
 
 

@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -104,9 +105,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
 
-        getWindow().getDecorView().setSystemUiVisibility(
+        /*getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);*/
+
+   // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
 
@@ -929,6 +932,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     public void run() {
 
                         typeWriter.animate().translationYBy(-displayHeight/2).setDuration(arrowAnimDuration/2);
+
+
+
+
 
 
                     }

@@ -28,9 +28,9 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical|center"
             android:textColor="#fff"
-            android:textSize="60sp"
+            android:textSize="100sp"
             android:textStyle="bold"
-            tools:text="Hi there!"/>
+            tools:text="Hi"/>
 
         <LinearLayout
             android:id="@+id/google_signin"

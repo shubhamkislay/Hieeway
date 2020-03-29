@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -61,6 +62,17 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private EditText editTextMessage;
     RelativeLayout splash_layout;
 
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String DEVICE_TOKEN = "devicetoken";
+    private static final int RC_SIGN_IN = 1;
+
     ImageView sendArrow, background_screen;
     float buttonSizeAlpha = 1.30f;
     float displayHeight;
@@ -74,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     RegisterAuthenticateActivity registerAuthenticateActivity;
     RegisterUsernameEntryFragment registerUsernameEntryFragment;
     Button change_frag_btn;
-    public static final String PUBLIC_KEY = "publicKey";
     int fragment_number=0;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
@@ -119,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         get_started.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animateArrow();
+                get_started.setVisibility(View.GONE);
             }
         });
 
@@ -139,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                     case 1: fragment_number =2;
                         animateArrow();
+                        get_started.setVisibility(View.INVISIBLE);
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
@@ -199,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
 
+
         if(firebaseAuth.getCurrentUser()!=null)
         {
 
@@ -215,8 +228,36 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     }
                     else
                     {
-                        firebaseAuth.signOut();
+                        splash_layout.setVisibility(View.VISIBLE);
+                        String public_key,publickeyid,device_token;
+
+                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+                        email = sharedPreferences.getString(EMAIL,null);
+                        name = sharedPreferences.getString(NAME,null);
+                        photourl = sharedPreferences.getString(PHOTO_URL,null);
+                        public_key = sharedPreferences.getString(PUBLIC_KEY,null);
+                        publickeyid = sharedPreferences.getString(PUBLIC_KEY_ID,null);
+                        device_token = sharedPreferences.getString(DEVICE_TOKEN,null);
+
+
+                        fragment_number =1;
+                        get_started.setText("Continue with profile setup");
+                       // animateArrow();
                         startSplash();
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+                        // get_started.setVisibility(View.VISIBLE);
+
+                        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,databaseReference, device_token,public_key,publickeyid);
+
+                        /*firebaseAuth.signOut();
+                        startSplash();*/
                     }
                 }
 
@@ -247,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     finish();
                 }
             });*/
+            splash_layout.setVisibility(View.VISIBLE);
             startSplash();
 
 
@@ -385,8 +427,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
         animateBottomNavMenuText(get_started,get_started_back);
-        get_started_back.setText("Change Fragment");
-        get_started.setText("Change Fragment");
+/*        get_started_back.setText("Change Fragment");
+        get_started.setText("Change Fragment");*/
 
 
 
@@ -499,14 +541,19 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 else
                 {
                     fragment_number =2;
-                    animateArrow();
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                            .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
-                    // get_started.setVisibility(View.VISIBLE);
+                   // animateArrow();
 
+                    // get_started.setVisibility(View.VISIBLE);
                     registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,reference, device_token,public_key,publickeyid);
-                }
+
+                     animateArrow();
+                            getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                    .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+
+
+
+                    }
             }
 
             @Override

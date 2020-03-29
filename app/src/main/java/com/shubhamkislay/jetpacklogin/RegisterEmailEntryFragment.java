@@ -43,6 +43,7 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -57,6 +58,10 @@ public class RegisterEmailEntryFragment extends Fragment {
     public static final String PUBLIC_KEY = "publicKey";
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String DEVICE_TOKEN = "devicetoken";
     private static final int RC_SIGN_IN = 1;
     FirebaseAuth firebaseAuth;
     String device_token;
@@ -269,7 +274,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         privateKeyText = privateKeyBytesBase64;
 
 
-        saveKeys(publicKeyText,privateKeyText,task,  email,  name,  photourl);
+        saveKeys(publicKeyText,privateKeyText,task,email,name,photourl);
 
     }
 
@@ -302,6 +307,25 @@ public class RegisterEmailEntryFragment extends Fragment {
                                                 progressBarOne.setVisibility(View.GONE);
                                                 progressBarTwo.setVisibility(View.GONE);*/
                                                 return;
+                                            }
+
+                                            try {
+                /*                                SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+            *//*DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());*//*
+
+
+                                                editor.putString(NAME, name+" "+surname);
+                                                editor.putString(EMAIL, acct.getEmail());
+                                                editor.putString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                editor.putString(PHOTO_URL, acct.getPhotoUrl().toString());
+
+
+                                                editor.apply();*/
+                                            }catch (Exception e)
+                                            {
+
                                             }
 
                                             if(privateKeyText!=null&&userID!=null&&userID.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
@@ -371,7 +395,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         return kp;
     }
 
-    private void saveKeys(String publicKey,String privateKey,Task<InstanceIdResult> task, String email, String name, String photourl) {
+    private void saveKeys(final String publicKey,final String privateKey,final Task<InstanceIdResult> task,final String email,final String name,final String photourl) {
 
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
@@ -379,16 +403,22 @@ public class RegisterEmailEntryFragment extends Fragment {
         databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        String publicKeyId = databaseReference.push().getKey();
+        device_token = task.getResult().getToken();
+
+        final String publicKeyId = databaseReference.push().getKey();
 
         editor.putString(PRIVATE_KEY,privateKey);
         editor.putString(PUBLIC_KEY,publicKey);
         editor.putString(USER_ID,FirebaseAuth.getInstance().getCurrentUser().getUid());
         editor.putString(PUBLIC_KEY_ID,publicKeyId);
+        editor.putString(NAME, name);
+        editor.putString(EMAIL, email);
+        editor.putString(PHOTO_URL, photourl);
+        editor.putString(DEVICE_TOKEN, device_token);
 
         editor.apply();
 
-        device_token = task.getResult().getToken();
+
 
         // Log and toast
         // String msg = device_token;
@@ -406,7 +436,13 @@ public class RegisterEmailEntryFragment extends Fragment {
        // databaseReference.updateChildren(hashMap);
 
         google_signin.setVisibility(View.GONE);
-        googleButtonListener.onGoogleButtonPressedKeyAvailable(email,name,photourl,databaseReference,device_token,publicKey,publicKeyId);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                googleButtonListener.onGoogleButtonPressedKeyAvailable(email,name,photourl,databaseReference,device_token,publicKey,publicKeyId);
+
+            }
+        },500);
 
         /*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
                                                 *//*progressBarOne.setVisibility(View.GONE);

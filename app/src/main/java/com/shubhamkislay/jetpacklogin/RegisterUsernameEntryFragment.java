@@ -2,6 +2,7 @@ package com.shubhamkislay.jetpacklogin;
 
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +55,15 @@ public class RegisterUsernameEntryFragment extends Fragment {
     Button progressBackgrounnd, username_found;
     ProgressBar progressbar;
     CustomImageView profile_image;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    private static final int RC_SIGN_IN = 1;
 
     public RegisterUsernameEntryFragment() {
         // Required empty public constructor
@@ -123,6 +135,18 @@ public class RegisterUsernameEntryFragment extends Fragment {
             nameTextView.setText(name);
             Glide.with(getActivity()).load(photourl.replace("s96-c", "s384-c")).into(profile_pic_background);
             Glide.with(getActivity()).load(photourl.replace("s96-c", "s384-c")).into(profile_image);
+
+/*            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            *//*DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());*//*
+
+
+            editor.putString(USER_ID,FirebaseAuth.getInstance().getCurrentUser().getUid());
+            editor.putString(PHOTO_URL,photourl);
+
+
+            editor.apply();*/
 
         }
         catch (Exception e)
