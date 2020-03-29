@@ -1,10 +1,15 @@
-package com.shubhamkislay.jetpacklogin;
+package com.shubhamkislay.jetpacklogin.Fragments;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -22,6 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,9 +38,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.shubhamkislay.jetpacklogin.CustomImageView;
+import com.shubhamkislay.jetpacklogin.FiltersListFragment;
+import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.PhotoEditToolsActivity;
+import com.shubhamkislay.jetpacklogin.R;
+import com.shubhamkislay.jetpacklogin.Utils.BitmapUtils;
+import com.yalantis.ucrop.UCrop;
+import com.yalantis.ucrop.UCropActivity;
 
+import java.io.File;
+import java.util.UUID;
+
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 
@@ -52,7 +73,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String device_token;
     String public_key;
     String publickeyid;
-    Button progressBackgrounnd, username_found;
+    public static final int PERMISSION_PICK_IMAGE = 1000;
     ProgressBar progressbar;
     CustomImageView profile_image;
     public static final String SHARED_PREFS = "sharedPrefs";
@@ -64,6 +85,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     private static final int RC_SIGN_IN = 1;
+    Button progressBackgrounnd, username_found, edit_image;
+    ImageSelectionCropListener imageSelectionCropListener;
 
     public RegisterUsernameEntryFragment() {
         // Required empty public constructor
@@ -81,6 +104,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
         profile_pic_background = view.findViewById(R.id.profile_pic_background);
 
         emailTextView = view.findViewById(R.id.email);
+
+        edit_image = view.findViewById(R.id.edit_image);
 
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
@@ -127,6 +152,25 @@ public class RegisterUsernameEntryFragment extends Fragment {
             }
         });
 
+        edit_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //startCrop(photourl.replace("s96-c", "s384-c"));
+
+
+
+
+                /*Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+
+                startActivityForResult(intent, PERMISSION_PICK_IMAGE);*/
+
+                imageSelectionCropListener.imageSelect();
+
+
+            }
+        });
+
 
 
         try {
@@ -160,6 +204,11 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
 
         return view;
+    }
+
+    public void setImageSelectionCropListener(ImageSelectionCropListener imageSelectionCropListener)
+    {
+        this.imageSelectionCropListener = imageSelectionCropListener;
     }
 
     private void setUpListener() {
@@ -262,6 +311,77 @@ public class RegisterUsernameEntryFragment extends Fragment {
             }
         });
 
+    }
+
+ /*   private void startCrop(Uri myUri) {
+
+
+
+        Uri uri = myUri;
+
+
+        String destinationFileName = new StringBuilder(UUID.randomUUID().toString()).append(".jpg").toString();
+
+
+        UCrop uCrop = UCrop.of(uri,Uri.fromFile( new File(getActivity().getCacheDir(),destinationFileName)));
+
+        *//*UCropActivity uCropActivity = new UCropActivity();
+
+        uCropActivity.setTheme(R.style.AppTheme);
+*//*
+
+
+
+
+
+
+        *//**
+         * Use the code below for a square image selection i.e. for profile pictures
+         * uCrop.withAspectRatio(1.0f, 1.0f);**//*
+
+        uCrop.start(getActivity());
+
+    }*/
+
+
+
+/*    private void handleCropError(Intent data) {
+
+        final Throwable cropError = UCrop.getError(data);
+
+        if(cropError!=null)
+        {
+            Toast.makeText(getActivity(), ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Unexpected Error", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private void handleCropResult(Intent data) {
+
+        final Uri resultUri = UCrop.getOutput(data);
+        if(resultUri != null)
+        {
+            setImageUri(resultUri);
+
+            Toast.makeText(getActivity(), "Image cropped",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getActivity(), "Cannot retrieve crop image",Toast.LENGTH_SHORT).show();
+        }
+
+    }*/
+
+    public void setImageUri(Uri resultUri)
+    {
+
+        profile_pic_background.setImageURI(resultUri);
+        profile_image.setImageURI(resultUri);
     }
 
     public void setUserData(String email, String name, String photourl, UsernameListener usernameListener,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid)

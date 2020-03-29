@@ -7,8 +7,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.shubhamkislay.jetpacklogin.Fragments.RegisterEmailEntryFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.RegisterUsernameEntryFragment;
+
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class VerticalRegisterationActivity extends AppCompatActivity {

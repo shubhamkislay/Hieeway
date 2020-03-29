@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/black"
     android:fitsSystemWindows="true"
-    tools:context=".RegisterUsernameEntryFragment">
+    tools:context=".Fragments.RegisterUsernameEntryFragment">
 
 
 
@@ -57,7 +57,7 @@
 
 
         <Button
-            android:id="@+id/change_activity"
+            android:id="@+id/edit_image"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_alignParentTop="true"

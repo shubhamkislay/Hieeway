@@ -3,25 +3,22 @@ package com.shubhamkislay.jetpacklogin;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -30,9 +27,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,17 +42,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.shubhamkislay.jetpacklogin.Fragments.RegisterEmailEntryFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.RegisterUsernameEntryFragment;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
+import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
+import com.shubhamkislay.jetpacklogin.Utils.BitmapUtils;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
-import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
-import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_2_ID;
-
-public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener {
+public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener, ImageSelectionCropListener {
 
 
     Button loginBtn, registerBtn, get_started, get_started_back;
@@ -72,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String NAME = "name";
     public static final String DEVICE_TOKEN = "devicetoken";
     private static final int RC_SIGN_IN = 1;
+    public static final int PERMISSION_PICK_IMAGE = 1000;
+
 
     ImageView sendArrow, background_screen;
     float buttonSizeAlpha = 1.30f;
@@ -85,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     RegisterEmailEntryFragment registerEmailEntryFragment;
     RegisterAuthenticateActivity registerAuthenticateActivity;
     RegisterUsernameEntryFragment registerUsernameEntryFragment;
+    private GoogleSignInClient mGoogleSignInClient;
     Button change_frag_btn;
     int fragment_number=0;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
@@ -125,6 +133,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         splash_layout = findViewById(R.id.splash_layout);
         background_screen = findViewById(R.id.background_screen);
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(MainActivity.this, gso);
+
 
 
         get_started.setOnClickListener(new View.OnClickListener() {
@@ -145,7 +160,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerEmailEntryFragment).commit();
+
                         registerEmailEntryFragment.setGoogleButtonListener(MainActivity.this);
+
                         break;
 
                     case 1: fragment_number =2;
@@ -154,6 +171,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+
+                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
+
                         break;
 
                     case 2: fragment_number =3;
@@ -254,6 +274,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
                         // get_started.setVisibility(View.VISIBLE);
 
+                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
+
                         registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,databaseReference, device_token,public_key,publickeyid);
 
                         /*firebaseAuth.signOut();
@@ -292,6 +314,147 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             startSplash();
 
 
+        }
+
+    }
+
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void startCrop(Uri myUri) {
+
+
+
+        Uri uri = myUri;
+
+
+        String destinationFileName = new StringBuilder(UUID.randomUUID().toString()).append(".jpg").toString();
+
+
+        UCrop uCrop = UCrop.of(uri,Uri.fromFile( new File(getCacheDir(),destinationFileName)));
+
+        uCrop.withAspectRatio(9,18);
+
+        /*UCropActivity uCropActivity = new UCropActivity();
+
+        uCropActivity.setTheme(R.style.AppTheme);*/
+
+
+
+
+
+
+        /**
+         * Use the code below for a square image selection i.e. for profile pictures
+         * uCrop.withAspectRatio(1.0f, 1.0f);**/
+
+        uCrop.start(MainActivity.this);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode == RESULT_OK)
+        {
+
+
+            if(requestCode==PERMISSION_PICK_IMAGE) {
+              //  Bitmap bitmap = BitmapUtils.getBitmapFromGallery(getContext(), data.getData(), 800, 800);
+
+
+
+
+                // image_selected_uri = data.getData();
+
+                startCrop(data.getData());
+
+
+                /*//clear bitmap memory
+
+                originalBitmap.recycle();
+                finalBitmap.recycle();
+                filteredBitmap.recycle();
+
+
+                originalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                finalBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                filteredBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+                //   img_preview.setImageBitmap(originalBitmap);
+                photoEditorView.getSource().setImageBitmap(originalBitmap);*/
+
+                //bitmap.recycle();
+
+                //Render selected img thumbnail
+
+                /*filtersListFragment.displayThumbnail(originalBitmap);*/
+
+                /*filtersListFragment = FiltersListFragment.getInstance(originalBitmap);
+                filtersListFragment.setListener(this);*/
+            }
+
+
+
+            else if(requestCode == UCrop.REQUEST_CROP) {
+                Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+                handleCropResult(data);
+
+            }
+
+            else if(requestCode == UCrop.RESULT_ERROR) {
+                handleCropError(data);
+            }
+
+            else if (requestCode == RC_SIGN_IN) {
+
+                Toast.makeText(this, "Google sign in",Toast.LENGTH_SHORT).show();
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    registerEmailEntryFragment.firebaseAuthWithGoogle(account,account.getGivenName(), account.getFamilyName());
+
+
+                } catch (ApiException e) {
+                    // Google Sign In failed, update UI appropriately
+                    // Log.w(TAG, "Google sign in failed", e);
+                    // ...
+                }
+            }
+
+        }
+    }
+
+    private void handleCropError(Intent data) {
+
+        final Throwable cropError = UCrop.getError(data);
+
+        if(cropError!=null)
+        {
+            Toast.makeText(this, ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(this, "Unexpected Error", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private void handleCropResult(Intent data) {
+
+        final Uri resultUri = UCrop.getOutput(data);
+        if(resultUri != null)
+        {
+            registerUsernameEntryFragment.setImageUri(resultUri);
+
+            Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(this, "Cannot retrieve crop image",Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -512,6 +675,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     }
 
     @Override
+    public void onSignInClicked() {
+        signIn();
+    }
+
+    @Override
     public void onGoogleButtonPressed(String email, String name, String photourl, DatabaseReference reference, String device_token) {
 
         //databaseReference.updateChildren(hashMap);
@@ -572,6 +740,16 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this);*/
 
 
+
+    }
+
+    @Override
+    public void imageSelect() {
+
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+
+        startActivityForResult(intent, PERMISSION_PICK_IMAGE);
 
     }
 

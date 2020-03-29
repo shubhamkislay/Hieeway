@@ -1,4 +1,4 @@
-package com.shubhamkislay.jetpacklogin;
+package com.shubhamkislay.jetpacklogin.Fragments;
 
 
 import android.annotation.SuppressLint;
@@ -37,6 +37,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
+import com.shubhamkislay.jetpacklogin.LoginActivity;
+import com.shubhamkislay.jetpacklogin.R;
+import com.shubhamkislay.jetpacklogin.TypeWriter;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -107,7 +110,9 @@ public class RegisterEmailEntryFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                signIn();
+                //signIn();
+
+                googleButtonListener.onSignInClicked();
 
             }
         });
@@ -119,7 +124,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         email_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(),LoginActivity.class));
+                startActivity(new Intent(getActivity(), LoginActivity.class));
             }
         });
 
@@ -224,7 +229,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    @Override
+ /*   @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -243,7 +248,7 @@ public class RegisterEmailEntryFragment extends Fragment {
                 // ...
             }
         }
-    }
+    }*/
 
 
     private void LoadKeys()
@@ -278,7 +283,7 @@ public class RegisterEmailEntryFragment extends Fragment {
 
     }
 
-    private void firebaseAuthWithGoogle(final GoogleSignInAccount acct,final  String name, final String surname) {
+    public void firebaseAuthWithGoogle(final GoogleSignInAccount acct,final  String name, final String surname) {
         // Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
