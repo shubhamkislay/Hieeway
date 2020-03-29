@@ -14,8 +14,8 @@
         android:layout_height="50dp"
         android:layout_gravity="top|right"
         android:layout_margin="4dp"
-        android:textColor="#fff"
-        android:background="#141414"
+        android:background="#0A0A0A"
+        android:textColor="#494949"
         android:textStyle="bold"
         android:text="E" />
     <RelativeLayout

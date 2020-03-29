@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -92,6 +93,9 @@ public class RegisterEmailEntryFragment extends Fragment {
 
         mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
         mAuth = FirebaseAuth.getInstance();
 
         google_signin.setOnClickListener(new View.OnClickListener() {
@@ -144,9 +148,9 @@ public class RegisterEmailEntryFragment extends Fragment {
             public void run() {
 
                 greet_text.animateText("Hi");
-                greet_text.setCharacterDelay(100);
+                greet_text.setCharacterDelay(150);
 
-                greet_text.setTextSize(72);
+                greet_text.setTextSize(100);
                 greet_text.animate();
 
                 new Handler().postDelayed(new Runnable() {
@@ -155,7 +159,7 @@ public class RegisterEmailEntryFragment extends Fragment {
 
 
                         greet_text.setText(" ");
-                        greet_text.setTextSize(24);
+                        greet_text.setTextSize(28);
                         greet_text.setCharacterDelay(60);
                         greet_text.animateText("Welcome to the next generation of messaging.");
                         greet_text.animate();

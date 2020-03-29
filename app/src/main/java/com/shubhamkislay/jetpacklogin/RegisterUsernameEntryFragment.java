@@ -1,6 +1,7 @@
 package com.shubhamkislay.jetpacklogin;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -8,11 +9,14 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +49,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String device_token;
     String public_key;
     String publickeyid;
+    Button progressBackgrounnd, username_found;
+    ProgressBar progressbar;
     CustomImageView profile_image;
 
     public RegisterUsernameEntryFragment() {
@@ -52,6 +58,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,8 +72,15 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
+       // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
 
         profile_image = view.findViewById(R.id.profile_image);
+
+        progressBackgrounnd = view.findViewById(R.id.progress_back);
+        progressbar = view.findViewById(R.id.progressbar);
 
 
         enter_btn = view.findViewById(R.id.enter_btn);
@@ -74,6 +88,33 @@ public class RegisterUsernameEntryFragment extends Fragment {
         nameTextView = view.findViewById(R.id.name);
 
         usernameTextView = view.findViewById(R.id.username);
+
+        username_found = view.findViewById(R.id.username_found);
+
+
+        intent_change_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    intent_change_btn.animate().scaleX(0.76f).scaleY(0.76f).setDuration(0);
+
+                }
+                else if(event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    intent_change_btn.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                else
+                {
+                    intent_change_btn.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                return false;
+            }
+        });
+
 
 
         try {
@@ -109,11 +150,16 @@ public class RegisterUsernameEntryFragment extends Fragment {
         enter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                progressBackgrounnd.setVisibility(View.VISIBLE);
+                progressbar.setVisibility(View.VISIBLE);
                 username = usernameTextView.getText().toString();
 
                 if(TextUtils.isEmpty(username)||username.length()<6/*||username.startsWith("[0-9]")*/)
                 {
                     usernameTextView.setError("Username should have alteast 6 characters, and should start with alphabets");
+                    progressBackgrounnd.setVisibility(View.INVISIBLE);
+                    progressbar.setVisibility(View.INVISIBLE);
                 }
                 else
                 {
@@ -136,17 +182,24 @@ public class RegisterUsernameEntryFragment extends Fragment {
                                     {
                                         count+=1;
                                         Toast.makeText(getContext(),"Username unvailable",Toast.LENGTH_SHORT).show();
+                                        progressbar.setVisibility(View.INVISIBLE);
+                                        progressBackgrounnd.setVisibility(View.INVISIBLE);
+
                                         break;
                                        // intent_change_btn.setVisibility(View.VISIBLE);
+
                                     }
 
 
                                 }
                                 if(count==0)
                                 {
-                                    Toast.makeText(getContext(),"Username available",Toast.LENGTH_SHORT).show();
+                                   // Toast.makeText(getContext(),"Username available",Toast.LENGTH_SHORT).show();
 
                                      intent_change_btn.setVisibility(View.VISIBLE);
+                                    progressBackgrounnd.setVisibility(View.VISIBLE);
+                                    progressbar.setVisibility(View.INVISIBLE);
+                                    username_found.setVisibility(View.VISIBLE);
                                 }
                               //  usernameTextView.set
 
@@ -155,6 +208,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
+                            progressBackgrounnd.setVisibility(View.INVISIBLE);
+                            progressbar.setVisibility(View.INVISIBLE);
 
                         }
                     });
@@ -171,7 +226,10 @@ public class RegisterUsernameEntryFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                intent_change_btn.setVisibility(View.GONE);
+                progressBackgrounnd.setVisibility(View.INVISIBLE);
+                progressbar.setVisibility(View.INVISIBLE);
+                username_found.setVisibility(View.INVISIBLE);
+                intent_change_btn.setVisibility(View.INVISIBLE);
             }
 
             @Override

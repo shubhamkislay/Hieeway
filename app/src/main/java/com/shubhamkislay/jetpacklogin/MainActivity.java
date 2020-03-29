@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         editTextTitle = findViewById(R.id.edit_text_title);
 
         editTextMessage = findViewById(R.id.edit_text_message);*/
+
+
 
         frameLayout = findViewById(R.id.framelayout);
 
