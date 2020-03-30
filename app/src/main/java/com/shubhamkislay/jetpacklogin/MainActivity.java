@@ -335,7 +335,19 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         UCrop uCrop = UCrop.of(uri,Uri.fromFile( new File(getCacheDir(),destinationFileName)));
 
+        UCrop.Options up = new UCrop.Options();
+        up.setLogoColor(getResources().getColor(R.color.colorBlack));
+        up.setStatusBarColor(getResources().getColor(R.color.colorBlack));
+        up.setToolbarColor(getResources().getColor(R.color.colorBlack));
+        up.setLogoColor(getResources().getColor(R.color.colorPrimaryDark));
+        up.setActiveWidgetColor(getResources().getColor(R.color.colorPrimaryDark));
+        up.setCompressionQuality(50);
+        /*up.setRootViewBackgroundColor(getResources().getColor(R.color.colorBlack));
+        up.setToolbarWidgetColor(getResources().getColor(R.color.colorBlack));
+        up.setDimmedLayerColor(getResources().getColor(R.color.colorPrimaryDark));*/
+
         uCrop.withAspectRatio(9,18);
+        uCrop.withOptions(up);
 
         /*UCropActivity uCropActivity = new UCropActivity();
 
