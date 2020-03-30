@@ -3,6 +3,8 @@ package com.shubhamkislay.jetpacklogin;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -21,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -34,6 +37,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +46,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.shubhamkislay.jetpacklogin.Fragments.RegisterEmailEntryFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.RegisterUsernameEntryFragment;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
@@ -78,6 +86,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String DEVICE_TOKEN = "devicetoken";
     private static final int RC_SIGN_IN = 1;
     public static final int PERMISSION_PICK_IMAGE = 1000;
+    private static final int IMAGE_REQUEST=1;
+    DatabaseReference databaseReference;
+    StorageReference storageReference;
+    private Button uploadButton;
+    private StorageTask uploadTask;
 
 
     ImageView sendArrow, background_screen;
@@ -133,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         splash_layout = findViewById(R.id.splash_layout);
         background_screen = findViewById(R.id.background_screen);
 
+        storageReference = FirebaseStorage.getInstance().getReference("uploads");
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -168,11 +183,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     case 1: fragment_number =2;
                         animateArrow();
                         get_started.setVisibility(View.INVISIBLE);
+                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
 
-                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
+                        //registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
 
                         break;
 
@@ -269,14 +285,15 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         get_started.setText("Continue with profile setup");
                        // animateArrow();
                         startSplash();
+                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
+
+                        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,databaseReference, device_token,public_key,publickeyid);
+
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
                         // get_started.setVisibility(View.VISIBLE);
 
-                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
-
-                        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,databaseReference, device_token,public_key,publickeyid);
 
                         /*firebaseAuth.signOut();
                         startSplash();*/
@@ -463,6 +480,14 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             registerUsernameEntryFragment.setImageUri(resultUri);
             Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
 
+            if(uploadTask!=null&&uploadTask.isInProgress())
+            {
+                Toast.makeText(MainActivity.this,"Uploading..." , Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                uploadImage(resultUri);
+            }
 
         }
         else
@@ -725,6 +750,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                    // animateArrow();
 
                     // get_started.setVisibility(View.VISIBLE);
+                    registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
                     registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,reference, device_token,public_key,publickeyid);
 
                      animateArrow();
@@ -763,6 +789,104 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         intent.setType("image/*");
 
         startActivityForResult(intent, PERMISSION_PICK_IMAGE);
+
+    }
+
+
+
+    private String getExtension(Uri uri)
+    {
+
+
+        ContentResolver contentResolver = MainActivity.this.getContentResolver();
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+
+    }
+
+    private void uploadImage(Uri imageUri)
+    {
+
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this );
+
+        progressDialog.setMessage("Uploading photo");
+        progressDialog.show();
+
+        if(imageUri!=null)
+        {
+
+            final StorageReference fileReference = storageReference.child(System.currentTimeMillis()+"."+getExtension(imageUri));
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task task) throws Exception {
+
+                    if(!task.isSuccessful())
+                    {
+                        throw task.getException();
+                    }
+
+
+
+
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+
+                    if(task.isSuccessful())
+                    {
+
+                        Uri downloadUri = task.getResult();
+
+                        String mUri = downloadUri.toString();
+
+
+                        /*databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                .child(FirebaseAuth.getInstance()
+                                        .getCurrentUser()
+                                        .getUid());
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("photo",mUri );
+                        databaseReference.updateChildren(map);
+                        progressDialog.dismiss();*/
+
+
+
+                        progressDialog.dismiss();
+                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                        editor.putString(PHOTO_URL, mUri);
+                        editor.apply();
+
+                        registerUsernameEntryFragment.setUploadedImage(mUri);
+
+
+
+
+                    }
+                    else
+                    {
+                        Toast.makeText(MainActivity.this,"Uploading failed" ,Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                    }
+
+                }
+            });
+
+
+        }
+        else
+        {
+            Toast.makeText(MainActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
+        }
+
 
     }
 

@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +66,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String username ="xyz";
     Button enter_btn;
     ImageView profile_pic_background;
-    TextView emailTextView, nameTextView;
+    TextView emailTextView, nameTextView, edit_pic_text;
     String email, name, photourl;
     UsernameListener usernameListener;
     Button intent_change_btn;
@@ -73,6 +74,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String device_token;
     String public_key;
     String publickeyid;
+    RelativeLayout edit_pic_layout;
     public static final int PERMISSION_PICK_IMAGE = 1000;
     ProgressBar progressbar;
     CustomImageView profile_image;
@@ -109,6 +111,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
+        edit_pic_layout = view.findViewById(R.id.edit_pic_layout);
+
        // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -127,6 +131,8 @@ public class RegisterUsernameEntryFragment extends Fragment {
         usernameTextView = view.findViewById(R.id.username);
 
         username_found = view.findViewById(R.id.username_found);
+
+        edit_pic_text = view.findViewById(R.id.edit_pic_text);
 
 
         intent_change_btn.setOnTouchListener(new View.OnTouchListener() {
@@ -168,6 +174,89 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 imageSelectionCropListener.imageSelect();
 
 
+            }
+        });
+
+        edit_pic_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSelectionCropListener.imageSelect();
+            }
+        });
+
+        edit_pic_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSelectionCropListener.imageSelect();
+            }
+        });
+
+        edit_pic_layout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    edit_pic_layout.animate().scaleX(0.76f).scaleY(0.76f).setDuration(0);
+
+                }
+                else if(event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    edit_pic_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                else
+                {
+                    edit_pic_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                return false;
+            }
+        });
+
+        edit_image.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    edit_pic_layout.animate().scaleX(0.76f).scaleY(0.76f).setDuration(0);
+
+                }
+                else if(event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    edit_pic_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                else
+                {
+                    edit_pic_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                return false;
+            }
+        });
+
+        edit_pic_text.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    edit_pic_layout.animate().scaleX(0.76f).scaleY(0.76f).setDuration(0);
+
+                }
+                else if(event.getAction() == MotionEvent.ACTION_UP)
+                {
+                    edit_pic_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                else
+                {
+                    edit_pic_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+
+                }
+                return false;
             }
         });
 
@@ -394,6 +483,11 @@ public class RegisterUsernameEntryFragment extends Fragment {
         this.device_token = device_token;
         this.public_key = public_key;
         this.publickeyid = publickeyid;
+    }
+
+    public void setUploadedImage(String photourl)
+    {
+        this.photourl = photourl;
     }
 
 }
