@@ -461,8 +461,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         if(resultUri != null)
         {
             registerUsernameEntryFragment.setImageUri(resultUri);
-
             Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+
+
         }
         else
         {
