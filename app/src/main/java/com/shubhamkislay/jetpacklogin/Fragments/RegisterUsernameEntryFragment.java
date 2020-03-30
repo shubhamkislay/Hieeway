@@ -349,7 +349,6 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
                                         break;
                                        // intent_change_btn.setVisibility(View.VISIBLE);
-
                                     }
 
 
