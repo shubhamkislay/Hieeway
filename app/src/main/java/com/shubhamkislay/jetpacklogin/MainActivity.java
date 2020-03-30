@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
             else if(requestCode == UCrop.REQUEST_CROP) {
-                Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
                 handleCropResult(data);
 
             }
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
             else if (requestCode == RC_SIGN_IN) {
 
-                Toast.makeText(this, "Google sign in",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "Google sign in",Toast.LENGTH_SHORT).show();
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                 try {
                     // Google Sign In was successful, authenticate with Firebase
@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         if(resultUri != null)
         {
             registerUsernameEntryFragment.setImageUri(resultUri);
-            Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
 
             if(uploadTask!=null&&uploadTask.isInProgress())
             {
@@ -809,10 +809,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private void uploadImage(Uri imageUri)
     {
 
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this );
+        /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this );
 
         progressDialog.setMessage("Uploading photo");
-        progressDialog.show();
+        progressDialog.show();*/
+
+        registerUsernameEntryFragment.setProgressVisibility(true);
 
         if(imageUri!=null)
         {
@@ -828,6 +830,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     {
                         throw task.getException();
                     }
+
 
 
 
@@ -858,7 +861,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
 
-                        progressDialog.dismiss();
+                       // progressDialog.dismiss();
+
+                        registerUsernameEntryFragment.setProgressVisibility(false);
                         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -874,7 +879,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     else
                     {
                         Toast.makeText(MainActivity.this,"Uploading failed" ,Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
+                        //progressDialog.dismiss();
+                        registerUsernameEntryFragment.setProgressVisibility(false);
                     }
 
                 }

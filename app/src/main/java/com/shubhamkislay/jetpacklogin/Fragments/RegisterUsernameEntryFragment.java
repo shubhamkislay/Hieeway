@@ -74,10 +74,11 @@ public class RegisterUsernameEntryFragment extends Fragment {
     String device_token;
     String public_key;
     String publickeyid;
+    ProgressBar progress_upload;
     RelativeLayout edit_pic_layout;
     public static final int PERMISSION_PICK_IMAGE = 1000;
     ProgressBar progressbar;
-    CustomImageView profile_image;
+    CustomImageView profile_image, profile_image_back;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
     public static final String PUBLIC_KEY = "publicKey";
@@ -112,6 +113,10 @@ public class RegisterUsernameEntryFragment extends Fragment {
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
         edit_pic_layout = view.findViewById(R.id.edit_pic_layout);
+
+        progress_upload = view.findViewById(R.id.progress_upload);
+
+        profile_image_back = view.findViewById(R.id.profile_image_back);
 
        // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -315,11 +320,18 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
                 progressBackgrounnd.setVisibility(View.VISIBLE);
                 progressbar.setVisibility(View.VISIBLE);
-                username = usernameTextView.getText().toString();
+                username = usernameTextView.getText().toString().toLowerCase().trim();
 
-                if(TextUtils.isEmpty(username)||username.length()<6/*||username.startsWith("[0-9]")*/)
+
+                String usernameFilter = filterUsername(username);
+
+                Boolean usernameAlphaNumeric = isAlphanumeric2(usernameFilter);
+
+
+                if(TextUtils.isEmpty(username)||username.length()<5||username.length()>15||!usernameAlphaNumeric/*&&!username.contains("_")*/||username.contains(" ")/*||username.startsWith("[0-9]")*/)
                 {
-                    usernameTextView.setError("Username should have alteast 6 characters, and should start with alphabets");
+
+                    usernameTextView.setError("Username should have 5-15 characters.\nIt should contain numbers [0-9] or alphabets[A-Z,a-z], or underscore [ _ ].\nIt can't have spaces in between.");
                     progressBackgrounnd.setVisibility(View.INVISIBLE);
                     progressbar.setVisibility(View.INVISIBLE);
                 }
@@ -343,7 +355,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
                                     if(user.getUsername().equals(username))
                                     {
                                         count+=1;
-                                        Toast.makeText(getContext(),"Username unvailable",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(),"Username unavailable",Toast.LENGTH_SHORT).show();
                                         progressbar.setVisibility(View.INVISIBLE);
                                         progressBackgrounnd.setVisibility(View.INVISIBLE);
 
@@ -391,6 +403,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 progressbar.setVisibility(View.INVISIBLE);
                 username_found.setVisibility(View.INVISIBLE);
                 intent_change_btn.setVisibility(View.INVISIBLE);
+
             }
 
             @Override
@@ -399,6 +412,41 @@ public class RegisterUsernameEntryFragment extends Fragment {
             }
         });
 
+    }
+
+    public boolean isAlphanumeric2(String str) {
+        for (int i=0; i<str.length(); i++) {
+            char c = str.charAt(i);
+            if (c < 0x30 || (c >= 0x3a && c <= 0x40) || (c > 0x5a && c <= 0x60) || c > 0x7a )
+                return false;
+        }
+        return true;
+    }
+
+    public String filterUsername(String usernameFilter)
+    {
+        /*if(username.contains("_"))
+        {
+            String filteredusername;
+            int index = username.indexOf("_");
+            filteredusername = charRemoveAt(username,index);
+
+            while(filteredusername.contains("_"))
+            {
+                filterUsername(filteredusername);
+            }
+        }*/
+
+        while(usernameFilter.contains("_"))
+        {
+            int index = usernameFilter.indexOf("_");
+            usernameFilter = charRemoveAt(usernameFilter,index);
+        }
+        return usernameFilter;
+    }
+
+    public  String charRemoveAt(String str, int p) {
+        return str.substring(0, p) + str.substring(p + 1);
     }
 
  /*   private void startCrop(Uri myUri) {
@@ -487,6 +535,26 @@ public class RegisterUsernameEntryFragment extends Fragment {
     public void setUploadedImage(String photourl)
     {
         this.photourl = photourl;
+    }
+    public void setProgressVisibility(Boolean visibility)
+    {
+        if(visibility)
+        {
+            progress_upload.setVisibility(View.VISIBLE);
+            profile_image_back.setVisibility(View.VISIBLE);
+            profile_pic_background.setAlpha(0.0f);
+            intent_change_btn.setAlpha(0.0f);
+            intent_change_btn.setEnabled(false);
+        }
+        else
+        {
+            progress_upload.setVisibility(View.INVISIBLE);
+            profile_image_back.setVisibility(View.INVISIBLE);
+            profile_pic_background.setAlpha(0.8f);
+            intent_change_btn.setAlpha(1.0f);
+            intent_change_btn.setEnabled(true);
+        }
+
     }
 
 }

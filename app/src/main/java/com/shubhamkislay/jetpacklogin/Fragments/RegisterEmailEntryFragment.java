@@ -378,7 +378,7 @@ public class RegisterEmailEntryFragment extends Fragment {
                                         }
                                     });
 
-                            Toast.makeText(getActivity(),name+" "+surname+", your login is Successful",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),"Welcome "+name,Toast.LENGTH_SHORT).show();
                         } else
                             Toast.makeText(getContext(), "Login failed", Toast.LENGTH_SHORT).show();
 
