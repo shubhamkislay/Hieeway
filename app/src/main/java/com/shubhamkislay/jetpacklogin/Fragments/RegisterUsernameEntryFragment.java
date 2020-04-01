@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -320,6 +321,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
                 progressBackgrounnd.setVisibility(View.VISIBLE);
                 progressbar.setVisibility(View.VISIBLE);
+                enter_btn.setVisibility(View.INVISIBLE);
                 username = usernameTextView.getText().toString().toLowerCase().trim();
 
 
@@ -334,6 +336,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
                     usernameTextView.setError("Username should have 5-15 characters.\nIt should contain numbers [0-9] or alphabets[A-Z,a-z], or underscore [ _ ].\nIt can't have spaces in between.");
                     progressBackgrounnd.setVisibility(View.INVISIBLE);
                     progressbar.setVisibility(View.INVISIBLE);
+                    enter_btn.setVisibility(View.VISIBLE);
                 }
                 else
                 {
@@ -356,8 +359,9 @@ public class RegisterUsernameEntryFragment extends Fragment {
                                     {
                                         count+=1;
                                         Toast.makeText(getContext(),"Username unavailable",Toast.LENGTH_SHORT).show();
-                                        progressbar.setVisibility(View.INVISIBLE);
                                         progressBackgrounnd.setVisibility(View.INVISIBLE);
+                                        progressbar.setVisibility(View.INVISIBLE);
+                                        enter_btn.setVisibility(View.VISIBLE);
 
                                         break;
                                        // intent_change_btn.setVisibility(View.VISIBLE);
@@ -370,9 +374,11 @@ public class RegisterUsernameEntryFragment extends Fragment {
                                    // Toast.makeText(getContext(),"Username available",Toast.LENGTH_SHORT).show();
 
                                      intent_change_btn.setVisibility(View.VISIBLE);
-                                    progressBackgrounnd.setVisibility(View.VISIBLE);
+                                    progressBackgrounnd.setVisibility(View.INVISIBLE);
                                     progressbar.setVisibility(View.INVISIBLE);
                                     username_found.setVisibility(View.VISIBLE);
+                                    enter_btn.setVisibility(View.VISIBLE);
+
                                 }
                               //  usernameTextView.set
 
@@ -383,6 +389,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
                         public void onCancelled(@NonNull DatabaseError databaseError) {
                             progressBackgrounnd.setVisibility(View.INVISIBLE);
                             progressbar.setVisibility(View.INVISIBLE);
+                            enter_btn.setVisibility(View.VISIBLE);
 
                         }
                     });
@@ -402,6 +409,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 progressBackgrounnd.setVisibility(View.INVISIBLE);
                 progressbar.setVisibility(View.INVISIBLE);
                 username_found.setVisibility(View.INVISIBLE);
+                enter_btn.setVisibility(View.VISIBLE);
                 intent_change_btn.setVisibility(View.INVISIBLE);
 
             }
