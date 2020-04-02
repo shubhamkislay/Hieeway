@@ -35,27 +35,62 @@
             android:rotation="180"
             android:background="@drawable/status_bar_fade"/>
 
+        <com.shubhamkislay.jetpacklogin.CustomImageView
+            android:id="@+id/center_dp"
+            android:layout_width="100dp"
+            android:layout_height="200dp"
+            android:layout_above="@id/name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp" />
+
 
         <TextView
-            android:id="@+id/email"
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="email"
+            android:textColor="#fff"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            tools:text="name"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             />
 
         <TextView
-            android:layout_below="@id/email"
+            android:layout_below="@id/name"
             android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="#fff"
             tools:text="username"
+            android:textSize="14sp"
+            android:textStyle="bold"
             android:layout_centerHorizontal="true"
+            />
+        <TextView
+            android:id="@+id/feeling_icon"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_below="@id/username"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/emoticon_feeling_happy"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/feeling_icon"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Happy"
+            android:textColor="#fff"
+            android:textSize="12sp"
+            android:textStyle="italic"
             />
         <Button
             android:id="@+id/logout_btn"
             android:text="Log out"
+
             android:layout_marginTop="8dp"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"

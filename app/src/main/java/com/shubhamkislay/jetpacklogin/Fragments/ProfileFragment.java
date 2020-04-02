@@ -36,8 +36,8 @@ import java.util.HashMap;
 public class ProfileFragment extends Fragment {
 
     private SharedViewModel sharedViewModel;
-    TextView username, email;
-    ImageView profile_pic_background;
+    TextView username, name;
+    ImageView profile_pic_background, center_dp;
     Button logoutBtn, uploadActivityButton;
 
 /*
@@ -56,7 +56,8 @@ public class ProfileFragment extends Fragment {
 
         username = view.findViewById(R.id.username);
         profile_pic_background = view.findViewById(R.id.profile_pic_background);
-        email = view.findViewById(R.id.email);
+        center_dp = view.findViewById(R.id.center_dp);
+        name = view.findViewById(R.id.name);
         logoutBtn = view.findViewById(R.id.logout_btn);
         uploadActivityButton = view.findViewById(R.id.change_activity);
 
@@ -116,10 +117,11 @@ public class ProfileFragment extends Fragment {
 
 
                 username.setText(user.getUsername());
-                email.setText(user.getEmail());
+                name.setText(user.getName());
 
                 try{
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
+                    Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
                 }
                 catch (Exception e)
                 {

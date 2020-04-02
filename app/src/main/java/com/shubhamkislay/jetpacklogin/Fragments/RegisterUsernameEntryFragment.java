@@ -311,7 +311,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         intent_change_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                usernameListener.onUsernameListener(username,photourl, reference,device_token,public_key,publickeyid);
+                usernameListener.onUsernameListener(username,name,photourl, reference,device_token,public_key,publickeyid);
             }
         });
 

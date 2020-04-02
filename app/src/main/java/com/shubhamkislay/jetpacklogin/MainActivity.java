@@ -679,14 +679,16 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
     @Override
-    public void onUsernameListener(String username, String photourl,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid) {
+    public void onUsernameListener(String username,String name, String photourl,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid) {
 
         this.username = username;
         this.photourl = photourl;
+        this.name = name;
 
 
         HashMap<String, Object> registerMap = new HashMap<>();
         registerMap.put("email", email);
+        registerMap.put("name", name);
         registerMap.put("phonenumber", "default");
         registerMap.put("photo",photourl);
         registerMap.put("username", username);
