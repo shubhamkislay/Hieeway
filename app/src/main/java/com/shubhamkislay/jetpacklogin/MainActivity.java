@@ -662,7 +662,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     }
     public void animateBottomNavMenuText(Button navText, Button imageView)
     {
-        Animation hyperspaceJump = AnimationUtils.loadAnimation(MainActivity.this, R.anim.text_bounce_anim);
+        Animation hyperspaceJump = AnimationUtils.loadAnimation(MainActivity.this, R.anim.image_bounce);
 
         hyperspaceJump.setRepeatMode(Animation.INFINITE);
 
@@ -670,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
 
-        Animation hyperspaceJumpImg = AnimationUtils.loadAnimation(MainActivity.this, R.anim.text_bounce_anim);
+        Animation hyperspaceJumpImg = AnimationUtils.loadAnimation(MainActivity.this, R.anim.image_bounce);
 
         hyperspaceJumpImg.setRepeatMode(Animation.INFINITE);
 

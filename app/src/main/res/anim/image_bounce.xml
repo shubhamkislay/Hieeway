@@ -6,8 +6,8 @@
 
     <!-- Use your working translate animation here-->
     <translate
-        android:duration="1000"
-        android:fromYDelta="100%p"
+        android:duration="500"
+        android:fromYDelta="50%p"
         android:toYDelta="0%p" />
 
 </set>
