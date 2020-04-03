@@ -12,12 +12,14 @@ public class User {
     private Boolean online;
     private String publicKey;
     private String publicKeyId;
+    private String feeling;
+
 
 
     public User() {
     }
 
-    public User(String email,String name, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId) {
+    public User(String email,String name, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -27,6 +29,7 @@ public class User {
         this.online = online;
         this.publicKey = publicKey;
         this.publicKeyId = publicKeyId;
+        this.feeling = feeling;
     }
 
     public String getEmail() {
@@ -109,5 +112,12 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+    public String getFeeling() {
+        return feeling;
+    }
+
+    public void setFeeling(String feeling) {
+        this.feeling = feeling;
     }
 }

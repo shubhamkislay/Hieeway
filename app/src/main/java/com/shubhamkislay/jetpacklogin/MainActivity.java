@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String DEVICE_TOKEN = "devicetoken";
+    public final static String HAPPY = "happy";
     private static final int RC_SIGN_IN = 1;
     public static final int PERMISSION_PICK_IMAGE = 1000;
     private static final int IMAGE_REQUEST=1;
@@ -694,6 +695,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerMap.put("username", username);
         registerMap.put("userid", firebaseAuth.getCurrentUser().getUid());
         registerMap.put("token",device_token);
+        registerMap.put("feeling",HAPPY);
         registerMap.put(PUBLIC_KEY,public_key);
         registerMap.put("publicKeyId",publickeyid);
 

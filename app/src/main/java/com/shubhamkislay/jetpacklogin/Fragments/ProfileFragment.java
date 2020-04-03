@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,8 +26,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.shubhamkislay.jetpacklogin.Adapters.ChatMessageAdapter;
 import com.shubhamkislay.jetpacklogin.Adapters.PeopleAdapter;
+import com.shubhamkislay.jetpacklogin.DeleteOptionsDialog;
+import com.shubhamkislay.jetpacklogin.FeelingDialog;
 import com.shubhamkislay.jetpacklogin.ImageUpload;
+import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 import com.shubhamkislay.jetpacklogin.MainActivity;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.R;
@@ -33,12 +39,19 @@ import com.shubhamkislay.jetpacklogin.SharedViewModel;
 
 import java.util.HashMap;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements FeelingListener {
 
     private SharedViewModel sharedViewModel;
-    TextView username, name;
+    final static String HAPPY = "happy";
     ImageView profile_pic_background, center_dp;
     Button logoutBtn, uploadActivityButton;
+    final static String BORED = "bored";
+    final static String EXCITED = "excited";
+    final static String SAD = "sad";
+    final static String CONFUSED = "confused";
+    final static String ANGRY = "angry";
+    TextView username, name, feeling_icon, feeling_txt;
+    FeelingDialog feelingDialog;
 
 /*
     @Override
@@ -60,6 +73,9 @@ public class ProfileFragment extends Fragment {
         name = view.findViewById(R.id.name);
         logoutBtn = view.findViewById(R.id.logout_btn);
         uploadActivityButton = view.findViewById(R.id.change_activity);
+        feeling_icon = view.findViewById(R.id.feeling_icon);
+
+        feeling_txt = view.findViewById(R.id.feeling_txt);
 
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +116,15 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        feeling_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                feelingDialog = new FeelingDialog(getContext(),ProfileFragment.this);
+                feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                feelingDialog.show();
+            }
+        });
+
 
         return view;
     }
@@ -118,6 +143,34 @@ public class ProfileFragment extends Fragment {
 
                 username.setText(user.getUsername());
                 name.setText(user.getName());
+              //  feeling_txt.setText(user.getFeeling());
+                switch (user.getFeeling())
+                {
+                    case HAPPY:
+                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                        feeling_txt.setText(HAPPY);
+                        break;
+                    case SAD:
+                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                        feeling_txt.setText(SAD);
+                        break;
+                    case BORED:
+                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                        feeling_txt.setText(BORED);
+                        break;
+                    case ANGRY:
+                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                        feeling_txt.setText(ANGRY);
+                        break;
+                    case EXCITED:
+                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                        feeling_txt.setText(EXCITED);
+                        break;
+                    case CONFUSED:
+                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                        feeling_txt.setText(CONFUSED);
+                        break;
+                }
 
                 try{
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
@@ -134,4 +187,43 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    @Override
+    public void changeFeeling(String feeling) {
+        DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        HashMap<String,Object> feelingHash =  new HashMap<>();
+        switch (feeling)
+        {
+            case HAPPY: feelingHash.put("feeling",HAPPY);
+                 feelingReference.updateChildren(feelingHash);
+                 feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                 feeling_txt.setText(HAPPY);
+                 break;
+            case SAD: feelingHash.put("feeling",SAD);
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                feeling_txt.setText(SAD);
+                break;
+            case BORED: feelingHash.put("feeling",BORED);
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                feeling_txt.setText(BORED);
+                break;
+            case ANGRY: feelingHash.put("feeling",ANGRY);
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                feeling_txt.setText(ANGRY);
+                break;
+            case EXCITED: feelingHash.put("feeling",EXCITED);
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                feeling_txt.setText(EXCITED);
+                break;
+            case CONFUSED: feelingHash.put("feeling",CONFUSED);
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                feeling_txt.setText(CONFUSED);
+                break;
+        }
+    }
 }
