@@ -113,7 +113,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
         intent_change_btn = view.findViewById(R.id.intent_change_btn);
 
-        edit_pic_layout = view.findViewById(R.id.edit_pic_layout);
+       // edit_pic_layout = view.findViewById(R.id.edit_pic_layout);
 
         progress_upload = view.findViewById(R.id.progress_upload);
 
@@ -138,7 +138,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
         username_found = view.findViewById(R.id.username_found);
 
-        edit_pic_text = view.findViewById(R.id.edit_pic_text);
+      //  edit_pic_text = view.findViewById(R.id.edit_pic_text);
 
 
         intent_change_btn.setOnTouchListener(new View.OnTouchListener() {
@@ -183,21 +183,21 @@ public class RegisterUsernameEntryFragment extends Fragment {
             }
         });
 
-        edit_pic_layout.setOnClickListener(new View.OnClickListener() {
+        /*edit_pic_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageSelectionCropListener.imageSelect();
             }
-        });
+        });*/
 
-        edit_pic_text.setOnClickListener(new View.OnClickListener() {
+        /*edit_pic_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageSelectionCropListener.imageSelect();
             }
-        });
+        });*/
 
-        edit_pic_layout.setOnTouchListener(new View.OnTouchListener() {
+        /*edit_pic_layout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -218,9 +218,9 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
-        edit_image.setOnTouchListener(new View.OnTouchListener() {
+        /*edit_image.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -241,9 +241,9 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
-        edit_pic_text.setOnTouchListener(new View.OnTouchListener() {
+        /*edit_pic_text.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -264,7 +264,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 }
                 return false;
             }
-        });
+        });*/
 
 
 

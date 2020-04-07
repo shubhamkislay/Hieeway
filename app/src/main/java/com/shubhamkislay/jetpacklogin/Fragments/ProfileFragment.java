@@ -1,23 +1,33 @@
 package com.shubhamkislay.jetpacklogin.Fragments;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +52,8 @@ import com.shubhamkislay.jetpacklogin.SharedViewModel;
 
 import java.util.HashMap;
 
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
+
 public class ProfileFragment extends Fragment implements FeelingListener {
 
     private SharedViewModel sharedViewModel;
@@ -53,14 +65,21 @@ public class ProfileFragment extends Fragment implements FeelingListener {
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
-    TextView username, name, feeling_icon, feeling_txt;
+    TextView username, name, feeling_icon, feeling_txt, bio_txt;
     FeelingDialog feelingDialog;
+    String feelingNow = null;
+    EditText change_nio_edittext;
 
 /*
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }*/
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,6 +98,15 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         feeling_icon = view.findViewById(R.id.feeling_icon);
 
         feeling_txt = view.findViewById(R.id.feeling_txt);
+        change_nio_edittext = view.findViewById(R.id.change_nio_edittext);
+        bio_txt = view.findViewById(R.id.bio_txt);
+
+        getActivity().getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
+
+        name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        feeling_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        username.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
+        change_nio_edittext.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,16 +150,59 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         feeling_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                feelingDialog = new FeelingDialog(getContext(),ProfileFragment.this);
+                feelingDialog = new FeelingDialog(getContext(),ProfileFragment.this,feelingNow);
                 feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 feelingDialog.show();
             }
         });
 
 
+        bio_txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                change_nio_edittext.setText(bio_txt.getText().toString());
+                bio_txt.setVisibility(View.GONE);
+                change_nio_edittext.setVisibility(View.VISIBLE);
+                change_nio_edittext.setEnabled(true);
+            }
+        });
+
+        change_nio_edittext.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        change_nio_edittext.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        change_nio_edittext.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    //do here your stuff f
+                   // change_nio_edittext.setText(change_nio_edittext.getText().toString());
+
+                    hideKeyboardFrom(getContext(),view);
+                    change_nio_edittext.clearFocus();
+
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    HashMap<String,Object> hashMap = new HashMap<>();
+                    hashMap.put("bio",change_nio_edittext.getText().toString());
+
+                   // if(change_nio_edittext.getText().toString().length()>0)
+                        databaseReference.updateChildren(hashMap);
+
+                    Toast.makeText(getContext(),"Bio updated!",Toast.LENGTH_SHORT).show();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+
+
         return view;
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -146,33 +217,49 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 
                 username.setText(user.getUsername());
                 name.setText(user.getName());
-              //  feeling_txt.setText(user.getFeeling());
-                switch (user.getFeeling())
+
+
+
+                try {
+                    change_nio_edittext.setText(user.getBio());
+                }catch (Exception e)
                 {
-                    case HAPPY:
-                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_happy));
-                        feeling_txt.setText(HAPPY);
-                        break;
-                    case SAD:
-                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_sad));
-                        feeling_txt.setText(SAD);
-                        break;
-                    case BORED:
-                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_bored));
-                        feeling_txt.setText(BORED);
-                        break;
-                    case ANGRY:
-                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_angry));
-                        feeling_txt.setText(ANGRY);
-                        break;
-                    case EXCITED:
-                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
-                        feeling_txt.setText(EXCITED);
-                        break;
-                    case CONFUSED:
-                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_confused));
-                        feeling_txt.setText(CONFUSED);
-                        break;
+                    //
+                }
+
+              //  feeling_txt.setText(user.getFeeling());
+
+                try {
+                    feelingNow = user.getFeeling();
+                    switch (user.getFeeling()) {
+                        case HAPPY:
+                            feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                            feeling_txt.setText(HAPPY);
+                            break;
+                        case SAD:
+                            feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                            feeling_txt.setText(SAD);
+                            break;
+                        case BORED:
+                            feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                            feeling_txt.setText(BORED);
+                            break;
+                        case ANGRY:
+                            feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                            feeling_txt.setText(ANGRY);
+                            break;
+                        case EXCITED:
+                            feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                            feeling_txt.setText(EXCITED);
+                            break;
+                        case CONFUSED:
+                            feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                            feeling_txt.setText(CONFUSED);
+                            break;
+                    }
+                }catch (Exception e)
+                {
+                    //
                 }
 
                 try{
@@ -238,6 +325,21 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         hyperspaceJump.setRepeatMode(Animation.INFINITE);
 
         feeling_icon.setAnimation(hyperspaceJump);
+        //feeling_txt.setAnimation(hyperspaceJump);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(feeling_txt,"alpha",0.0f,1.0f);
+        //ObjectAnimator animatorfeeling_icon = ObjectAnimator.ofFloat(feeling_txt,"alpha",0.0f,1.0f);
+
+        animatorSet.setDuration(2000);
+        animatorSet.playTogether(animator/*,animatorfeeling_icon*/);
+        animatorSet.start();
+
+
+
+
+
 
     }
 }

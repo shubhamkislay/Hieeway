@@ -20,6 +20,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -134,6 +136,11 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
         search_bar = view.findViewById(R.id.search_bar);
 
+
+        search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -183,6 +190,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             }
         });*/
+
 
         search_chat_btn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -189,23 +189,20 @@
 
 
                         <EditText
-
                             android:id="@+id/search_bar"
                             android:layout_width="100dp"
                             android:layout_height="40dp"
                             android:visibility="gone"
                             android:focusedByDefault="true"
                             android:hint="Search..."
+                            android:imeOptions="actionDone"
+                            android:inputType="textMultiLine"
+                            android:maxLength="30"
                             android:layout_gravity="center_vertical"
                             android:gravity="center_vertical"
                             android:textColorHint="#585858"
                             android:paddingLeft="12dp"
                             android:background="@color/darkButtonBackground" />
-
-
-
-
-
 
                     </LinearLayout>
 

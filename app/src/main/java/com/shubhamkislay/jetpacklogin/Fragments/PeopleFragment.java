@@ -15,12 +15,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -75,6 +77,10 @@ public class PeopleFragment extends Fragment {
         progressBarTwo = view.findViewById(R.id.progressTwo);
 
         searchPeople = view.findViewById(R.id.search_people);
+
+        searchPeople.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
         result_text = view.findViewById(R.id.result_text);
         result_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));

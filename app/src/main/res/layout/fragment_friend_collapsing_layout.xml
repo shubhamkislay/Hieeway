@@ -126,7 +126,7 @@
                             android:layout_centerVertical="true"
                             android:layout_height="32dp"
                             android:layout_alignParentRight="true"
-                            android:background="@drawable/ic_clear_black_24dp"
+                            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"
                             android:backgroundTint="#757575"/>
 
                     </RelativeLayout>
@@ -154,14 +154,12 @@
                         android:layout_toRightOf="@id/app_title"
                         android:layout_marginLeft="8dp"
                         android:layout_marginBottom="8dp"
-
                         android:layout_centerVertical="true"
-                        android:text="Requests"
                         android:textSize="12sp"
-                        android:background="@drawable/message_box_drawable"
-                        android:backgroundTint="@color/darkButtonBackground"
+                        android:layout_width="36dp"
+                        android:background="@drawable/layer_friends_request_btn"
                         android:textAllCaps="false"
-                        android:layout_width="wrap_content"
+                        android:padding="4dp"
                         android:layout_height="36dp" />
 
 
@@ -214,11 +212,10 @@
                             android:gravity="center_vertical"
                             android:textColorHint="#585858"
                             android:paddingLeft="12dp"
+                            android:imeOptions="actionDone"
+                            android:inputType="textMultiLine"
+                            android:maxLength="30"
                             android:background="@color/darkButtonBackground" />
-
-
-
-
 
 
                     </LinearLayout>

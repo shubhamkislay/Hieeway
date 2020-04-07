@@ -13,13 +13,14 @@ public class User {
     private String publicKey;
     private String publicKeyId;
     private String feeling;
+    private String bio;
 
 
 
     public User() {
     }
 
-    public User(String email,String name, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling) {
+    public User(String email,String name, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling, String bio) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -30,6 +31,7 @@ public class User {
         this.publicKey = publicKey;
         this.publicKeyId = publicKeyId;
         this.feeling = feeling;
+        this.bio = bio;
     }
 
     public String getEmail() {
@@ -104,6 +106,14 @@ public class User {
 
     public void setPublicKeyId(String publicKeyId) {
         this.publicKeyId = publicKeyId;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getName() {

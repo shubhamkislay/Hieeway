@@ -54,40 +54,7 @@
 
 
 
-        <RelativeLayout
-            android:id="@+id/edit_pic_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:background="@drawable/message_send_sent_background"
-            android:layout_alignParentRight="true"
-            android:layout_margin="16dp"
-            android:backgroundTint="#0F0F0F"
-            android:paddingRight="12dp"
-            android:paddingLeft="16dp">
 
-            <TextView
-                android:id="@+id/edit_pic_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:text="Profile Pic"
-                android:textColor="#fff"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
-            <Button
-                android:id="@+id/edit_image"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="4dp"
-                android:layout_toRightOf="@id/edit_pic_text"
-                android:background="@drawable/layer_edit_profile"
-                android:padding="8dp"
-                android:text="" />
-
-
-        </RelativeLayout>
 
 
 
@@ -184,6 +151,19 @@
                     android:layout_marginBottom="16dp"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/profile_pic"/>
+
+                <Button
+                    android:id="@+id/edit_image"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_above="@id/name"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="-22.5dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_toRightOf="@id/profile_image"
+                    android:background="@drawable/layer_edit_profile"
+                    android:padding="8dp"
+                    android:text="" />
                 <com.shubhamkislay.jetpacklogin.CustomImageView
                     android:id="@+id/profile_image_back"
                     android:layout_width="100dp"

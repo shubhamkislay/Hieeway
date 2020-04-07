@@ -17,6 +17,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -123,6 +125,11 @@ public class FriendListFagment extends Fragment {
 
 
         search_chat_btn = view.findViewById(R.id.search_chat_btn_friends);
+
+
+        search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
         //search_chat_btn_back = view.findViewById(R.id.search_chat_btn_back);
 
         //close_search = view.findViewById(R.id.close_search);
@@ -183,7 +190,7 @@ public class FriendListFagment extends Fragment {
                     // search_bar.setFocusable(true);
                     requests_btn.setVisibility(View.GONE);
 
-                    search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_clear_black_24dp));
+                    search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp));
                     search_bar.requestFocus();
                     // search_bar.setFocusable(true);
                     // search_bar.setSelected(true);
