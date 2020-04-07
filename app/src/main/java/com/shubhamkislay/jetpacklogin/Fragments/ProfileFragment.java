@@ -217,12 +217,12 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         change_nio_edittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if(!s.toString().equals(bio))
+/*                if(!s.toString().equals(bio))
                 {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
                 else
-                    relativeLayout.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(View.GONE);*/
 
             }
 
@@ -240,12 +240,12 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(!s.toString().equals(bio))
+/*                if(!s.toString().equals(bio))
                 {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
                 else
-                    relativeLayout.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(View.GONE);*/
 
             }
         });
@@ -274,8 +274,10 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 
 
                 try {
-                    change_nio_edittext.setText(user.getBio());
                     bio = user.getBio();
+                    change_nio_edittext.setText(user.getBio());
+
+
                 }catch (Exception e)
                 {
                     //

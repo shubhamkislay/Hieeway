@@ -126,13 +126,14 @@
             android:visibility="gone"/>
         <RelativeLayout
             android:id="@+id/edit_text_back"
+            android:background="@drawable/bio_edittext_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/username"
             android:layout_margin="16dp"
             android:layout_marginTop="8dp"
             android:alpha="0.35"
-            android:background="@drawable/send_message_back_highlight_drawable"/>
+            android:visibility="gone"/>
 
         <EditText
             android:id="@+id/change_nio_edittext"
