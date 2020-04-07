@@ -4,13 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -21,13 +25,21 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,19 +47,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.FriendListFagment;
 import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
 import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
 import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
+import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener {
+public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener {
 
     private TextView text_home;
     private ImageView homeBtnPressed, homeBtnUnpressed;
@@ -58,6 +79,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private TextView text_search;
     private ImageView searchBtnPressed, searchBtnUnpressed;
 
+    public static final int PERMISSION_PICK_IMAGE = 1000;
     private TextView text_profile;
     private CircleImageView profileBtnPressed, profileBtnUnpressed;
 
@@ -83,6 +105,13 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
 
+    private static final int IMAGE_REQUEST=1;
+    DatabaseReference databaseReference;
+    StorageReference storageReference;
+    private Button uploadButton;
+    private StorageTask uploadTask;
+
+
     RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
 
     int fragmentId=1;
@@ -102,6 +131,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         nav_bar = findViewById(R.id.nav_bar);
 
         getUserImageIntoNavButton();
+
+
+        storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
 
 
@@ -729,10 +761,270 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
 
+        profileFragment.setImageSelectionCropListener(NavButtonTest.this);
+
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
                 .replace(R.id.container_layout, profileFragment).commit();
         fragmentId=4;
+    }
+
+    @Override
+    public void imageSelect() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+
+        startActivityForResult(intent, PERMISSION_PICK_IMAGE);
+    }
+
+    private void startCrop(Uri myUri) {
+
+
+
+        Uri uri = myUri;
+
+
+        String destinationFileName = new StringBuilder(UUID.randomUUID().toString()).append(".jpg").toString();
+
+
+        UCrop uCrop = UCrop.of(uri,Uri.fromFile( new File(getCacheDir(),destinationFileName)));
+
+        UCrop.Options up = new UCrop.Options();
+        up.setLogoColor(getResources().getColor(R.color.colorBlack));
+        up.setStatusBarColor(getResources().getColor(R.color.colorBlack));
+        up.setToolbarColor(getResources().getColor(R.color.colorBlack));
+        up.setLogoColor(getResources().getColor(R.color.colorPrimaryDark));
+        up.setActiveWidgetColor(getResources().getColor(R.color.colorPrimaryDark));
+        up.setCompressionQuality(50);
+        /*up.setRootViewBackgroundColor(getResources().getColor(R.color.colorBlack));
+        up.setToolbarWidgetColor(getResources().getColor(R.color.colorBlack));
+        up.setDimmedLayerColor(getResources().getColor(R.color.colorPrimaryDark));*/
+
+        uCrop.withAspectRatio(9,18);
+        uCrop.withOptions(up);
+
+        /*UCropActivity uCropActivity = new UCropActivity();
+
+        uCropActivity.setTheme(R.style.AppTheme);*/
+
+
+
+
+
+
+        /**
+         * Use the code below for a square image selection i.e. for profile pictures
+         * uCrop.withAspectRatio(1.0f, 1.0f);**/
+
+        uCrop.start(NavButtonTest.this);
+
+    }
+
+    private void handleCropError(Intent data) {
+
+        final Throwable cropError = UCrop.getError(data);
+
+        if(cropError!=null)
+        {
+            Toast.makeText(this, ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(this, "Unexpected Error", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private void handleCropResult(Intent data) {
+
+        final Uri resultUri = UCrop.getOutput(data);
+        if(resultUri != null)
+        {
+            //registerUsernameEntryFragment.setImageUri(resultUri);
+            //Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+
+            if(uploadTask!=null&&uploadTask.isInProgress())
+            {
+                Toast.makeText(NavButtonTest.this,"Uploading..." , Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+
+                uploadImage(resultUri);
+            }
+
+        }
+        else
+        {
+            Toast.makeText(this, "Cannot retrieve crop image",Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void uploadImage(Uri imageUri)
+    {
+
+        /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this );
+
+        progressDialog.setMessage("Uploading photo");
+        progressDialog.show();*/
+        profileFragment.setProgressVisibility(true);
+
+        //registerUsernameEntryFragment.setProgressVisibility(true);
+
+        if(imageUri!=null)
+        {
+
+            final StorageReference fileReference = storageReference.child(System.currentTimeMillis()+"."+getExtension(imageUri));
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task task) throws Exception {
+
+                    if(!task.isSuccessful())
+                    {
+                        throw task.getException();
+                    }
+
+
+
+
+
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+
+                    if(task.isSuccessful())
+                    {
+
+                        Uri downloadUri = task.getResult();
+
+                        String mUri = downloadUri.toString();
+
+
+                        databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                .child(FirebaseAuth.getInstance()
+                                        .getCurrentUser()
+                                        .getUid());
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put("photo",mUri );
+                        databaseReference.updateChildren(map);
+                        //progressDialog.dismiss();
+
+
+                       Glide.with(NavButtonTest.this).load(mUri).into(profileBtnPressed);
+                       Glide.with(NavButtonTest.this).load(mUri).into(profileBtnUnpressed);
+
+
+
+                        // progressDialog.dismiss();
+                        profileFragment.setProgressVisibility(false);
+
+                        /*registerUsernameEntryFragment.setProgressVisibility(false);
+                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                        editor.putString(PHOTO_URL, mUri);
+                        editor.apply();
+
+                        registerUsernameEntryFragment.setUploadedImage(mUri);*/
+
+                    }
+                    else
+                    {
+                        Toast.makeText(NavButtonTest.this,"Uploading failed" ,Toast.LENGTH_SHORT).show();
+                        //progressDialog.dismiss();
+                       // registerUsernameEntryFragment.setProgressVisibility(false);
+                        profileFragment.setProgressVisibility(false);
+                    }
+
+                }
+            });
+
+
+        }
+        else
+        {
+            Toast.makeText(NavButtonTest.this,"No Image selected",Toast.LENGTH_SHORT ).show();
+            profileFragment.setProgressVisibility(false);
+        }
+
+
+    }
+
+    private String getExtension(Uri uri)
+    {
+
+
+        ContentResolver contentResolver = NavButtonTest.this.getContentResolver();
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode == RESULT_OK)
+        {
+
+
+            if(requestCode==PERMISSION_PICK_IMAGE) {
+                //  Bitmap bitmap = BitmapUtils.getBitmapFromGallery(getContext(), data.getData(), 800, 800);
+
+
+
+
+                // image_selected_uri = data.getData();
+
+                startCrop(data.getData());
+
+
+                /*//clear bitmap memory
+
+                originalBitmap.recycle();
+                finalBitmap.recycle();
+                filteredBitmap.recycle();
+
+
+                originalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                finalBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                filteredBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+
+                //   img_preview.setImageBitmap(originalBitmap);
+                photoEditorView.getSource().setImageBitmap(originalBitmap);*/
+
+                //bitmap.recycle();
+
+                //Render selected img thumbnail
+
+                /*filtersListFragment.displayThumbnail(originalBitmap);*/
+
+                /*filtersListFragment = FiltersListFragment.getInstance(originalBitmap);
+                filtersListFragment.setListener(this);*/
+            }
+
+
+
+            else if(requestCode == UCrop.REQUEST_CROP) {
+                //  Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
+                handleCropResult(data);
+
+            }
+
+            else if(requestCode == UCrop.RESULT_ERROR) {
+                handleCropError(data);
+            }
+
+
+        }
     }
 
     public void deactivateProfileBtn()
@@ -1027,4 +1319,6 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         animateArrow();
     }
+
+
 }
