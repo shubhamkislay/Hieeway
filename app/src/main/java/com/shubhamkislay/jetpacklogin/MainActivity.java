@@ -696,6 +696,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerMap.put("userid", firebaseAuth.getCurrentUser().getUid());
         registerMap.put("token",device_token);
         registerMap.put("feeling",HAPPY);
+        registerMap.put("feelingIcon", "default");
         registerMap.put(PUBLIC_KEY,public_key);
         registerMap.put("publicKeyId",publickeyid);
 

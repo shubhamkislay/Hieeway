@@ -36,7 +36,7 @@ public class FeelingDialog extends Dialog {
     TextView excited_txt;
     TextView angry_txt;
     TextView bored_txt;
-    RelativeLayout add_feeling_layout, add_feeling_btn;
+    RelativeLayout add_feeling_layout, add_feeling_btn, custom_feel_bacl;
     Context context;
 
 
@@ -68,6 +68,8 @@ public class FeelingDialog extends Dialog {
         excited_txt = findViewById(R.id.excited_txt);
         angry_txt = findViewById(R.id.angry_txt);
         bored_txt = findViewById(R.id.bored_txt);
+
+        custom_feel_bacl = findViewById(R.id.custom_feel_bacl);
 
         add_feeling_btn = findViewById(R.id.add_feeling_btn);
 
@@ -187,6 +189,10 @@ public class FeelingDialog extends Dialog {
 
             case BORED: bored_emoji.setBackgroundTintList(null);
                 bored_txt.setTextColor(getContext().getResources().getColor(R.color.white));
+                break;
+
+            default:
+                custom_feel_bacl.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 break;
 
 

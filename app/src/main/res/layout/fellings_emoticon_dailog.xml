@@ -208,6 +208,7 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
+                android:id="@+id/custom_feel_bacl"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerInParent="true"

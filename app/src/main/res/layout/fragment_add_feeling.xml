@@ -78,12 +78,12 @@
 
                 <TextView
                     android:id="@+id/emoji_icon"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="0dp"
+                    android:layout_marginBottom="5dp"
                     android:gravity="center"
-                    android:textSize="50sp" />
+                    android:textSize="44sp" />
 
             </RelativeLayout>
 

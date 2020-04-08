@@ -14,13 +14,14 @@ public class User {
     private String publicKeyId;
     private String feeling;
     private String bio;
+    private String feelingIcon;
 
 
 
     public User() {
     }
 
-    public User(String email,String name, String phonenumber, String username, String userid,String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling, String bio) {
+    public User(String email, String name, String phonenumber, String username, String userid, String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling, String bio, String feelingIcon) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -32,6 +33,7 @@ public class User {
         this.publicKeyId = publicKeyId;
         this.feeling = feeling;
         this.bio = bio;
+        this.feelingIcon = feelingIcon;
     }
 
     public String getEmail() {
@@ -129,5 +131,13 @@ public class User {
 
     public void setFeeling(String feeling) {
         this.feeling = feeling;
+    }
+
+    public String getFeelingIcon() {
+        return feelingIcon;
+    }
+
+    public void setFeelingIcon(String feelingIcon) {
+        this.feelingIcon = feelingIcon;
     }
 }

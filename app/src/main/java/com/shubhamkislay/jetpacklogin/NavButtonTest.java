@@ -1355,12 +1355,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             profileFragment.setEditBioFragmentListener(NavButtonTest.this);
             profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
+
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                     .replace(R.id.container_layout, profileFragment).commit();
         } else {
             addFeelingFragment = new AddFeelingFragment();
 
+            addFeelingFragment.setAddFeelingFragmentListener(NavButtonTest.this);
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                     .replace(R.id.container_layout, addFeelingFragment).commit();
