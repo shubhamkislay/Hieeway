@@ -201,6 +201,19 @@
 
 
         </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:text="Your friends will be notified about your feeling"
+            android:textColor="#8D8D8D"
+            android:textSize="12sp"/>
+        </RelativeLayout>
 
 
 

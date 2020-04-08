@@ -52,11 +52,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.EditBioLayoutFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.FriendListFagment;
 import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
 import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
 import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
+import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.yalantis.ucrop.UCrop;
@@ -68,7 +70,9 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener {
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
+
+public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener {
 
     private TextView text_home;
     private ImageView homeBtnPressed, homeBtnUnpressed;
@@ -84,6 +88,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private CircleImageView profileBtnPressed, profileBtnUnpressed;
 
     private FrameLayout frameLayout;
+    EditBioLayoutFragment editBioLayoutFragment;
 
     ChatsFragment chatsFragment;
     PeopleFragment peopleFragment;
@@ -212,6 +217,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         peopleFragment = new PeopleFragment();
         profileFragment = new ProfileFragment();
         friendListFagment = new FriendListFagment();
+        editBioLayoutFragment = new EditBioLayoutFragment();
 
         ArrayList<Fragment> fragmentList = new ArrayList<>();
 
@@ -762,7 +768,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         profileFragment.setImageSelectionCropListener(NavButtonTest.this);
+        profileFragment.setEditBioFragmentListener(NavButtonTest.this);
 
+        getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
                 .replace(R.id.container_layout, profileFragment).commit();
@@ -1321,4 +1329,25 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     }
 
 
+    @Override
+    public void setEditBioChange(Boolean returnFromEditBio,String currentBio) {
+        if(returnFromEditBio)
+        {
+
+            profileFragment.setImageSelectionCropListener(NavButtonTest.this);
+            profileFragment.setEditBioFragmentListener(NavButtonTest.this);
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                    .replace(R.id.container_layout, profileFragment).commit();
+        }
+        else
+        {
+            editBioLayoutFragment.setCurrentBio(NavButtonTest.this,currentBio);
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                    .replace(R.id.container_layout, editBioLayoutFragment).commit();
+        }
+
+    }
 }

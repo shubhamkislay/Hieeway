@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -19,7 +20,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextPaint;
 import android.text.TextWatcher;
+import android.text.style.URLSpan;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +52,7 @@ import com.shubhamkislay.jetpacklogin.Adapters.PeopleAdapter;
 import com.shubhamkislay.jetpacklogin.DeleteOptionsDialog;
 import com.shubhamkislay.jetpacklogin.FeelingDialog;
 import com.shubhamkislay.jetpacklogin.ImageUpload;
+import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.MainActivity;
@@ -78,6 +84,9 @@ public class ProfileFragment extends Fragment implements FeelingListener {
     ProgressBar upload_progress;
     RelativeLayout relativeLayout;
     String bio = "";
+    Boolean continue_blinking = false;
+    Boolean isBlinking = false;
+    EditBioFragmentListener editBioFragmentListener;
 
 /*
     @Override
@@ -119,7 +128,8 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         feeling_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         username.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
-        change_nio_edittext.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //change_nio_edittext.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        bio_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,14 +183,29 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 
         bio_txt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {/*
                 change_nio_edittext.setText(bio_txt.getText().toString());
                 bio_txt.setVisibility(View.GONE);
                 change_nio_edittext.setVisibility(View.VISIBLE);
-                change_nio_edittext.setEnabled(true);
+                change_nio_edittext.setEnabled(true);*/
+
+                editBioFragmentListener.setEditBioChange(false,bio_txt.getText().toString());
             }
         });
+        try {
+            if (bio.length() < 1) {
+                bio_txt.setText("Tell something about yourself");
+                bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
+            } else {
+                bio_txt.setText(bio);
+                stripUnderlines(bio_txt);
+                bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+            }
+        }catch (Exception e){
+            //
+        }
 
+/*
         change_nio_edittext.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         change_nio_edittext.setRawInputType(InputType.TYPE_CLASS_TEXT);
@@ -212,17 +237,21 @@ public class ProfileFragment extends Fragment implements FeelingListener {
                 return false;
             }
         });
+*/
 
 
+/*
         change_nio_edittext.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+*/
 /*                if(!s.toString().equals(bio))
                 {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
                 else
-                    relativeLayout.setVisibility(View.GONE);*/
+                    relativeLayout.setVisibility(View.GONE);*//*
+
 
             }
 
@@ -232,23 +261,33 @@ public class ProfileFragment extends Fragment implements FeelingListener {
                 if(!s.toString().equals(bio))
                 {
                     relativeLayout.setVisibility(View.VISIBLE);
+                    continue_blinking = true;
+                    if(!isBlinking)
+                        blinkEditTextBackground();
+                    isBlinking = true;
                 }
-                else
+                else {
                     relativeLayout.setVisibility(View.GONE);
+                    continue_blinking = false;
+                    isBlinking = false;
+                }
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+*/
 /*                if(!s.toString().equals(bio))
                 {
                     relativeLayout.setVisibility(View.VISIBLE);
                 }
                 else
-                    relativeLayout.setVisibility(View.GONE);*/
+                    relativeLayout.setVisibility(View.GONE);*//*
+
 
             }
         });
+*/
 
 
 
@@ -275,12 +314,17 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 
                 try {
                     bio = user.getBio();
-                    change_nio_edittext.setText(user.getBio());
+                   // change_nio_edittext.setText(user.getBio());
+                    bio_txt.setText(user.getBio());
+                    stripUnderlines(bio_txt);
+                    bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
 
 
                 }catch (Exception e)
                 {
                     //
+                    bio_txt.setText("Tell something about yourself");
+                    bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
                 }
 
               //  feeling_txt.setText(user.getFeeling());
@@ -338,6 +382,11 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         this.imageSelectionCropListener = imageSelectionCropListener;
     }
 
+    public  void setEditBioFragmentListener(EditBioFragmentListener editBioFragmentListener)
+    {
+        this.editBioFragmentListener = editBioFragmentListener;
+    }
+
     @Override
     public void changeFeeling(String feeling) {
         DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -379,6 +428,34 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         }
     }
 
+    private void blinkEditTextBackground() {
+
+
+
+        relativeLayout.animate().alpha(1.0f).setDuration(250);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                relativeLayout.animate().alpha(0.0f).setDuration(250);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if(continue_blinking)
+                            blinkEditTextBackground();
+
+                    }
+                }, 300);
+            }
+
+        },300);
+
+
+
+
+    }
+
     public void animateEmoji()
     {
         Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.image_bounce);
@@ -417,8 +494,31 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         {
             center_dp.setAlpha(1.0f);
             upload_progress.setVisibility(View.GONE);
-            profile_pic_background.setAlpha(0.8f);
+            profile_pic_background.setAlpha(1.0f);
         }
 
+    }
+
+    private void stripUnderlines(TextView textView) {
+        Spannable s = new SpannableString(textView.getText());
+        URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
+        for (URLSpan span: spans) {
+            int start = s.getSpanStart(span);
+            int end = s.getSpanEnd(span);
+            s.removeSpan(span);
+            span = new URLSpanNoUnderline(span.getURL());
+            s.setSpan(span, start, end, 0);
+        }
+        textView.setText(s);
+    }
+
+    private class URLSpanNoUnderline extends URLSpan {
+        public URLSpanNoUnderline(String url) {
+            super(url);
+        }
+        @Override public void updateDrawState(TextPaint ds) {
+            super.updateDrawState(ds);
+            ds.setUnderlineText(false);
+        }
     }
 }

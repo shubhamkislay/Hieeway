@@ -210,6 +210,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                     search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp));
                     search_bar.requestFocus();
 
+
+
                     // search_bar.setFocusable(true);
                     // search_bar.setSelected(true);
                     // search_btn_layout.setVisibility(View.GONE);
