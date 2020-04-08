@@ -139,9 +139,7 @@ public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapt
             }
         });
 
-        int unicode = 0x1F60A;
 
-        Bio += getEmojiByUnicode(unicode);
         edit_text_bio.setText(Bio.replaceAll("(?m)^[ \t]*\r?\n", ""));
 
 
