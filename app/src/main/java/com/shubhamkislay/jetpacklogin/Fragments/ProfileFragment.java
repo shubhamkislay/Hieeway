@@ -205,7 +205,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 bio_txt.setVisibility(View.GONE);
                 change_nio_edittext.setVisibility(View.VISIBLE);
                 change_nio_edittext.setEnabled(true);*/
-                if (bio_txt.getText().toString().length() > 0)
+                if (bio_txt.getText().toString().length() < 1)
                     editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
             }
         });
@@ -468,6 +468,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         animateEmoji();
         HashMap<String,Object> feelingHash =  new HashMap<>();
+        feeling_icon.setVisibility(View.VISIBLE);
+        emoji_icon.setVisibility(View.GONE);
         switch (feeling)
         {
             case HAPPY: feelingHash.put("feeling",HAPPY);
