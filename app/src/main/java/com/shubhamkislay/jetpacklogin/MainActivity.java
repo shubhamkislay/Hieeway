@@ -64,6 +64,7 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener, ImageSelectionCropListener {
 
+    //Last commit stated as Profile Fragment is a major migration commit from appcompat to androidX
 
     Button loginBtn, registerBtn, get_started, get_started_back;
     FirebaseAuth firebaseAuth;
