@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.shubhamkislay.jetpacklogin.Adapters.EmojiAdapter;
 import com.shubhamkislay.jetpacklogin.Adapters.EmojiDisplayAdapter;
 import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
+import com.shubhamkislay.jetpacklogin.Model.EmojiList;
 import com.shubhamkislay.jetpacklogin.R;
 
 import java.util.ArrayList;
@@ -79,23 +80,17 @@ public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapt
         bio_layout = view.findViewById(R.id.bio_layout);
 
 
-        emojiList.add(getEmojiByUnicode(0x23EC));
-        emojiList.add(getEmojiByUnicode(0x23F0));
-        emojiList.add(getEmojiByUnicode(0x23F3));
-        emojiList.add(getEmojiByUnicode(0x24C2));
-        emojiList.add(getEmojiByUnicode(0x25AA));
-        emojiList.add(getEmojiByUnicode(0x25AB));
-        emojiList.add(getEmojiByUnicode(0x25C0));
-        emojiList.add(getEmojiByUnicode(0x25FB));
-        emojiList.add(getEmojiByUnicode(0x25FC));
-        emojiList.add(getEmojiByUnicode(0x25FD));
-        emojiList.add(getEmojiByUnicode(0x2600));
+
+
 
 
 
       /*  EmojiDisplayAdapter adapter = new EmojiDisplayAdapter(getContext(), emojiList,this);
         recycler_emoji.setAdapter(adapter);*/
-        final EmojiDisplayAdapter adapter = new EmojiDisplayAdapter(getContext(), PhotoEditor.getEmojis(getContext()), this);
+        EmojiList emojiList = new EmojiList();
+        // final EmojiDisplayAdapter adapter = new EmojiDisplayAdapter(getContext(), PhotoEditor.getEmojis(getContext()), this);
+
+        final EmojiDisplayAdapter adapter = new EmojiDisplayAdapter(getContext(), emojiList.getEmojiList(), this);
 
 
         open_emojis.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +115,7 @@ public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapt
                 String editedBio = edit_text_bio.getText().toString().replaceAll("(?m)^[ \t]*\r?\n", "");
 
 
+
                 hashMap.put("bio",editedBio);
 
                 databaseReference.updateChildren(hashMap);
@@ -139,6 +135,7 @@ public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapt
             }
         });
 
+        // Bio+=" "+getEmojiByUnicode(0x1F680);
 
         edit_text_bio.setText(Bio.replaceAll("(?m)^[ \t]*\r?\n", ""));
 

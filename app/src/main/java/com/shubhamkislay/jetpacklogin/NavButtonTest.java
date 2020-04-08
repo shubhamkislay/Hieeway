@@ -1329,6 +1329,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         }
         else
         {
+            editBioLayoutFragment = new EditBioLayoutFragment();
             editBioLayoutFragment.setCurrentBio(NavButtonTest.this,currentBio);
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
