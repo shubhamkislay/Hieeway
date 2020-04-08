@@ -1,8 +1,9 @@
 package com.shubhamkislay.jetpacklogin.Adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Handler;
 
 import javax.crypto.Cipher;
 

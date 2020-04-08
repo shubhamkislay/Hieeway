@@ -1,31 +1,32 @@
 package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.app.Activity;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -42,32 +43,22 @@ import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Adapters.ChatMessageAdapter;
-import com.shubhamkislay.jetpacklogin.Adapters.PeopleAdapter;
-import com.shubhamkislay.jetpacklogin.AlphaActivity;
 import com.shubhamkislay.jetpacklogin.ChatsFragmentViewModel;
-import com.shubhamkislay.jetpacklogin.EphemeralMessageActivityViewModelFactory;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
 import com.shubhamkislay.jetpacklogin.GridSpacingItemDecoration;
 import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
 import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
-import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
-import com.shubhamkislay.jetpacklogin.Model.User;
-import com.shubhamkislay.jetpacklogin.NavButtonTest;
-import com.shubhamkislay.jetpacklogin.PeopleFragmentViewModel;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.SharedViewModel;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
-import com.shubhamkislay.jetpacklogin.UserPicViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class ChatsFragment extends Fragment implements DeleteOptionsListener{
@@ -328,7 +319,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),spanCount);
 
 
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
         //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         chats_recyclerview.setLayoutManager(gridLayoutManager);

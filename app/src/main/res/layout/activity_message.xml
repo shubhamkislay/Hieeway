@@ -36,7 +36,7 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
 
         android:id="@+id/message_recyclerview"
         android:layout_below="@id/top_panel"

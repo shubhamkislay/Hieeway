@@ -1,11 +1,10 @@
 package com.shubhamkislay.jetpacklogin;
 
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
-import android.os.Handler;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -15,8 +14,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Model.LiveMessage;
-import com.shubhamkislay.jetpacklogin.Model.User;
-
 
 
 public class LiveVideoViewModel extends ViewModel {

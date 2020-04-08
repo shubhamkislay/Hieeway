@@ -3,12 +3,12 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.Manifest;
 import android.animation.Animator;
-import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,11 +25,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -43,7 +46,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -83,7 +85,6 @@ import com.shubhamkislay.jetpacklogin.CameraActivity;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageActivityViewModelFactory;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
 import com.shubhamkislay.jetpacklogin.EphemeralPhotoActivity;
-import com.shubhamkislay.jetpacklogin.Interface.MessageHighlightListener;
 import com.shubhamkislay.jetpacklogin.Interface.MessageRunningListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatListItemCreationModel;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
@@ -92,7 +93,6 @@ import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.SendMessageAsyncModel;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.R;
-import com.shubhamkislay.jetpacklogin.SwipeButtonActivity;
 import com.shubhamkislay.jetpacklogin.TypeWriter;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
 import com.shubhamkislay.jetpacklogin.UserPicViewModelFactory;
@@ -105,9 +105,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.crypto.Cipher;
@@ -1228,7 +1226,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         EphemeralMessageActivityViewModelFactory ephemeralMessageActivityViewModelFactory = new EphemeralMessageActivityViewModelFactory(userIdChattingWith);
         ephemeralMessageViewModel = ViewModelProviders.of(this, ephemeralMessageActivityViewModelFactory).get(EphemeralMessageViewModel.class);
-        ephemeralMessageViewModel.getAllMessages().observe(this, new Observer<List<ChatMessage>>() {
+        ephemeralMessageViewModel.getAllMessages().observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
             @Override
             public void onChanged(@Nullable List<ChatMessage> chatMessageList) {
 
@@ -1441,7 +1439,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         UserPicViewModelFactory userPicViewModelFactory = new UserPicViewModelFactory(userIdChattingWith);
        UserPicViewModel userPicViewModel = ViewModelProviders.of(this, userPicViewModelFactory).get(UserPicViewModel.class);
-        userPicViewModel.getUserPic().observe(this, new Observer<User>() {
+        userPicViewModel.getUserPic().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(@Nullable final User user) {
 

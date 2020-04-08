@@ -1,28 +1,18 @@
 package com.shubhamkislay.jetpacklogin;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.ScrollerCompat;
-import android.support.v4.view.ViewCompat;
+
+import androidx.core.view.MotionEventCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.core.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import android.view.animation.DecelerateInterpolator;
 
-import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.ScrollerCompat;
-import android.support.v4.view.ViewCompat;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.ViewConfiguration;
-import android.view.animation.DecelerateInterpolator;
+import androidx.core.widget.ScrollerCompat;
 
 
 public class FlingableViewPager extends ViewPager

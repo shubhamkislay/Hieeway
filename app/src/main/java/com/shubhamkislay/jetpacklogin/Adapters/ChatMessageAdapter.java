@@ -3,17 +3,12 @@ package com.shubhamkislay.jetpacklogin.Adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityOptions;
-import android.app.AlertDialog;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -21,28 +16,22 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
-import android.util.Pair;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -56,42 +45,27 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.shubhamkislay.jetpacklogin.AlphaActivity;
 import com.shubhamkislay.jetpacklogin.ArchiveActivity;
-import com.shubhamkislay.jetpacklogin.AutoTextSizeChangeActivity;
 import com.shubhamkislay.jetpacklogin.DeleteOptionsDialog;
-import com.shubhamkislay.jetpacklogin.EncryptionActivity;
-import com.shubhamkislay.jetpacklogin.EphemeralChainMessageActivity;
-import com.shubhamkislay.jetpacklogin.EphemeralMessageActivity;
-import com.shubhamkislay.jetpacklogin.EphemeralMessageActivityViewModelFactory;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
-import com.shubhamkislay.jetpacklogin.FireVideo;
 import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.CheckPendingMessageAsyncModel;
-import com.shubhamkislay.jetpacklogin.Model.LiveMessage;
 import com.shubhamkislay.jetpacklogin.Model.User;
-import com.shubhamkislay.jetpacklogin.NavButtonTest;
 import com.shubhamkislay.jetpacklogin.R;
-import com.shubhamkislay.jetpacklogin.RevealReplyActivity;
-import com.shubhamkislay.jetpacklogin.SwipeButtonActivity;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 import com.shubhamkislay.jetpacklogin.VerticalRegisterationActivity;
-import com.shubhamkislay.jetpacklogin.WebRTCActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,9 +74,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements DeleteOptionsListener {
 

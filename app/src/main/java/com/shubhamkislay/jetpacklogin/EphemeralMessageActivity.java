@@ -3,8 +3,9 @@ package com.shubhamkislay.jetpacklogin;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,9 +15,10 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,7 +44,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hanks.htextview.line.LineTextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -50,10 +51,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.hanks.htextview.base.HTextView;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
-import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.ArrayList;

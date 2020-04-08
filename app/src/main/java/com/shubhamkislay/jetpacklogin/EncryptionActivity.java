@@ -1,7 +1,8 @@
 package com.shubhamkislay.jetpacklogin;
 
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;

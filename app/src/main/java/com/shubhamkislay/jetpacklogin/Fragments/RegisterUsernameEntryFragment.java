@@ -2,16 +2,12 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -29,33 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.CustomImageView;
-import com.shubhamkislay.jetpacklogin.FiltersListFragment;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
-import com.shubhamkislay.jetpacklogin.PhotoEditToolsActivity;
 import com.shubhamkislay.jetpacklogin.R;
-import com.shubhamkislay.jetpacklogin.Utils.BitmapUtils;
-import com.yalantis.ucrop.UCrop;
-import com.yalantis.ucrop.UCropActivity;
-
-import java.io.File;
-import java.util.UUID;
-
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.MODE_PRIVATE;
 
 
 /**

@@ -1,10 +1,9 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -14,7 +13,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.ArrayList;

@@ -3,16 +3,14 @@ package com.shubhamkislay.jetpacklogin;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 
 public class PhotoViewerUploadActivity extends AppCompatActivity {
 

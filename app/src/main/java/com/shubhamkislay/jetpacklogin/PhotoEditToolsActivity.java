@@ -1,7 +1,6 @@
 package com.shubhamkislay.jetpacklogin;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,13 +10,17 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
+
+import androidx.cardview.widget.CardView;
 import android.text.TextUtils;
 import android.util.LruCache;
 import android.view.View;
@@ -997,6 +1000,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK)
         {
             if(requestCode==PERMISSION_PICK_IMAGE) {

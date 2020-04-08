@@ -4,19 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Base64;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -30,23 +23,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.shubhamkislay.jetpacklogin.Interface.BrushFragmentListener;
-import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
 import com.shubhamkislay.jetpacklogin.Interface.RevealOptionListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
-import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.spec.KeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.Arrays;
 import java.util.HashMap;
-
-import javax.crypto.Cipher;
 
 import static android.content.Context.MODE_PRIVATE;
 

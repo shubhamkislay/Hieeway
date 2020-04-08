@@ -2,20 +2,21 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 
 import android.Manifest;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
@@ -30,18 +31,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.shubhamkislay.jetpacklogin.CameraActivity;
-import com.shubhamkislay.jetpacklogin.FireVideo;
 import com.shubhamkislay.jetpacklogin.Interface.LiveMessageEventListener;
 import com.shubhamkislay.jetpacklogin.LiveMessagingViewModel;
 import com.shubhamkislay.jetpacklogin.LiveMessagingViewModelFactory;
@@ -54,9 +50,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import br.com.instachat.emojilibrary.model.layout.EmojiCompatActivity;
-import br.com.instachat.emojilibrary.model.layout.EmojiEditText;
-import br.com.instachat.emojilibrary.model.layout.EmojiKeyboardLayout;
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;

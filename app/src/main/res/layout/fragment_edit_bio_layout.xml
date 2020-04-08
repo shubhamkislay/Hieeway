@@ -6,6 +6,7 @@
     tools:context=".Fragments.EditBioLayoutFragment">
 
     <RelativeLayout
+        android:id="@+id/bio_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBlack">
@@ -64,9 +65,26 @@
             android:padding="12dp"
             android:textColor="#fff"
             android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/open_emojis"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/edit_text_bio"
+            android:layout_centerHorizontal="true"
+            android:text="click" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/emojiRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/open_emojis"
+            android:layout_marginTop="8dp"
+            android:background="#000"
+            android:visibility="gone" />
+
+
     </RelativeLayout>
-
-
 
 
 </FrameLayout>

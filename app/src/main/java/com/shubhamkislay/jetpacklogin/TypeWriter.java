@@ -4,13 +4,12 @@ package com.shubhamkislay.jetpacklogin;
 import android.content.Context;
 
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 
 import android.os.Handler;
 
 
-public class TypeWriter extends android.support.v7.widget.AppCompatTextView {
+public class TypeWriter extends androidx.appcompat.widget.AppCompatTextView {
 
     private CharSequence mText;
     private int index;

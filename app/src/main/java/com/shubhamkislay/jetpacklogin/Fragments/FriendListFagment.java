@@ -1,7 +1,6 @@
 package com.shubhamkislay.jetpacklogin.Fragments;
 
 
-import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,13 +8,16 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -25,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -35,7 +36,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -46,14 +46,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Adapters.FriendsAdapter;
 import com.shubhamkislay.jetpacklogin.GridSpacingItemDecoration;
-import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.Friend;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.RequestTrackerActivity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -333,7 +331,7 @@ public class FriendListFagment extends Fragment {
         LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),spanCount);
 
 
-        gridLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
         //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         friend_list_recyclerview.setLayoutManager(gridLayoutManager);

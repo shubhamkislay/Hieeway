@@ -2,8 +2,9 @@ package com.shubhamkislay.jetpacklogin;
 
 import android.content.Intent;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.ConsoleMessage;
@@ -13,7 +14,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.firebase.auth.FirebaseAuth;

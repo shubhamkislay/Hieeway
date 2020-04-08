@@ -1,28 +1,25 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
@@ -34,14 +31,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -980,14 +973,13 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK)
-        {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
 
 
-            if(requestCode==PERMISSION_PICK_IMAGE) {
+            if (requestCode == PERMISSION_PICK_IMAGE) {
                 //  Bitmap bitmap = BitmapUtils.getBitmapFromGallery(getContext(), data.getData(), 800, 800);
-
-
 
 
                 // image_selected_uri = data.getData();
@@ -1017,17 +1009,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                 /*filtersListFragment = FiltersListFragment.getInstance(originalBitmap);
                 filtersListFragment.setListener(this);*/
-            }
-
-
-
-            else if(requestCode == UCrop.REQUEST_CROP) {
+            } else if (requestCode == UCrop.REQUEST_CROP) {
                 //  Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
                 handleCropResult(data);
 
-            }
-
-            else if(requestCode == UCrop.RESULT_ERROR) {
+            } else if (requestCode == UCrop.RESULT_ERROR) {
                 handleCropError(data);
             }
 

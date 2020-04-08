@@ -34,12 +34,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -81,8 +84,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
-
-import static com.shubhamkislay.jetpacklogin.PhotoEditToolsActivity.PERMISSION_INSERT_IMAGE;
 
 
 public class Camera2BasicFragment extends Fragment

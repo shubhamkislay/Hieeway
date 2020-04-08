@@ -4,16 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -33,24 +28,11 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.shubhamkislay.jetpacklogin.ArchiveActivity;
-import com.shubhamkislay.jetpacklogin.AutoTextSizeChangeActivity;
-import com.shubhamkislay.jetpacklogin.DeleteOptionsDialog;
-import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
-import com.shubhamkislay.jetpacklogin.Model.Friend;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 
-import java.util.HashMap;
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 

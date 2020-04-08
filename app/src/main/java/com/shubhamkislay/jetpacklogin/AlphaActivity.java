@@ -2,37 +2,30 @@ package com.shubhamkislay.jetpacklogin;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.gauravk.bubblenavigation.BubbleNavigationConstraintView;
 import com.gauravk.bubblenavigation.BubbleToggleView;
 import com.gauravk.bubblenavigation.listener.BubbleNavigationChangeListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.FriendListFagment;
 import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
 import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
-import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
-import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.ArrayList;
 

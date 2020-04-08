@@ -40,8 +40,7 @@
     </RelativeLayout>
 
 
-
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav_bar"
         android:alpha="1.0"
         android:layout_width="match_parent"
@@ -295,7 +294,7 @@
         </RelativeLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/send_arrow"

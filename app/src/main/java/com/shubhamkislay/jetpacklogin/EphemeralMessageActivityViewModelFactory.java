@@ -1,10 +1,8 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
-
-import com.shubhamkislay.jetpacklogin.Adapters.ChatMessageAdapter;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
 
 public class EphemeralMessageActivityViewModelFactory implements ViewModelProvider.Factory {
 

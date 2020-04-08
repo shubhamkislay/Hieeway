@@ -2,8 +2,10 @@ package com.shubhamkislay.jetpacklogin;
 
 
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialogFragment;
-import android.support.v4.app.Fragment;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

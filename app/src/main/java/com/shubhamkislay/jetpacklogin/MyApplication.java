@@ -1,15 +1,12 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

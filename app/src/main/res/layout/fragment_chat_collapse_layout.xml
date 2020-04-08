@@ -10,11 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
 
             android:layout_marginTop="2dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -35,12 +35,12 @@
             android:layout_above="@id/bottom_panel"
             android:background="@drawable/status_bar_fade"/>
 
-        <android.support.design.widget.AppBarLayout
+            <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:background="@android:color/transparent"
             android:layout_height="wrap_content">
 
-            <android.support.design.widget.CollapsingToolbarLayout
+                <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layout_scrollFlags="scroll|enterAlways">
@@ -216,14 +216,10 @@
                 </RelativeLayout>
 
 
-            </android.support.design.widget.CollapsingToolbarLayout>
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
 
 
-
-
-
-
-        </android.support.design.widget.AppBarLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
 
 
@@ -289,8 +285,7 @@
             android:background="@drawable/status_bar_fade"/>
 
 
-
-    </android.support.design.widget.CoordinatorLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <ImageView
             android:id="@+id/progress_menu_logo"

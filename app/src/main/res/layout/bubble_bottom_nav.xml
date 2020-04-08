@@ -127,7 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"/>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:visibility="gone"
         android:layout_width="match_parent"

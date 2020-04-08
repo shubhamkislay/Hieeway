@@ -3,11 +3,9 @@ package com.shubhamkislay.jetpacklogin;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;

@@ -4,29 +4,45 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.shubhamkislay.jetpacklogin.Adapters.EmojiAdapter;
+import com.shubhamkislay.jetpacklogin.Adapters.EmojiDisplayAdapter;
 import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
 import com.shubhamkislay.jetpacklogin.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import ja.burhanrashid52.photoeditor.PhotoEditor;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditBioLayoutFragment extends Fragment {
+public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapter.EmojiAdapterListener {
 
     TextView edit_text_bio, cancel_edit, confirm_edit;
     EditBioFragmentListener editBioFragmentListener;
     String Bio="";
+    RecyclerView recycler_emoji;
+    List<String> emojiList;
+    Button open_emojis;
+    RelativeLayout bio_layout;
 
 
     public EditBioLayoutFragment() {
@@ -49,6 +65,49 @@ public class EditBioLayoutFragment extends Fragment {
         confirm_edit = view.findViewById(R.id.confirm_edit);
 
         edit_text_bio.append("\ud83d\ude01");
+
+        recycler_emoji = view.findViewById(R.id.emojiRecyclerView);
+
+        recycler_emoji.setHasFixedSize(true);
+
+        recycler_emoji.setLayoutManager(new GridLayoutManager(getActivity(), 5));
+
+        emojiList = new ArrayList<>();
+
+        open_emojis = view.findViewById(R.id.open_emojis);
+
+        bio_layout = view.findViewById(R.id.bio_layout);
+
+
+        emojiList.add(getEmojiByUnicode(0x23EC));
+        emojiList.add(getEmojiByUnicode(0x23F0));
+        emojiList.add(getEmojiByUnicode(0x23F3));
+        emojiList.add(getEmojiByUnicode(0x24C2));
+        emojiList.add(getEmojiByUnicode(0x25AA));
+        emojiList.add(getEmojiByUnicode(0x25AB));
+        emojiList.add(getEmojiByUnicode(0x25C0));
+        emojiList.add(getEmojiByUnicode(0x25FB));
+        emojiList.add(getEmojiByUnicode(0x25FC));
+        emojiList.add(getEmojiByUnicode(0x25FD));
+        emojiList.add(getEmojiByUnicode(0x2600));
+
+
+
+      /*  EmojiDisplayAdapter adapter = new EmojiDisplayAdapter(getContext(), emojiList,this);
+        recycler_emoji.setAdapter(adapter);*/
+        final EmojiDisplayAdapter adapter = new EmojiDisplayAdapter(getContext(), PhotoEditor.getEmojis(getContext()), this);
+
+
+        open_emojis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                recycler_emoji.setAdapter(adapter);
+
+                recycler_emoji.setVisibility(View.VISIBLE);
+                // bio_layout.setVisibility(View.GONE);
+            }
+        });
 
         confirm_edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +139,9 @@ public class EditBioLayoutFragment extends Fragment {
             }
         });
 
+        int unicode = 0x1F60A;
+
+        Bio += getEmojiByUnicode(unicode);
         edit_text_bio.setText(Bio.replaceAll("(?m)^[ \t]*\r?\n", ""));
 
 
@@ -93,4 +155,17 @@ public class EditBioLayoutFragment extends Fragment {
 
     }
 
+    public String getEmojiByUnicode(int unicode) {
+        return new String(Character.toChars(unicode));
+    }
+
+    @Override
+    public void onEmojiItemSelected(String emoji) {
+
+        recycler_emoji.setVisibility(View.GONE);
+        bio_layout.setVisibility(View.VISIBLE);
+
+        open_emojis.setText(emoji);
+
+    }
 }

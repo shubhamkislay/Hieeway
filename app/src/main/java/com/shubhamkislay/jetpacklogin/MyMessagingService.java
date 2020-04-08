@@ -6,11 +6,10 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.AudioAttributes;
 import android.net.Uri;
 import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
-import android.widget.RemoteViews;
+
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

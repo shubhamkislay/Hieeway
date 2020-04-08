@@ -1,19 +1,15 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import br.com.instachat.emojilibrary.model.layout.EmojiCompatActivity;
 import br.com.instachat.emojilibrary.model.layout.EmojiEditText;
 import br.com.instachat.emojilibrary.model.layout.EmojiKeyboardLayout;
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconTextView;
 
 public class TestJavaEmojiKeyBoard extends EmojiCompatActivity {
 

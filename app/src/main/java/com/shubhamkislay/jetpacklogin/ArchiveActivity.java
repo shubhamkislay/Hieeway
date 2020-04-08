@@ -1,23 +1,23 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.annotation.NonNull;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
-import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.PinnedMessagesFragment;
-import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.SendMessageFragment;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 

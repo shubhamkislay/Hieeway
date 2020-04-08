@@ -4,24 +4,18 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.shubhamkislay.jetpacklogin.Interface.BrushFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
 import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;

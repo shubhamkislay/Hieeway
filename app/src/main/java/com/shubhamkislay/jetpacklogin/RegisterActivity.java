@@ -3,9 +3,9 @@ package com.shubhamkislay.jetpacklogin;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,16 +22,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.shubhamkislay.jetpacklogin.Model.User;
 
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
-
-import static com.shubhamkislay.jetpacklogin.LoginActivity.PUBLIC_KEY_ID;
 
 public class RegisterActivity extends AppCompatActivity {
 

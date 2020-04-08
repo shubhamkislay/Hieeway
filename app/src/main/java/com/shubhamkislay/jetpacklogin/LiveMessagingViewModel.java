@@ -1,15 +1,14 @@
 package com.shubhamkislay.jetpacklogin;
 
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,7 +22,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.shubhamkislay.jetpacklogin.Adapters.ChatMessageAdapter;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
-import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.LiveMessage;
 
 import java.util.ArrayList;

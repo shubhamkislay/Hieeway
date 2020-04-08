@@ -5,15 +5,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.text.format.Time;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +30,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.shubhamkislay.jetpacklogin.DeleteOptionsDialog;
 import com.shubhamkislay.jetpacklogin.EphemeralPhotoActivity;
 import com.shubhamkislay.jetpacklogin.Interface.RevealOptionListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;

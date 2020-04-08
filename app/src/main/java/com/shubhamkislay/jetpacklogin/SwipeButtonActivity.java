@@ -1,10 +1,9 @@
 package com.shubhamkislay.jetpacklogin;
 
 import android.annotation.SuppressLint;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;

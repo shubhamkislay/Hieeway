@@ -6,15 +6,13 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {

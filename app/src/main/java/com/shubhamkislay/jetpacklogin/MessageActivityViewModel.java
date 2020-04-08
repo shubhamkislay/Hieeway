@@ -1,22 +1,14 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.app.Application;
-import android.app.ProgressDialog;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
-import android.widget.Toast;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.google.android.gms.tasks.Continuation;
+import android.net.Uri;
+import android.os.Handler;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +22,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.shubhamkislay.jetpacklogin.Adapters.ChatMessageAdapter;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
-import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;

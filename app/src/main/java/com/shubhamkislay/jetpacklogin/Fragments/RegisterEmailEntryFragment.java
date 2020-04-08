@@ -7,8 +7,9 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,7 +26,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -46,7 +46,6 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 

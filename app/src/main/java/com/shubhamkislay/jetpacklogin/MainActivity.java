@@ -3,20 +3,19 @@ package com.shubhamkislay.jetpacklogin;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -55,7 +54,6 @@ import com.shubhamkislay.jetpacklogin.Fragments.RegisterUsernameEntryFragment;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
-import com.shubhamkislay.jetpacklogin.Utils.BitmapUtils;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -386,6 +384,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK)
         {
 

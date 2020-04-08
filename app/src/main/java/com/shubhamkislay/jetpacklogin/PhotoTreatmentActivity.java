@@ -1,7 +1,8 @@
 package com.shubhamkislay.jetpacklogin;
 
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 

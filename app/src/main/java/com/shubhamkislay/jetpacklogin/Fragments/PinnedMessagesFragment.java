@@ -1,13 +1,14 @@
 package com.shubhamkislay.jetpacklogin.Fragments;
 
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +16,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.shubhamkislay.jetpacklogin.Adapters.SendMessageAdapter;
-import com.shubhamkislay.jetpacklogin.ArchiveActivity;
 import com.shubhamkislay.jetpacklogin.ArchiveActivityViewModel;
 import com.shubhamkislay.jetpacklogin.ArchiveActivityViewModelFactory;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.R;
 
-import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class PinnedMessagesFragment extends Fragment {
 
         archiveActivityViewModelFactory = new ArchiveActivityViewModelFactory(userIdChattingWith);
         archiveActivityViewModel = ViewModelProviders.of(this, archiveActivityViewModelFactory).get(ArchiveActivityViewModel.class);
-        archiveActivityViewModel.getChatList().observe(this, new Observer<List<ChatMessage>>() {
+        archiveActivityViewModel.getChatList().observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
             @Override
             public void onChanged(@Nullable List<ChatMessage> chatMessageList) {
 

@@ -1,11 +1,12 @@
 package com.shubhamkislay.jetpacklogin;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
