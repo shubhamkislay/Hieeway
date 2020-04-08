@@ -43,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.shubhamkislay.jetpacklogin.FeelingDialog;
+import com.shubhamkislay.jetpacklogin.Interface.AddFeelingFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
@@ -69,6 +70,7 @@ public class ProfileFragment extends Fragment implements FeelingListener {
     TextView username, name, feeling_icon, feeling_txt, bio_txt;
     FeelingDialog feelingDialog;
     ImageSelectionCropListener imageSelectionCropListener;
+    AddFeelingFragmentListener addFeelingFragmentListener;
     String feelingNow = null;
     EditText change_nio_edittext;
     ProgressBar upload_progress;
@@ -76,7 +78,10 @@ public class ProfileFragment extends Fragment implements FeelingListener {
     String bio = "";
     Boolean continue_blinking = false;
     Boolean isBlinking = false;
+    RelativeLayout emoji_holder_layout;
     EditBioFragmentListener editBioFragmentListener;
+    RelativeLayout ring_blinker_layout;
+    Boolean blinking = false;
 
 /*
     @Override
@@ -114,6 +119,10 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         upload_progress = view.findViewById(R.id.upload_progress);
 
         relativeLayout = view.findViewById(R.id.edit_text_back);
+
+        emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
+
+        ring_blinker_layout = view.findViewById(R.id.ring_blinker_layout);
 
         name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         feeling_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -164,7 +173,7 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         feeling_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                feelingDialog = new FeelingDialog(getContext(),ProfileFragment.this,feelingNow);
+                feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
                 feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 feelingDialog.show();
             }
@@ -280,10 +289,29 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 */
 
 
-
-
-
+        if (!blinking) {
+            blinking = true;
+            startBlinking();
+        }
         return view;
+    }
+
+    private void startBlinking() {
+        ring_blinker_layout.animate().alpha(0.0f).setDuration(950);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                ring_blinker_layout.animate().alpha(1.0f).setDuration(950);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ring_blinker_layout.animate().alpha(0.0f).setDuration(950);
+                        startBlinking();
+                    }
+                }, 1000);
+            }
+        }, 1000);
     }
 
     @Override
@@ -377,6 +405,10 @@ public class ProfileFragment extends Fragment implements FeelingListener {
         this.editBioFragmentListener = editBioFragmentListener;
     }
 
+    public void setAddFeelingFragmentListener(AddFeelingFragmentListener addFeelingFragmentListener) {
+        this.addFeelingFragmentListener = addFeelingFragmentListener;
+    }
+
     @Override
     public void changeFeeling(String feeling) {
         DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -452,7 +484,7 @@ public class ProfileFragment extends Fragment implements FeelingListener {
 
         hyperspaceJump.setRepeatMode(Animation.INFINITE);
 
-        feeling_icon.setAnimation(hyperspaceJump);
+        emoji_holder_layout.setAnimation(hyperspaceJump);
         //feeling_txt.setAnimation(hyperspaceJump);
 
         AnimatorSet animatorSet = new AnimatorSet();

@@ -17,7 +17,7 @@
             android:id="@+id/top_options"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="#111111">
+            android:background="#0C0C0C">
 
             <TextView
                 android:id="@+id/cancel_edit"
@@ -29,13 +29,16 @@
             </TextView>
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
                 android:layout_toRightOf="@id/cancel_edit"
-                android:gravity="center_vertical"
+                android:layout_marginRight="16dp"
                 android:text="Edit Bio"
+                android:layout_toLeftOf="@id/confirm_edit"
+                android:gravity="center"
                 android:textColor="#fff"
                 android:textSize="20sp"
                 android:textStyle="bold"/>
@@ -57,11 +60,15 @@
             android:id="@+id/edit_text_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/top_options"
-            android:layout_margin="8dp"
             android:hint="write your bio"
             android:inputType="textMultiLine"
             android:maxLength="150"
+            android:layout_centerInParent="true"
+            android:layout_margin="24dp"
+            android:background="@drawable/message_box_reply_drawable"
+            android:backgroundTint="#131313"
+            android:gravity="center"
+            android:textColorHint="#242424"
             android:padding="12dp"
             android:textColor="#fff"
             android:textSize="18sp" />

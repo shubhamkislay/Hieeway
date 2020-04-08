@@ -201,10 +201,35 @@
 
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/add_feeling_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/ring_thick"
+                android:backgroundTint="@color/feelingDeactiveColor">
+
+                <RelativeLayout
+                    android:id="@+id/add_feeling_btn"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_add_circle_outline_white_24dp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="4dp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

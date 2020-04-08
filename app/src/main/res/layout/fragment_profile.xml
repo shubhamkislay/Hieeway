@@ -88,27 +88,43 @@
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
             />
-        <TextView
-            android:id="@+id/feeling_icon"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_below="@id/logout_btn"
-            android:layout_alignParentTop="true"
+
+        <RelativeLayout
+            android:id="@+id/emoji_holder_layout"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/emoticon_feeling_happy"/>
+            android:layout_marginTop="32dp"
+            android:background="@drawable/message_counter_drawable"
+            android:backgroundTint="#0F0F0F">
+
+            <TextView
+                android:id="@+id/feeling_icon"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/emoticon_feeling_happy" />
+
+            <RelativeLayout
+                android:id="@+id/ring_blinker_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ring_back"
+                android:backgroundTint="#FFFFFF" />
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/feeling_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/feeling_icon"
+            android:layout_below="@id/emoji_holder_layout"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="64dp"
             android:gravity="center"
             android:text="Happy"
             android:textColor="#fff"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             />
         <TextView
@@ -116,12 +132,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/username"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:padding="16dp"
             android:gravity="center"
             android:autoLink="web"
-            android:textColor="#fff"
-            android:hint="Tell something about yourself"
+            android:autoSizeMaxTextSize="28sp"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeTextType="uniform"
+            android:breakStrategy="high_quality"
+            android:hint="Bio"
+            android:textColor="#333333"
             android:textSize="15sp"
             android:textStyle="bold|italic"
             android:visibility="visible"/>

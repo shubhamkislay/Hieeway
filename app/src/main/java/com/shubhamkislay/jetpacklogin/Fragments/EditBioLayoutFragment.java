@@ -3,6 +3,7 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -37,7 +38,7 @@ import ja.burhanrashid52.photoeditor.PhotoEditor;
  */
 public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapter.EmojiAdapterListener {
 
-    TextView edit_text_bio, cancel_edit, confirm_edit;
+    TextView edit_text_bio, cancel_edit, confirm_edit, title;
     EditBioFragmentListener editBioFragmentListener;
     String Bio="";
     RecyclerView recycler_emoji;
@@ -78,6 +79,10 @@ public class EditBioLayoutFragment extends Fragment implements EmojiDisplayAdapt
         open_emojis = view.findViewById(R.id.open_emojis);
 
         bio_layout = view.findViewById(R.id.bio_layout);
+
+        title = view.findViewById(R.id.title);
+
+        title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
 

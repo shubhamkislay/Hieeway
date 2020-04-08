@@ -6,8 +6,10 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.shubhamkislay.jetpacklogin.Interface.AddFeelingFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 
 
@@ -21,6 +23,7 @@ public class FeelingDialog extends Dialog {
     final static String ANGRY = "angry";
     String feelingNow;
     FeelingListener feelingListener;
+    AddFeelingFragmentListener addFeelingFragmentListener;
     TextView happy_emoji;
     TextView bored_emoji;
     TextView sad_emoji;
@@ -33,15 +36,16 @@ public class FeelingDialog extends Dialog {
     TextView excited_txt;
     TextView angry_txt;
     TextView bored_txt;
+    RelativeLayout add_feeling_layout, add_feeling_btn;
     Context context;
 
 
-
-    public FeelingDialog( Context context, FeelingListener feelingListener, String feelingNow) {
+    public FeelingDialog(Context context, FeelingListener feelingListener, String feelingNow, AddFeelingFragmentListener addFeelingFragmentListener) {
         super(context);
         this.context = context;
         this.feelingListener = feelingListener;
         this.feelingNow = feelingNow;
+        this.addFeelingFragmentListener = addFeelingFragmentListener;
     }
 
     @Override
@@ -56,6 +60,7 @@ public class FeelingDialog extends Dialog {
         excited_emoji = findViewById(R.id.excited_emoji);
         angry_emoji = findViewById(R.id.angry_emoji);
         confused_emoji = findViewById(R.id.confused_emoji);
+        add_feeling_layout = findViewById(R.id.add_feeling_layout);
 
         happy_txt = findViewById(R.id.happy_txt);
         sad_txt = findViewById(R.id.sad_txt);
@@ -63,6 +68,24 @@ public class FeelingDialog extends Dialog {
         excited_txt = findViewById(R.id.excited_txt);
         angry_txt = findViewById(R.id.angry_txt);
         bored_txt = findViewById(R.id.bored_txt);
+
+        add_feeling_btn = findViewById(R.id.add_feeling_btn);
+
+        add_feeling_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFeelingFragmentListener.setFeelingChange(false, "", "");
+                dismiss();
+            }
+        });
+
+        add_feeling_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addFeelingFragmentListener.setFeelingChange(false, "", "");
+                dismiss();
+            }
+        });
 
 
         happy_txt.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/samsungsharpsans-bold.otf"));

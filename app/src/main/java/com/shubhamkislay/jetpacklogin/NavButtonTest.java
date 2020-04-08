@@ -44,11 +44,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.shubhamkislay.jetpacklogin.Fragments.AddFeelingFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.EditBioLayoutFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.FriendListFagment;
 import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
+import com.shubhamkislay.jetpacklogin.Interface.AddFeelingFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
 import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
 import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
@@ -65,7 +67,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
-public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener {
+public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener, AddFeelingFragmentListener {
 
     private TextView text_home;
     private ImageView homeBtnPressed, homeBtnUnpressed;
@@ -87,6 +89,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     PeopleFragment peopleFragment;
     ProfileFragment profileFragment;
     FriendListFagment friendListFagment;
+    AddFeelingFragment addFeelingFragment;
     RelativeLayout splash_layout;
     private Bundle bundle;
 
@@ -211,6 +214,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileFragment = new ProfileFragment();
         friendListFagment = new FriendListFagment();
         editBioLayoutFragment = new EditBioLayoutFragment();
+
+        addFeelingFragment = new AddFeelingFragment();
 
         ArrayList<Fragment> fragmentList = new ArrayList<>();
 
@@ -762,6 +767,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         profileFragment.setImageSelectionCropListener(NavButtonTest.this);
         profileFragment.setEditBioFragmentListener(NavButtonTest.this);
+        profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
         getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
         getSupportFragmentManager().beginTransaction()
@@ -1322,6 +1328,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
             profileFragment.setImageSelectionCropListener(NavButtonTest.this);
             profileFragment.setEditBioFragmentListener(NavButtonTest.this);
+            profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
+
 
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
@@ -1334,6 +1342,28 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                     .replace(R.id.container_layout, editBioLayoutFragment).commit();
+        }
+
+    }
+
+    @Override
+    public void setFeelingChange(Boolean returnFromAddFeeling, String feelingIcon, String feelingText) {
+
+        if (returnFromAddFeeling) {
+
+            profileFragment.setImageSelectionCropListener(NavButtonTest.this);
+            profileFragment.setEditBioFragmentListener(NavButtonTest.this);
+            profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                    .replace(R.id.container_layout, profileFragment).commit();
+        } else {
+            addFeelingFragment = new AddFeelingFragment();
+
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                    .replace(R.id.container_layout, addFeelingFragment).commit();
         }
 
     }
