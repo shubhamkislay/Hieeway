@@ -17,17 +17,85 @@ public class EmojiList {
 
     public void addEmojisToList() {
 
-        //smilies start
+        //smilies startU+1F607
         emojiList.add(getEmojiByUnicode(0x263A));
         emojiList.add(getEmojiByUnicode(0x1F601));
         emojiList.add(getEmojiByUnicode(0x1F602));
         emojiList.add(getEmojiByUnicode(0x1F603));
+        emojiList.add(getEmojiByUnicode(0x1F643));
         emojiList.add(getEmojiByUnicode(0x1F604));
+        emojiList.add(getEmojiByUnicode(0x1F607));
         emojiList.add(getEmojiByUnicode(0x1F605));
         emojiList.add(getEmojiByUnicode(0x1F606));
         emojiList.add(getEmojiByUnicode(0x1F609));
+        emojiList.add(getEmojiByUnicode(0x1F92A));
         emojiList.add(getEmojiByUnicode(0x1F60A));
         emojiList.add(getEmojiByUnicode(0x1F60B));
+        emojiList.add(getEmojiByUnicode(0x1F911));
+        emojiList.add(getEmojiByUnicode(0x1F617));
+
+        emojiList.add(getEmojiByUnicode(0x1F97A));
+
+
+        emojiList.add(getEmojiByUnicode(0x1F92D));
+        emojiList.add(getEmojiByUnicode(0x1F917));
+        emojiList.add(getEmojiByUnicode(0x1F92D));
+        emojiList.add(getEmojiByUnicode(0x1F92B));
+        emojiList.add(getEmojiByUnicode(0x1F914));
+        emojiList.add(getEmojiByUnicode(0x1F910));
+
+        emojiList.add(getEmojiByUnicode(0x1F92C));
+        emojiList.add(getEmojiByUnicode(0x1F928));
+        emojiList.add(getEmojiByUnicode(0x1F610));
+        emojiList.add(getEmojiByUnicode(0x1F611));
+        emojiList.add(getEmojiByUnicode(0x1F636));
+        emojiList.add(getEmojiByUnicode(0x1F644));
+        emojiList.add(getEmojiByUnicode(0x1F62C));
+        emojiList.add(getEmojiByUnicode(0x1F925));
+        emojiList.add(getEmojiByUnicode(0x1F924));
+        emojiList.add(getEmojiByUnicode(0x1F634));
+        emojiList.add(getEmojiByUnicode(0x1F912));
+        emojiList.add(getEmojiByUnicode(0x1F915));
+        emojiList.add(getEmojiByUnicode(0x1F922));
+        emojiList.add(getEmojiByUnicode(0x1F92E));
+        emojiList.add(getEmojiByUnicode(0x1F927));
+        emojiList.add(getEmojiByUnicode(0x1F975));
+        emojiList.add(getEmojiByUnicode(0x1F976));
+        emojiList.add(getEmojiByUnicode(0x1F974));
+        emojiList.add(getEmojiByUnicode(0x1F92F));
+        emojiList.add(getEmojiByUnicode(0x1F920));
+        emojiList.add(getEmojiByUnicode(0x1F973));
+        emojiList.add(getEmojiByUnicode(0x1F60E));
+        emojiList.add(getEmojiByUnicode(0x1F913));
+        emojiList.add(getEmojiByUnicode(0x1F9D0));
+        emojiList.add(getEmojiByUnicode(0x1F608));
+        emojiList.add(getEmojiByUnicode(0x1F47F));
+        emojiList.add(getEmojiByUnicode(0x1F4A9));
+        emojiList.add(getEmojiByUnicode(0x1F921));
+        emojiList.add(getEmojiByUnicode(0x1F4AF));
+        emojiList.add(getEmojiByUnicode(0x1F919));
+        emojiList.add(getEmojiByUnicode(0x1F918));
+
+        emojiList.add(getEmojiByUnicode(0x1F595));
+
+
+
+/*        emojiList.add(getEmojiByUnicode(0x1F937));
+        emojiList.add(getEmojiByUnicode(0x2642));
+        emojiList.add(getEmojiByUnicode(0x200D));
+        emojiList.add(getEmojiByUnicode(0x1F926));
+        emojiList.add(getEmojiByUnicode(0xFE0F));
+        emojiList.add(getEmojiByUnicode(0x1F64B));*/
+
+        emojiList.add(getEmojiByUnicode(0x1F468));
+        emojiList.add(getEmojiByUnicode(0x1F469));
+
+
+
+
+
+
+
         emojiList.add(getEmojiByUnicode(0x1F60C));
         emojiList.add(getEmojiByUnicode(0x1F60D));
         emojiList.add(getEmojiByUnicode(0x1F60F));

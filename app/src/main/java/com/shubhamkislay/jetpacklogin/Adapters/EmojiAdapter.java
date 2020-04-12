@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 import com.shubhamkislay.jetpacklogin.R;
@@ -52,7 +53,7 @@ public class EmojiAdapter extends RecyclerView.Adapter<EmojiAdapter.EmojiViewHol
     }
 
     public class EmojiViewHolder extends RecyclerView.ViewHolder {
-        public EmojiconTextView emojiconTextView;
+        public TextView emojiconTextView;
 
         public EmojiViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -97,6 +97,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/message_box_reply_drawable"
                 android:backgroundTint="#131313"
+                android:maxLength="30"
                 android:gravity="center"
                 android:hint="write how you feel here"
                 android:padding="8dp"

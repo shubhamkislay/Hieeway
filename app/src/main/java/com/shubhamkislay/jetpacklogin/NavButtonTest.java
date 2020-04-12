@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
@@ -597,6 +598,20 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         }
 
         fragmentId=2;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            try {
+                profileFragment.setBottomSheetBehavior(event);
+                // chatsFragment.setBottomSheetBehavior(event);
+            } catch (Exception e) {
+                //
+            }
+        }
+
+        return super.dispatchTouchEvent(event);
     }
 
     public void deactivateFriendsBNtn()

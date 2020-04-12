@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#15181A"
+    android:background="@drawable/rounded_dialog"
+    android:backgroundTint="#000"
     tools:context=".EmojiFragment">
 
     <RelativeLayout
@@ -13,14 +14,18 @@
 
         <RelativeLayout
             android:id="@+id/handle"
+            android:layout_marginBottom="-20dp"
+            android:background="@drawable/message_box_reply_drawable"
+            android:backgroundTint="#000"
             android:layout_width="match_parent"
             android:layout_height="40dp">
 
 
             <Button
-                android:layout_centerVertical="true"
+                android:layout_width="45dp"
+                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_width="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_height="15dp" />
 
 
@@ -31,7 +36,10 @@
         android:id="@+id/recycler_emoji"
         android:layout_below="@id/handle"
         android:background="#000000"
-        android:padding="12dp"
+            android:paddingLeft="12dp"
+            android:paddingTop="24dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="12dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

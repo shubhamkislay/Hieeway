@@ -90,15 +90,17 @@
             android:layout_height="75dp"
             android:alpha="1.0"
 
+            android:visibility="gone"
             android:background="@drawable/ic_search_black_24dp"
             android:backgroundTint="#8D8D8D"
             android:layout_centerInParent="true"/>
 
 
         <TextView
+
             android:layout_marginTop="-8dp"
             android:layout_below="@id/progress_menu_logo"
-            android:visibility="visible"
+            android:visibility="gone"
             android:id="@+id/result_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

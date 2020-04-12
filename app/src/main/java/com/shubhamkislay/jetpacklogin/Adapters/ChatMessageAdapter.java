@@ -75,7 +75,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements DeleteOptionsListener {
+public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements DeleteOptionsListener {
 
     private Context mContext;
     private List<ChatMessage> countMessages = new ArrayList<>();
@@ -97,22 +97,20 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
     String userPic = null;
     Boolean chatPending = false;
     DeleteOptionsDialog deleteOptionsDialog;
+    DeleteOptionsListener deleteOptionsListener;
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     private  String publicKeyId = null;
     int spanCount;
     public static final int MSG_FIRST_ROW= 1,MSG_NOT_PEND=0,MSG_FIRST_ITEM = 2;
 
 
-
-
-
-
-    public ChatMessageAdapter(Context mContext, List<ChatStamp> mUsers,Activity activity) {
+    public ChatMessageAdapter(Context mContext, List<ChatStamp> mUsers, Activity activity/*, DeleteOptionsListener deleteOptionsListener*/) {
 
 
         this.activity = activity;
         this.mChatStamps = mUsers;
         this.mContext = mContext;
+        this.deleteOptionsListener = deleteOptionsListener;
 
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
         publicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID,null);
@@ -381,6 +379,8 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
 
               //  DeleteOptionsListener deleteOptionsListener;
 
+                // deleteOptionsListener.setDeleteOptionsDialog(mContext,chatStamp,position,mChatStamps,activity,viewHolder);
+
 
 
 
@@ -641,8 +641,8 @@ public class ChatMessageAdapter  extends RecyclerView.Adapter<ChatMessageAdapter
 
        int pos = viewHolder.getAdapterPosition();
 
-       ChatStamp chatStamp = mChatStamps.get(pos);
-       mChatStamps.remove(chatStamp);
+        ChatStamp chatStamp = mChatStamps.get(pos);
+        mChatStamps.remove(chatStamp);
 
         notifyItemRemoved(pos);
     }

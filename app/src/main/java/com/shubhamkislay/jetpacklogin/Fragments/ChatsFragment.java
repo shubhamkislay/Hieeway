@@ -6,8 +6,11 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +29,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -40,9 +44,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -51,8 +57,10 @@ import com.shubhamkislay.jetpacklogin.ChatsFragmentViewModel;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
 import com.shubhamkislay.jetpacklogin.GridSpacingItemDecoration;
 import com.shubhamkislay.jetpacklogin.Interface.AnimationArrowListener;
+import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
 import com.shubhamkislay.jetpacklogin.Interface.DeleteOptionsListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
+import com.shubhamkislay.jetpacklogin.NavButtonTest;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.SharedViewModel;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
@@ -79,7 +87,19 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
     Boolean searchBtnActive = true;
 
+    public Context context;
+
     Thread searchUserThread;
+    public Dialog d;
+    RelativeLayout bottom_delete_options;
+    RecyclerView.ViewHolder viewHolder;
+    BottomSheetBehavior bottomSheetBehavior;
+    private int position;
+    private ChatStamp chatStamp;
+    private List<ChatStamp> mChatStamps;
+    private TextView deleteForMe, deleteForAll, optionsTag, deleteForMeDesc, deleteForAllDesc;
+    private DeleteOptionsListener deleteOptionsListener;
+    private ChatStampSizeListener chatStampSizeListener;
 
 
     List<String> usersIdList = new ArrayList<>();
@@ -89,9 +109,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     StaggeredGridLayoutManager staggeredGridLayoutManager;
     private int chatStampSize =0;
     private List<ChatStamp> chatStampsListtwo;
+    private RelativeLayout delete_for_all_option_layout, delete_for_me_option_layout;
     AnimationArrowListener animationArrowListener;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,10 +146,43 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
         search_bar = view.findViewById(R.id.search_bar);
 
+        bottom_delete_options = view.findViewById(R.id.bottom_delete_options);
+
 
         search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+
+        deleteForMe = view.findViewById(R.id.delete_for_me_option);
+
+        deleteForAll = view.findViewById(R.id.delete_for_all_option);
+
+        optionsTag = view.findViewById(R.id.options_txt);
+
+        deleteForMeDesc = view.findViewById(R.id.delete_for_me_des);
+        deleteForAllDesc = view.findViewById(R.id.delete_for_all_des);
+
+        delete_for_all_option_layout = view.findViewById(R.id.delete_for_all_option_layout);
+
+        delete_for_me_option_layout = view.findViewById(R.id.delete_for_me_option_layout);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_delete_options);
+
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(View bottomSheet, float slideOffset) {
+            }
+        });
+
+
 
         search_bar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -372,7 +424,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
 
                         if(chatStampSize<=chatStampsList.size()) {
-                            chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity);
+                            chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
                             chats_recyclerview.setAdapter(chatMessageAdapter);
                             chatMessageAdapter.notifyDataSetChanged();
                             new Handler().postDelayed(new Runnable() {
@@ -406,12 +458,37 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
 
 
-
-
-
         return view;
     }
 
+    public void setBottomSheetBehavior(MotionEvent event) {
+        try {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+
+                Rect outRect = new Rect();
+                bottom_delete_options.getGlobalVisibleRect(outRect);
+
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    //relay.setVisibility(View.GONE);
+                }
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
+
+/*    public void setDeleteOptionsDialog(Context context, ChatStamp chatStamp, int position,
+                               List<ChatStamp> mChatStamps, Activity activity, RecyclerView.ViewHolder viewHolder) {
+
+        this.context=context;
+        this.chatStamp = chatStamp;
+        this.position = position;
+        this.mChatStamps = mChatStamps;
+        this.activity = activity;
+        this.viewHolder = viewHolder;
+        chatStampSizeListener = (NavButtonTest) activity;
+    }*/
 
 
     private void searchChat(final String username) {
@@ -500,6 +577,12 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     public void onDeleteForAll(int position, int mChatStampsListSize,RecyclerView.ViewHolder viewHolder) {
 
         //updateList(position,mChatStampsListSize,viewHolder);
+        int pos = viewHolder.getAdapterPosition();
+
+        ChatStamp chatStamp = mChatStamps.get(pos);
+        mChatStamps.remove(chatStamp);
+
+        chatMessageAdapter.notifyItemRemoved(pos);
 
     }
 
@@ -507,7 +590,29 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     public void onDeleteForMe(int position, int mChatStampsListSize,RecyclerView.ViewHolder viewHolder) {
 
         //updateList(position,mChatStampsListSize,viewHolder);
+        int pos = viewHolder.getAdapterPosition();
+
+        ChatStamp chatStamp = mChatStamps.get(pos);
+        mChatStamps.remove(chatStamp);
+
+        chatMessageAdapter.notifyItemRemoved(pos);
     }
+
+/*    @Override
+    public void setDeleteOptionsDialog(Context context, ChatStamp chatStamp, int position, List<ChatStamp> mChatStamps, Activity activity, RecyclerView.ViewHolder viewHolder){
+
+
+        this.context=context;
+        this.chatStamp = chatStamp;
+        this.position = position;
+        this.mChatStamps = mChatStamps;
+        this.activity = activity;
+        this.viewHolder = viewHolder;
+        chatStampSizeListener = (NavButtonTest) activity;
+
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+    }*/
 
     private void updateList(int position, int mChatStampsListSize,RecyclerView.ViewHolder viewHolder)
     {
@@ -654,8 +759,6 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
         }
     }
-
-
 
 
 }

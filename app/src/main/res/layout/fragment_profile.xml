@@ -7,277 +7,272 @@
     android:background="@android:color/transparent"
     tools:context=".Fragments.ProfileFragment">
 
-
-
-    <RelativeLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/profile_pic_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/profile_pic" />
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
-            android:background="@color/colorBlack"
-            android:visibility="visible"/>
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:alpha="1.0"
-            android:background="@drawable/status_bar_fade"/>
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:alpha="1.0"
-            android:layout_gravity="bottom"
-            android:rotation="180"
-            android:background="@drawable/status_bar_fade"/>
-
-        <com.shubhamkislay.jetpacklogin.CustomImageView
-            android:id="@+id/center_dp"
-            android:layout_width="100dp"
-            android:layout_height="200dp"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/name"
-            android:scaleType="centerCrop"
-            android:src="@drawable/profile_pic"
-            android:layout_marginBottom="16dp" />
-
-        <ProgressBar
-            android:id="@+id/upload_progress"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_above="@id/center_dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="-118dp"
-            android:visibility="gone"/>
-
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            android:layout_centerVertical="true"
-            android:textStyle="bold"
-            tools:text="name"
-            android:textSize="20sp"
-            android:layout_centerHorizontal="true"
-            />
-
-        <TextView
-            android:layout_below="@id/name"
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fff"
-            tools:text="username"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            />
 
         <RelativeLayout
-            android:id="@+id/emoji_holder_layout"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/message_counter_drawable"
-            android:backgroundTint="#0F0F0F">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/feeling_icon"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/emoticon_feeling_happy" />
-
-            <TextView
-                android:id="@+id/emoji_icon"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="5dp"
-                android:gravity="center"
-                android:textSize="44sp"
-                android:visibility="gone" />
-
-            <RelativeLayout
-                android:id="@+id/ring_blinker_layout"
+            <ImageView
+                android:id="@+id/profile_pic_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/ring_back"
-                android:backgroundTint="#FFFFFF" />
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/profile_pic" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0.5"
+                android:background="@color/colorBlack"
+                android:visibility="visible"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:alpha="1.0"
+                android:background="@drawable/status_bar_fade"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:alpha="1.0"
+                android:layout_gravity="bottom"
+                android:rotation="180"
+                android:background="@drawable/status_bar_fade"/>
+
+            <com.shubhamkislay.jetpacklogin.CustomImageView
+                android:id="@+id/center_dp"
+                android:layout_width="100dp"
+                android:layout_height="200dp"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/name"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_pic"
+                android:layout_marginBottom="16dp" />
+
+            <ProgressBar
+                android:id="@+id/upload_progress"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_above="@id/center_dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="-118dp"
+                android:visibility="gone"/>
+
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                tools:text="name"
+                android:textSize="20sp"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:layout_below="@id/name"
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                tools:text="username"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_centerHorizontal="true" />
+
+            <RelativeLayout
+                android:id="@+id/emoji_holder_layout"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/message_counter_drawable"
+                android:backgroundTint="#0F0F0F">
+
+                <TextView
+                    android:id="@+id/feeling_icon"
+                    android:layout_width="39.5dp"
+                    android:layout_height="39.5dp"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/emoticon_feeling_happy" />
+
+                <TextView
+                    android:id="@+id/emoji_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="2.5dp"
+                    android:gravity="center"
+                    android:textSize="32sp"
+                    android:visibility="gone" />
+
+                <RelativeLayout
+                    android:id="@+id/ring_blinker_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/ring_back"
+                    android:backgroundTint="#FFFFFF" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/feeling_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/emoji_holder_layout"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="64dp"
+                android:gravity="center"
+                android:text="Happy"
+                android:textColor="#fff"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/bio_txt_back"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/username"
+                android:layout_margin="24dp"
+                android:layout_marginTop="24dp"
+                android:alpha="0.35"
+                android:autoLink="web"
+                android:autoSizeMaxTextSize="28sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:background="@drawable/message_box_reply_drawable"
+                android:backgroundTint="#000"
+                android:breakStrategy="high_quality"
+                android:gravity="center"
+                android:padding="16dp"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:textStyle="bold|italic"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/bio_txt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/username"
+                android:layout_marginTop="24dp"
+                android:padding="16dp"
+                android:gravity="center"
+                android:autoLink="web"
+                android:autoSizeMaxTextSize="28sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:breakStrategy="high_quality"
+                android:hint="Bio"
+                android:textColor="#333333"
+                android:textSize="15sp"
+                android:layout_margin="24dp"
+                android:textStyle="bold|italic"
+                android:visibility="visible"/>
+
+
+            <RelativeLayout
+                android:id="@+id/edit_text_back"
+                android:background="@drawable/bio_edittext_background"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@id/username"
+                android:layout_margin="16dp"
+                android:layout_marginTop="8dp"
+                android:alpha="0.35"
+                android:visibility="gone"/>
+
+            <EditText
+
+                android:id="@+id/change_nio_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_below="@id/username"
+                android:layout_margin="16dp"
+                android:layout_marginTop="8dp"
+                android:textColor="#fff"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:hint="What's on your mind?"
+                android:imeOptions="actionDone"
+                android:textSize="18sp"
+                android:inputType="textMultiLine"
+                android:maxLength="120"
+                android:padding="16dp"
+                android:textColorHint="#474747"
+                android:textStyle="bold|italic"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/logout_btn"
+                android:text="Log out"
+                android:paddingLeft="12dp"
+                android:layout_alignParentTop="true"
+                android:paddingRight="12dp"
+                android:background="@drawable/message_receive_background"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/change_activity"
+                android:layout_above="@id/name"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="-22.5dp"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:padding="8dp"
+                android:visibility="gone"
+                android:layout_marginBottom="4dp"
+                android:layout_toRightOf="@id/center_dp"
+                android:background="@drawable/layer_edit_profile"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/edit_profile_option_btn"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="36dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/layer_edit_profile"
+                android:padding="8dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:text=""
+                android:visibility="visible" />
+
+
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/feeling_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/emoji_holder_layout"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="64dp"
-            android:gravity="center"
-            android:text="Happy"
-            android:textColor="#fff"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            />
-
-        <TextView
-            android:id="@+id/bio_txt_back"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/username"
-            android:layout_margin="24dp"
-            android:layout_marginTop="24dp"
-            android:alpha="0.35"
-            android:autoLink="web"
-
-            android:autoSizeMaxTextSize="28sp"
-            android:autoSizeMinTextSize="12sp"
-            android:autoSizeTextType="uniform"
-            android:background="@drawable/message_box_reply_drawable"
-            android:backgroundTint="#000"
-            android:breakStrategy="high_quality"
-            android:gravity="center"
-            android:padding="16dp"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:textStyle="bold|italic"
-            android:visibility="gone" />
-        <TextView
-            android:id="@+id/bio_txt"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/username"
-            android:layout_marginTop="24dp"
-            android:padding="16dp"
-            android:gravity="center"
-            android:autoLink="web"
-            android:autoSizeMaxTextSize="28sp"
-            android:autoSizeMinTextSize="12sp"
-            android:autoSizeTextType="uniform"
-            android:breakStrategy="high_quality"
-            android:hint="Bio"
-            android:textColor="#333333"
-            android:textSize="15sp"
-            android:layout_margin="24dp"
-            android:textStyle="bold|italic"
-            android:visibility="visible"/>
-
-
-        <Button
-            android:id="@+id/edit_bio_btn"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_above="@id/bio_txt"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="-48dp"
-            android:background="@drawable/layer_edit_profile"
-            android:padding="8dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:text=""
-            android:visibility="gone" />
         <RelativeLayout
-            android:id="@+id/edit_text_back"
-            android:background="@drawable/bio_edittext_background"
+            android:id="@+id/relay"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@id/username"
-            android:layout_margin="16dp"
-            android:layout_marginTop="8dp"
-            android:alpha="0.35"
-            android:visibility="gone"/>
+            android:layout_height="match_parent"
+            android:alpha="0.75"
+            android:background="#000"
+            android:visibility="gone" />
 
-        <EditText
+        <include layout="@layout/dialog_edit_profile" />
 
-            android:id="@+id/change_nio_edittext"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@id/username"
-            android:layout_margin="16dp"
-            android:layout_marginTop="8dp"
-            android:textColor="#fff"
-            android:background="@android:color/transparent"
-            android:gravity="center"
-            android:hint="What's on your mind?"
-            android:imeOptions="actionDone"
-            android:textSize="18sp"
-            android:inputType="textMultiLine"
-            android:maxLength="120"
-            android:padding="16dp"
-            android:textColorHint="#474747"
-            android:textStyle="bold|italic"
-            android:visibility="gone"/>
-        <Button
-            android:id="@+id/logout_btn"
-            android:text="Log out"
-            android:paddingLeft="12dp"
-            android:layout_alignParentTop="true"
-            android:paddingRight="12dp"
-            android:background="@drawable/message_receive_background"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_height="wrap_content"
-
-            android:layout_marginTop="12dp"
-
-
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/change_activity"
-            android:layout_above="@id/name"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="-22.5dp"
-            android:layout_marginTop="16dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:padding="8dp"
-            android:visibility="gone"
-            android:layout_marginBottom="4dp"
-            android:layout_toRightOf="@id/center_dp"
-            android:background="@drawable/layer_edit_profile"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:text="" />
-
-        <Button
-            android:id="@+id/edit_profile_option_btn"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="24dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/layer_edit_profile"
-            android:padding="8dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:text=""
-            android:visibility="visible" />
-
-
-    </RelativeLayout>
-
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </FrameLayout>

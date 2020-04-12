@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -39,6 +41,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -84,8 +87,14 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     EditBioFragmentListener editBioFragmentListener;
     RelativeLayout ring_blinker_layout;
     Boolean blinking = false;
-    Button edit_bio_btn;
     Button edit_profile_option_btn;
+    BottomSheetBehavior bottomSheetBehavior;
+    RelativeLayout edit_profile_pic;
+    RelativeLayout edit_bio;
+    Boolean bottomSheetDialogVisible = false;
+    TextView bottom_dialog_title, prof_txt, bio_txt_dialog;
+    RelativeLayout bottom_sheet_dialog_layout;
+    RelativeLayout relay;
 
 
 /*
@@ -106,6 +115,12 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
+        edit_bio = view.findViewById(R.id.edit_bio);
+
+        bottom_dialog_title = view.findViewById(R.id.title);
+        prof_txt = view.findViewById(R.id.profile_txt);
+        bio_txt_dialog = view.findViewById(R.id.bio_txtview);
 
         username = view.findViewById(R.id.username);
         profile_pic_background = view.findViewById(R.id.profile_pic_background);
@@ -114,16 +129,19 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         logoutBtn = view.findViewById(R.id.logout_btn);
         uploadActivityButton = view.findViewById(R.id.change_activity);
         feeling_icon = view.findViewById(R.id.feeling_icon);
+        bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
 
         feeling_txt = view.findViewById(R.id.feeling_txt);
         change_nio_edittext = view.findViewById(R.id.change_nio_edittext);
         bio_txt = view.findViewById(R.id.bio_txt);
-        edit_bio_btn = view.findViewById(R.id.edit_bio_btn);
         edit_profile_option_btn = view.findViewById(R.id.edit_profile_option_btn);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
 
         getActivity().getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
 
         upload_progress = view.findViewById(R.id.upload_progress);
+        relay = view.findViewById(R.id.relay);
 
         relativeLayout = view.findViewById(R.id.edit_text_back);
 
@@ -138,6 +156,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         username.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
         //change_nio_edittext.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         bio_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        bio_txt_dialog.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        prof_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        bottom_dialog_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,39 +203,45 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         feeling_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
-                feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                feelingDialog.show();
+                if (!bottomSheetDialogVisible) {
+
+                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    feelingDialog.show();
+                }
             }
         });
 
         emoji_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
-                feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                feelingDialog.show();
+                if (!bottomSheetDialogVisible) {
+                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    feelingDialog.show();
+                }
             }
         });
+
 
 
         bio_txt.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {/*
+            public void onClick(View v) {
+                if (!bottomSheetDialogVisible) {
+                /*
+
                 change_nio_edittext.setText(bio_txt.getText().toString());
                 bio_txt.setVisibility(View.GONE);
                 change_nio_edittext.setVisibility(View.VISIBLE);
                 change_nio_edittext.setEnabled(true);*/
-                if (bio_txt.getText().toString().length() < 1)
-                    editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
+                    if (bio_txt.getText().toString().length() < 1)
+                        editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
+                }
             }
         });
-        edit_bio_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
-            }
-        });
+
+
         try {
             if (bio.length() < 1) {
                 bio_txt.setText("Tell something about yourself");
@@ -231,9 +258,47 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         edit_profile_option_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditProfileDialog editProfileDialog = new EditProfileDialog(getContext(), ProfileFragment.this);
+                if (!bottomSheetDialogVisible) {
+                /*EditProfileDialog editProfileDialog = new EditProfileDialog(getContext(), ProfileFragment.this);
                 editProfileDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                editProfileDialog.show();
+                editProfileDialog.show();*/
+                    relay.setVisibility(View.VISIBLE);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    bottomSheetDialogVisible = true;
+                }
+            }
+        });
+
+        edit_profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relay.setVisibility(View.GONE);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                imageSelectionCropListener.imageSelect();
+                bottomSheetDialogVisible = false;
+            }
+        });
+
+        edit_bio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relay.setVisibility(View.GONE);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
+                bottomSheetDialogVisible = false;
+            }
+        });
+
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                }
+            }
+
+            @Override
+            public void onSlide(View bottomSheet, float slideOffset) {
             }
         });
 
@@ -564,11 +629,33 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         animatorSet.start();
 
 
-
-
-
-
     }
+
+
+    public void setBottomSheetBehavior(MotionEvent event) {
+        try {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+
+                Rect outRect = new Rect();
+                bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    relay.setVisibility(View.GONE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            bottomSheetDialogVisible = false;
+                        }
+                    }, 500);
+                }
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
+
 
     public void setProgressVisibility(Boolean visibility)
     {

@@ -48,6 +48,10 @@
         <item name="android:colorForeground">#42FFFFFF</item>
     </style>
 
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/rounded_dialog</item>
+    </style>
+
 
     <style name="AppTheme.NoActionBar.FullScreen">
 
