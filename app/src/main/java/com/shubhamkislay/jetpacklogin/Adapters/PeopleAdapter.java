@@ -33,6 +33,7 @@ import com.shubhamkislay.jetpacklogin.Model.Friend;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
+import com.shubhamkislay.jetpacklogin.ViewProfileActivity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -175,7 +176,29 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                         }
                         else
                         {
-                            Toast.makeText(mContext,"Can't send messages as the user is not your friend",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(mContext,"Can't send messages as the user is not your friend",Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(mContext, ViewProfileActivity.class);
+
+
+                            intent.putExtra("username", user.getUsername());
+                            intent.putExtra("name", user.getUsername());
+                            intent.putExtra("feeling_txt", user.getFeeling());
+                            intent.putExtra("bio_txt", user.getBio());
+                            intent.putExtra("userId", user.getUserid());
+                            intent.putExtra("currentUsername", currentUsername);
+                            if (viewHolder.acceptBtn.getVisibility() == View.VISIBLE)
+                                intent.putExtra("friendStatus", "got");
+                            else if (viewHolder.requestBtn.getVisibility() == View.VISIBLE)
+                                intent.putExtra("friendStatus", "requested");
+                            else
+                                intent.putExtra("friendStatus", "notFriend");
+
+                            intent.putExtra("feelingEmoji", user.getFeelingIcon());
+                            intent.putExtra("photourl", user.getPhoto());
+
+                            mContext.startActivity(intent);
+
                         }
 
                     }

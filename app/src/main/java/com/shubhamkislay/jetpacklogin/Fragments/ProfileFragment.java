@@ -65,9 +65,10 @@ import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener {
 
     private SharedViewModel sharedViewModel;
-    final static String HAPPY = "happy";
+
     ImageView profile_pic_background, center_dp;
     Button logoutBtn, uploadActivityButton;
+    final static String HAPPY = "happy";
     final static String BORED = "bored";
     final static String EXCITED = "excited";
     final static String SAD = "sad";
