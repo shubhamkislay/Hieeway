@@ -24,47 +24,61 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VerticalRegisterationActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".WebRTCActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RevealReplyActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RevealedMessageActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EncryptionActivity"
+        <activity
+            android:name=".ProfilePhotoActivity"
+            android:excludeFromRecents="true"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
+        <activity
+            android:name=".VerticalRegisterationActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".NavButtonTest"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".NavButtonTestActivity"
+        <activity
+            android:name=".WebRTCActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".RequestTrackerActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EphemeralPhotoActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".EphermeralPhotoActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ephemeral_photo_activity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AutoTextSizeChangeActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".RevealReplyActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RevealedMessageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EncryptionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NavButtonTest"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NavButtonTestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RequestTrackerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EphemeralPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EphermeralPhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ephemeral_photo_activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AutoTextSizeChangeActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".VerticalPageActivity"
-            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"
-            />
-        <activity android:name=".PhotoTreatmentActivity"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".PhotoTreatmentActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TestJavaEmojiKeyBoard"
             android:screenOrientation="portrait"
-
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".FireVideo"
-            android:theme="@style/BlackStatusBar"
-
             android:screenOrientation="portrait"
+            android:theme="@style/BlackStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LiveMessagingActivity"
@@ -72,7 +86,6 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SplashScreen"
-
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
@@ -85,27 +98,30 @@
         <activity
             android:name=".EphemeralChainMessageActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".SwipeButtonActivity" />
         <activity
             android:name=".ArchiveActivity"
-
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_archive" />
+            android:label="@string/title_activity_archive"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".EphemeralMessageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".PhotoViewerUploadActivity"
-
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ImageUpload"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PhotoActivity"
+        <activity
+            android:name=".PhotoViewerUploadActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".PhotoViewActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PhotoEditToolsActivity"
+        <activity
+            android:name=".ImageUpload"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PhotoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PhotoViewActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PhotoEditToolsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
@@ -121,13 +137,17 @@
             android:label="@string/title_activity_alpha"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".LoginActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RegisterActivity"
+        <activity
+            android:name=".LoginActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".HomeActivity"
+        <activity
+            android:name=".RegisterActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

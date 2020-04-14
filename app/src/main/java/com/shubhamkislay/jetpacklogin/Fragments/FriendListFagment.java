@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -36,6 +37,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -75,8 +77,13 @@ public class FriendListFagment extends Fragment {
     TextView search_result_txt;
     private ValueEventListener valueEventListener;
     private Query query;
+    Button requests_btn_friends_back;
 
     Boolean searchBtnActive = true;
+    int friendRequestsCounter = 0;
+    private boolean enableRefreshButton = false;
+    private boolean friendRequests = false;
+    private boolean friendAvailable = false;
 
 
     public FriendListFagment() {
@@ -107,6 +114,7 @@ public class FriendListFagment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
 
         requests_btn = view.findViewById(R.id.requests_btn_friends);
+        requests_btn_friends_back = view.findViewById(R.id.requests_btn_friends_back);
 
         progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
 
@@ -266,8 +274,17 @@ public class FriendListFagment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                //if(s.length()>0)
+                if (s.length() > 0)
                 searchFriends(s.toString().toLowerCase());
+
+                else {
+                    /*userList.clear();
+                    friendsAdapter.notifyDataSetChanged();
+                    search_result_txt.setVisibility(View.VISIBLE);
+                    search_result_txt.setText("Add friends from search tab");*/
+
+                    populateWithFriends();
+                }
 
 
             }
@@ -302,6 +319,7 @@ public class FriendListFagment extends Fragment {
                 Intent intent = new Intent(getActivity(), RequestTrackerActivity.class);
 
                 getActivity().startActivity(intent);
+                enableRefreshButton = true;
             }
         });
 
@@ -354,6 +372,31 @@ public class FriendListFagment extends Fragment {
         //animateMenuImage(progress_menu_logo, progress_menu_logo_two);
 
 
+
+
+
+
+/*        DatabaseReference friendsRefresh = FirebaseDatabase.getInstance().getReference("FriendList")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        friendsRefresh.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    if(enableRefreshButton) {
+                        Toast.makeText(getContext(), "Refresh list", Toast.LENGTH_SHORT).show();
+                        enableRefreshButton = false;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -363,9 +406,6 @@ public class FriendListFagment extends Fragment {
 
             }
         }, 400);
-
-
-
 
         return view;
     }
@@ -481,6 +521,8 @@ public class FriendListFagment extends Fragment {
     private void populateWithFriends() {
 
 
+        search_result_txt.setVisibility(View.GONE);
+        friendRequestsCounter = 0;
         userList.clear();
         DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -509,12 +551,14 @@ public class FriendListFagment extends Fragment {
                                             new Thread(new Runnable() {
                                                 @Override
                                                 public void run() {
+
                                                     User user = dataSnapshot.getValue(User.class);
                                                     userList.add(user);
 
-
                                                 }
                                             }).start();
+                                            /*User user = dataSnapshot.getValue(User.class);
+                                            userList.add(user);*/
 
                                             friendsAdapter.notifyDataSetChanged();
 
@@ -532,7 +576,14 @@ public class FriendListFagment extends Fragment {
                                 progress_menu_logo_two.setVisibility(View.INVISIBLE);
                                 progressBarTwo.setVisibility(View.INVISIBLE);
 
+                                friendAvailable = true;
+
+                            } else if (friend.getStatus().equals("got")) {
+
+                                friendRequests = true;
+                                friendRequestsCounter += 1;
                             }
+
                         }catch (Exception e)
                         {
                             //
@@ -548,6 +599,37 @@ public class FriendListFagment extends Fragment {
                         }
 
                     }
+                    if (!friendAvailable) {
+                        if (friendRequests) {
+                            search_result_txt.setVisibility(View.VISIBLE);
+                            requests_btn_friends_back.setVisibility(View.VISIBLE);
+                            if (friendRequestsCounter > 1)
+                                search_result_txt.setText("You have got " + friendRequestsCounter + " friend requests");
+                            else
+                                search_result_txt.setText("You have got a friend request");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        } else {
+                            search_result_txt.setVisibility(View.VISIBLE);
+                            search_result_txt.setText("No friends");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+                        if (friendRequests) {
+                            requests_btn_friends_back.setVisibility(View.VISIBLE);
+                            // friendRequestsCounter
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
 
                 }
                 else {
@@ -570,7 +652,15 @@ public class FriendListFagment extends Fragment {
         });
 
 
+
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        populateWithFriends();
+    }
+
     public void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
@@ -613,5 +703,19 @@ public class FriendListFagment extends Fragment {
 
         }
         super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (enableRefreshButton) {
+            friendRequests = false;
+            friendAvailable = false;
+            requests_btn_friends_back.setVisibility(View.GONE);
+            search_result_txt.setVisibility(View.GONE);
+            populateWithFriends();
+            enableRefreshButton = false;
+        }
+
     }
 }

@@ -54,6 +54,7 @@ import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.MainActivity;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.ProfilePhotoActivity;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.SharedViewModel;
 
@@ -95,6 +96,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     TextView bottom_dialog_title, prof_txt, bio_txt_dialog;
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout relay;
+    private String profilepic;
 
 
 /*
@@ -197,6 +199,18 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 });
 
 
+            }
+        });
+
+        center_dp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!bottomSheetDialogVisible) {
+                    Intent intent = new Intent(getActivity(), ProfilePhotoActivity.class);
+                    intent.putExtra("profilepic", profilepic);
+
+                    getActivity().startActivity(intent);
+                }
             }
         });
 
@@ -499,6 +513,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 }
 
                 try{
+                    profilepic = user.getPhoto().replace("s96-c", "s384-c");
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
                 }

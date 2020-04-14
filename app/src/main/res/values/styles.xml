@@ -52,6 +52,10 @@
         <item name="android:background">@drawable/rounded_dialog</item>
     </style>
 
+    <style name="Activity.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:backgroundTint">#000</item>
+        <item name="actionBarTheme">@style/AppTheme.NoActionBar.FullScreen</item>
+    </style>
 
     <style name="AppTheme.NoActionBar.FullScreen">
 
