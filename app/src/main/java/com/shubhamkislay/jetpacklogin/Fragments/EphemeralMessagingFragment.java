@@ -97,6 +97,7 @@ import com.shubhamkislay.jetpacklogin.TypeWriter;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
 import com.shubhamkislay.jetpacklogin.UserPicViewModelFactory;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
+import com.shubhamkislay.jetpacklogin.ViewProfileActivity;
 
 import java.security.Key;
 import java.security.KeyFactory;
@@ -177,7 +178,20 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public static final int MSG_TYPING_BOX_ID = 1;
     public static final int MSG_TYPING_BOX_TWO_ID = 2;
     public static final int MSG_TYPING_BOX_THREE_ID = 3;
+    /*    username.setText(intent.getStringExtra("username"));
+            name.setText(intent.getStringExtra("name"));
+            feeling_txt.setText(intent.getStringExtra("feeling_txt"));
+            bio_txt.setText(intent.getStringExtra("bio_txt"));
+        friendStatus = intent.getStringExtra("friendStatus");
+        feelingEmoji = intent.getStringExtra("feelingEmoji");
+        photourl = intent.getStringExtra("photourl");
+        userId = intent.getStringExtra("userId");
+        currentUsername = intent.getStringExtra("currentUsername");
+        feeling_text_label = intent.getStringExtra("feeling_txt");
+        usernameText = intent.getStringExtra("username");
 
+        String otherusername;
+        String feeling_txt;*/
     public Button photosNotification;
     private ObjectAnimator UsernameObjectAnimator;
 
@@ -686,6 +700,25 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         chainBtn = view.findViewById(R.id.chain_message_btn);
+
+
+        username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ViewProfileActivity.class);
+
+
+                intent.putExtra("username", usernameChattingWith);
+                intent.putExtra("name", usernameChattingWith);
+                intent.putExtra("userId", userIdChattingWith);
+                intent.putExtra("currentUsername", currentUsername);
+                intent.putExtra("photourl", photo);
+                intent.putExtra("friendStatus", "friends");
+
+
+                getContext().startActivity(intent);
+            }
+        });
 
         chainBtn.setOnClickListener(new View.OnClickListener() {
             @Override

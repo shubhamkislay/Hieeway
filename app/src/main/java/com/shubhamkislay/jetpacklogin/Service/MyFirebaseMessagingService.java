@@ -1,35 +1,42 @@
-package com.shubhamkislay.jetpacklogin;
+package com.shubhamkislay.jetpacklogin.Service;
+
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
-import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
-
-public class MyMessagingService extends FirebaseMessagingService {
+import com.shubhamkislay.jetpacklogin.MainActivity;
+import com.shubhamkislay.jetpacklogin.R;
 
 
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+
+    public static final String CHANNEL_1_ID = "channel1";
+    public static final String CHANNEL_2_ID = "channel2";
     private String TAG = "Log";
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        // super.onMessageReceived(remoteMessage);
+        // ...
 
-        //  if(SettingsFragment.getReceiceNotification()){ //if user wants to receive notification
+        // TODO(developer): Handle FCM messages here.
+        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
+        Log.d(TAG, "From: " + remoteMessage.getFrom());
 
+        // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             sendNotification(remoteMessage.getNotification().getBody());
@@ -44,37 +51,28 @@ public class MyMessagingService extends FirebaseMessagingService {
 
         }
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+        }
 
-        Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE +"://" + this.getPackageName() + "/" +R.raw.chin_up);
+        // Also if you intend on generating your own notifications as a result of a received FCM
+        // message, here is where that should be initiated.
+    }
 
-            /*RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.push_notification_layout);
+    /**
+     * Called if InstanceID token is updated. This may occur if the security of
+     * the previous token had been compromised. Note that this is called when the InstanceID token
+     * is initially generated so this is where you would retrieve the token.
+     */
+    @Override
+    public void onNewToken(String token) {
+        Log.d(TAG, "Refreshed token: " + token);
 
-            remoteViews.setImageViewResource(R.id.push_notif_icon,R.mipmap.ic_bird_black);*/
-
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent, PendingIntent.FLAG_ONE_SHOT);
-
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,CHANNEL_1_ID);
-        // notificationBuilder.setContent(remoteViews);
-        notificationBuilder.setContentTitle(remoteMessage.getNotification().getTitle());
-        notificationBuilder.setContentText(remoteMessage.getNotification().getBody());
-
-        notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
-        notificationBuilder.setAutoCancel(true);
-        notificationBuilder.setColor(Color.parseColor("#29A8CF"));
-        // notificationBuilder.setSmallIcon(R.drawable.hieeway_logo_splash);
-        notificationBuilder.setSmallIcon(R.mipmap.ic_hieeway_logo);
-        notificationBuilder.setContentIntent(pendingIntent);
-
-         /*   remoteViews.setTextViewText(R.id.push_title, "Radyo Türkkuşu");
-            remoteViews.setTextViewText(R.id.push_context, remoteMessage.getNotification().getBody());*/
-        //notificationBuilder.setLights (ContextCompat.getColor(MainActivity.context, R.color.pushColor), 5000, 5000);
-        notificationManager.notify(1,notificationBuilder.build());
-        //    }
-
+        // If you want to send messages to this application instance or
+        // manage this apps subscriptions on the server side, send the
+        // Instance ID token to your app server.
+        // sendRegistrationToServer(token);
     }
 
     private void sendNotification(String messageBody) {

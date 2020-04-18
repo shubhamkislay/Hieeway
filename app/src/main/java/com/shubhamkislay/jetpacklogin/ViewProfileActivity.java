@@ -1,5 +1,6 @@
 package com.shubhamkislay.jetpacklogin;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -13,11 +14,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.shubhamkislay.jetpacklogin.Model.Friend;
+import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.HashMap;
 
@@ -79,20 +86,153 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         username.setText(intent.getStringExtra("username"));
         name.setText(intent.getStringExtra("name"));
-        feeling_txt.setText(intent.getStringExtra("feeling_txt"));
-        bio_txt.setText(intent.getStringExtra("bio_txt"));
-        friendStatus = intent.getStringExtra("friendStatus");
-        feelingEmoji = intent.getStringExtra("feelingEmoji");
+
         photourl = intent.getStringExtra("photourl");
         userId = intent.getStringExtra("userId");
         currentUsername = intent.getStringExtra("currentUsername");
-        feeling_text_label = intent.getStringExtra("feeling_txt");
+
         usernameText = intent.getStringExtra("username");
 
 
         Glide.with(this).load(photourl.replace("s96-c", "s384-c")).into(center_dp);
         Glide.with(this).load(photourl.replace("s96-c", "s384-c")).into(profile_pic_background);
 
+
+        checkUserData(intent);
+
+
+        friend_btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelRequest();
+            }
+        });
+
+        start_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ViewProfileActivity.this, VerticalPageActivity.class);
+                intent.putExtra("username", usernameText);
+                intent.putExtra("userid", userId);
+                intent.putExtra("photo", photourl);
+                //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
+
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
+    }
+
+    private void checkUserData(Intent intent) {
+        // try {
+
+        feeling_txt.setText(intent.getStringExtra("feeling_txt"));
+        bio_txt.setText(intent.getStringExtra("bio_txt"));
+        friendStatus = intent.getStringExtra("friendStatus");
+        feelingEmoji = intent.getStringExtra("feelingEmoji");
+        feeling_text_label = intent.getStringExtra("feeling_txt");
+        try {
+            if (feeling_text_label.length() < 1)
+                feeling_txt.setText(HAPPY);
+        } catch (Exception e) {
+            feeling_text_label = "happy";
+            feeling_txt.setText(HAPPY);
+        }
+/*        }catch (Exception e)
+        {
+            //
+            //   Toast.makeText(ViewProfileActivity.this,"Data unavailable",Toast.LENGTH_SHORT).show();
+            //friendStatus = "friends";
+            loadNullValue(userId,FirebaseAuth.getInstance().getCurrentUser().getUid());
+            return;
+        }
+        try {*/
+        if (friendStatus.equals("friends")
+                || friendStatus.equals("notFriend")
+                || friendStatus.equals("got")
+                || friendStatus.equals("requested"))
+            setUserData();
+        // friendStatus.length();
+
+
+    }
+
+    private void loadNullValue(final String userId, String uid) {
+
+/*        DatabaseReference findFriendShipReference = FirebaseDatabase.getInstance().getReference("FriendList")
+                .child(uid)
+                .child(userId);
+
+        findFriendShipReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    Friend friend = dataSnapshot.getValue(Friend.class);
+                    try {
+                        friendStatus = friend.getStatus();
+                    }catch (NullPointerException e)
+                    {
+                        friendStatus = "notFriend";
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
+
+        DatabaseReference findUserDataReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(userId);
+
+        findUserDataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    try {
+                        feeling_txt.setText(user.getFeeling());
+                    } catch (Exception e) {
+                        feeling_txt.setText(HAPPY);
+                    }
+
+                    bio_txt.setText(user.getBio());
+
+                    try {
+                        feelingEmoji = user.getFeelingIcon();
+                    } catch (Exception e) {
+                        feelingEmoji = "default";
+                    }
+
+                    try {
+                        feeling_text_label = user.getFeeling();
+                    } catch (Exception e) {
+                        feeling_text_label = HAPPY;
+                    }
+
+                    setUserData();
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    public void setUserData() {
+        // try {
         if (friendStatus.equals("friends")) {
             feeling_txt.setVisibility(View.VISIBLE);
             emoji_holder_layout.setVisibility(View.VISIBLE);
@@ -101,14 +241,23 @@ public class ViewProfileActivity extends AppCompatActivity {
             startBlinking();
 
 
-            if (feelingEmoji.equals("default")) {
+            try {
+                if (feelingEmoji.equals("default")) {
+                    emoji_icon.setVisibility(View.INVISIBLE);
+                    feeling_icon.setVisibility(View.VISIBLE);
+                    setFeelingEmoji(feeling_text_label);
+                } else {
+                    emoji_icon.setVisibility(View.VISIBLE);
+                    feeling_icon.setVisibility(View.INVISIBLE);
+                    emoji_icon.setText(feelingEmoji);
+
+                }
+            } catch (Exception e) {
+                loadNullValue(userId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                feelingEmoji = "default";
                 emoji_icon.setVisibility(View.INVISIBLE);
                 feeling_icon.setVisibility(View.VISIBLE);
-                setFeelingEmoji(feeling_text_label);
-            } else {
-                emoji_icon.setVisibility(View.VISIBLE);
-                feeling_icon.setVisibility(View.INVISIBLE);
-                emoji_icon.setText(feelingEmoji);
+                setFeelingEmoji(HAPPY);
 
             }
         } else {
@@ -148,28 +297,12 @@ public class ViewProfileActivity extends AppCompatActivity {
                 }
 
             }
-        });
-
-        friend_btn_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelRequest();
-            }
-        });
-
-        start_chat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ViewProfileActivity.this, VerticalPageActivity.class);
-                intent.putExtra("username", usernameText);
-                intent.putExtra("userid", userId);
-                intent.putExtra("photo", photourl);
-                //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
-
-                startActivity(intent);
-                finish();
-            }
-        });
+        });/*
+        }catch (Exception e)
+        {
+            Toast.makeText(ViewProfileActivity.this,"Data is not present",Toast.LENGTH_SHORT).show();
+            loadNullValue(userId,FirebaseAuth.getInstance().getCurrentUser().getUid());
+            }*/
 
 
     }
@@ -336,7 +469,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     }
 
     private void startBlinking() {
-        ring_blinker_layout.animate().alpha(0.0f).setDuration(950);
+/*        ring_blinker_layout.animate().alpha(0.0f).setDuration(950);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -350,6 +483,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                     }
                 }, 1000);
             }
-        }, 1000);
+        }, 1000);*/
     }
+
 }

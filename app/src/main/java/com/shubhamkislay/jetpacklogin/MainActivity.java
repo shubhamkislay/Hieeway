@@ -739,13 +739,23 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         this.photourl = photourl;
 
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
+                    HashMap<String, Object> hashMap = new HashMap<>();
+
+                    hashMap.put("token", device_token);
+                    hashMap.put(PUBLIC_KEY, public_key);
+                    hashMap.put("publicKeyId", publickeyid);
+
+                    databaseReference.updateChildren(hashMap);
+
+
+
                     startActivity(new Intent(MainActivity.this,NavButtonTest.class));
                     finish();
                 }

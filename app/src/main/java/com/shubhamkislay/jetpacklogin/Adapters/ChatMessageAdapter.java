@@ -49,12 +49,15 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.shubhamkislay.jetpacklogin.ArchiveActivity;
 import com.shubhamkislay.jetpacklogin.DeleteOptionsDialog;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
@@ -293,7 +296,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 /*Intent intent = new Intent(mContext, WebRTCActivity.class);
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
                 mContext.startActivity(intent);*/
-                mContext.startActivity(new Intent(mContext, VerticalRegisterationActivity.class));
+                //mContext.startActivity(new Intent(mContext, VerticalRegisterationActivity.class));
+
+                FirebaseMessaging.getInstance().subscribeToTopic(chatStamp.getUsername()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(mContext, "Subscribed to " + chatStamp.getUsername(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
 
             }

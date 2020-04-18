@@ -332,8 +332,13 @@ public class RegisterEmailEntryFragment extends Fragment {
 
                                             }
 
-                                            if(privateKeyText!=null&&userID!=null&&userID.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                                            /**
+                                             * Uncomment the following to enable saved keys when logging back in
+                                             */
+/*                                            if(privateKeyText!=null&&userID!=null&&userID.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
                                             {
+
+
 
                                                 // Get new Instance ID token
                                                 device_token = task.getResult().getToken();
@@ -360,10 +365,10 @@ public class RegisterEmailEntryFragment extends Fragment {
 
                                                 databaseReference.updateChildren(hashMap);
 
-                                                /*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
-                                                *//*progressBarOne.setVisibility(View.GONE);
-                                                progressBarTwo.setVisibility(View.GONE);*//*
-                                                finish();*/
+                                                *//*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
+                                             *//**//*progressBarOne.setVisibility(View.GONE);
+                                                progressBarTwo.setVisibility(View.GONE);*//**//*
+                                                finish();*//*
 
                                                 google_signin.setVisibility(View.GONE);
                                                 googleButtonListener.onGoogleButtonPressed(acct.getEmail(),name+" "+surname,acct.getPhotoUrl().toString(),databaseReference,device_token);
@@ -371,7 +376,9 @@ public class RegisterEmailEntryFragment extends Fragment {
                                             else
                                             {
                                                 generateKeys(task,acct.getEmail(),name+" "+surname,acct.getPhotoUrl().toString());
-                                            }
+                                            }*/
+
+                                            generateKeys(task, acct.getEmail(), name + " " + surname, acct.getPhotoUrl().toString());
 
 
                                         }
@@ -431,11 +438,11 @@ public class RegisterEmailEntryFragment extends Fragment {
 
 
 
-        HashMap<String, Object> hashMap = new HashMap<>();
+/*        HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put("token",device_token);
         hashMap.put(PUBLIC_KEY,publicKey);
-        hashMap.put("publicKeyId",publicKeyId);
+        hashMap.put("publicKeyId",publicKeyId);*/
 
        // databaseReference.updateChildren(hashMap);
 
