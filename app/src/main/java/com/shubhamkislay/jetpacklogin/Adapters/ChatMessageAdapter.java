@@ -550,6 +550,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                         intent.putExtra("username", chatStamp.getUsername());
                         intent.putExtra("userid", chatStamp.getId());
                         intent.putExtra("photo", chatStamp.getPhoto());
+                        intent.putExtra("live", "no");
                         //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
 
                         mContext.startActivity(intent);

@@ -186,6 +186,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                         intent.putExtra("username", user.getUsername());
                         intent.putExtra("userid", user.getUserid());
                         intent.putExtra("photo", user.getPhoto());
+                        intent.putExtra("live", "no");
                         mContext.startActivity(intent);
 
 

@@ -119,6 +119,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
     public TextView username, button_exterior, message_counter_background, message_no_message_counter_background;
     public Button  message_counter;
+    String userFeeling;
 
     public TextView message_text_dummy, message_text, message_text_two, message_text_three;
     public TextView message_text_sender_dummy, message_text_sender, message_text_two_sender, message_text_three_sender;
@@ -370,6 +371,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     try {
                         otherUserPublicKey = user.getPublicKey();
                         otherUserPublicKeyID = user.getPublicKeyId();
+
                     }
                     catch (Exception e)
                     {

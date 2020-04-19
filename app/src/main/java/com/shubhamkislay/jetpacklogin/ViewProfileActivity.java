@@ -115,6 +115,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 intent.putExtra("username", usernameText);
                 intent.putExtra("userid", userId);
                 intent.putExtra("photo", photourl);
+                intent.putExtra("live", "no");
                 //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
 
                 startActivity(intent);

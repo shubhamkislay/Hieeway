@@ -52,6 +52,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private Bundle bundleSendMessage;
     private int pageSelected = 1;
     private int chatStampSize = 0;
+    String live = "no";
     LiveMessageFragment liveMessageFragment;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
@@ -74,6 +75,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         final String usernameChattingWith = intent.getStringExtra("username");
         userIdChattingWith = intent.getStringExtra("userid");
         final String photo = intent.getStringExtra("photo");
+        live = intent.getStringExtra("live");
+
 
 
 
@@ -177,7 +180,12 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
          *
          * The following line of code is the focused entity
         * */
-        viewPager.setCurrentItem(fragmentList.size()-2);
+        if (live.equals("no"))
+            viewPager.setCurrentItem(fragmentList.size()-2);
+
+        else
+            viewPager.setCurrentItem(fragmentList.size() - 1);
+
 
        // observeLiveChatList();
         viewPager.setOffscreenPageLimit(2);

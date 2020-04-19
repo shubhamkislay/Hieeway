@@ -377,7 +377,6 @@ public class RegisterEmailEntryFragment extends Fragment {
                                             {
                                                 generateKeys(task,acct.getEmail(),name+" "+surname,acct.getPhotoUrl().toString());
                                             }*/
-
                                             generateKeys(task, acct.getEmail(), name + " " + surname, acct.getPhotoUrl().toString());
 
 

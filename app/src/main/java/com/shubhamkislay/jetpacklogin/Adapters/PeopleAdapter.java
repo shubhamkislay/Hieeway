@@ -160,6 +160,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                             intent.putExtra("username", user.getUsername());
                             intent.putExtra("userid", user.getUserid());
                             intent.putExtra("photo", user.getPhoto());
+                            intent.putExtra("live", "no");
 
 
                         /*Pair[] pairs = new Pair[1];
