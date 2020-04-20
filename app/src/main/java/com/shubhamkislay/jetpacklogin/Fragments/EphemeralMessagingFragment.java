@@ -359,6 +359,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         currentUserPrivateKey = getArguments().getString("currentUserPrivateKey");
         currentUserPublicKeyID = getArguments().getString("currentUserPublicKeyID");
 
+
         DatabaseReference otherUserkeyReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(userIdChattingWith);
 

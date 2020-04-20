@@ -10,8 +10,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Display;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -52,12 +59,27 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private Bundle bundleSendMessage;
     private int pageSelected = 1;
     private int chatStampSize = 0;
-    String live = "no";
+    final static String HAPPY = "happy";
+    final static String BORED = "bored";
+    final static String EXCITED = "excited";
+    final static String SAD = "sad";
+    final static String CONFUSED = "confused";
+    final static String ANGRY = "angry";
+    String userFeeling;
+    String feelingDefault;
     LiveMessageFragment liveMessageFragment;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
     public static final String PUBLIC_KEY = "publicKey";
     public static final String PUBLIC_KEY_ID = "publicKeyID";
+    RelativeLayout feeling_splash_layout;
+    ImageView feelingDefaultEmoji;
+    TextView feelingCustomEmoji;
+    String live;
+    Point size;
+    float displayHeight;
+    int emojiYTransitionDuration = 1250;
+    int emojiAplhaDuration = 500;
     String publicKeyText, privateKeyText, otherUserPublicKey, otherUserPublicKeyID, publicKeyId;
 
     @Override
@@ -71,11 +93,233 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         messageList = new ArrayList<>();
         sendMessagelist = new ArrayList<>();
+        feeling_splash_layout = findViewById(R.id.feeling_splash_layout);
+        feelingDefaultEmoji = findViewById(R.id.feelingDefaultEmoji);
+        feelingCustomEmoji = findViewById(R.id.feelingCustomEmoji);
+
 
         final String usernameChattingWith = intent.getStringExtra("username");
         userIdChattingWith = intent.getStringExtra("userid");
         final String photo = intent.getStringExtra("photo");
         live = intent.getStringExtra("live");
+
+        Display display = getWindowManager().getDefaultDisplay();
+        size = new Point();
+        display.getSize(size);
+        displayHeight = size.y;
+
+        if (intent.getExtras() != null) {
+
+            for (String key : getIntent().getExtras().keySet()) {
+                if (key.equals("feeling")) {
+                    feelingDefault = intent.getStringExtra("default");
+                    if (feelingDefault.equals("no")) {
+                        feelingCustomEmoji.setText(intent.getStringExtra("feeling"));
+                        feelingCustomEmoji.setVisibility(View.VISIBLE);
+                        feeling_splash_layout.setVisibility(View.VISIBLE);
+                        feelingCustomEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                        feelingCustomEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                feelingCustomEmoji.animate().alpha(0.0f).setDuration(emojiAplhaDuration);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingCustomEmoji.setVisibility(View.GONE);
+                                        feeling_splash_layout.setVisibility(View.GONE);
+                                    }
+                                }, 1000);
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                    }
+                                }, emojiAplhaDuration);
+
+                            }
+                        }, 2000);
+
+                    } else {
+
+                        String feeling = intent.getStringExtra("feeling");
+                        switch (feeling) {
+                            case HAPPY:
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                                feelingDefaultEmoji.setVisibility(View.VISIBLE);
+                                feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                                feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+                                feeling_splash_layout.setVisibility(View.VISIBLE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingDefaultEmoji.animate().alpha(0.0f).setDuration(emojiAplhaDuration);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feelingDefaultEmoji.setVisibility(View.GONE);
+                                                feeling_splash_layout.setVisibility(View.GONE);
+                                            }
+                                        }, 1000);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                            }
+                                        }, emojiAplhaDuration);
+                                    }
+                                }, 2000);
+                                break;
+
+                            case ANGRY:
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                                feelingDefaultEmoji.setVisibility(View.VISIBLE);
+                                feeling_splash_layout.setVisibility(View.VISIBLE);
+                                feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                                feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingDefaultEmoji.animate().alpha(0.0f).setDuration(emojiAplhaDuration);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feelingDefaultEmoji.setVisibility(View.GONE);
+                                                feeling_splash_layout.setVisibility(View.GONE);
+                                            }
+                                        }, 1000);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                            }
+                                        }, emojiAplhaDuration);
+                                    }
+                                }, 2000);
+                                break;
+
+                            case SAD:
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                                feelingDefaultEmoji.setVisibility(View.VISIBLE);
+                                feeling_splash_layout.setVisibility(View.VISIBLE);
+                                feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                                feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingDefaultEmoji.animate().alpha(0.0f).setDuration(emojiAplhaDuration);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feelingDefaultEmoji.setVisibility(View.GONE);
+                                                feeling_splash_layout.setVisibility(View.GONE);
+                                            }
+                                        }, 1000);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                            }
+                                        }, emojiAplhaDuration);
+                                    }
+                                }, 2000);
+                                break;
+
+                            case BORED:
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                                feelingDefaultEmoji.setVisibility(View.VISIBLE);
+                                feeling_splash_layout.setVisibility(View.VISIBLE);
+                                feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                                feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingDefaultEmoji.animate().alpha(0.0f).setDuration(emojiAplhaDuration);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feelingDefaultEmoji.setVisibility(View.GONE);
+                                                feeling_splash_layout.setVisibility(View.GONE);
+                                            }
+                                        }, 1000);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                            }
+                                        }, emojiAplhaDuration);
+                                    }
+                                }, 2000);
+                                break;
+
+                            case CONFUSED:
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                                feelingDefaultEmoji.setVisibility(View.VISIBLE);
+                                feeling_splash_layout.setVisibility(View.VISIBLE);
+                                feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                                feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingDefaultEmoji.animate().alpha(0.0f).setDuration(emojiAplhaDuration);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feelingDefaultEmoji.setVisibility(View.GONE);
+                                                feeling_splash_layout.setVisibility(View.GONE);
+                                            }
+                                        }, 1000);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                            }
+                                        }, emojiAplhaDuration);
+                                    }
+                                }, 2000);
+                                break;
+
+                            case EXCITED:
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                                feelingDefaultEmoji.setVisibility(View.VISIBLE);
+                                feeling_splash_layout.setVisibility(View.VISIBLE);
+                                feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
+                                feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        feelingDefaultEmoji.animate().alpha(0.0f).setDuration(1000);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feelingDefaultEmoji.setVisibility(View.GONE);
+                                                feeling_splash_layout.setVisibility(View.GONE);
+                                            }
+                                        }, 1000);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                feeling_splash_layout.animate().alpha(0.0f).setDuration(800);
+                                            }
+                                        }, emojiAplhaDuration);
+                                    }
+                                }, 2000);
+                                break;
+
+                        }
+                    }
+                }
+            }
+        }
 
 
 

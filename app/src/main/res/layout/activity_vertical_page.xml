@@ -29,5 +29,35 @@ android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <RelativeLayout
+        android:id="@+id/feeling_splash_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/feelingDefaultEmoji"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/feelingCustomEmoji"
+            android:layout_width="190dp"
+            android:layout_height="190dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0"
+            android:gravity="center"
+            android:textSize="130sp"
+            android:visibility="gone" />
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
