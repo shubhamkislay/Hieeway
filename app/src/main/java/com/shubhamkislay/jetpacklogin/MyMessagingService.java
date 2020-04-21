@@ -194,6 +194,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setContentTitle(remoteMessage.getData().get("label"))
                                 .setContentText(remoteMessage.getData().get("content"))
                                 .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_MAX)
+                                .setGroup("feelingcustom")
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
 
@@ -217,9 +219,24 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setSmallIcon(R.mipmap.ic_hieeway_logo)
                                 .setContentTitle(remoteMessage.getData().get("label"))
                                 .setContentText(remoteMessage.getData().get("content"))
-                                .setAutoCancel(true)
+                                // .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_MAX)
+                                .setGroup("feelingdefault")
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
+
+                /*NotificationCompat.Builder summaryNotificationBuilder =
+                        new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                .setStyle(new NotificationCompat.InboxStyle()
+                                .addLine(remoteMessage.getData().get("label") + " " + remoteMessage.getData().get("content"))
+                                .setBigContentTitle("2 new messages"))
+                                // .setAutoCancel(true)
+                                .setPriority(NotificationCompat.PRIORITY_MAX)
+                                .setGroup("feelingdefault")
+                                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+                                .setSound(defaultSoundUri)
+                                .setContentIntent(pendingIntent);*/
 
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -233,6 +250,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                 }
 
                 notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+                /* notificationManager.notify(0 *//* ID of notification *//*, notificationBuilder.build());
+                notificationManager.notify(0 *//* ID of notification *//*, summaryNotificationBuilder.build());*/
             }
         }
 
