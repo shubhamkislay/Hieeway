@@ -1,5 +1,6 @@
 package com.shubhamkislay.jetpacklogin;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,12 +19,17 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
 
 public class MyMessagingService extends FirebaseMessagingService {
 
 
     private String TAG = "Log";
+    private static int messageNotificationCount = 1;
+    private static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // super.onMessageReceived(remoteMessage);
@@ -72,6 +78,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             notificationBuilder.setSmallIcon(R.mipmap.ic_hieeway_logo);
             notificationBuilder.setContentIntent(pendingIntent);
 
+
          /*   remoteViews.setTextViewText(R.id.push_title, "Radyo Türkkuşu");
             remoteViews.setTextViewText(R.id.push_context, remoteMessage.getNotification().getBody());*/
             //notificationBuilder.setLights (ContextCompat.getColor(MainActivity.context, R.color.pushColor), 5000, 5000);
@@ -107,7 +114,92 @@ public class MyMessagingService extends FirebaseMessagingService {
                         .setContentText(remoteMessage.getData().get("content"))
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
+                        //.setGroup(remoteMessage.getData().get("userId"))
                         .setContentIntent(pendingIntent);
+
+
+        int id = NotificationID.getID();
+
+
+        if (remoteMessage.getData().get("reply").equals("no")) {
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "sent")) {
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "sent", id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 1);
+                messageNotificationCount = 1;
+            } else {
+                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numbersent");
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "sent");
+                messageNotificationCount = newCount + 1;
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", messageNotificationCount);
+            }
+
+        } else {
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "reply")) {
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "reply", id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 1);
+                messageNotificationCount = 1;
+            } else {
+                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberreply");
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "reply");
+                messageNotificationCount = newCount + 1;
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", messageNotificationCount);
+            }
+        }
+
+/*        if(!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId"))) {
+            if(remoteMessage.getData().get("reply").equals("no")) {
+                notificationIDHashMap.put(remoteMessage.getData().get("userId"), id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId")+"replyid", id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 1);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 0);
+            }
+            else {
+                notificationIDHashMap.put(remoteMessage.getData().get("userId"), id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId"), id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 0);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 1);
+            }
+            messageNotificationCount = 1;
+        }
+        else {
+            id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId"));
+            if(remoteMessage.getData().get("reply").equals("no")) {
+                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numbersent");
+                messageNotificationCount = newCount + 1;
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", messageNotificationCount);
+            }
+            else {
+                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberreply");
+                messageNotificationCount = newCount + 1;
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", messageNotificationCount);
+            }
+        }*/
+
+        Notification summaryNotificationBuilder;
+
+        if (remoteMessage.getData().get("reply").equals("no")) {
+            summaryNotificationBuilder =
+                    new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                            .setContentTitle(remoteMessage.getData().get("username") + " has sent you " + (messageNotificationCount) + " messages")
+                            .setContentText(remoteMessage.getData().get("content"))
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setGroup(remoteMessage.getData().get("userId"))
+                            .setGroupSummary(true)
+                            .setContentIntent(pendingIntent).build();
+        } else {
+            summaryNotificationBuilder =
+                    new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                            .setContentTitle(remoteMessage.getData().get("username") + " replied to " + (messageNotificationCount) + " of your messages")
+                            .setContentText(remoteMessage.getData().get("content"))
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setGroup(remoteMessage.getData().get("userId"))
+                            .setGroupSummary(true)
+                            .setContentIntent(pendingIntent).build();
+        }
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -120,7 +212,13 @@ public class MyMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(channel);
         }
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        //int id =NotificationID.getID();
+        notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        //  ++messageNotificationCount;
+        if (messageNotificationCount > 1)
+            notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
+
+
     }
 
     private void sendFeelingNotification(RemoteMessage remoteMessage) {
@@ -130,6 +228,14 @@ public class MyMessagingService extends FirebaseMessagingService {
         /*final String usernameChattingWith = intent.getStringExtra("username");
         userIdChattingWith = intent.getStringExtra("userid");
         final String photo = intent.getStringExtra("photo");*/
+
+        int id = NotificationID.getID();
+
+        if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "feeling")) {
+            notificationIDHashMap.put(remoteMessage.getData().get("userId") + "feeling", id);
+        } else {
+            id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "feeling");
+        }
 
 
         if (remoteMessage.getData().get("default").equals("no")) {
@@ -158,6 +264,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setSound(defaultSoundUri)
                             .setContentIntent(pendingIntent);
 
+
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -165,11 +272,11 @@ public class MyMessagingService extends FirebaseMessagingService {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
                         "Channel human readable title",
-                        NotificationManager.IMPORTANCE_DEFAULT);
+                        NotificationManager.IMPORTANCE_HIGH);
                 notificationManager.createNotificationChannel(channel);
             }
 
-            notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+            notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
         } else {
 
 
@@ -184,6 +291,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                     PendingIntent.FLAG_ONE_SHOT);
 
+
             if (remoteMessage.getData().get("feeling").equals("happy")) {
 
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -195,7 +303,6 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setContentText(remoteMessage.getData().get("content"))
                                 .setAutoCancel(true)
                                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                                .setGroup("feelingcustom")
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
 
@@ -210,7 +317,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                     notificationManager.createNotificationChannel(channel);
                 }
 
-                notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+                notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
             } else {
                 Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 String mipMap = remoteMessage.getData().get("icon");
@@ -221,22 +328,10 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setContentText(remoteMessage.getData().get("content"))
                                 // .setAutoCancel(true)
                                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                                .setGroup("feelingdefault")
+
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
 
-                /*NotificationCompat.Builder summaryNotificationBuilder =
-                        new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                                .setStyle(new NotificationCompat.InboxStyle()
-                                .addLine(remoteMessage.getData().get("label") + " " + remoteMessage.getData().get("content"))
-                                .setBigContentTitle("2 new messages"))
-                                // .setAutoCancel(true)
-                                .setPriority(NotificationCompat.PRIORITY_MAX)
-                                .setGroup("feelingdefault")
-                                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
-                                .setSound(defaultSoundUri)
-                                .setContentIntent(pendingIntent);*/
 
                 NotificationManager notificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -249,11 +344,18 @@ public class MyMessagingService extends FirebaseMessagingService {
                     notificationManager.createNotificationChannel(channel);
                 }
 
-                notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-                /* notificationManager.notify(0 *//* ID of notification *//*, notificationBuilder.build());
-                notificationManager.notify(0 *//* ID of notification *//*, summaryNotificationBuilder.build());*/
+                notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+
             }
         }
 
+    }
+
+    public static class NotificationID {
+        private final static AtomicInteger c = new AtomicInteger(0);
+
+        public static int getID() {
+            return c.incrementAndGet();
+        }
     }
 }
