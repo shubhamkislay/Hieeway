@@ -397,13 +397,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 // deleteOptionsListener.setDeleteOptionsDialog(mContext,chatStamp,position,mChatStamps,activity,viewHolder);
 
 
-
-
-
-
-
-
-                return false;
+                return true;
             }
         });
 

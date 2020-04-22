@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.media.session.MediaController;
@@ -43,13 +44,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
+import static com.shubhamkislay.jetpacklogin.MyApplication.notificationIDHashMap;
 
 public class MyMessagingService extends FirebaseMessagingService {
 
 
     private String TAG = "Log";
     private static int messageNotificationCount = 1;
-    private static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
     Bitmap bitmap = null;
     int notificationBackGroundColor = Color.RED;
     int notificationTitleColor = Color.RED;
@@ -75,8 +76,12 @@ public class MyMessagingService extends FirebaseMessagingService {
 
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            if (remoteMessage.getData().get("type").equals("message"))
+            if (remoteMessage.getData().get("type").equals("message")
+                    && remoteMessage.getData().get("live").equals("no"))
                 sendMessageNotification(remoteMessage);
+            else if (remoteMessage.getData().get("type").equals("message")
+                    && remoteMessage.getData().get("live").equals("yes"))
+                sendLiveNotification(remoteMessage);
             else //if(remoteMessage.getData().get("type").equals("feeling"))
                 sendFeelingNotification(remoteMessage);
 
@@ -125,6 +130,140 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     }
 
+    private void sendLiveNotification(RemoteMessage remoteMessage) {
+        context = this;
+
+        intent = new Intent(this, VerticalPageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("username", remoteMessage.getData().get("username"));
+        intent.putExtra("userid", remoteMessage.getData().get("userId"));
+        intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+        intent.putExtra("live", remoteMessage.getData().get("live"));
+        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        collapsedView = new RemoteViews(getPackageName(), R.layout.collapsed_message_notification);
+        RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.expanded_message_notification);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        try {
+            bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(remoteMessage.getData().get("userPhoto").replace("s96-c", "s384-c"))
+                    .submit(512, 512)
+                    .get();
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+            collapsedView.setImageViewBitmap(R.id.logo, bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder;
+
+        NotificationChannel notificationChannel;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel =
+                    new NotificationChannel("ch_nr", "CHART", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setVibrationPattern(new long[]{300, 300, 300});
+
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                notificationChannel.setSound(defaultSoundUri, att);
+            }
+
+
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, notificationChannel.getId())
+                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText("Tap to accept")
+                            //.setCont
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            //.setAutoCancel(true)
+                            /*.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                            .setSound(defaultSoundUri)*/
+                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            //.setOngoing(true)
+                            //.setDefaults(Notification.FLAG_INSISTENT|Notification.DEFAULT_VIBRATE)
+                            /*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                            //  .setShowActionsInCompactView(1))
+                            //.setMediaSession(MediaSessionCompat.Token))
+                            //.setGroup(remoteMessage.getData().get("userId"))
+                            .setContentIntent(pendingIntent);
+
+
+            int id = NotificationID.getID();
+
+
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "live"))
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "live", id);
+            else
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
+
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        } else {
+
+
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText("Tap to accept")
+                            //.setCont
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            //.setAutoCancel(true)
+                            .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                            .setSound(defaultSoundUri)
+                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setOngoing(true)
+                            //.setDefaults(Notification.FLAG_INSISTENT|Notification.DEFAULT_VIBRATE)
+                            /*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                            //  .setShowActionsInCompactView(1))
+                            //.setMediaSession(MediaSessionCompat.Token))
+                            //.setGroup(remoteMessage.getData().get("userId"))
+                            .setFullScreenIntent(pendingIntent, true);
+            ;
+
+
+            int id = NotificationID.getID();
+
+
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "live"))
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "live", id);
+            else
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
+
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        }
+
+
+    }
+
     private void sendMessageNotification(final RemoteMessage remoteMessage) {
 
 
@@ -137,12 +276,45 @@ public class MyMessagingService extends FirebaseMessagingService {
 
         context = this;
 
+        int id = NotificationID.getID();
+        String userValueIntentExtra;
+
+        if (remoteMessage.getData().get("reply").equals("no")) {
+            userValueIntentExtra = remoteMessage.getData().get("userId") + "numbersent";
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "sent")) {
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "sent", id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 1);
+
+                messageNotificationCount = 1;
+            } else {
+                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numbersent");
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "sent");
+                messageNotificationCount = newCount + 1;
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", messageNotificationCount);
+            }
+
+        } else {
+            userValueIntentExtra = remoteMessage.getData().get("userId") + "numberreply";
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "reply")) {
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "reply", id);
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 1);
+                messageNotificationCount = 1;
+            } else {
+                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberreply");
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "reply");
+                messageNotificationCount = newCount + 1;
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", messageNotificationCount);
+            }
+        }
+
         intent = new Intent(this, VerticalPageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
         intent.putExtra("live", remoteMessage.getData().get("live"));
+        intent.putExtra("userValueIntentExtra", userValueIntentExtra);
+
         pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -240,129 +412,214 @@ public class MyMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder;
 
-
-        notificationBuilder =
-                new NotificationCompat.Builder(context, CHANNEL_1_ID)
-                        .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                        //.setCustomContentView(collapsedView)
-                        .setContentTitle("You got a message")
-                        .setContentText(remoteMessage.getData().get("label"))
-                        //.setCont
-                        .setLargeIcon(bitmap)
-                        //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                        .setPriority(NotificationCompat.PRIORITY_MAX)
-                        /*.setStyle(new NotificationCompat.BigTextStyle()
-                        .setBigContentTitle(remoteMessage.getData().get("label")))*/
-
-                        //  .setShowActionsInCompactView(1))
-                        //.setMediaSession(MediaSessionCompat.Token))
-                        //.setGroup(remoteMessage.getData().get("userId"))
-                        .setContentIntent(pendingIntent);
-
-
-        int id = NotificationID.getID();
-
-
-        if (remoteMessage.getData().get("reply").equals("no")) {
-            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "sent")) {
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "sent", id);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 1);
-                messageNotificationCount = 1;
-            } else {
-                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numbersent");
-                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "sent");
-                messageNotificationCount = newCount + 1;
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", messageNotificationCount);
-            }
-
-        } else {
-            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "reply")) {
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "reply", id);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 1);
-                messageNotificationCount = 1;
-            } else {
-                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberreply");
-                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "reply");
-                messageNotificationCount = newCount + 1;
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", messageNotificationCount);
-            }
-        }
-
-
-        Notification summaryNotificationBuilder;
-
-        if (remoteMessage.getData().get("reply").equals("no")) {
-
-
-            summaryNotificationBuilder =
-                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
-                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                            .setContentTitle("You have got messages")
-                            .setContentText(messageNotificationCount + " messages from " + remoteMessage.getData().get("username"))
-                            //.setCustomContentView(collapsedView)
-                            .setLargeIcon(bitmap)
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                            .setGroup(remoteMessage.getData().get("userId"))
-                            .setGroupSummary(true)
-                            .setContentIntent(pendingIntent).build();
-        } else {
-
-
-            summaryNotificationBuilder =
-                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
-                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                            //.setCustomContentView(collapsedView)
-                            .setContentTitle("You have got messages")
-                            .setContentText(messageNotificationCount + " replies from " + remoteMessage.getData().get("username"))
-                            .setLargeIcon(bitmap)
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                            .setGroup(remoteMessage.getData().get("userId"))
-                            .setGroupSummary(true)
-                            .setContentIntent(pendingIntent).build();
-        }
-
+        NotificationChannel notificationChannel;
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel =
+                    new NotificationChannel("ch_nm", "CHART", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setVibrationPattern(new long[]{300, 300, 300});
+
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                notificationChannel.setSound(defaultSoundUri, att);
+            }
+
+
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, notificationChannel.getId())
+                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle("You got a message")
+                            .setContentText(remoteMessage.getData().get("label"))
+                            //.setCont
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            //.setPriority(NotificationCompat.PRIORITY_MAX)
+                            /*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                            //  .setShowActionsInCompactView(1))
+                            //.setMediaSession(MediaSessionCompat.Token))
+                            //.setGroup(remoteMessage.getData().get("userId"))
+                            .setContentIntent(pendingIntent);
+
+
+            Notification summaryNotificationBuilder;
+
+            if (remoteMessage.getData().get("reply").equals("no")) {
+
+
+                summaryNotificationBuilder =
+                        new NotificationCompat.Builder(context, notificationChannel.getId())
+                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                .setContentTitle("You have got messages")
+                                .setContentText(messageNotificationCount + " messages from " + remoteMessage.getData().get("username"))
+                                //.setCustomContentView(collapsedView)
+                                .setLargeIcon(bitmap)
+                                .setAutoCancel(true)
+                                .setSound(defaultSoundUri)
+                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setGroup(remoteMessage.getData().get("userId"))
+                                .setGroupSummary(true)
+                                .setContentIntent(pendingIntent).build();
+            } else {
+
+
+                summaryNotificationBuilder =
+                        new NotificationCompat.Builder(context, notificationChannel.getId())
+                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                //.setCustomContentView(collapsedView)
+                                .setContentTitle("You have got messages")
+                                .setContentText(messageNotificationCount + " replies from " + remoteMessage.getData().get("username"))
+                                .setLargeIcon(bitmap)
+                                .setAutoCancel(true)
+                                .setSound(defaultSoundUri)
+                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setGroup(remoteMessage.getData().get("userId"))
+                                .setGroupSummary(true)
+                                .setContentIntent(pendingIntent).build();
+            }
+
+
+            // Since android Oreo notification channel is needed.
+/*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
                     "Channel human readable title",
                     NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
+        }*/
+
+            //int id =NotificationID.getID();
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+            //  ++messageNotificationCount;
+            if (messageNotificationCount > 1) {
+                if (remoteMessage.getData().get("reply").equals("no"))
+                    collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " has sent you " + (messageNotificationCount) + " messages");
+                else
+                    collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " replied to " + (messageNotificationCount) + " of your messages");
+
+                notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
+            }
+
+
+        } else {
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle("You got a message")
+                            .setContentText(remoteMessage.getData().get("label"))
+                            //.setCont
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            //.setPriority(NotificationCompat.PRIORITY_MAX)
+                            /*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                            //  .setShowActionsInCompactView(1))
+                            //.setMediaSession(MediaSessionCompat.Token))
+                            //.setGroup(remoteMessage.getData().get("userId"))
+                            .setContentIntent(pendingIntent);
+
+
+            if (remoteMessage.getData().get("reply").equals("no")) {
+                if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "sent")) {
+                    notificationIDHashMap.put(remoteMessage.getData().get("userId") + "sent", id);
+                    notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 1);
+                    messageNotificationCount = 1;
+                } else {
+                    int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numbersent");
+                    id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "sent");
+                    messageNotificationCount = newCount + 1;
+                    notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", messageNotificationCount);
+                }
+
+            } else {
+                if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "reply")) {
+                    notificationIDHashMap.put(remoteMessage.getData().get("userId") + "reply", id);
+                    notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 1);
+                    messageNotificationCount = 1;
+                } else {
+                    int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberreply");
+                    id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "reply");
+                    messageNotificationCount = newCount + 1;
+                    notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", messageNotificationCount);
+                }
+            }
+
+
+            Notification summaryNotificationBuilder;
+
+            if (remoteMessage.getData().get("reply").equals("no")) {
+
+
+                summaryNotificationBuilder =
+                        new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                .setContentTitle("You have got messages")
+                                .setContentText(messageNotificationCount + " messages from " + remoteMessage.getData().get("username"))
+                                //.setCustomContentView(collapsedView)
+                                .setLargeIcon(bitmap)
+                                .setAutoCancel(true)
+                                .setSound(defaultSoundUri)
+                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setGroup(remoteMessage.getData().get("userId"))
+                                .setGroupSummary(true)
+                                .setContentIntent(pendingIntent).build();
+            } else {
+
+
+                summaryNotificationBuilder =
+                        new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                //.setCustomContentView(collapsedView)
+                                .setContentTitle("You have got messages")
+                                .setContentText(messageNotificationCount + " replies from " + remoteMessage.getData().get("username"))
+                                .setLargeIcon(bitmap)
+                                .setAutoCancel(true)
+                                .setSound(defaultSoundUri)
+                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setGroup(remoteMessage.getData().get("userId"))
+                                .setGroupSummary(true)
+                                .setContentIntent(pendingIntent).build();
+            }
+
+
+            // Since android Oreo notification channel is needed.
+/*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }*/
+
+            //int id =NotificationID.getID();
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+            //  ++messageNotificationCount;
+            if (messageNotificationCount > 1) {
+                if (remoteMessage.getData().get("reply").equals("no"))
+                    collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " has sent you " + (messageNotificationCount) + " messages");
+                else
+                    collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " replied to " + (messageNotificationCount) + " of your messages");
+
+                notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
+            }
+
+
         }
-
-        //int id =NotificationID.getID();
-        notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
-        //  ++messageNotificationCount;
-        if (messageNotificationCount > 1) {
-            if (remoteMessage.getData().get("reply").equals("no"))
-                collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " has sent you " + (messageNotificationCount) + " messages");
-            else
-                collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " replied to " + (messageNotificationCount) + " of your messages");
-
-            notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +39,8 @@ import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.shubhamkislay.jetpacklogin.MyApplication.notificationIDHashMap;
 
 
 public class VerticalPageActivity extends AppCompatActivity implements MessageHighlightListener , LiveMessageEventListener {
@@ -91,6 +94,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         Intent intent = getIntent();
 
+        notificationIDHashMap.put(intent.getStringExtra("userValueIntentExtra"), 0);
+
         messageList = new ArrayList<>();
         sendMessagelist = new ArrayList<>();
         feeling_splash_layout = findViewById(R.id.feeling_splash_layout);
@@ -103,10 +108,14 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         final String photo = intent.getStringExtra("photo");
         live = intent.getStringExtra("live");
 
+        notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
+        notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
+
         Display display = getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
+
 
         if (intent.getExtras() != null) {
 
@@ -317,6 +326,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                         }
                     }
+                }
+                if (key.equals("userValueIntentExtra")) {
+                    //notificationIDHashMap.put(intent.getStringExtra("userValueIntentExtra"),0);
+                    // Toast.makeText(VerticalPageActivity.this,"Updated Notification",Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -560,6 +573,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     @Override
     protected void onPause() {
+        notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
+        notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
         try {
             sendMessageFragment.removeListeners();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")

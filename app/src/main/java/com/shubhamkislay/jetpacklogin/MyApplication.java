@@ -3,9 +3,14 @@ package com.shubhamkislay.jetpacklogin;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,9 +20,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 public class MyApplication extends Application {
     public static final String CHANNEL_1_ID = "messages";
     public static final String CHANNEL_2_ID = "feelings";
+    public static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
 
     @Override
     public void onCreate() {
@@ -40,21 +48,43 @@ public class MyApplication extends Application {
     private void createNotificationChannels() {
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+
             NotificationChannel channel1 = new NotificationChannel(
                     CHANNEL_1_ID,
                     "messages",
                     NotificationManager.IMPORTANCE_HIGH);
+            channel1.setVibrationPattern(new long[]{300, 300, 300});
+
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                channel1.setSound(defaultSoundUri, att);
+            }
 
             channel1.setDescription("direct messages");
+
 
             NotificationChannel channel2 = new NotificationChannel(
                     CHANNEL_2_ID,
                     "feelings",
-                    NotificationManager.IMPORTANCE_LOW);
+                    NotificationManager.IMPORTANCE_HIGH);
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                channel2.setSound(defaultSoundUri, att);
+            }
 
             channel2.setDescription("feeling changes");
+            channel2.setVibrationPattern(new long[]{300, 300, 300});
 
-            NotificationManager manager = getSystemService(NotificationManager.class);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.createNotificationChannel(channel1);
             manager.createNotificationChannel(channel2);
 

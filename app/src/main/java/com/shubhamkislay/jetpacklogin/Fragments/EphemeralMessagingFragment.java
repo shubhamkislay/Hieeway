@@ -9,6 +9,8 @@ import android.annotation.SuppressLint;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -110,6 +112,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.crypto.Cipher;
+
+import static com.shubhamkislay.jetpacklogin.MyApplication.notificationIDHashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -257,6 +261,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private DatabaseReference senderChatCreateRef;
     private DatabaseReference receiverChatCreateRef;
     private ChatMessage firstReceivedMessage = new ChatMessage();
+    NotificationManager notificationManager;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -276,6 +281,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         display.getSize(size);
         displayHeight = size.y;
 
+
+        NotificationManager notificationManager = (NotificationManager) getContext().getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
 
 
@@ -1265,6 +1272,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         ephemeralMessageViewModel.getAllMessages().observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
             @Override
             public void onChanged(@Nullable List<ChatMessage> chatMessageList) {
+
+                notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
+                notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
 
                 /*try {
 
