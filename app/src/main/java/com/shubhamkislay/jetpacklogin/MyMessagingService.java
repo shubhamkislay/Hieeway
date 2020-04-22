@@ -7,20 +7,40 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.media.session.MediaController;
+import android.media.session.MediaSession;
+import android.media.session.MediaSessionManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.palette.graphics.Palette;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_1_ID;
 
@@ -30,9 +50,26 @@ public class MyMessagingService extends FirebaseMessagingService {
     private String TAG = "Log";
     private static int messageNotificationCount = 1;
     private static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
+    Bitmap bitmap = null;
+    int notificationBackGroundColor = Color.RED;
+    int notificationTitleColor = Color.RED;
+    boolean setColorized = false;
+    RemoteViews collapsedView;
+    PendingIntent pendingIntent;
+    Intent intent;
+    Context context;
+    private Palette.Swatch vibrantSwatch;
+    private Palette.Swatch mutedSwatch;
+    private Palette.Swatch lightVibrantSwatch;
+    private Palette.Swatch darkVibrantSwatch;
+    private Palette.Swatch dominantSwatch;
+    private Palette.Swatch lightMutedSwatch;
+    private Palette.Swatch darkMutedSwatch;
+    private int swatchNumber;
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // super.onMessageReceived(remoteMessage);
+
 
         //  if(SettingsFragment.getReceiceNotification()){ //if user wants to receive notification
 
@@ -88,7 +125,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     }
 
-    private void sendMessageNotification(RemoteMessage remoteMessage) {
+    private void sendMessageNotification(final RemoteMessage remoteMessage) {
 
 
 
@@ -96,24 +133,131 @@ public class MyMessagingService extends FirebaseMessagingService {
         userIdChattingWith = intent.getStringExtra("userid");
         final String photo = intent.getStringExtra("photo");*/
 
-        Intent intent = new Intent(this, VerticalPageActivity.class);
+        // mediaSessionCompat = new MediaSessionCompat(getBaseContext(),"mediaSession");
+
+        context = this;
+
+        intent = new Intent(this, VerticalPageActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
         intent.putExtra("live", remoteMessage.getData().get("live"));
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
 
+        collapsedView = new RemoteViews(getPackageName(), R.layout.collapsed_message_notification);
+        RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.expanded_message_notification);
+
+
+        try {
+            bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(remoteMessage.getData().get("userPhoto").replace("s96-c", "s384-c"))
+                    .submit(512, 512)
+                    .get();
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+            collapsedView.setImageViewBitmap(R.id.logo, bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+/*        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(@Nullable Palette palette) {
+
+                Palette.Swatch currentSwatch = null;
+
+                vibrantSwatch = palette.getVibrantSwatch();
+                darkVibrantSwatch = palette.getDarkVibrantSwatch();
+                lightVibrantSwatch = palette.getLightVibrantSwatch();
+                mutedSwatch = palette.getMutedSwatch();
+                darkMutedSwatch = palette.getDarkMutedSwatch();
+                lightMutedSwatch = palette.getLightMutedSwatch();
+                dominantSwatch = palette.getDominantSwatch();
+
+               // Toast.makeText(getBaseContext(),"Swatches Size: "+palette.getSwatches().size(),Toast.LENGTH_SHORT).show();
+                if(vibrantSwatch!=null)
+                    currentSwatch = vibrantSwatch;
+                else if(darkVibrantSwatch!=null)
+                    currentSwatch = darkVibrantSwatch;
+                else if(lightVibrantSwatch!=null)
+                    currentSwatch = lightVibrantSwatch;
+                else if(mutedSwatch!=null )
+                    currentSwatch = mutedSwatch;
+                else if(darkMutedSwatch!=null)
+                    currentSwatch = darkMutedSwatch;
+                else if(lightMutedSwatch!=null)
+                    currentSwatch = lightMutedSwatch;
+                else if(dominantSwatch!=null)
+                    currentSwatch = dominantSwatch;
+
+                if(currentSwatch != null){
+                    int titleColor = currentSwatch.getRgb();
+                    notificationTitleColor = titleColor;
+                    notificationBackGroundColor = currentSwatch.getRgb();
+                    setColorized = true;
+                    // ...
+                }
+                else
+                {
+                    notificationBackGroundColor = Color.YELLOW;
+                    setColorized = true;
+
+                }
+
+                collapsedView.setTextViewText(R.id.notification_message_collapsed,remoteMessage.getData().get("label"));
+                collapsedView.setInt(R.id.background_fade, "setBackgroundTint",
+                        notificationTitleColor);
+              //  collapsedView.setT
+
+
+            }
+        });*/
+
+
+        Date parsedDate = Calendar.getInstance().getTime();
+
+
+        Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+
+        // S is the millisecond
+        // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+
+
+        // sendMessageViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+        collapsedView.setTextViewText(R.id.timestamp_textview, simpleDateFormat.format(timestamp));
+
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder =
-                new NotificationCompat.Builder(this, CHANNEL_1_ID)
+        NotificationCompat.Builder notificationBuilder;
+
+
+        notificationBuilder =
+                new NotificationCompat.Builder(context, CHANNEL_1_ID)
                         .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                        .setContentTitle(remoteMessage.getData().get("label"))
-                        .setContentText(remoteMessage.getData().get("content"))
+                        //.setCustomContentView(collapsedView)
+                        .setContentTitle("You got a message")
+                        .setContentText(remoteMessage.getData().get("label"))
+                        //.setCont
+                        .setLargeIcon(bitmap)
+                        //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
+                        .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                        /*.setStyle(new NotificationCompat.BigTextStyle()
+                        .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                        //  .setShowActionsInCompactView(1))
+                        //.setMediaSession(MediaSessionCompat.Token))
                         //.setGroup(remoteMessage.getData().get("userId"))
                         .setContentIntent(pendingIntent);
 
@@ -146,56 +290,40 @@ public class MyMessagingService extends FirebaseMessagingService {
             }
         }
 
-/*        if(!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId"))) {
-            if(remoteMessage.getData().get("reply").equals("no")) {
-                notificationIDHashMap.put(remoteMessage.getData().get("userId"), id);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId")+"replyid", id);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 1);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 0);
-            }
-            else {
-                notificationIDHashMap.put(remoteMessage.getData().get("userId"), id);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId"), id);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", 0);
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", 1);
-            }
-            messageNotificationCount = 1;
-        }
-        else {
-            id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId"));
-            if(remoteMessage.getData().get("reply").equals("no")) {
-                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numbersent");
-                messageNotificationCount = newCount + 1;
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numbersent", messageNotificationCount);
-            }
-            else {
-                int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberreply");
-                messageNotificationCount = newCount + 1;
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberreply", messageNotificationCount);
-            }
-        }*/
 
         Notification summaryNotificationBuilder;
 
         if (remoteMessage.getData().get("reply").equals("no")) {
+
+
             summaryNotificationBuilder =
-                    new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
                             .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                            .setContentTitle(remoteMessage.getData().get("username") + " has sent you " + (messageNotificationCount) + " messages")
-                            .setContentText(remoteMessage.getData().get("content"))
+                            .setContentTitle("You have got messages")
+                            .setContentText(messageNotificationCount + " messages from " + remoteMessage.getData().get("username"))
+                            //.setCustomContentView(collapsedView)
+                            .setLargeIcon(bitmap)
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                             .setGroup(remoteMessage.getData().get("userId"))
                             .setGroupSummary(true)
                             .setContentIntent(pendingIntent).build();
         } else {
+
+
             summaryNotificationBuilder =
-                    new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
                             .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                            .setContentTitle(remoteMessage.getData().get("username") + " replied to " + (messageNotificationCount) + " of your messages")
-                            .setContentText(remoteMessage.getData().get("content"))
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle("You have got messages")
+                            .setContentText(messageNotificationCount + " replies from " + remoteMessage.getData().get("username"))
+                            .setLargeIcon(bitmap)
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .setBigContentTitle(remoteMessage.getData().get("label")))
                             .setGroup(remoteMessage.getData().get("userId"))
                             .setGroupSummary(true)
                             .setContentIntent(pendingIntent).build();
@@ -215,8 +343,26 @@ public class MyMessagingService extends FirebaseMessagingService {
         //int id =NotificationID.getID();
         notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
         //  ++messageNotificationCount;
-        if (messageNotificationCount > 1)
+        if (messageNotificationCount > 1) {
+            if (remoteMessage.getData().get("reply").equals("no"))
+                collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " has sent you " + (messageNotificationCount) + " messages");
+            else
+                collapsedView.setTextViewText(R.id.notification_message_collapsed, remoteMessage.getData().get("username") + " replied to " + (messageNotificationCount) + " of your messages");
+
             notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     }
@@ -228,6 +374,21 @@ public class MyMessagingService extends FirebaseMessagingService {
         /*final String usernameChattingWith = intent.getStringExtra("username");
         userIdChattingWith = intent.getStringExtra("userid");
         final String photo = intent.getStringExtra("photo");*/
+
+        Bitmap bitmap = null;
+
+        try {
+            bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(remoteMessage.getData().get("userPhoto").replace("s96-c", "s384-c"))
+                    .submit(512, 512)
+                    .get();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
 
         int id = NotificationID.getID();
 
@@ -260,6 +421,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setSmallIcon(R.mipmap.ic_hieeway_logo)
                             .setContentTitle(remoteMessage.getData().get("label"))
                             .setContentText(remoteMessage.getData().get("content"))
+                            .setLargeIcon(bitmap)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
                             .setContentIntent(pendingIntent);
@@ -301,6 +464,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setSmallIcon(R.drawable.emoticon_feeling_happy)
                                 .setContentTitle(remoteMessage.getData().get("label"))
                                 .setContentText(remoteMessage.getData().get("content"))
+                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setLargeIcon(bitmap)
                                 .setAutoCancel(true)
                                 .setPriority(NotificationCompat.PRIORITY_MAX)
                                 .setSound(defaultSoundUri)
@@ -326,7 +491,9 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setSmallIcon(R.mipmap.ic_hieeway_logo)
                                 .setContentTitle(remoteMessage.getData().get("label"))
                                 .setContentText(remoteMessage.getData().get("content"))
+                                .setLargeIcon(bitmap)
                                 // .setAutoCancel(true)
+                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                                 .setPriority(NotificationCompat.PRIORITY_MAX)
 
                                 .setSound(defaultSoundUri)
@@ -357,5 +524,20 @@ public class MyMessagingService extends FirebaseMessagingService {
         public static int getID() {
             return c.incrementAndGet();
         }
+    }
+
+    public Palette createPaletteSync(Bitmap bitmap) {
+        Palette p = Palette.from(bitmap).generate();
+        return p;
+    }
+
+    // Generate palette asynchronously and use it on a different
+// thread using onGenerated()
+    public void createPaletteAsync(Bitmap bitmap) {
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            public void onGenerated(Palette p) {
+                // Use generated instance
+            }
+        });
     }
 }

@@ -4,10 +4,13 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Handler;
 
@@ -16,6 +19,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media.MediaSessionManager;
+import androidx.palette.graphics.Palette;
+
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -27,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +69,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+
 public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener, ImageSelectionCropListener {
 
     //Last commit stated as Profile Fragment is a major migration commit from appcompat to androidX
@@ -91,6 +99,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     StorageReference storageReference;
     private Button uploadButton;
     private StorageTask uploadTask;
+    private MediaPlayer mMediaPlayer;
+    private MediaSessionManager mManager;
+    private MediaSession mSession;
+    private MediaController mController;
+
+
 
 
     ImageView sendArrow, background_screen;
@@ -121,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         editTextTitle = findViewById(R.id.edit_text_title);
 
         editTextMessage = findViewById(R.id.edit_text_message);*/
-
 
 
         frameLayout = findViewById(R.id.framelayout);

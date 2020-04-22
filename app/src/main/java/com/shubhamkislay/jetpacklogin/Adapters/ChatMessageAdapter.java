@@ -66,6 +66,7 @@ import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.CheckPendingMessageAsyncModel;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.PaletteActivity;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 import com.shubhamkislay.jetpacklogin.VerticalRegisterationActivity;
@@ -306,6 +307,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                         }
                     }
                 });
+
+                mContext.startActivity(new Intent(mContext, PaletteActivity.class));
 
 
             }

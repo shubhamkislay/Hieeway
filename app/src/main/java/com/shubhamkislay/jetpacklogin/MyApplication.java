@@ -16,8 +16,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MyApplication extends Application {
-    public static final String CHANNEL_1_ID = "channel1";
-    public static final String CHANNEL_2_ID = "channel2";
+    public static final String CHANNEL_1_ID = "messages";
+    public static final String CHANNEL_2_ID = "feelings";
 
     @Override
     public void onCreate() {
@@ -42,17 +42,17 @@ public class MyApplication extends Application {
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             NotificationChannel channel1 = new NotificationChannel(
                     CHANNEL_1_ID,
-                    "channel 1",
+                    "messages",
                     NotificationManager.IMPORTANCE_HIGH);
 
-            channel1.setDescription("This is channel 1");
+            channel1.setDescription("direct messages");
 
             NotificationChannel channel2 = new NotificationChannel(
                     CHANNEL_2_ID,
-                    "channel 2",
+                    "feelings",
                     NotificationManager.IMPORTANCE_LOW);
 
-            channel2.setDescription("This is channel 2");
+            channel2.setDescription("feeling changes");
 
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel1);

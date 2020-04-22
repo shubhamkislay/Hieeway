@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -24,6 +26,7 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".PaletteActivity"></activity>
         <activity
             android:name=".ViewProfileActivity"
             android:screenOrientation="portrait" />
@@ -171,6 +174,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver android:name="androidx.media.session.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
