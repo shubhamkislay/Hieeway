@@ -253,6 +253,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
                         /*.setStyle(new NotificationCompat.BigTextStyle()
                         .setBigContentTitle(remoteMessage.getData().get("label")))*/
 
@@ -322,8 +323,6 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
                             .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .setBigContentTitle(remoteMessage.getData().get("label")))
                             .setGroup(remoteMessage.getData().get("userId"))
                             .setGroupSummary(true)
                             .setContentIntent(pendingIntent).build();
