@@ -2,13 +2,16 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -23,10 +26,12 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.URLSpan;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -98,6 +103,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout relay;
     private String profilepic;
+    Point size;
+    float displayHeight;
 
 
 /*
@@ -111,10 +118,17 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        size = new Point();
+        display.getSize(size);
+        displayHeight = size.y;
 
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -154,6 +168,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         emoji_icon = view.findViewById(R.id.emoji_icon);
 
+        center_dp.getLayoutParams().height = (int) displayHeight / 4;
+        center_dp.getLayoutParams().width = (int) displayHeight / 8;
+
         name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         feeling_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         username.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
@@ -166,7 +183,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // startActivity(new Intent(getActivity(), ImageUpload.class));
+                // startActivity(new Intent(getActivity(), ImageUpload.class));
                 imageSelectionCropListener.imageSelect();
             }
         });
@@ -191,8 +208,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         try{
                             startActivity(new Intent(getActivity(), MainActivity.class));
                             getActivity().finish();
-                        }catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             Toast.makeText(getContext(),"Logout done! Close app and restart",Toast.LENGTH_SHORT).show();
                         }
 
@@ -237,7 +253,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 }
             }
         });
-
 
 
         bio_txt.setOnClickListener(new View.OnClickListener() {
@@ -314,6 +329,77 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
             @Override
             public void onSlide(View bottomSheet, float slideOffset) {
+            }
+        });
+
+        emoji_holder_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                feelingDialog.show();
+            }
+        });
+
+        emoji_holder_layout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(300);
+                    emoji_holder_layout.setAlpha(0.75f);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    emoji_holder_layout.setAlpha(1.0f);
+                } else {
+                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    emoji_holder_layout.setAlpha(1.0f);
+                }
+
+
+                return false;
+            }
+        });
+
+
+        emoji_icon.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(300);
+                    emoji_holder_layout.setAlpha(0.75f);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    emoji_holder_layout.setAlpha(1.0f);
+                } else {
+                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    emoji_holder_layout.setAlpha(1.0f);
+                }
+
+
+                return false;
+            }
+        });
+
+
+        feeling_icon.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(0);
+                    emoji_holder_layout.setAlpha(0.75f);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(30);
+                    emoji_holder_layout.setAlpha(1.0f);
+                } else {
+                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    emoji_holder_layout.setAlpha(1.0f);
+                }
+
+
+                return false;
             }
         });
 
@@ -470,39 +556,40 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         feeling_txt.setText(user.getFeeling());
 
                     } else {
-                            /*feeling_icon.setVisibility(View.GONE);
-                            feeling_txt.setText(user.getFeeling());*/
+                        feeling_icon.setVisibility(View.GONE);
+                        feeling_txt.setText(user.getFeeling());
                         emoji_icon.setVisibility(View.GONE);
 
                         feelingNow = user.getFeeling();
                         switch (user.getFeeling()) {
                             case HAPPY:
                                 feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
                                 feeling_txt.setText(HAPPY);
                                 break;
                             case SAD:
                                 feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
                                 feeling_txt.setText(SAD);
                                 break;
                             case BORED:
                                 feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
                                 feeling_txt.setText(BORED);
                                 break;
                             case ANGRY:
                                 feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
                                 feeling_txt.setText(ANGRY);
                                 break;
-                            case EXCITED:
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                            case "excited":
+                                feeling_icon.setVisibility(View.VISIBLE);
+                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
                                 feeling_txt.setText(EXCITED);
                                 break;
                             case CONFUSED:
                                 feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
                                 feeling_txt.setText(CONFUSED);
                                 break;
                         }
@@ -556,37 +643,44 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             case HAPPY: feelingHash.put("feeling",HAPPY);
                 feelingHash.put("feelingIcon", "default");
                  feelingReference.updateChildren(feelingHash);
-                 feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                  feeling_txt.setText(HAPPY);
                  break;
             case SAD: feelingHash.put("feeling",SAD);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(SAD);
                 break;
             case BORED: feelingHash.put("feeling",BORED);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(BORED);
                 break;
             case ANGRY: feelingHash.put("feeling",ANGRY);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(ANGRY);
                 break;
-            case EXCITED: feelingHash.put("feeling",EXCITED);
+            case "excited":
+                feelingHash.put("feeling", "excited");
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
                 feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(EXCITED);
                 break;
             case CONFUSED: feelingHash.put("feeling",CONFUSED);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(CONFUSED);
                 break;
         }

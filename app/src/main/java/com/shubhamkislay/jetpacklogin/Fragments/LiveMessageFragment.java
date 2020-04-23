@@ -397,7 +397,12 @@ public class LiveMessageFragment extends Fragment {
                     public void run() {
                         stopSignalling();
 
-                        liveMessageEventListener.changeFragment();
+                        try {
+                            liveMessageEventListener.changeFragment();
+                        } catch (Exception e) {
+                            //
+                            getActivity().finish();
+                        }
                        // getActivity().finish();
 
                     }

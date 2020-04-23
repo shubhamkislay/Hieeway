@@ -94,6 +94,7 @@ import com.shubhamkislay.jetpacklogin.Model.ChatMessageCompound;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.SendMessageAsyncModel;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.NavButtonTest;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.TypeWriter;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
@@ -1003,7 +1004,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                startActivity(new Intent(getActivity(), NavButtonTest.class));
                 getActivity().finish();
+
             }
         });
 

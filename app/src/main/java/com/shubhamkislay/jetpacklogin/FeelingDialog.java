@@ -12,15 +12,17 @@ import android.widget.TextView;
 import com.shubhamkislay.jetpacklogin.Interface.AddFeelingFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 
+import static com.shubhamkislay.jetpacklogin.VerticalPageActivity.ANGRY;
+import static com.shubhamkislay.jetpacklogin.VerticalPageActivity.BORED;
+import static com.shubhamkislay.jetpacklogin.VerticalPageActivity.CONFUSED;
+import static com.shubhamkislay.jetpacklogin.VerticalPageActivity.EXCITED;
+import static com.shubhamkislay.jetpacklogin.VerticalPageActivity.HAPPY;
+import static com.shubhamkislay.jetpacklogin.VerticalPageActivity.SAD;
+
 
 public class FeelingDialog extends Dialog {
 
-    final static String HAPPY = "happy";
-    final static String BORED = "bored";
-    final static String EXCITED = "excited";
-    final static String SAD = "sad";
-    final static String CONFUSED = "confused";
-    final static String ANGRY = "angry";
+
     String feelingNow;
     FeelingListener feelingListener;
     AddFeelingFragmentListener addFeelingFragmentListener;
@@ -102,7 +104,7 @@ public class FeelingDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 //happy_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor )));
-                happy_emoji.setBackgroundTintList(null);
+                happy_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 removeHighlight(feelingNow);
                 feelingListener.changeFeeling(HAPPY);
                 dismiss();
@@ -113,7 +115,7 @@ public class FeelingDialog extends Dialog {
             @Override
             public void onClick(View v) {
                // bored_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor )));
-                happy_emoji.setBackgroundTintList(null);
+                happy_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 removeHighlight(feelingNow);
                 feelingListener.changeFeeling(BORED);
                 dismiss();
@@ -123,7 +125,7 @@ public class FeelingDialog extends Dialog {
         sad_emoji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sad_emoji.setBackgroundTintList(null);
+                sad_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 removeHighlight(feelingNow);
                 feelingListener.changeFeeling(SAD);
                 dismiss();
@@ -133,7 +135,7 @@ public class FeelingDialog extends Dialog {
         confused_emoji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                confused_emoji.setBackgroundTintList(null);
+                confused_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 removeHighlight(feelingNow);
                 feelingListener.changeFeeling(CONFUSED);
                 dismiss();
@@ -143,7 +145,7 @@ public class FeelingDialog extends Dialog {
         angry_emoji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                angry_emoji.setBackgroundTintList(null);
+                angry_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 removeHighlight(feelingNow);
                 feelingListener.changeFeeling(ANGRY);
                 dismiss();
@@ -153,9 +155,9 @@ public class FeelingDialog extends Dialog {
         excited_emoji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                excited_emoji.setBackgroundTintList(null);
+                excited_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 removeHighlight(feelingNow);
-                feelingListener.changeFeeling(EXCITED);
+                feelingListener.changeFeeling("excited");
                 dismiss();
             }
         });
@@ -167,27 +169,33 @@ public class FeelingDialog extends Dialog {
     private void setEmojiHighlight() {
         switch (feelingNow)
         {
-            case HAPPY: happy_emoji.setBackgroundTintList(null);
+            case HAPPY:
+                happy_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 happy_txt.setTextColor(getContext().getResources().getColor(R.color.white));
                 break;
 
-            case SAD: sad_emoji.setBackgroundTintList(null);
+            case SAD:
+                sad_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 sad_txt.setTextColor(getContext().getResources().getColor(R.color.white));
                 break;
 
-            case CONFUSED: confused_emoji.setBackgroundTintList(null);
+            case CONFUSED:
+                confused_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 confused_txt.setTextColor(getContext().getResources().getColor(R.color.white));
                 break;
 
-            case EXCITED: excited_emoji.setBackgroundTintList(null);
+            case EXCITED:
+                excited_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 excited_txt.setTextColor(getContext().getResources().getColor(R.color.white));
                 break;
 
-            case ANGRY: angry_emoji.setBackgroundTintList(null);
+            case ANGRY:
+                angry_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 angry_txt.setTextColor(getContext().getResources().getColor(R.color.white));
                 break;
 
-            case BORED: bored_emoji.setBackgroundTintList(null);
+            case BORED:
+                bored_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 bored_txt.setTextColor(getContext().getResources().getColor(R.color.white));
                 break;
 
@@ -218,18 +226,21 @@ public class FeelingDialog extends Dialog {
 
                 break;
 
-            case EXCITED: excited_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor )));
-                confused_txt.setTextColor(getContext().getResources().getColor(R.color.feelingDeactiveColor));
+            case EXCITED:
+                excited_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor)));
+                excited_txt.setTextColor(getContext().getResources().getColor(R.color.feelingDeactiveColor));
 
                 break;
 
-            case ANGRY: angry_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor )));
+            case ANGRY:
+                angry_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor)));
                 angry_txt.setTextColor(getContext().getResources().getColor(R.color.feelingDeactiveColor));
 
                 break;
 
-            case BORED: bored_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor )));
-                bored_emoji.setTextColor(getContext().getResources().getColor(R.color.feelingDeactiveColor));
+            case BORED:
+                bored_emoji.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.feelingDeactiveColor)));
+                bored_txt.setTextColor(getContext().getResources().getColor(R.color.feelingDeactiveColor));
 
                 break;
 

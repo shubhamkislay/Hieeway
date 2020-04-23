@@ -42,7 +42,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_centerHorizontal="true"
-                android:background="@drawable/emoticon_feeling_bored"
+                android:background="@drawable/ic_emoticon_feeling_bored"
                 android:backgroundTint="@color/feelingDeactiveColor"/>
 
                 <TextView
@@ -68,7 +68,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/emoticon_feeling_sad"
+                    android:background="@drawable/ic_emoticon_feeling_sad"
                     android:backgroundTint="@color/feelingDeactiveColor"/>
                 <TextView
                     android:id="@+id/sad_txt"
@@ -101,7 +101,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/emoticon_feeling_happy"
+                    android:background="@drawable/ic_emoticon_feeling_happy"
                     android:backgroundTint="@color/feelingDeactiveColor"/>
                 <TextView
                     android:id="@+id/happy_txt"
@@ -126,7 +126,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/emoticon_feeling_confused"
+                    android:background="@drawable/ic_emoticon_feeling_confused"
                     android:backgroundTint="@color/feelingDeactiveColor"/>
                 <TextView
                     android:id="@+id/confused_txt"
@@ -159,7 +159,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/emoticon_feeling_excited"
+                    android:background="@drawable/ic_emoticon_feeling_excited"
                     android:backgroundTint="@color/feelingDeactiveColor"/>
                 <TextView
                     android:id="@+id/excited_txt"
@@ -184,7 +184,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    android:background="@drawable/emoticon_feeling_angry"
+                    android:background="@drawable/ic_emoticon_feeling_angry"
                     android:backgroundTint="@color/feelingDeactiveColor"/>
                 <TextView
                     android:id="@+id/angry_txt"

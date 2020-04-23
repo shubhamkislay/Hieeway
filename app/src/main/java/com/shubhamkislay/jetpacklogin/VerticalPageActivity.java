@@ -123,6 +123,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 if (key.equals("feeling")) {
                     feelingDefault = intent.getStringExtra("default");
                     if (feelingDefault.equals("no")) {
+                        feelingDefaultEmoji.setVisibility(View.GONE);
                         feelingCustomEmoji.setText(intent.getStringExtra("feeling"));
                         feelingCustomEmoji.setVisibility(View.VISIBLE);
                         feeling_splash_layout.setVisibility(View.VISIBLE);
@@ -156,7 +157,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         String feeling = intent.getStringExtra("feeling");
                         switch (feeling) {
                             case HAPPY:
-                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                                feelingCustomEmoji.setVisibility(View.GONE);
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
                                 feelingDefaultEmoji.setVisibility(View.VISIBLE);
                                 feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
                                 feelingDefaultEmoji.animate().alpha(1.0f).setDuration(emojiYTransitionDuration);
@@ -184,7 +186,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                                 break;
 
                             case ANGRY:
-                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
                                 feelingDefaultEmoji.setVisibility(View.VISIBLE);
                                 feeling_splash_layout.setVisibility(View.VISIBLE);
                                 feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
@@ -212,7 +214,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                                 break;
 
                             case SAD:
-                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
                                 feelingDefaultEmoji.setVisibility(View.VISIBLE);
                                 feeling_splash_layout.setVisibility(View.VISIBLE);
                                 feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
@@ -240,7 +242,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                                 break;
 
                             case BORED:
-                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
                                 feelingDefaultEmoji.setVisibility(View.VISIBLE);
                                 feeling_splash_layout.setVisibility(View.VISIBLE);
                                 feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
@@ -268,7 +270,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                                 break;
 
                             case CONFUSED:
-                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
                                 feelingDefaultEmoji.setVisibility(View.VISIBLE);
                                 feeling_splash_layout.setVisibility(View.VISIBLE);
                                 feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
@@ -297,7 +299,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                                 break;
 
                             case EXCITED:
-                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                                feelingDefaultEmoji.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
                                 feelingDefaultEmoji.setVisibility(View.VISIBLE);
                                 feeling_splash_layout.setVisibility(View.VISIBLE);
                                 feelingDefaultEmoji.animate().translationY(-displayHeight / 2).setDuration(emojiYTransitionDuration);
@@ -327,10 +329,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         }
                     }
                 }
-                if (key.equals("userValueIntentExtra")) {
-                    //notificationIDHashMap.put(intent.getStringExtra("userValueIntentExtra"),0);
-                    // Toast.makeText(VerticalPageActivity.this,"Updated Notification",Toast.LENGTH_SHORT).show();
-                }
+
             }
         }
 
@@ -624,8 +623,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     }
 
-    private void LoadKeys()
-    {
+    private void LoadKeys() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
         privateKeyText = sharedPreferences.getString(PRIVATE_KEY,null);

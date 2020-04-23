@@ -56,8 +56,8 @@ public class MyMessagingService extends FirebaseMessagingService {
     int notificationTitleColor = Color.RED;
     boolean setColorized = false;
     RemoteViews collapsedView;
-    PendingIntent pendingIntent;
-    Intent intent;
+
+
     Context context;
     private Palette.Swatch vibrantSwatch;
     private Palette.Swatch mutedSwatch;
@@ -133,15 +133,9 @@ public class MyMessagingService extends FirebaseMessagingService {
     private void sendLiveNotification(RemoteMessage remoteMessage) {
         context = this;
 
+        Intent intent;
         intent = new Intent(this, VerticalPageActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("username", remoteMessage.getData().get("username"));
-        intent.putExtra("userid", remoteMessage.getData().get("userId"));
-        intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
-        intent.putExtra("live", remoteMessage.getData().get("live"));
-        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+
 
 
         collapsedView = new RemoteViews(getPackageName(), R.layout.collapsed_message_notification);
@@ -168,6 +162,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder;
 
+
         NotificationChannel notificationChannel;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannel =
@@ -182,8 +177,26 @@ public class MyMessagingService extends FirebaseMessagingService {
                 notificationChannel.setSound(defaultSoundUri, att);
             }
 
+            int id = NotificationID.getID();
+
+
+            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "live"))
+                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "live", id);
+            else
+                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("username", remoteMessage.getData().get("username"));
+            intent.putExtra("userid", remoteMessage.getData().get("userId"));
+            intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+            intent.putExtra("live", remoteMessage.getData().get("live"));
+            PendingIntent pendingIntent;
+            pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
             notificationManager.createNotificationChannel(notificationChannel);
+
 
             notificationBuilder =
                     new NotificationCompat.Builder(context, notificationChannel.getId())
@@ -193,11 +206,13 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentText("Tap to accept")
                             //.setCont
                             .setLargeIcon(bitmap)
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                             //.setAutoCancel(true)
                             /*.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
                             .setSound(defaultSoundUri)*/
-                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             //.setOngoing(true)
                             //.setDefaults(Notification.FLAG_INSISTENT|Notification.DEFAULT_VIBRATE)
@@ -210,6 +225,12 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentIntent(pendingIntent);
 
 
+
+
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        } else {
+
             int id = NotificationID.getID();
 
 
@@ -218,10 +239,15 @@ public class MyMessagingService extends FirebaseMessagingService {
             else
                 id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
 
-
-            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
-        } else {
-
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.putExtra("username", remoteMessage.getData().get("username"));
+            intent.putExtra("userid", remoteMessage.getData().get("userId"));
+            intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+            intent.putExtra("live", remoteMessage.getData().get("live"));
+            PendingIntent pendingIntent;
+            pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
 
             notificationBuilder =
                     new NotificationCompat.Builder(context, CHANNEL_1_ID)
@@ -231,11 +257,13 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentText("Tap to accept")
                             //.setCont
                             .setLargeIcon(bitmap)
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                             //.setAutoCancel(true)
                             .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                             .setSound(defaultSoundUri)
-                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setOngoing(true)
                             //.setDefaults(Notification.FLAG_INSISTENT|Notification.DEFAULT_VIBRATE)
@@ -245,17 +273,11 @@ public class MyMessagingService extends FirebaseMessagingService {
                             //  .setShowActionsInCompactView(1))
                             //.setMediaSession(MediaSessionCompat.Token))
                             //.setGroup(remoteMessage.getData().get("userId"))
-                            .setFullScreenIntent(pendingIntent, true);
+                            .setContentIntent(pendingIntent);
             ;
 
 
-            int id = NotificationID.getID();
 
-
-            if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "live"))
-                notificationIDHashMap.put(remoteMessage.getData().get("userId") + "live", id);
-            else
-                id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
 
 
             notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
@@ -275,6 +297,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         // mediaSessionCompat = new MediaSessionCompat(getBaseContext(),"mediaSession");
 
         context = this;
+        Intent intent;
 
         int id = NotificationID.getID();
         String userValueIntentExtra;
@@ -315,8 +338,9 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("live", remoteMessage.getData().get("live"));
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
 
-        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent;
+        pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         collapsedView = new RemoteViews(getPackageName(), R.layout.collapsed_message_notification);
@@ -439,6 +463,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentTitle("You got a message")
                             .setContentText(remoteMessage.getData().get("label"))
                             //.setCont
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
                             .setLargeIcon(bitmap)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                             .setAutoCancel(true)
@@ -465,6 +491,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setContentTitle("You have got messages")
                                 .setContentText(messageNotificationCount + " messages from " + remoteMessage.getData().get("username"))
                                 //.setCustomContentView(collapsedView)
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
                                 .setLargeIcon(bitmap)
                                 .setAutoCancel(true)
                                 .setSound(defaultSoundUri)
@@ -482,6 +510,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setContentTitle("You have got messages")
                                 .setContentText(messageNotificationCount + " replies from " + remoteMessage.getData().get("username"))
                                 .setLargeIcon(bitmap)
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
                                 .setAutoCancel(true)
                                 .setSound(defaultSoundUri)
                                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
@@ -522,6 +552,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                             //.setCont
                             .setLargeIcon(bitmap)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)
                             .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
@@ -575,6 +607,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setLargeIcon(bitmap)
                                 .setAutoCancel(true)
                                 .setSound(defaultSoundUri)
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
                                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                                 .setGroup(remoteMessage.getData().get("userId"))
                                 .setGroupSummary(true)
@@ -589,6 +623,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                                 .setContentTitle("You have got messages")
                                 .setContentText(messageNotificationCount + " replies from " + remoteMessage.getData().get("username"))
                                 .setLargeIcon(bitmap)
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
                                 .setAutoCancel(true)
                                 .setSound(defaultSoundUri)
                                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
@@ -654,123 +690,287 @@ public class MyMessagingService extends FirebaseMessagingService {
             id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "feeling");
         }
 
+        NotificationCompat.Builder notificationBuilder;
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        if (remoteMessage.getData().get("default").equals("no")) {
+        NotificationChannel notificationChannel;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel =
+                    new NotificationChannel("ch_nm", "CHART", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setVibrationPattern(new long[]{300, 300, 300});
 
-            Intent intent = new Intent(this, VerticalPageActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("username", remoteMessage.getData().get("username"));
-            intent.putExtra("userid", remoteMessage.getData().get("userId"));
-            intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
-            intent.putExtra("live", remoteMessage.getData().get("live"));
-            intent.putExtra("default", "no");
-            intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                    PendingIntent.FLAG_ONE_SHOT);
-
-
-            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-            NotificationCompat.Builder notificationBuilder =
-                    new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                            .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                            .setContentTitle(remoteMessage.getData().get("label"))
-                            .setContentText(remoteMessage.getData().get("content"))
-                            .setLargeIcon(bitmap)
-                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                            .setAutoCancel(true)
-                            .setSound(defaultSoundUri)
-                            .setContentIntent(pendingIntent);
-
-
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            // Since android Oreo notification channel is needed.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
-                        "Channel human readable title",
-                        NotificationManager.IMPORTANCE_HIGH);
-                notificationManager.createNotificationChannel(channel);
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                notificationChannel.setSound(defaultSoundUri, att);
             }
 
-            notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
-        } else {
+
+            notificationManager.createNotificationChannel(notificationChannel);
+            if (remoteMessage.getData().get("default").equals("no")) {
 
 
-            Intent intent = new Intent(this, VerticalPageActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("username", remoteMessage.getData().get("username"));
-            intent.putExtra("userid", remoteMessage.getData().get("userId"));
-            intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
-            intent.putExtra("live", remoteMessage.getData().get("live"));
-            intent.putExtra("default", "yes");
-            intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                    PendingIntent.FLAG_ONE_SHOT);
+                Intent intent = new Intent(this, VerticalPageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("username", remoteMessage.getData().get("username"));
+                intent.putExtra("userid", remoteMessage.getData().get("userId"));
+                intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("live", remoteMessage.getData().get("live"));
+                intent.putExtra("default", "no");
+                intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                        PendingIntent.FLAG_ONE_SHOT);
 
 
-            if (remoteMessage.getData().get("feeling").equals("happy")) {
+                // Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                String mipMap = remoteMessage.getData().get("icon");
-                NotificationCompat.Builder notificationBuilder =
-                        new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                                .setSmallIcon(R.drawable.emoticon_feeling_happy)
+
+                notificationBuilder =
+                        new NotificationCompat.Builder(this, notificationChannel.getId())
+                                .setSmallIcon(R.mipmap.ic_hieeway_logo)
                                 .setContentTitle(remoteMessage.getData().get("label"))
                                 .setContentText(remoteMessage.getData().get("content"))
-                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                                .setLargeIcon(bitmap)
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
+                                // .setLargeIcon(bitmap)
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
+                                //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .setBigContentTitle(remoteMessage.getData().get("label"))
+                                        .bigText(remoteMessage.getData().get("content")))
                                 .setAutoCancel(true)
-                                .setPriority(NotificationCompat.PRIORITY_MAX)
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
 
-                NotificationManager notificationManager =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
                 // Since android Oreo notification channel is needed.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
                             "Channel human readable title",
-                            NotificationManager.IMPORTANCE_DEFAULT);
+                            NotificationManager.IMPORTANCE_HIGH);
                     notificationManager.createNotificationChannel(channel);
                 }
 
                 notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+
+
             } else {
-                Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                String mipMap = remoteMessage.getData().get("icon");
-                NotificationCompat.Builder notificationBuilder =
+
+
+                Intent intent = new Intent(this, VerticalPageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("username", remoteMessage.getData().get("username"));
+                intent.putExtra("userid", remoteMessage.getData().get("userId"));
+                intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("live", remoteMessage.getData().get("live"));
+                intent.putExtra("default", "yes");
+                intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+                if (remoteMessage.getData().get("feeling").equals("happy")) {
+
+                    // Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    String mipMap = remoteMessage.getData().get("icon");
+                    notificationBuilder =
+                            new NotificationCompat.Builder(this, notificationChannel.getId())
+                                    .setSmallIcon(R.drawable.ic_emoticon_feeling_happy)
+                                    .setContentTitle(remoteMessage.getData().get("label"))
+                                    .setContentText(remoteMessage.getData().get("content"))
+                                    .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                    .setColorized(true)
+                                    //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                            .setBigContentTitle(remoteMessage.getData().get("label"))
+                                            .bigText(remoteMessage.getData().get("content")))
+                                    //.setLargeIcon(bitmap)
+                                    .setAutoCancel(true)
+                                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                                    .setSound(defaultSoundUri)
+                                    .setContentIntent(pendingIntent);
+
+
+                    // Since android Oreo notification channel is needed.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                                "Channel human readable title",
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+
+                    notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+                } else {
+
+                    String mipMap = remoteMessage.getData().get("icon");
+                    notificationBuilder =
+                            new NotificationCompat.Builder(this, notificationChannel.getId())
+                                    .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                    .setContentTitle(remoteMessage.getData().get("label"))
+                                    .setContentText(remoteMessage.getData().get("content"))
+                                    .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                    .setColorized(true)
+                                    //.setLargeIcon(bitmap)
+                                    // .setAutoCancel(true)
+                                    //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                            .setBigContentTitle(remoteMessage.getData().get("label"))
+                                            .bigText(remoteMessage.getData().get("content")))
+                                    .setPriority(NotificationCompat.PRIORITY_MAX)
+
+                                    .setSound(defaultSoundUri)
+                                    .setContentIntent(pendingIntent);
+
+
+                    // Since android Oreo notification channel is needed.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                                "Channel human readable title",
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+
+                    notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+
+                }
+            }
+        } else {
+            if (remoteMessage.getData().get("default").equals("no")) {
+
+
+                Intent intent = new Intent(this, VerticalPageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("username", remoteMessage.getData().get("username"));
+                intent.putExtra("userid", remoteMessage.getData().get("userId"));
+                intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("live", remoteMessage.getData().get("live"));
+                intent.putExtra("default", "no");
+                intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+                // Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+
+                notificationBuilder =
                         new NotificationCompat.Builder(this, CHANNEL_1_ID)
                                 .setSmallIcon(R.mipmap.ic_hieeway_logo)
                                 .setContentTitle(remoteMessage.getData().get("label"))
                                 .setContentText(remoteMessage.getData().get("content"))
+                                .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                .setColorized(true)
                                 .setLargeIcon(bitmap)
-                                // .setAutoCancel(true)
-                                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
-                                .setPriority(NotificationCompat.PRIORITY_MAX)
-
+                                //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .setBigContentTitle(remoteMessage.getData().get("label"))
+                                        .bigText(remoteMessage.getData().get("content")))
+                                .setAutoCancel(true)
                                 .setSound(defaultSoundUri)
                                 .setContentIntent(pendingIntent);
 
-
-                NotificationManager notificationManager =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
                 // Since android Oreo notification channel is needed.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
                             "Channel human readable title",
-                            NotificationManager.IMPORTANCE_DEFAULT);
+                            NotificationManager.IMPORTANCE_HIGH);
                     notificationManager.createNotificationChannel(channel);
                 }
 
                 notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
 
+
+            } else {
+
+
+                Intent intent = new Intent(this, VerticalPageActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("username", remoteMessage.getData().get("username"));
+                intent.putExtra("userid", remoteMessage.getData().get("userId"));
+                intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("live", remoteMessage.getData().get("live"));
+                intent.putExtra("default", "yes");
+                intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+                if (remoteMessage.getData().get("feeling").equals("happy")) {
+
+                    // Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    String mipMap = remoteMessage.getData().get("icon");
+                    notificationBuilder =
+                            new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                                    .setSmallIcon(R.drawable.ic_emoticon_feeling_happy)
+                                    .setContentTitle(remoteMessage.getData().get("label"))
+                                    .setContentText(remoteMessage.getData().get("content"))
+                                    .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                    .setColorized(true)
+                                    //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                            .setBigContentTitle(remoteMessage.getData().get("label"))
+                                            .bigText(remoteMessage.getData().get("content")))
+                                    //.setLargeIcon(bitmap)
+                                    .setAutoCancel(true)
+                                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                                    .setSound(defaultSoundUri)
+                                    .setContentIntent(pendingIntent);
+
+
+                    // Since android Oreo notification channel is needed.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                                "Channel human readable title",
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+
+                    notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+                } else {
+
+                    String mipMap = remoteMessage.getData().get("icon");
+                    notificationBuilder =
+                            new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                                    .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                    .setContentTitle(remoteMessage.getData().get("label"))
+                                    .setContentText(remoteMessage.getData().get("content"))
+                                    .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                                    .setColorized(true)
+                                    //.setLargeIcon(bitmap)
+                                    // .setAutoCancel(true)
+                                    .setStyle(new NotificationCompat.BigTextStyle()
+                                            .setBigContentTitle(remoteMessage.getData().get("label"))
+                                            .bigText(remoteMessage.getData().get("content")))
+                                    .setPriority(NotificationCompat.PRIORITY_MAX)
+
+                                    .setSound(defaultSoundUri)
+                                    .setContentIntent(pendingIntent);
+
+
+                    // Since android Oreo notification channel is needed.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                                "Channel human readable title",
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+
+                    notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
+
+                }
             }
         }
+
+
+
+
 
     }
 
