@@ -17,12 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.shubhamkislay.jetpacklogin.Model.Friend;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
@@ -348,6 +351,15 @@ public class ViewProfileActivity extends AppCompatActivity {
         feeling_txt.setVisibility(View.INVISIBLE);
         emoji_holder_layout.setVisibility(View.INVISIBLE);
         start_chat.setVisibility(View.GONE);
+
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(usernameText).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //Toast.makeText(ViewProfileActivity.this, "unsubscribed to " + usernameText, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         cancelRequest();
 
 
@@ -374,6 +386,15 @@ public class ViewProfileActivity extends AppCompatActivity {
         hashMap.put("username", usernameText);
 
         requestSentReference.updateChildren(hashMap);
+
+        FirebaseMessaging.getInstance().subscribeToTopic(usernameText).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(ViewProfileActivity.this, "Friend request accepted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
 
         DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")

@@ -299,16 +299,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 mContext.startActivity(intent);*/
                 //mContext.startActivity(new Intent(mContext, VerticalRegisterationActivity.class));
 
-                FirebaseMessaging.getInstance().subscribeToTopic(chatStamp.getUsername()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(chatStamp.getUsername()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(mContext, "Subscribed to " + chatStamp.getUsername(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "unsubscribed to " + chatStamp.getUsername(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
-                mContext.startActivity(new Intent(mContext, PaletteActivity.class));
+                //mContext.startActivity(new Intent(mContext, PaletteActivity.class));
 
 
             }
