@@ -135,8 +135,8 @@
 
                     <TextView
                         android:id="@+id/feeling_icon"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/ic_emoticon_feeling_happy"
@@ -172,7 +172,7 @@
                 android:gravity="center"
                 android:text="Happy"
                 android:textColor="#fff"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <TextView

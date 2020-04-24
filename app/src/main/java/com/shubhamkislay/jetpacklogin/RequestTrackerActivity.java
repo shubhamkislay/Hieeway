@@ -81,22 +81,22 @@ public class RequestTrackerActivity extends AppCompatActivity {
         DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        friendsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 progressBar.setVisibility(View.GONE);
                 progressBarTwo.setVisibility(View.GONE);
 
-                userList.clear();
+                // userList.clear();
                 if(dataSnapshot.exists())
                 {
-                    userList.clear();
+                    // userList.clear();
                     for(DataSnapshot snapshot: dataSnapshot.getChildren())
                     {
                         Friend friend = snapshot.getValue(Friend.class);
                         try {
-                            if (!friend.getStatus().equals("friends")) {
+                            if (friend.getStatus().equals("got")) {
 
                                 final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                                         .child(friend.getFriendId());
