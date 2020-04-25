@@ -356,7 +356,7 @@ public class RevealedMessageActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(RevealedMessageActivity.this, "Message unavailable", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RevealedMessageActivity.this, "This message was deleted", Toast.LENGTH_SHORT).show();
                     //reportReferenceOne.removeEventListener(reportValueEventListener);
                     finish();
                 }

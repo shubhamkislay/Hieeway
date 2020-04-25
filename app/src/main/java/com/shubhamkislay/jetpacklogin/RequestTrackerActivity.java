@@ -67,10 +67,7 @@ public class RequestTrackerActivity extends AppCompatActivity {
             //
         }
 
-
-
         populateWithFriends();
-
 
     }
 
@@ -147,4 +144,5 @@ public class RequestTrackerActivity extends AppCompatActivity {
 
 
     }
+
 }

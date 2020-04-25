@@ -115,6 +115,11 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        privateKeyText = sharedPreferences.getString(PRIVATE_KEY, null);
+        publicKeyText = sharedPreferences.getString(PUBLIC_KEY, null);
+        publicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, null);
 
 
         if (intent.getExtras() != null) {
@@ -328,6 +333,14 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                         }
                     }
+                } else if (key.equals("revealmessage")) {
+                    Intent revealActivityIntent = new Intent(VerticalPageActivity.this, RevealReplyActivity.class);
+
+                    revealActivityIntent.putExtra("userIdChattingWith", userIdChattingWith);
+                    revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
+                    revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
+
+                    startActivity(revealActivityIntent);
                 }
 
             }
@@ -336,11 +349,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
 
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
 
-        privateKeyText = sharedPreferences.getString(PRIVATE_KEY,null);
-        publicKeyText = sharedPreferences.getString(PUBLIC_KEY,null);
-        publicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID,null);
 
 
 

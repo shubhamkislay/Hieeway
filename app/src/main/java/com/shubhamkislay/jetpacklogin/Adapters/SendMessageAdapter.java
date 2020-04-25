@@ -602,8 +602,7 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private void getMessageRevealed(final TextView gotReplyTag, final TextView replyTag, final String replyId, final String gotReplyId, final ChatMessage chatMessage,final int viewType) {
 
 
-
-         if(!replyId.equals("none")|| !gotReplyId.equals("none")) {
+        if (!replyId.equals("none")/*|| !gotReplyId.equals("none")*/) {
         final DatabaseReference reportReplyIdRef= FirebaseDatabase.getInstance().getReference("Reports")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userIdChattingWith)
@@ -616,6 +615,7 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
+
                     replyTag.setVisibility(View.VISIBLE);
                     replyTag.setBackground(context.getDrawable(R.drawable.layer_replied_message_box));
 
