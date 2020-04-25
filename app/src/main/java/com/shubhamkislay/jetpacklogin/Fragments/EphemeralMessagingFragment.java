@@ -2947,7 +2947,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             if(!isMessageRunning) {
                                 username.setVisibility(View.VISIBLE);
 
-                                Toast.makeText(getContext(),"entered block isMessageRunning line 2356",Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(getContext(),"entered block isMessageRunning line 2356",Toast.LENGTH_SHORT).show();
 
 
                                 List<ObjectAnimator> objectAnimators = new ArrayList<>();
