@@ -22,6 +22,8 @@ import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.shubhamkislay.jetpacklogin.MyApplication.notificationIDHashMap;
+
 public class RevealReplyActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
@@ -51,6 +53,8 @@ public class RevealReplyActivity extends AppCompatActivity {
         chatMessageList = new ArrayList<>();
         newChatList = new ArrayList<>();
 
+        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequest", 0);
+
         titleText.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         populateList();
@@ -67,6 +71,7 @@ public class RevealReplyActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 chatMessageList.clear();
+                notificationIDHashMap.put(userIdChattingWith + "numberrevealrequest", 0);
                 if(dataSnapshot.exists())
                 {
                     for(DataSnapshot snapshot:dataSnapshot.getChildren())
@@ -91,5 +96,12 @@ public class RevealReplyActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onPause() {
+
+        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequest", 0);
+        super.onPause();
     }
 }

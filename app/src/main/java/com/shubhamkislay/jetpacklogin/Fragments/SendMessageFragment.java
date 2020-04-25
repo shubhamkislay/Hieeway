@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.shubhamkislay.jetpacklogin.MyApplication.notificationIDHashMap;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -101,7 +103,7 @@ public class SendMessageFragment extends Fragment {
         recharge_gems = view.findViewById(R.id.recharge_gems);
 
 
-
+        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequestaccepted", 1);
 
 
         sendMessagelist = new ArrayList<>();
@@ -338,7 +340,7 @@ public class SendMessageFragment extends Fragment {
         return view;
     }
 
-    private void countGems(String userIdChattingWith) {
+    private void countGems(final String userIdChattingWith) {
 
         DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -348,6 +350,7 @@ public class SendMessageFragment extends Fragment {
         deleteMessageSenderRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                notificationIDHashMap.put(userIdChattingWith + "numberrevealrequestaccepted", 0);
 
                 if(dataSnapshot.exists()) {
                     ChatStamp chatStamp = dataSnapshot.getValue(ChatStamp.class);
@@ -693,5 +696,10 @@ public class SendMessageFragment extends Fragment {
         this.messageHighlightListener = messageHighlightListener;
     }
 
+    @Override
+    public void onPause() {
 
+        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequestaccepted", 0);
+        super.onPause();
+    }
 }

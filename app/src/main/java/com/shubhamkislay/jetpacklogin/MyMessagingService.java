@@ -87,6 +87,8 @@ public class MyMessagingService extends FirebaseMessagingService {
             else if (remoteMessage.getData().get("type").equals("requestaccepted"))
                 sendFriendRequestAcceptedNotification(remoteMessage);
             else if (remoteMessage.getData().get("type").equals("revealrequest"))
+                sendMessageRevealRequestedNotification(remoteMessage);
+            else if (remoteMessage.getData().get("type").equals("revealrequestaccepted"))
                 sendMessageRevealRequestAcceptedNotification(remoteMessage);
             else //if(remoteMessage.getData().get("type").equals("feeling"))
                 sendFeelingNotification(remoteMessage);
@@ -143,6 +145,219 @@ public class MyMessagingService extends FirebaseMessagingService {
         int id = NotificationID.getID();
         String userValueIntentExtra;
 
+        userValueIntentExtra = remoteMessage.getData().get("userId") + "revealrequestaccepted";
+
+        if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "revealrequestaccepted")) {
+            notificationIDHashMap.put(remoteMessage.getData().get("userId") + "revealrequestaccepted", id);
+            notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberrevealrequestaccepted", 1);
+
+            messageNotificationCount = 1;
+        } else {
+            int newCount = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "numberrevealrequestaccepted");
+            id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "revealrequestaccepted");
+            messageNotificationCount = newCount + 1;
+            notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberrevealrequestaccepted", messageNotificationCount);
+        }
+
+        intent = new Intent(this, VerticalPageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("username", remoteMessage.getData().get("username"));
+        intent.putExtra("userid", remoteMessage.getData().get("userId"));
+        intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+        intent.putExtra("live", "no");
+        intent.putExtra("revealmessage", "yes");
+        intent.putExtra("userValueIntentExtra", userValueIntentExtra);
+
+        PendingIntent pendingIntent;
+        pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        collapsedView = new RemoteViews(getPackageName(), R.layout.collapsed_message_notification);
+        RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.expanded_message_notification);
+
+
+        try {
+            bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(remoteMessage.getData().get("userPhoto").replace("s96-c", "s384-c"))
+                    .submit(512, 512)
+                    .get();
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+            collapsedView.setImageViewBitmap(R.id.logo, bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder;
+
+        NotificationChannel notificationChannel;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel =
+                    new NotificationChannel("ch_nm", "CHART", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setVibrationPattern(new long[]{300, 300, 300});
+
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                notificationChannel.setSound(defaultSoundUri, att);
+            }
+
+
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, notificationChannel.getId())
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText(remoteMessage.getData().get("content"))
+                            //.setCont
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            //.setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .setBigContentTitle(remoteMessage.getData().get("label"))
+                                    .bigText(remoteMessage.getData().get("content")))
+                            //.setPriority(NotificationCompat.PRIORITY_MAX)
+                            /*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                            //  .setShowActionsInCompactView(1))
+                            //.setMediaSession(MediaSessionCompat.Token))
+                            //.setGroup(remoteMessage.getData().get("userId"))
+                            .setContentIntent(pendingIntent);
+
+
+            Notification summaryNotificationBuilder;
+
+
+            summaryNotificationBuilder =
+                    new NotificationCompat.Builder(context, notificationChannel.getId())
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText(messageNotificationCount + " messages revealed by " + remoteMessage.getData().get("username"))
+                            //.setCustomContentView(collapsedView)
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            //.setLargeIcon(bitmap)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .setBigContentTitle(remoteMessage.getData().get("label"))
+                                    .bigText(remoteMessage.getData().get("content")))
+                            .setGroup(remoteMessage.getData().get("userId"))
+                            .setGroupSummary(true)
+                            .setContentIntent(pendingIntent).build();
+
+
+            // Since android Oreo notification channel is needed.
+/*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }*/
+
+            //int id =NotificationID.getID();
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+            //  ++messageNotificationCount;
+            if (messageNotificationCount > 1) {
+                notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
+            }
+
+
+        } else {
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText(remoteMessage.getData().get("content"))
+                            //.setCont
+                            //.setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .setBigContentTitle(remoteMessage.getData().get("label"))
+                                    .bigText(remoteMessage.getData().get("content")))
+                            //.setPriority(NotificationCompat.PRIORITY_MAX)
+                            /*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+
+                            //  .setShowActionsInCompactView(1))
+                            //.setMediaSession(MediaSessionCompat.Token))
+                            //.setGroup(remoteMessage.getData().get("userId"))
+                            .setContentIntent(pendingIntent);
+
+
+            Notification summaryNotificationBuilder;
+
+
+            summaryNotificationBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText(messageNotificationCount + " messages revealed by " + remoteMessage.getData().get("username"))
+                            //.setCustomContentView(collapsedView)
+                            //.setLargeIcon(bitmap)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .setBigContentTitle(remoteMessage.getData().get("label"))
+                                    .bigText(remoteMessage.getData().get("content")))
+                            .setGroup(remoteMessage.getData().get("userId"))
+                            .setGroupSummary(true)
+                            .setContentIntent(pendingIntent).build();
+
+
+            // Since android Oreo notification channel is needed.
+/*        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_1_ID,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }*/
+
+            //int id =NotificationID.getID();
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+            //  ++messageNotificationCount;
+            if (messageNotificationCount > 1) {
+                notificationManager.notify(id/* ID of notification */, summaryNotificationBuilder);
+            }
+
+
+        }
+    }
+
+    private void sendMessageRevealRequestedNotification(RemoteMessage remoteMessage) {
+        context = this;
+        Intent intent;
+
+        int id = NotificationID.getID();
+        String userValueIntentExtra;
+
         userValueIntentExtra = remoteMessage.getData().get("userId") + "revealrequest";
 
         if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "revealrequest")) {
@@ -163,7 +378,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
         intent.putExtra("live", remoteMessage.getData().get("live"));
-        intent.putExtra("revealmessage", "yes");
+        intent.putExtra("revealmessage", "no");
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
 
         PendingIntent pendingIntent;

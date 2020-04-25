@@ -83,6 +83,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     float displayHeight;
     int emojiYTransitionDuration = 1250;
     int emojiAplhaDuration = 500;
+    Boolean openSendMessageFragment = false;
     String publicKeyText, privateKeyText, otherUserPublicKey, otherUserPublicKeyID, publicKeyId;
 
     @Override
@@ -334,13 +335,17 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         }
                     }
                 } else if (key.equals("revealmessage")) {
-                    Intent revealActivityIntent = new Intent(VerticalPageActivity.this, RevealReplyActivity.class);
+                    if (intent.getStringExtra("revealmessage").equals("no")) {
+                        Intent revealActivityIntent = new Intent(VerticalPageActivity.this, RevealReplyActivity.class);
 
-                    revealActivityIntent.putExtra("userIdChattingWith", userIdChattingWith);
-                    revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
-                    revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
+                        revealActivityIntent.putExtra("userIdChattingWith", userIdChattingWith);
+                        revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
+                        revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
 
-                    startActivity(revealActivityIntent);
+                        startActivity(revealActivityIntent);
+                    } else if (intent.getStringExtra("revealmessage").equals("yes")) {
+                        openSendMessageFragment = true;
+                    }
                 }
 
             }
@@ -445,8 +450,12 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
          *
          * The following line of code is the focused entity
         * */
-        if (live.equals("no"))
-            viewPager.setCurrentItem(fragmentList.size()-2);
+        if (live.equals("no")) {
+            if (openSendMessageFragment)
+                viewPager.setCurrentItem(fragmentList.size() - 3);
+            else
+                viewPager.setCurrentItem(fragmentList.size() - 2);
+        }
 
         else
             viewPager.setCurrentItem(fragmentList.size() - 1);

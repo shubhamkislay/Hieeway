@@ -2995,7 +2995,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     animatorSet1.start();
                                 }catch (Exception e)
                                 {
-                                    Toast.makeText(getContext(),"Problem in playing animation together using a list",Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(getContext(),"Problem in playing animation together using a list",Toast.LENGTH_SHORT).show();
                                 }
 
                             }
@@ -3080,13 +3080,20 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                     @Override
                                                     public void run() {
 
-                                                        Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                                                        try {
+
+                                                            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+
 // Vibrate for 500 milliseconds
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                            v.vibrate(VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE));
-                                                        } else {
-                                                            //deprecated in API 26
-                                                            v.vibrate(75);
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                                v.vibrate(VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE));
+                                                            } else {
+                                                                //deprecated in API 26
+                                                                v.vibrate(75);
+                                                            }
+                                                        } catch (Exception e) {
+                                                            //
+
                                                         }
                                                         blinkMessageBox();
                                                         setIsMessageRunning(false);
