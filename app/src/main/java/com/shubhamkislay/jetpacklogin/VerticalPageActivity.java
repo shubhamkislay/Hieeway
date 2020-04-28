@@ -85,6 +85,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     int emojiAplhaDuration = 500;
     Boolean openSendMessageFragment = false;
     String publicKeyText, privateKeyText, otherUserPublicKey, otherUserPublicKeyID, publicKeyId;
+    String feededMessageID = "default";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -341,10 +342,15 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         revealActivityIntent.putExtra("userIdChattingWith", userIdChattingWith);
                         revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
                         revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
+                        revealActivityIntent.putExtra("photo", photo);
+                        revealActivityIntent.putExtra("username", usernameChattingWith);
+
+
 
                         startActivity(revealActivityIntent);
                     } else if (intent.getStringExtra("revealmessage").equals("yes")) {
                         openSendMessageFragment = true;
+                        feededMessageID = intent.getStringExtra("messageID");
                     }
                 }
 
@@ -399,6 +405,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         bundleSendMessage.putString("userIdChattingWith",userIdChattingWith);
         bundleSendMessage.putString("currentUserPrivateKey",privateKeyText);
         bundleSendMessage.putString("currentUserPublicKeyID",publicKeyId);
+        bundleSendMessage.putString("messageID", feededMessageID);
+        bundleSendMessage.putString("usernameChattingWith", usernameChattingWith);
+        bundleSendMessage.putString("userIdChattingWith", userIdChattingWith);
+        bundleSendMessage.putString("photo", photo);
 
         // set Fragmentclass Arguments
         ephemeralMessagingFragment = new EphemeralMessagingFragment();

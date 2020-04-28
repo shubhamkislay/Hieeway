@@ -167,6 +167,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("live", "no");
         intent.putExtra("revealmessage", "yes");
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
+        intent.putExtra("messageID", remoteMessage.getData().get("messageId"));
 
         PendingIntent pendingIntent;
         pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,

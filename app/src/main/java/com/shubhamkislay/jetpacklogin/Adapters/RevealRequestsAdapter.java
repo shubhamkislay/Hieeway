@@ -1,14 +1,19 @@
 package com.shubhamkislay.jetpacklogin.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.Intent;
 import android.util.Base64;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.R;
+import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 
 import java.security.Key;
 import java.security.KeyFactory;
@@ -40,34 +46,153 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
     private String currentUserPrivateKey;
     private String currentUserPublicKeyID;
     private String userIdChattingWith;
+    RelativeLayout messageBody;
+    TextView replyTag;
+    TextView gotReplyTag;
+    TextView messageView;
+    TextView timestampView;
+    Button acceptBtn, rejectBtn;
+    private String username;
+    private String photo;
 
 
-
-    public RevealRequestsAdapter(List<ChatMessage> chatMessageList, Context context, String currentUserPrivateKey,String currentUserPublicKeyID,String userIdChattingWith)
+    public RevealRequestsAdapter(List<ChatMessage> chatMessageList, Context context, String currentUserPrivateKey, String currentUserPublicKeyID, String userIdChattingWith, String username, String photo)
     {
         this.chatMessageList = chatMessageList;
         this.context = context;
         this.currentUserPrivateKey = currentUserPrivateKey;
         this.currentUserPublicKeyID = currentUserPublicKeyID;
         this.userIdChattingWith = userIdChattingWith;
+        this.username = username;
+        this.photo = photo;
     }
-
-
 
     @NonNull
     @Override
     public RevealRequestsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.reveal_request_layout_view,viewGroup,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.reveal_request_layout_view, viewGroup, false);
 
         return new ViewHolder(view);
     }
 
+    public String decryptRSAToString(String encryptedBase64, String privateKey) {
+
+        String decryptedString = "";
+        try {
+            KeyFactory keyFac = KeyFactory.getInstance("RSA");
+            KeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decode(privateKey.trim().getBytes(), Base64.DEFAULT));
+            Key key = keyFac.generatePrivate(keySpec);
+
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.DECRYPT_MODE, key);
+
+            byte[] encryptedBytes = Base64.decode(encryptedBase64, Base64.DEFAULT);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            decryptedString = new String(decryptedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return decryptedString;
+    }
+
+    private void getMessageRevealed(final TextView gotReplyTag, final TextView replyTag, final String replyId, final String gotReplyId, final ChatMessage chatMessage, Boolean showGotReply, Boolean showReply) {
+
+
+        if (!replyId.equals("none") && showReply) {
+            final DatabaseReference reportReplyIdRef = FirebaseDatabase.getInstance().getReference("Reports")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIdChattingWith)
+                    .child(replyId);
+
+
+            reportReplyIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        ChatMessage chatMessage1 = dataSnapshot.getValue(ChatMessage.class);
+                        replyTag.setVisibility(View.VISIBLE);
+
+                        String messsage = decryptRSAToString(chatMessage1.getMessageText(), currentUserPrivateKey);
+                        if (chatMessage1.getIfMessageTwo())
+                            messsage = messsage + "\n" + decryptRSAToString(chatMessage1.getMessageTextTwo(), currentUserPrivateKey);
+                        if (chatMessage1.getIfMessageThree())
+                            messsage = messsage + "\n" + decryptRSAToString(chatMessage1.getMessageTextThree(), currentUserPrivateKey);
+
+                        replyTag.setText(messsage);
+                    } else {
+                        replyTag.setVisibility(View.VISIBLE);
+                        // replyTag.setAlpha(0.60f);
+                        replyTag.setBackground(context.getDrawable(R.drawable.layer_message_unavailable_drawable));
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        if (!gotReplyId.equals("none") && showGotReply) {
+            final DatabaseReference reportReplyIdRef = FirebaseDatabase.getInstance().getReference("Reports")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIdChattingWith)
+                    .child(gotReplyId);
+
+
+            reportReplyIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        /*if(!chatMessage.getSeen().equals("notseen")) {
+                            gotReplyTag.setVisibility(View.VISIBLE);*/
+
+                        ChatMessage chatMessage1 = dataSnapshot.getValue(ChatMessage.class);
+                        gotReplyTag.setVisibility(View.VISIBLE);
+                        String messsage = decryptRSAToString(chatMessage1.getMessageText(), currentUserPrivateKey);
+                        if (chatMessage1.getIfMessageTwo())
+                            messsage = messsage + "\n" + decryptRSAToString(chatMessage1.getMessageTextTwo(), currentUserPrivateKey);
+                        if (chatMessage1.getIfMessageThree())
+                            messsage = messsage + "\n" + decryptRSAToString(chatMessage1.getMessageTextThree(), currentUserPrivateKey);
+
+                        gotReplyTag.setText(messsage);
+                        //  }
+                    } else {
+
+                        //  if(!chatMessage.getSeen().equals("notseen") )
+                        gotReplyTag.setVisibility(View.INVISIBLE);
+                        // gotReplyTag.setAlpha(0.60f);
+
+                        gotReplyTag.setBackground(context.getDrawable(R.drawable.layer_message_unavailable_drawable));
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return chatMessageList.size();
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull final RevealRequestsAdapter.ViewHolder viewHolder, int i) {
 
         final ChatMessage chatMessage = chatMessageList.get(viewHolder.getAdapterPosition());
-
 
 
         //Ths is try catch block is to add the timestamp
@@ -109,6 +234,21 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
 
         messageView.setText(message);
 
+        messageBody.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, VerticalPageActivity.class);
+                intent.putExtra("revealmessage", "yes");
+                intent.putExtra("messageID", chatMessage.getMessageId());
+                intent.putExtra("userid", userIdChattingWith);
+                intent.putExtra("username", username);
+                intent.putExtra("photo", photo);
+                intent.putExtra("live", "no");
+
+                context.startActivity(intent);
+            }
+        });
+
         getMessageRevealed(gotReplyTag,replyTag,chatMessage.getReplyID(),chatMessage.getGotReplyID(),chatMessage, chatMessage.getShowGotReplyMsg(),chatMessage.getShowReplyMsg());
 
 
@@ -125,8 +265,7 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
                     databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists())
-                            {
+                            if (dataSnapshot.exists()) {
                                 HashMap<String,Object> messageHash = new HashMap<>();
                                 messageHash.put("showGotReplyMsg",true);
 
@@ -150,8 +289,7 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
                     databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists())
-                            {
+                            if (dataSnapshot.exists()) {
                                 HashMap<String,Object> messageHash = new HashMap<>();
                                 messageHash.put("showReplyMsg",true);
 
@@ -173,17 +311,42 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
                         .child(chatMessage.getMessageId());
 
 
-
-
-
                 chatMessageList.remove(chatMessage);
                 notifyItemRemoved(viewHolder.getAdapterPosition());
                 databaseReference.removeValue();
 
 
-
-
             }
+        });
+
+        messageBody.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                    messageBody.setAlpha(0.75f);
+
+                    messageBody.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    messageBody.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+
+
+                    messageBody.animate().alpha(1.0f).setDuration(100);
+
+
+                } else {
+                    messageBody.animate().setDuration(100).alpha(1.0f);
+
+                    messageBody.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                }
+
+                return false;
+            }
+
         });
 
 
@@ -196,7 +359,6 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
                         .child(chatMessage.getMessageId());
 
 
-
                 chatMessageList.remove(chatMessage);
                 notifyItemRemoved(viewHolder.getAdapterPosition());
 
@@ -205,139 +367,8 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
         });
 
 
-
     }
 
-    public  String decryptRSAToString(String encryptedBase64, String privateKey) {
-
-        String decryptedString = "";
-        try {
-            KeyFactory keyFac = KeyFactory.getInstance("RSA");
-            KeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decode(privateKey.trim().getBytes(), Base64.DEFAULT));
-            Key key = keyFac.generatePrivate(keySpec);
-
-            // get an RSA cipher object and print the provider
-            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
-            // encrypt the plain text using the public key
-            cipher.init(Cipher.DECRYPT_MODE, key);
-
-            byte[] encryptedBytes = Base64.decode(encryptedBase64, Base64.DEFAULT);
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            decryptedString = new String(decryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return decryptedString;
-    }
-
-    private void getMessageRevealed(final TextView gotReplyTag, final TextView replyTag, final String replyId, final String gotReplyId, final ChatMessage chatMessage,Boolean showGotReply, Boolean showReply) {
-
-
-
-        if(!replyId.equals("none") && showReply) {
-            final DatabaseReference reportReplyIdRef= FirebaseDatabase.getInstance().getReference("Reports")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(userIdChattingWith)
-                    .child(replyId);
-
-
-
-            reportReplyIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists())
-                    {
-                        ChatMessage chatMessage1 = dataSnapshot.getValue(ChatMessage.class);
-                        replyTag.setVisibility(View.VISIBLE);
-
-                        String messsage = decryptRSAToString(chatMessage1.getMessageText(),currentUserPrivateKey);
-                        if(chatMessage1.getIfMessageTwo())
-                            messsage = messsage+"\n"+decryptRSAToString(chatMessage1.getMessageTextTwo(),currentUserPrivateKey);
-                        if(chatMessage1.getIfMessageThree())
-                            messsage = messsage+"\n"+decryptRSAToString(chatMessage1.getMessageTextThree(),currentUserPrivateKey);
-
-                        replyTag.setText(messsage);
-                    }
-                    else {
-                        replyTag.setVisibility(View.VISIBLE);
-                        // replyTag.setAlpha(0.60f);
-                        replyTag.setBackground(context.getDrawable(R.drawable.layer_message_unavailable_drawable));
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-        if(!gotReplyId.equals("none") && showGotReply) {
-            final DatabaseReference reportReplyIdRef= FirebaseDatabase.getInstance().getReference("Reports")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(userIdChattingWith)
-                    .child(gotReplyId);
-
-
-            reportReplyIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists())
-                    {
-                        /*if(!chatMessage.getSeen().equals("notseen")) {
-                            gotReplyTag.setVisibility(View.VISIBLE);*/
-
-                            ChatMessage chatMessage1 = dataSnapshot.getValue(ChatMessage.class);
-                            gotReplyTag.setVisibility(View.VISIBLE);
-                            String messsage = decryptRSAToString(chatMessage1.getMessageText(), currentUserPrivateKey);
-                            if (chatMessage1.getIfMessageTwo())
-                                messsage = messsage + "\n" + decryptRSAToString(chatMessage1.getMessageTextTwo(), currentUserPrivateKey);
-                            if (chatMessage1.getIfMessageThree())
-                                messsage = messsage + "\n" + decryptRSAToString(chatMessage1.getMessageTextThree(), currentUserPrivateKey);
-
-                            gotReplyTag.setText(messsage);
-                      //  }
-                    }
-                    else {
-
-                      //  if(!chatMessage.getSeen().equals("notseen") )
-                            gotReplyTag.setVisibility(View.INVISIBLE);
-                        // gotReplyTag.setAlpha(0.60f);
-
-                        gotReplyTag.setBackground(context.getDrawable(R.drawable.layer_message_unavailable_drawable));
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-
-
-
-
-
-
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return chatMessageList.size();
-    }
-
-
-    TextView replyTag;
-    TextView gotReplyTag;
-    TextView messageView;
-    TextView timestampView;
-    Button acceptBtn, rejectBtn;
     public class ViewHolder extends RecyclerView.ViewHolder{
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -348,6 +379,7 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
             timestampView = itemView.findViewById(R.id.timestamp);
             acceptBtn = itemView.findViewById(R.id.acceptBtn);
             rejectBtn = itemView.findViewById(R.id.rejectBtn);
+            messageBody = itemView.findViewById(R.id.relative_layout);
 
 
         }

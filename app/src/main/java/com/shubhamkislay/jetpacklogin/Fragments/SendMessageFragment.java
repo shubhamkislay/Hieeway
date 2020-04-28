@@ -40,6 +40,7 @@ import com.shubhamkislay.jetpacklogin.Interface.MessageHighlightListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.R;
+import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +78,10 @@ public class SendMessageFragment extends Fragment {
     private int sizeBeforeDeleting;
     private int sizeAfterDataChange;
     public boolean swiped=false;
+    String usernameChattingWith;
+    String photo;
+    Boolean blinked = false;
+    private String messageID = "default";
 
     public SendMessageFragment() {
         // Required empty public constructor
@@ -94,6 +99,11 @@ public class SendMessageFragment extends Fragment {
         userIdChattingWith = getArguments().getString("userIdChattingWith");
         currentUserPrivateKey = getArguments().getString("currentUserPrivateKey");
         currentUserPublicKeyID = getArguments().getString("currentUserPublicKeyID");
+        messageID = getArguments().getString("messageID");
+        usernameChattingWith = getArguments().getString("usernameChattingWith");
+        // userIdChattingWith = getArguments().getString("userIdChattingWith");
+        photo = getArguments().getString("photo");
+
 
 
         toggleButton = view.findViewById(R.id.toggle_msg_highlight);
@@ -149,7 +159,8 @@ public class SendMessageFragment extends Fragment {
         bottomTextRelativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refreshChat();
+                //refreshChat();
+                searchChats(userIdChattingWith);
                 Toast.makeText(getContext(),"Swipe right on messages to unsend",Toast.LENGTH_SHORT).show();
             }
         });
@@ -317,6 +328,12 @@ public class SendMessageFragment extends Fragment {
           intent.putExtra("userIdChattingWith",userIdChattingWith);
           intent.putExtra("currentUserPrivateKey",currentUserPrivateKey);
           intent.putExtra("currentUserPublicKeyID",currentUserPublicKeyID);
+                intent.putExtra("photo", photo);
+                intent.putExtra("username", usernameChattingWith);
+
+
+
+
 
 
           startActivity(intent);
@@ -332,7 +349,7 @@ public class SendMessageFragment extends Fragment {
 
       //  addListToRecyclerView(sendMessagelist);
 
-        searchChats(userIdChattingWith);
+        // searchChats(userIdChattingWith);
 
 
 
@@ -509,8 +526,12 @@ public class SendMessageFragment extends Fragment {
     private void addListToRecyclerView(List<ChatMessage> sendMessagelist) {
 
 
-        sendMessageAdapter = new SendMessageAdapter(getActivity(),getContext(), sendMessagelist,userIdChattingWith,readMessageList,gemCount,currentUserPrivateKey, currentUserPublicKeyID);
+        sendMessageAdapter = new SendMessageAdapter(getActivity(), getContext(), sendMessagelist, userIdChattingWith, readMessageList, gemCount, currentUserPrivateKey, currentUserPublicKeyID, messageID);
         recyclerView.setAdapter(sendMessageAdapter);
+        if (!messageID.equals("default") && !blinked) {
+            recyclerView.scrollToPosition(sendMessageAdapter.getItemPosition(messageID));
+            blinked = true;
+        }
        // sendMessageAdapter.notifyDataSetChanged();
 
 
@@ -699,7 +720,16 @@ public class SendMessageFragment extends Fragment {
     @Override
     public void onPause() {
 
-        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequestaccepted", 0);
+
         super.onPause();
+        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequestaccepted", 0);
+        messageID = "default";
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        searchChats(userIdChattingWith);
+
     }
 }

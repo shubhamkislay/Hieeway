@@ -6,12 +6,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
+
     <RelativeLayout
 
         android:layout_marginTop="1.5dp"
         android:layout_width="match_parent"
         android:layout_marginBottom="1.5dp"
         android:layout_height="wrap_content">
+
+
         <RelativeLayout
             android:id="@+id/relative_layout"
             android:layout_width="match_parent"
@@ -40,6 +43,7 @@
                 android:paddingTop="16dp"
                 android:paddingRight="24dp"
                 android:background="@drawable/layer_message_box_drawable_white"
+
                 android:paddingLeft="24dp"
                 android:paddingBottom="4dp">
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
@@ -82,13 +83,13 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private ChatMessage replyMessage = null;
     private ChatMessage gotReplyMessage = null;
     private ChatMessageCompound chatMessageCompound = null;
+    private static final int BLINK_SPEED = 350;
+    private static final float SCALE_SIZE = 0.85f;
+    private String searchedMessageID;
+    private Boolean blinked = false;
 
 
-
-
-
-
-    public SendMessageAdapter(Activity activity,Context context, List<ChatMessage> chatMessageList, String userIdChattingWith, List<ChatMessage> receiverMessageList, int gemCount,String currentUserPrivateKey, String currentUserPublicKeyID)
+    public SendMessageAdapter(Activity activity, Context context, List<ChatMessage> chatMessageList, String userIdChattingWith, List<ChatMessage> receiverMessageList, int gemCount, String currentUserPrivateKey, String currentUserPublicKeyID, String searchMessageID)
     {
         this.context = context;
         this.activity = activity;
@@ -96,6 +97,7 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.chatMessageList = chatMessageList;
         this.userIdChattingWith = userIdChattingWith;
         this.receiverMessageList = receiverMessageList;
+        this.searchedMessageID = searchMessageID;
         try {
 
             this.highlightMessage = receiverMessageList.get(0).getReplyID();
@@ -235,6 +237,53 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             countGems(userIdChattingWith);
 
+        if (!searchedMessageID.equals("default") && searchedMessageID.equals(chatMessage.getMessageId()) && !blinked) {
+            sendMessageViewHolder.messageView.setTextSize(24);
+            //sendMessageViewHolder.messageView.setS
+            sendMessageViewHolder.messageView.setTypeface(null, Typeface.BOLD);
+            sendMessageViewHolder.relativeLayout.setBackground(context.getResources().getDrawable(R.drawable.layer_message_box_highlight_drawable));
+
+            sendMessageViewHolder.relativeLayout.animate().scaleX(SCALE_SIZE).scaleY(SCALE_SIZE).setDuration(BLINK_SPEED);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sendMessageViewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(BLINK_SPEED);
+                    //  sendMessageViewHolder.relativeLayout.setBackground(context.getResources().getDrawable(R.drawable.layer_message_box_drawable));
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendMessageViewHolder.relativeLayout.animate().scaleX(SCALE_SIZE).scaleY(SCALE_SIZE).setDuration(BLINK_SPEED);
+                            // sendMessageViewHolder.relativeLayout.setBackground(context.getResources().getDrawable(R.drawable.layer_message_box_highlight_drawable));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sendMessageViewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(BLINK_SPEED);
+                                    //sendMessageViewHolder.relativeLayout.setBackground(context.getResources().getDrawable(R.drawable.layer_message_box_drawable));
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            sendMessageViewHolder.relativeLayout.setBackground(context.getResources().getDrawable(R.drawable.layer_message_box_drawable));
+                                            sendMessageViewHolder.messageView.setTextSize(14);
+                                            sendMessageViewHolder.messageView.setTypeface(null, Typeface.NORMAL);
+                                            blinked = true;
+
+                                        }
+                                    }, BLINK_SPEED);
+
+                                }
+                            }, BLINK_SPEED);
+
+                        }
+                    }, BLINK_SPEED);
+
+                }
+            }, BLINK_SPEED);
+
+        }
+
             if (currentUserPublicKeyID.equals(chatMessage.getPublicKeyID())) {
 
                 if(!chatMessage.getGotReplyID().equals("none"))
@@ -337,7 +386,6 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         revealMessageDialog.show();
 
 
-
                     }
                 });
 
@@ -398,7 +446,6 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         revealMessageDialog.setListener(SendMessageAdapter.this);
 
                             revealMessageDialog.show();
-
 
 
                     }
@@ -805,7 +852,9 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         this.gemCount = gemCount;
 
+        searchedMessageID = "default";
         notifyDataSetChanged();
+
 
     }
 
@@ -916,6 +965,13 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
+    public int getItemPosition(String chatMessageID) {
+        for (ChatMessage chatMessage : chatMessageList) {
+            if (chatMessage.getMessageId().equals(chatMessageID))
+                return chatMessageList.indexOf(chatMessage);
+        }
+        return -1;
+    }
 
 
 
