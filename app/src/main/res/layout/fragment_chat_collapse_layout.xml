@@ -33,7 +33,8 @@
             android:visibility="visible"
             android:alpha="1.0"
             android:layout_above="@id/bottom_panel"
-            android:background="@drawable/status_bar_fade"/>
+            android:background="@drawable/status_bar_fade"
+            android:backgroundTint="@color/nav_status_color" />
 
             <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -52,7 +53,7 @@
                     android:id="@+id/app_title_layout"
                     android:layout_width="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:background="@android:color/black"
+                    android:background="@drawable/rounded_bottom_corner_drawable"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -172,7 +173,7 @@
                         android:layout_margin="8dp"
                         android:animateLayoutChanges="true"
                         android:background="@drawable/home_background_oval"
-                        android:backgroundTint="@color/darkButtonBackground"
+                        android:backgroundTint="#181818"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
@@ -184,7 +185,7 @@
                             android:elevation="10dp"
                             android:visibility="visible"
                             android:background="@drawable/ic_search_black_24dp"
-                            android:backgroundTint="@color/textThemeColor"
+                            android:backgroundTint="@color/colorPrimaryDark"
                             />
 
 

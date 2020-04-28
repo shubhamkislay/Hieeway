@@ -2,6 +2,7 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.app.Activity;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -68,6 +70,7 @@ import com.shubhamkislay.jetpacklogin.UserPicViewModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
@@ -126,6 +129,29 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
         email = view.findViewById(R.id.email);
         logo_title = view.findViewById(R.id.logo_title);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Window window = Objects.requireNonNull(getActivity()).getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_status_color));
+                } catch (Exception e) {
+                    //
+                }
+
+            }
+        }, 2000);
+
+
 
 
 

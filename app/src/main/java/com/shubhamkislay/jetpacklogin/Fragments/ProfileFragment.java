@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -31,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -131,6 +133,17 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         displayHeight = size.y;
 
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        Window window = getActivity().getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
 
         edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
         edit_bio = view.findViewById(R.id.edit_bio);

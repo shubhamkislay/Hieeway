@@ -2,6 +2,7 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.app.Activity;
 
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -19,6 +20,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
@@ -57,6 +60,7 @@ public class PeopleFragment extends Fragment {
     public String searchingUsername;
     ProgressBar progressBar,progressBarTwo;
     private List<User> userlist;
+    TextView logo_title;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,11 +82,25 @@ public class PeopleFragment extends Fragment {
         searchPeople.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        logo_title = view.findViewById(R.id.layout_title);
+
+        Window window = getActivity().getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_status_color));
 
         result_text = view.findViewById(R.id.result_text);
         result_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
+
+        logo_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
 

@@ -57,6 +57,8 @@
 
     <color name="nav_button_inactive">#C4C4C4</color>
 
+    <color name="nav_status_color">#131313</color>
+
 
 
     <color name="textThemeColor">#fff</color>

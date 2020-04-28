@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -26,6 +27,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -119,6 +121,17 @@ public class FriendListFagment extends Fragment {
         progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
 
         progress_menu_logo_two = view.findViewById(R.id.progress_menu_logo_two);
+
+        Window window = getActivity().getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_status_color));
 
 
        // search_btn_layout = view.findViewById(R.id.search_bar_layout_friends);
