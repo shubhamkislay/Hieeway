@@ -228,7 +228,7 @@
             android:layout_toLeftOf="@id/online_ring"
             android:text="online"
             android:alpha="0.0"
-            android:visibility="visible"
+            android:visibility="gone"
             android:textSize="12sp"
             android:textColor="#5AEC00"
             android:layout_marginTop="12dp"

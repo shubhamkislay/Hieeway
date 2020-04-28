@@ -1500,14 +1500,15 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             {
 
 
+                                // try{
 
                                 online_ring.animate().alpha(1.0f).setDuration(500);
-                                online_status.animate().alpha(1.0f).setDuration(500);
+                                //online_status.animate().alpha(1.0f).setDuration(500);
                             }
                             else
                             {
                                 online_ring.animate().alpha(0.0f).setDuration(500);
-                                online_status.animate().alpha(0.0f).setDuration(500);
+                                //online_status.animate().alpha(0.0f).setDuration(500);
                             }
 
                         }catch (Exception e)
@@ -3438,7 +3439,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 if (connected) {
 
                     online_ring.setVisibility(View.VISIBLE);
-                    online_status.setVisibility(View.VISIBLE);
+                    //online_status.setVisibility(View.VISIBLE);
                    // Log.d(TAG, "connected");
                    // Toast.makeText(getActivity(),"You are connected!",Toast.LENGTH_SHORT).show();
 
