@@ -344,6 +344,23 @@
             android:src="@drawable/splash_logo_gradient"
             android:visibility="gone"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+
+            android:layout_alignParentTop="true"
+            android:background="@drawable/top_fade_dark_background"
+            android:backgroundTint="@color/nav_status_color" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"
+
+            android:background="@drawable/top_fade_dark_background"
+            android:backgroundTint="@color/nav_status_color"
+            android:rotation="180" />
+
         <com.shubhamkislay.jetpacklogin.TypeWriter
             android:id="@+id/logo_txt"
             android:layout_width="match_parent"
@@ -356,8 +373,10 @@
             android:gravity="center"
             android:maxLines="1"
             android:padding="48dp"
+            android:background="@android:color/transparent"
             android:text="Hieeway"
             android:textColor="#fff"/>
+
 
         <ImageView
             android:id="@+id/send_arrow_splash"

@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#09bbf5</color>
     <color name="colorAccent">#29c3cf</color>
     <color name="colorPending">#636363</color>
+    <color name="profile_color_theme">#0E0E0E</color>
+
+    <!--<color name="profile_color_theme">#011B2E</color>-->
 
     <color name="colorBlack">#000000</color>
     <color name="colorRed">#A70000</color>
@@ -58,7 +61,6 @@
     <color name="nav_button_inactive">#C4C4C4</color>
 
     <color name="nav_status_color">#131313</color>
-
 
 
     <color name="textThemeColor">#fff</color>

@@ -149,7 +149,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 }
 
             }
-        }, 2000);
+        }, 0);
 
 
 

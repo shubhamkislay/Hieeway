@@ -37,6 +37,12 @@ public class PaletteActivity extends AppCompatActivity {
         bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
 
+        setPaletteColor();
+
+
+    }
+
+    private void setPaletteColor() {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             @Override
             public void onGenerated(@Nullable Palette palette) {
@@ -78,8 +84,6 @@ public class PaletteActivity extends AppCompatActivity {
 
             }
         });
-
-
     }
 
 

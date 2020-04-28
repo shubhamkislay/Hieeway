@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -19,6 +20,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
+
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -61,11 +64,14 @@ import com.shubhamkislay.jetpacklogin.Interface.ChatStampSizeListener;
 import com.shubhamkislay.jetpacklogin.Interface.EditBioFragmentListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
+
+import static com.shubhamkislay.jetpacklogin.MyApplication.darkMutedSwatch;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -121,6 +127,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
 
     int fragmentId=1;
+    private Bitmap bitmap;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -136,7 +143,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         nav_bar = findViewById(R.id.nav_bar);
 
+        profileFragment = new ProfileFragment();
+
         getUserImageIntoNavButton();
+
 
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
@@ -150,7 +160,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_status_color));
 
 
 
@@ -227,7 +237,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         peopleFragment = new PeopleFragment();
-        profileFragment = new ProfileFragment();
+
         friendListFagment = new FriendListFagment();
         editBioLayoutFragment = new EditBioLayoutFragment();
 
@@ -556,6 +566,22 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     try {
                         Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnPressed);
                         Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnUnpressed);
+
+                        try {
+                            bitmap = Glide.with(NavButtonTest.this)
+                                    .asBitmap()
+                                    .load(user.getPhoto())
+                                    .submit(50, 50)
+                                    .get();
+
+                            profileFragment.setBitmap(bitmap);
+
+                        } catch (Exception e) {
+                            //
+                        }
+
+
+
                     } catch (Exception e) {
 
                     }
@@ -575,6 +601,81 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         });
     }
 
+    private void setPaletteColor() {
+        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(@Nullable Palette palette) {
+
+                /*vibrantSwatch = palette.getVibrantSwatch();
+                darkVibrantSwatch = palette.getDarkVibrantSwatch();
+                lightVibrantSwatch = palette.getLightVibrantSwatch();
+                mutedSwatch = palette.getMutedSwatch();*/
+                darkMutedSwatch = palette.getDarkMutedSwatch();
+                /*lightMutedSwatch = palette.getLightMutedSwatch();
+                dominantSwatch = palette.getDominantSwatch();*/
+
+                // Palette.Swatch currentSwatch = null;
+                /*
+                if (vibrantSwatch != null)
+                    currentSwatch = vibrantSwatch;
+                else if (darkVibrantSwatch != null)
+                    currentSwatch = darkVibrantSwatch;
+                else if (lightVibrantSwatch != null)
+                    currentSwatch = lightVibrantSwatch;
+                else if (mutedSwatch != null)
+                    currentSwatch = mutedSwatch;
+                else if (darkMutedSwatch != null)
+                    currentSwatch = darkMutedSwatch;
+                else if (lightMutedSwatch != null)
+                    currentSwatch = lightMutedSwatch;
+                else if (dominantSwatch != null)
+                    currentSwatch = dominantSwatch;*/
+
+
+                /*if (currentSwatch != null) {
+                    //relativeLayout.setBackgroundColor(currentSwatch.getRgb());
+
+                    if(darkMutedSwatch!=null) {
+
+                        currentSwatch = darkMutedSwatch;
+                        *//*top_fade.setBackgroundTintList(ColorStateList.valueOf(currentSwatch.getRgb()));
+                        bottom_fade.setBackgroundTintList(ColorStateList.valueOf(currentSwatch.getRgb()));
+                        overlay_fade.setBackgroundTintList(ColorStateList.valueOf(currentSwatch.getRgb()));*//*
+
+
+
+                 *//*top_fade.setBackgroundColor(currentSwatch.getRgb());
+                    bottom_fade.setBackgroundColor(currentSwatch.getRgb());
+                    overlay_fade.setBackgroundColor(currentSwatch.getRgb());*//*
+                 *//*username.setTextColor(currentSwatch.getTitleTextColor());
+                        feeling_txt.setTextColor(currentSwatch.getTitleTextColor());
+                        bio_txt.setTextColor(currentSwatch.getTitleTextColor());
+                        name.setTextColor(currentSwatch.getTitleTextColor());*//*
+
+                        try {
+                            *//*window = getActivity().getWindow();
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+                            window.setStatusBarColor(currentSwatch.getRgb());*//*
+                        } catch (Exception e) {
+                            //
+                        }
+                    }
+
+
+                    // ...
+                } else {
+                    //Toast.makeText(getActivity(), "Null color", Toast.LENGTH_SHORT).show();
+                }*/
+
+
+            }
+        });
+    }
 
     public void activateFriendsBtn()
     {
@@ -627,6 +728,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         }
 
         return super.dispatchTouchEvent(event);
+    }
+
+    public Palette createPaletteSync(Bitmap bitmap) {
+        Palette p = Palette.from(bitmap).generate();
+        return p;
     }
 
     public void deactivateFriendsBNtn()
@@ -776,6 +882,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     {
         profileBtnUnpressed.setVisibility(View.GONE);
         profileBtnPressed.setVisibility(View.VISIBLE);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+            }
+        }, 100);
+
 
         profileBtnPressed.setAlpha(1.0f);
 
@@ -956,6 +1070,19 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                        Glide.with(NavButtonTest.this).load(mUri).into(profileBtnPressed);
                        Glide.with(NavButtonTest.this).load(mUri).into(profileBtnUnpressed);
+                        try {
+                            bitmap = Glide.with(NavButtonTest.this)
+                                    .asBitmap()
+                                    .load(mUri)
+                                    .submit(50, 50)
+                                    .get();
+
+                            profileFragment.setBitmap(bitmap);
+
+                        } catch (Exception e) {
+                            //
+                        }
+
 
 
 
@@ -1062,6 +1189,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileBtnUnpressed.setVisibility(View.VISIBLE);
         profileBtnPressed.setVisibility(View.GONE);
         profileBtnUnpressed.setAlpha(0.85f);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
+            }
+        }, 100);
+
        // profile_button_layout.setBackground(getDrawable(R.drawable.message_box_drawable));
        // profileBtnUnpressed
 
@@ -1253,7 +1388,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     @Override
                     public void run() {
 
-                        typeWriter.animate().translationYBy(-displayHeight/2).setDuration(arrowAnimDuration/2);
+                        typeWriter.animate().translationYBy(-displayHeight / 1.5f).setDuration(arrowAnimDuration / 2);
 
 
 
@@ -1261,7 +1396,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
                     }
-                },arrowAnimDuration/2);
+                }, arrowAnimDuration / 4);
 
 
                 typeWriter.animate().alpha(0.0f).setDuration(arrowAnimDuration);
@@ -1271,6 +1406,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                 animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/,alphaBackgroundScreen/*,alphaMasterHead*//*,alphaNavBar, alphaFrameLayout*/);
                 animatorSet.start();
+        //typeWriter.animate().translationYBy(-displayHeight/2).setDuration(arrowAnimDuration/2);
 
                 if(playFrameAnimation) {
 

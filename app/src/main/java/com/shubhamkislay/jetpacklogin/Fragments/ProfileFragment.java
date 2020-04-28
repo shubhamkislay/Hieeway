@@ -11,10 +11,12 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,7 @@ import android.os.Handler;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.palette.graphics.Palette;
 
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -61,11 +64,13 @@ import com.shubhamkislay.jetpacklogin.Interface.FeelingListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.MainActivity;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.PaletteActivity;
 import com.shubhamkislay.jetpacklogin.ProfilePhotoActivity;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.SharedViewModel;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
@@ -108,6 +113,20 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     Point size;
     float displayHeight;
 
+    static Bitmap bitmap;
+    //adding theme based on profile photo colors
+    static private Palette.Swatch vibrantSwatch;
+    static private Palette.Swatch mutedSwatch;
+    static private Palette.Swatch lightVibrantSwatch;
+    static private Palette.Swatch darkVibrantSwatch;
+    static private Palette.Swatch dominantSwatch;
+    static private Palette.Swatch lightMutedSwatch;
+    static private Palette.Swatch darkMutedSwatch;
+    static private Palette.Swatch currentSwatch = null;
+    RelativeLayout top_fade, bottom_fade, overlay_fade;
+    Window window;
+    String userPhoto = "default";
+
 
 /*
     @Override
@@ -134,16 +153,21 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        Window window = getActivity().getWindow();
+
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        try {
+            window = getActivity().getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
+            window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
+        } catch (Exception e) {
+            //
+        }
 
         edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
         edit_bio = view.findViewById(R.id.edit_bio);
@@ -155,11 +179,16 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         username = view.findViewById(R.id.username);
         profile_pic_background = view.findViewById(R.id.profile_pic_background);
         center_dp = view.findViewById(R.id.center_dp);
+
+
         name = view.findViewById(R.id.name);
         logoutBtn = view.findViewById(R.id.logout_btn);
         uploadActivityButton = view.findViewById(R.id.change_activity);
         feeling_icon = view.findViewById(R.id.feeling_icon);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
+        top_fade = view.findViewById(R.id.top_fade);
+        bottom_fade = view.findViewById(R.id.bottom_fade);
+        overlay_fade = view.findViewById(R.id.overlay_fade);
 
         feeling_txt = view.findViewById(R.id.feeling_txt);
         change_nio_edittext = view.findViewById(R.id.change_nio_edittext);
@@ -231,6 +260,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
             }
         });
+
 
         center_dp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -416,6 +446,16 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             }
         });
 
+        try {
+            bitmap = Glide.with(getActivity())
+                    .asBitmap()
+                    .load(userPhoto)
+                    .submit(5, 5)
+                    .get();
+            //setPaletteColor();
+        } catch (Exception e) {
+            //
+        }
 /*
         change_nio_edittext.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -615,8 +655,14 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                 try{
                     profilepic = user.getPhoto().replace("s96-c", "s384-c");
+                    userPhoto = profilepic;
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
+
+                    bitmap = ((BitmapDrawable) profile_pic_background.getDrawable()).getBitmap();
+
+
+                    // setPaletteColor();
                 }
                 catch (Exception e)
                 {
@@ -626,6 +672,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             }
         });
 
+        //setPaletteColor();
+        setColor();
 
     }
 
@@ -641,6 +689,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
     public void setAddFeelingFragmentListener(AddFeelingFragmentListener addFeelingFragmentListener) {
         this.addFeelingFragmentListener = addFeelingFragmentListener;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+        //setPaletteColor();
     }
 
     @Override
@@ -696,6 +749,140 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(CONFUSED);
                 break;
+        }
+    }
+
+    private void setColor() {
+        top_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+        bottom_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+        overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+
+        try {
+            window = getActivity().getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+            window.setStatusBarColor(getResources().getColor(R.color.profile_color_theme));
+        } catch (Exception ef) {
+            //
+        }
+    }
+
+    private void setPaletteColor() {
+        try {
+            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(@Nullable Palette palette) {
+
+                    vibrantSwatch = palette.getVibrantSwatch();
+                    darkVibrantSwatch = palette.getDarkVibrantSwatch();
+                    lightVibrantSwatch = palette.getLightVibrantSwatch();
+                    mutedSwatch = palette.getMutedSwatch();
+                    darkMutedSwatch = palette.getDarkMutedSwatch();
+                    lightMutedSwatch = palette.getLightMutedSwatch();
+                    dominantSwatch = palette.getDominantSwatch();
+
+
+                    if (vibrantSwatch != null)
+                        currentSwatch = vibrantSwatch;
+                    else if (darkVibrantSwatch != null)
+                        currentSwatch = darkVibrantSwatch;
+                    else if (lightVibrantSwatch != null)
+                        currentSwatch = lightVibrantSwatch;
+                    else if (mutedSwatch != null)
+                        currentSwatch = mutedSwatch;
+                    else if (darkMutedSwatch != null)
+                        currentSwatch = darkMutedSwatch;
+                    else if (lightMutedSwatch != null)
+                        currentSwatch = lightMutedSwatch;
+                    else if (dominantSwatch != null)
+                        currentSwatch = dominantSwatch;
+
+
+                    if (currentSwatch != null) {
+                        //relativeLayout.setBackgroundColor(currentSwatch.getRgb());
+
+                        if (darkMutedSwatch != null) {
+
+                            currentSwatch = darkMutedSwatch;
+                            try {
+                                top_fade.setBackgroundTintList(ColorStateList.valueOf(currentSwatch.getRgb()));
+                                bottom_fade.setBackgroundTintList(ColorStateList.valueOf(currentSwatch.getRgb()));
+                                overlay_fade.setBackgroundTintList(ColorStateList.valueOf(currentSwatch.getRgb()));
+                            } catch (Exception e) {
+                                //
+                            }
+
+
+
+                    /*top_fade.setBackgroundColor(currentSwatch.getRgb());
+                    bottom_fade.setBackgroundColor(currentSwatch.getRgb());
+                    overlay_fade.setBackgroundColor(currentSwatch.getRgb());*/
+                        /*username.setTextColor(currentSwatch.getTitleTextColor());
+                        feeling_txt.setTextColor(currentSwatch.getTitleTextColor());
+                        bio_txt.setTextColor(currentSwatch.getTitleTextColor());
+                        name.setTextColor(currentSwatch.getTitleTextColor());*/
+
+                            try {
+                                window = getActivity().getWindow();
+                                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+                                window.setStatusBarColor(currentSwatch.getRgb());
+                            } catch (Exception e) {
+                                //
+                            }
+                        }
+
+
+                        // ...
+                    } else {
+                        //Toast.makeText(getActivity(), "Null color", Toast.LENGTH_SHORT).show();
+                        top_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+                        bottom_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+                        overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+
+                        try {
+                            window = getActivity().getWindow();
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+                            window.setStatusBarColor(getResources().getColor(R.color.profile_color_theme));
+                        } catch (Exception e) {
+                            //
+                        }
+
+                    }
+
+
+                }
+            });
+        } catch (Exception e) {
+            top_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+            bottom_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+            overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
+
+            try {
+                window = getActivity().getWindow();
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+                window.setStatusBarColor(getResources().getColor(R.color.profile_color_theme));
+            } catch (Exception ef) {
+                //
+            }
         }
     }
 

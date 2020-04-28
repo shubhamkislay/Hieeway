@@ -12,6 +12,7 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+import androidx.palette.graphics.Palette;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +27,7 @@ public class MyApplication extends Application {
     public static final String CHANNEL_1_ID = "messages";
     public static final String CHANNEL_2_ID = "feelings";
     public static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
+    public static Palette.Swatch darkMutedSwatch;
 
     @Override
     public void onCreate() {

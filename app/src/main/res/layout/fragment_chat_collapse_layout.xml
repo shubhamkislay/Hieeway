@@ -52,6 +52,7 @@
                     android:visibility="visible"
                     android:id="@+id/app_title_layout"
                     android:layout_width="match_parent"
+                    android:padding="4dp"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/rounded_bottom_corner_drawable"
                     android:layout_height="wrap_content">
@@ -260,6 +261,7 @@
             android:id="@+id/no_items_text"
             android:visibility="gone"
 
+            android:textColor="#fff"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:foregroundGravity="center"

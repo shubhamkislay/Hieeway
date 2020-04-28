@@ -26,6 +26,7 @@
                 tools:src="@drawable/profile_pic" />
 
             <RelativeLayout
+                android:id="@+id/overlay_fade"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:alpha="0.25"
@@ -33,6 +34,7 @@
                 android:visibility="visible"/>
 
             <RelativeLayout
+                android:id="@+id/bottom_fade"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="visible"
@@ -40,6 +42,7 @@
                 android:background="@drawable/status_bar_fade"/>
 
             <RelativeLayout
+                android:id="@+id/top_fade"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="visible"
