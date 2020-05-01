@@ -1092,7 +1092,7 @@
                 android:textColorHint="#505050"
                 android:layout_toLeftOf="@id/send_button"
                 android:layout_centerVertical="true"
-                android:background="@drawable/message_box_reply_drawable"
+                android:background="@drawable/gradient_wallpaper_list"
                 />
 
             <EditText

@@ -3,12 +3,12 @@
 
     <item
         android:drawable="@drawable/faded_wallpaper_one"
-        android:duration="4000" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/faded_wallpaper_two"
-        android:duration="4000" />
+        android:duration="300" />
     <item
         android:drawable="@drawable/faded_wallpaper_three"
-        android:duration="4000" />
+        android:duration="300" />
 
 </animation-list>

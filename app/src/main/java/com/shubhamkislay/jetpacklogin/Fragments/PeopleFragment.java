@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -62,6 +63,7 @@ public class PeopleFragment extends Fragment {
     private List<User> userlist;
     TextView logo_title;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -83,6 +85,7 @@ public class PeopleFragment extends Fragment {
 
         searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
         logo_title = view.findViewById(R.id.layout_title);
+
 
         Window window = getActivity().getWindow();
 

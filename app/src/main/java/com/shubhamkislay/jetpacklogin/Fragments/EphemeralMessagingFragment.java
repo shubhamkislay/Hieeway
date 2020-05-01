@@ -17,6 +17,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -331,6 +332,13 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         message_box = view.findViewById(R.id.message_box);
         message_box_behind = view.findViewById(R.id.message_box_behind);
+
+        AnimationDrawable animationDrawable = (AnimationDrawable) message_box_behind.getBackground();
+
+        animationDrawable.setEnterFadeDuration(150);
+        animationDrawable.setExitFadeDuration(300);
+        animationDrawable.start();
+
         message_box.clearFocus();
 
 
@@ -3343,6 +3351,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                             if(continue_message_box_blinking)
                                 blinkMessageBox();
+
 
                         }
                     }, 300);
