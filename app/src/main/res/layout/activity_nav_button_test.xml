@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
+    android:background="@color/nav_btn_background_accent_color"
     tools:context=".NavButtonTest">
 
 
@@ -45,7 +46,7 @@
         android:alpha="1.0"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="#000"
+        android:background="@color/nav_btn_background_accent_color"
         android:layout_alignParentBottom="true"
         android:animateLayoutChanges="true"
         android:orientation="horizontal"
@@ -58,8 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/message_box_drawable"
-            android:backgroundTint="@color/darkButtonBackground"
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="@color/darkButtonBackground_accent"
 
             android:padding="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -118,7 +119,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
-            android:background="@drawable/message_box_drawable"
+            android:background="@drawable/nav_btn_back_drawable"
 
             android:padding="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -179,7 +180,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/message_box_drawable"
+            android:background="@drawable/nav_btn_back_drawable"
             android:padding="12dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -241,7 +242,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/message_box_drawable"
+            android:background="@drawable/nav_btn_back_drawable"
             android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -312,16 +313,18 @@
         />
 
     <RelativeLayout
+
         android:id="@+id/splash_layout"
+        android:background="@color/nav_btn_background_accent_color"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent">
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/background_screen"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"/>
+            android:background="@color/nav_btn_background_accent_color" />
 
         <ImageView
             android:id="@+id/splash_logo"
@@ -348,14 +351,16 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
 
+            android:backgroundTint="@color/nav_status_color_accent"
             android:layout_alignParentTop="true"
             android:background="@drawable/top_fade_dark_background"
-            android:backgroundTint="@color/nav_status_color" />
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentBottom="true"
+            android:visibility="gone"
 
             android:background="@drawable/top_fade_dark_background"
             android:backgroundTint="@color/nav_status_color"

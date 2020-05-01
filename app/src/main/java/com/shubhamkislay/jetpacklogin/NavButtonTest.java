@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Handler;
 
@@ -116,6 +117,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     TextView master_head;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
+    RelativeLayout nav_parent_layout;
 
     private static final int IMAGE_REQUEST=1;
     DatabaseReference databaseReference;
@@ -146,6 +148,18 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileFragment = new ProfileFragment();
 
         getUserImageIntoNavButton();
+        nav_parent_layout = findViewById(R.id.nav_parent_layout);
+
+        /**
+         *When you set the background as a gradiant animation list drawable, then you can uncomment the following code
+         * to get animation
+         */
+
+        /*AnimationDrawable animationDrawable = (AnimationDrawable) nav_parent_layout.getBackground();
+
+        animationDrawable.setEnterFadeDuration(2000);
+        animationDrawable.setExitFadeDuration(4000);
+        animationDrawable.start();*/
 
 
 
@@ -160,7 +174,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_status_color));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_status_color_accent));
 
 
 
@@ -693,7 +707,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         friendsBtnUnpressed.setAlpha(1.0f);
 
-        friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground )));
+        friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
 
        // friendsBtnUnpressed.setBackground(getDrawable(R.drawable.ic_friends_active));
 
@@ -774,8 +788,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         //home_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
 
-
-        home_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground )));
+        home_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
 
         text_home.setVisibility(View.VISIBLE);
 
@@ -830,7 +843,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
        // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
-        people_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground )));
+        people_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
 
         // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         text_search.setVisibility(View.VISIBLE);
@@ -897,7 +910,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         text_profile.setVisibility(View.VISIBLE);
 
-        profile_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground )));
+        profile_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
 
 /*        profileBtnPressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
         profileBtnPressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_active_size);
@@ -1193,7 +1206,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
+                nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_btn_background_accent_color)));
             }
         }, 100);
 

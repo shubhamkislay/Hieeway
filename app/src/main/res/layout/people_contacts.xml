@@ -7,7 +7,7 @@
 
     <RelativeLayout
 
-        android:background="@drawable/people_item_list_background"
+        android:background="@drawable/nav_btn_back_drawable"
         android:paddingLeft="24dp"
         android:alpha="1.0"
         android:paddingRight="16dp"

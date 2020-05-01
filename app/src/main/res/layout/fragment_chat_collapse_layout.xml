@@ -16,7 +16,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
 
-            android:layout_marginTop="2dp"
+                android:layout_marginTop="8dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:foregroundGravity="center"
             android:id="@+id/chats_recyclerview"
@@ -55,6 +55,10 @@
                     android:padding="4dp"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/rounded_bottom_corner_drawable"
+                    android:backgroundTint="@color/nav_title_background_accent_color"
+                    android:elevation="30dp"
+
+                    android:outlineProvider="paddedBounds"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -173,8 +177,8 @@
                         android:padding="8dp"
                         android:layout_margin="8dp"
                         android:animateLayoutChanges="true"
-                        android:background="@drawable/home_background_oval"
-                        android:backgroundTint="#181818"
+                        android:background="@drawable/nav_btn_back_drawable"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 
@@ -204,7 +208,8 @@
                             android:gravity="center_vertical"
                             android:textColorHint="#585858"
                             android:paddingLeft="12dp"
-                            android:background="@color/darkButtonBackground" />
+                            android:background="@color/darkButtonBackground"
+                            android:backgroundTint="@color/nav_btn_background_color" />
 
                     </LinearLayout>
 
@@ -285,6 +290,7 @@
             android:alpha="1.0"
             android:layout_gravity="bottom"
             android:rotation="180"
+            android:backgroundTint="@color/nav_btn_background_accent_color"
             android:background="@drawable/status_bar_fade"/>
 
 
