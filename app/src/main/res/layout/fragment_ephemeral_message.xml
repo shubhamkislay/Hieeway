@@ -276,6 +276,7 @@
             android:layout_height="22dp"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
+            android:visibility="gone"
             android:layout_toLeftOf="@id/photo_btn_bg"
             android:background="@drawable/ic_mic_black_24dp"
             android:backgroundTint="#fff" />
