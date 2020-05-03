@@ -87,6 +87,9 @@ public class AudioRecorderActivity extends AppCompatActivity {
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.MEDIA_CONTENT_CONTROL};
     private boolean intialStage = true;
+    String sender;
+    Boolean deleteMessage = true;
+    String mKey;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -98,6 +101,14 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
         userIdChattingWith = intent.getStringExtra("userIdChattingWith");
         audioUrl = intent.getStringExtra("audiourl");
+        sender = intent.getStringExtra("sender");
+        mKey = intent.getStringExtra("mKey");
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(sender))
+            deleteMessage = false;
+
+
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -418,12 +429,37 @@ public class AudioRecorderActivity extends AppCompatActivity {
             player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    // startPlaying();
+                    if (deleteMessage)
+                        deleteMessage();
+                        // startPlaying();
+                    else
+                        finish();
                 }
             });
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
+    }
+
+    private void deleteMessage() {
+
+        DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userIdChattingWith)
+                .child(mKey);
+
+        receiverReference.removeValue();
+
+        DatabaseReference senderReference = FirebaseDatabase.getInstance().getReference("Messages")
+                .child(userIdChattingWith)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(mKey);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("seen", "seen");
+        senderReference.updateChildren(hashMap);
+        finish();
+
     }
 
     private void stopPlaying() {
@@ -484,7 +520,13 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 // Now dismis progress dialog, Media palyer will start playing
                 audioPlaying = true;
                 loading_audio.setVisibility(View.GONE);
-                equilizerAnimation();
+                //equilizerAnimation();
+                equilizerAnimation(equi_one);
+                equilizerAnimation(equi_three);
+                equilizerAnimation(equi_two);
+                equilizerAnimation(equi_five);
+                equilizerAnimation(equi_four);
+
                 mp.start();
             }
         });
@@ -517,71 +559,47 @@ public class AudioRecorderActivity extends AppCompatActivity {
         });
     }
 
-    private void equilizerAnimation() {
 
+    private void equilizerAnimation(final RelativeLayout equi) {
+
+        equlizer.setAlpha(1.0f);
         equlizer.setVisibility(View.VISIBLE);
         play_btn.setVisibility(View.GONE);
         stop_btn.setVisibility(View.GONE);
 
         Random r = new Random();
         float min = 0.65f;
-        float max = 1.75f;
+        float max = 1.3f;
 
-        float equiranfive = min + r.nextFloat() * (max - min);
-        float equiranone = min + r.nextFloat() * (max - min);
-        float equirantwo = min + r.nextFloat() * (max - min);
-        float equirathree = min + r.nextFloat() * (max - min);
-        float equirafour = min + r.nextFloat() * (max - min);
+        float equir = min + r.nextFloat() * (max - min);
+
 
         Random ri = new Random();
 
         final int minTime = 150;
         final int maxTime = 300;
 
-        equiranoneTime = ri.nextInt((maxTime - minTime) + 1) + minTime;
-        equirantwoTime = ri.nextInt((maxTime - minTime) + 1) + minTime;
-        equiranthreeTime = ri.nextInt((maxTime - minTime) + 1) + minTime;
-        equiranfourTime = ri.nextInt((maxTime - minTime) + 1) + minTime;
-        equiranfiveTime = ri.nextInt((maxTime - minTime) + 1) + minTime;
+        final int equitime = ri.nextInt((maxTime - minTime) + 1) + minTime;
 
-        /*if(equiranoneTime<0)
-            equiranoneTime = equiranoneTime * -1;
+        equi.animate().scaleY(equir).setDuration(equitime);
 
-        if(equirantwoTime<0)
-            equirantwoTime = equirantwoTime * -1;
-        if(equiranthreeTime<0)
-            equiranthreeTime = equiranthreeTime * -1;
-        if(equiranfourTime<0)
-            equiranfourTime = equiranfourTime * -1;
-        if(equiranfiveTime<0)
-            equiranfiveTime = equiranfiveTime * -1;*/
-
-
-        equi_one.animate().scaleY(equiranone).setDuration(equiranoneTime);
-        equi_three.animate().scaleY(equirathree).setDuration(equiranthreeTime);
-        equi_two.animate().scaleY(equirantwo).setDuration(equirantwoTime);
-        equi_five.animate().scaleY(equiranfive).setDuration(equiranfiveTime);
-        equi_four.animate().scaleY(equirafour).setDuration(equiranfourTime);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                equi_one.animate().scaleY(1.0f).setDuration(equiranoneTime);
-                equi_three.animate().scaleY(1.0f).setDuration(equiranthreeTime);
-                equi_two.animate().scaleY(1.0f).setDuration(equirantwoTime);
-                equi_five.animate().scaleY(1.0f).setDuration(equiranfiveTime);
-                equi_four.animate().scaleY(1.0f).setDuration(equiranfourTime);
+                equi.animate().scaleY(1.0f).setDuration(equitime);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (audioPlaying)
-                            equilizerAnimation();
+                            equilizerAnimation(equi);
                         else
                             equlizer.setVisibility(View.GONE);
 
                     }
-                }, maxTime);
+                }, equitime);
             }
-        }, maxTime);
+        }, equitime);
     }
 
     @Override
@@ -595,76 +613,5 @@ public class AudioRecorderActivity extends AppCompatActivity {
         }
     }
 
-    class Player extends AsyncTask<String, Void, Boolean> {
-        private ProgressDialog progress;
 
-        public Player() {
-            progress = new ProgressDialog(AudioRecorderActivity.this);
-        }
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            // TODO Auto-generated method stub
-            Boolean prepared;
-            try {
-
-                mediaPlayer.setDataSource(params[0]);
-
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        // TODO Auto-generated method stub
-                        intialStage = true;
-                        //  playPause=false;
-                        //btn.setBackgroundResource(R.drawable.button_play);
-                        mediaPlayer.stop();
-                        mediaPlayer.reset();
-                    }
-                });
-                mediaPlayer.prepare();
-                prepared = true;
-            } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
-                Log.d("IllegarArgument", e.getMessage());
-                prepared = false;
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                // TODO Auto-generated catch block
-                prepared = false;
-                e.printStackTrace();
-            } catch (IllegalStateException e) {
-                // TODO Auto-generated catch block
-                prepared = false;
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                prepared = false;
-                e.printStackTrace();
-            }
-            return prepared;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            // TODO Auto-generated method stub
-            super.onPostExecute(result);
-            if (progress.isShowing()) {
-                progress.cancel();
-            }
-            Log.d("Prepared", "//" + result);
-            mediaPlayer.start();
-
-            intialStage = false;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // TODO Auto-generated method stub
-            super.onPreExecute();
-            this.progress.setMessage("Buffering...");
-            this.progress.show();
-
-        }
-    }
 }

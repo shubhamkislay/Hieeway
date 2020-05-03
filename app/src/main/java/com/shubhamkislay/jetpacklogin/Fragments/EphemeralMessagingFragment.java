@@ -11,6 +11,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,7 +23,9 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
+import android.media.MediaRecorder;
 import android.media.SoundPool;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -32,6 +36,12 @@ import android.os.Vibrator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.devlomi.record_view.OnBasketAnimationEnd;
+import com.devlomi.record_view.OnRecordClickListener;
+import com.devlomi.record_view.OnRecordListener;
+import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordView;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.fragment.app.Fragment;
@@ -40,6 +50,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,6 +60,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -78,6 +90,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -104,6 +120,8 @@ import com.shubhamkislay.jetpacklogin.UserPicViewModelFactory;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 import com.shubhamkislay.jetpacklogin.ViewProfileActivity;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.spec.KeySpec;
@@ -113,6 +131,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 
@@ -139,6 +158,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public String highlightMessageText = "";
     public EditText message_box, message_box_behind;
     boolean continue_message_box_blinking = true;
+    private static String fileName = null;
     public Boolean messageHighlight = true, sendButtonEnabled =false;
     public Button sendButton, message_bar, reply_btn, cancel_reply_btn;
     public RelativeLayout bottom_bar, message_counter_layout, message_space, reply_tag, app_context_layout, sender_reply_body, sender_reply_tag;
@@ -167,6 +187,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public Boolean isSenderReplying = false;
     public ImageView view;
     public int before_count, after_count;
+    StorageTask uploadTask;
+    StorageReference storageReference;
     public ToggleButton toggleButton;
     public Boolean imageReady = true;
     public Boolean imageLoaded = false;
@@ -186,6 +208,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public static final int MSG_TYPING_BOX_ID = 1;
     public static final int MSG_TYPING_BOX_TWO_ID = 2;
     public static final int MSG_TYPING_BOX_THREE_ID = 3;
+    RelativeLayout equlizer;
+    RelativeLayout equi_one;
     /*    username.setText(intent.getStringExtra("username"));
             name.setText(intent.getStringExtra("name"));
             feeling_txt.setText(intent.getStringExtra("feeling_txt"));
@@ -219,6 +243,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     float displayHeight;
 
     Boolean emojiActive = false;
+    RelativeLayout equi_two;
+    RelativeLayout equi_three;
+    RelativeLayout equi_four;
+    RelativeLayout equi_five;
+    RecordView recordView;
+    RecordButton recordButton;
 
     public int setAnimationSendingDuration;
 
@@ -266,6 +296,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private DatabaseReference receiverChatCreateRef;
     private ChatMessage firstReceivedMessage = new ChatMessage();
     NotificationManager notificationManager;
+    private Button camera_background;
+    private MediaRecorder recorder = null;
+    private boolean audioRecording = false;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -302,6 +335,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         toggleButton = view.findViewById(R.id.toggle_msg_highlight);
 
+        camera_background = view.findViewById(R.id.camera_background);
+
 
         app_context_layout = view.findViewById(R.id.app_context_layout);
 
@@ -322,6 +357,130 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         swipe_down = view.findViewById(R.id.swipe_down);
 
         go_live_txt = view.findViewById(R.id.go_live_txt);
+
+        recordView = (RecordView) view.findViewById(R.id.record_view);
+        recordButton = (RecordButton) view.findViewById(R.id.record_button);
+
+        equlizer = view.findViewById(R.id.equlizer);
+        equi_one = view.findViewById(R.id.equi_one);
+        equi_two = view.findViewById(R.id.equi_two);
+        equi_three = view.findViewById(R.id.equi_three);
+        equi_four = view.findViewById(R.id.equi_four);
+        equi_five = view.findViewById(R.id.equi_five);
+
+
+        recordView.setSmallMicColor(Color.parseColor("#ffffff"));
+
+        // recordView.setSlideToCancelText("TEXT");
+
+        //disable Sounds
+        recordView.setSoundEnabled(false);
+
+        //prevent recording under one Second (it's false by default)
+        recordView.setLessThanSecondAllowed(false);
+
+        //set Custom sounds onRecord
+        //you can pass 0 if you don't want to play sound in certain state
+        recordView.setCustomSounds(R.raw.quiet_knock, R.raw.shootem, R.raw.record_error);
+
+        //change slide To Cancel Text Color
+        recordView.setSlideToCancelTextColor(Color.parseColor("#ffffff"));
+        //change slide To Cancel Arrow Color
+        recordView.setSlideToCancelArrowColor(Color.parseColor("#ffffff"));
+        //change Counter Time (Chronometer) color
+        recordView.setCounterTimeColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+
+        //recordButton.setListenForRecord(false);
+
+        //ListenForRecord must be false ,otherwise onClick will not be called
+        recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Toast.makeText(AudioRecorderActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                //  Log.d("RecordButton","RECORD BUTTON CLICKED");
+            }
+        });
+
+        recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                // Log.d("RecordView", "Basket Animation Finished");
+                camera.setVisibility(View.VISIBLE);
+                camera_background.setVisibility(View.VISIBLE);
+                message_box.setVisibility(View.VISIBLE);
+                message_box_behind.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        recordView.setSlideToCancelText("Slide to cancel");
+
+        //IMPORTANT
+        recordButton.setRecordView(recordView);
+
+
+        recordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                //Start Recording..
+                startRecording();
+                // bottom_bar.setVisibility(View.INVISIBLE);
+                camera.setVisibility(View.INVISIBLE);
+                camera_background.setVisibility(View.INVISIBLE);
+                message_box.setVisibility(View.INVISIBLE);
+                message_box_behind.setVisibility(View.INVISIBLE);
+
+                Log.d("RecordView", "onStart");
+            }
+
+            @Override
+            public void onCancel() {
+                //On Swipe To Cancel
+                recorder.reset();
+                recorder.release();
+                audioRecording = false;
+
+                //recorder.
+                // bottom_bar.setVisibility(View.VISIBLE);
+                Log.d("RecordView", "onCancel");
+
+            }
+
+            @Override
+            public void onFinish(long recordTime) {
+                //Stop Recording..
+                /*String time = getHumanTimeText(recordTime);
+                Log.d("RecordView", "onFinish");
+
+
+
+
+
+                Log.d("RecordTime", time);*/
+                audioRecording = false;
+                camera.setVisibility(View.VISIBLE);
+                camera_background.setVisibility(View.VISIBLE);
+                message_box.setVisibility(View.VISIBLE);
+                message_box_behind.setVisibility(View.VISIBLE);
+
+                stopRecording();
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                //When the record time is less than One Second
+                Log.d("RecordView", "onLessThanSecond");
+                audioRecording = false;
+                camera.setVisibility(View.VISIBLE);
+                camera_background.setVisibility(View.VISIBLE);
+                message_box.setVisibility(View.VISIBLE);
+                message_box_behind.setVisibility(View.VISIBLE);
+
+                recorder.reset();
+                recorder.release();
+            }
+        });
 
 
 
@@ -387,6 +546,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 Intent intent = new Intent(getActivity(), AudioRecorderActivity.class);
                 intent.putExtra("userIdChattingWith", userIdChattingWith);
                 intent.putExtra("audiourl", "default");
+                //intent.putExtra("sender", chatMessage.getSenderId());
 
                 startActivity(intent);
             }
@@ -1626,7 +1786,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     profile_pic.setAlpha(0.0f);
                     imageReady = false;
+                    sendButton.setVisibility(View.VISIBLE);
                     sendButton.setAlpha(1.0f);
+
+                    recordView.setVisibility(View.GONE);
+                    recordButton.setVisibility(View.GONE);
 
                     if (!getIsMessageRunning()) {
 
@@ -1714,6 +1878,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     alphaValueProfilePic = 0.0f;
                     imageReady = false;
                     sendButton.setAlpha(1.0f);
+                    sendButton.setVisibility(View.VISIBLE);
+
+                    recordView.setVisibility(View.GONE);
+                    recordButton.setVisibility(View.GONE);
 
                     if (!getIsMessageRunning()) {
 
@@ -1767,6 +1935,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         chainBtn.setVisibility(View.GONE);
                         chain_pulse.setVisibility(View.GONE);
                         sendButton.setAlpha(0.15f);
+                        sendButton.setVisibility(View.INVISIBLE);
+
+                        recordView.setVisibility(View.VISIBLE);
+                        recordButton.setVisibility(View.VISIBLE);
 
 
                         profile_pic.animate().alpha(alphaValueProfilePic).setDuration(setAnimationSendingDuration /** 3 + 650*/);
@@ -2367,6 +2539,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         sendButton.setAlpha(0.15f);
         sendButton.setEnabled(false);
+        sendButton.setVisibility(View.INVISIBLE);
+
+        recordView.setVisibility(View.VISIBLE);
+        recordButton.setVisibility(View.VISIBLE);
         sendButtonEnabled = false;
 
         send_arrow.setAlpha(1.0f);
@@ -2520,6 +2696,218 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         //message_text_sender_dummy.setVisibility(View.VISIBLE);
 
         sendButtonPressed = false;
+    }
+
+    private void startRecording() {
+
+        audioRecording = true;
+        equlizer.setVisibility(View.VISIBLE);
+        equlizer.animate().alpha(1.0f).setDuration(300);
+        equilizerAnimation(equi_one);
+        equilizerAnimation(equi_two);
+        equilizerAnimation(equi_three);
+        equilizerAnimation(equi_four);
+        equilizerAnimation(equi_five);
+
+        recorder = new MediaRecorder();
+        fileName = getActivity().getExternalCacheDir().getAbsolutePath();
+        fileName += "/audiorecordtest.3gp";
+        //play_btn.setVisibility(View.GONE);
+        Toast.makeText(getActivity(), "Recording started", Toast.LENGTH_SHORT).show();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFile(fileName);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            recorder.prepare();
+        } catch (IOException e) {
+            //Log.e(LOG_TAG, "prepare() failed");
+        }
+
+        recorder.start();
+    }
+
+    private void stopRecording() {
+
+        //audioRecording = true;
+
+
+        Toast.makeText(getActivity(), "Recording stopped", Toast.LENGTH_SHORT).show();
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+        //animateArrow();
+
+        uploadAudio();
+
+        // play_btn.setVisibility(View.VISIBLE);
+    }
+
+    private void uploadAudio() {
+
+        /*progressDialog = new ProgressDialog(AudioRecorderActivity.this);
+        progressDialog.setTitle("Uploading audio...");
+        progressDialog.show();*/
+
+        Uri uri = Uri.fromFile(new File(fileName));
+
+
+        storageReference = FirebaseStorage.getInstance().getReference().child(System.currentTimeMillis() + "." + getExtension(uri));
+
+
+        uploadTask = storageReference.putFile(uri);
+
+        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task task) throws Exception {
+
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+
+                return storageReference.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+
+                    // progressDialog.dismiss();
+                    Uri downloadUri = task.getResult();
+
+                    String mUri = downloadUri.toString();
+
+
+                    final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                            .child(FirebaseAuth.getInstance()
+                                    .getCurrentUser()
+                                    .getUid())
+                            .child(userIdChattingWith);
+
+                    DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
+                            .child(userIdChattingWith)
+                            .child(FirebaseAuth.getInstance()
+                                    .getCurrentUser()
+                                    .getUid());
+
+                    final String mKey = databaseReference.push().getKey();
+
+                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                    final HashMap<String, Object> sendMessageHash = new HashMap<>();
+                    sendMessageHash.put("senderId", FirebaseAuth.getInstance()
+                            .getCurrentUser()
+                            .getUid());
+                    sendMessageHash.put("receiverId", userIdChattingWith);
+                    sendMessageHash.put("messageId", mKey);
+                    sendMessageHash.put("publicKeyID", currentUserPublicKeyID);
+                    sendMessageHash.put("timeStamp", timestamp.toString());
+                    sendMessageHash.put("messageText", "");
+                    sendMessageHash.put("sentStatus", "sending");
+                    sendMessageHash.put("seen", "notseen");
+                    sendMessageHash.put("photourl", "none");
+                    sendMessageHash.put("audiourl", mUri);
+                    sendMessageHash.put("videourl", "none");
+                    sendMessageHash.put("gotReplyID", "none");
+                    sendMessageHash.put("replyTag", false);
+                    sendMessageHash.put("replyID", "none");
+                    sendMessageHash.put("senderReplyMessage", "none");
+                    sendMessageHash.put("ifMessageTwo", false);
+                    sendMessageHash.put("messageTextTwo", "");
+                    sendMessageHash.put("ifMessageThree", false);
+                    sendMessageHash.put("messageTextThree", "");
+                    sendMessageHash.put("showReplyMsg", false);
+                    sendMessageHash.put("replyMsg", " ");
+                    sendMessageHash.put("showGotReplyMsg", false);
+                    sendMessageHash.put("gotReplyMsg", " ");
+
+                    final HashMap<String, Object> sendReceiverMessageHash = new HashMap<>();
+                    sendMessageHash.put("senderId", FirebaseAuth.getInstance()
+                            .getCurrentUser()
+                            .getUid());
+                    sendReceiverMessageHash.put("receiverId", userIdChattingWith);
+                    sendReceiverMessageHash.put("messageId", mKey);
+                    sendReceiverMessageHash.put("publicKeyID", otherUserPublicKeyID);
+                    sendReceiverMessageHash.put("timeStamp", timestamp.toString());
+                    sendReceiverMessageHash.put("messageText", "");
+                    sendReceiverMessageHash.put("sentStatus", "sending");
+                    sendReceiverMessageHash.put("seen", "notseen");
+                    sendReceiverMessageHash.put("photourl", "none");
+                    sendReceiverMessageHash.put("audiourl", mUri);
+                    sendReceiverMessageHash.put("videourl", "none");
+                    sendReceiverMessageHash.put("gotReplyID", "none");
+                    sendReceiverMessageHash.put("replyTag", false);
+                    sendReceiverMessageHash.put("replyID", "none");
+                    sendReceiverMessageHash.put("senderReplyMessage", "none");
+                    sendReceiverMessageHash.put("ifMessageTwo", false);
+                    sendReceiverMessageHash.put("messageTextTwo", "");
+                    sendReceiverMessageHash.put("ifMessageThree", false);
+                    sendReceiverMessageHash.put("messageTextThree", "");
+                    sendReceiverMessageHash.put("showReplyMsg", false);
+                    sendReceiverMessageHash.put("replyMsg", " ");
+                    sendReceiverMessageHash.put("showGotReplyMsg", false);
+                    sendReceiverMessageHash.put("gotReplyMsg", " ");
+
+                    databaseReference.child(mKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("sentStatus", "sent");
+
+                                databaseReference.child(mKey).updateChildren(hashMap);
+                            }
+                        }
+                    });
+                    receiverReference.child(mKey).updateChildren(sendReceiverMessageHash);
+
+
+                    createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
+                }
+            }
+        });
+
+
+    }
+
+    private String getExtension(Uri uri) {
+
+
+        ContentResolver contentResolver = getActivity().getContentResolver();
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+
+    }
+
+    public void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto) {
+
+        Long tsLong = System.currentTimeMillis() / 1000;
+        final String ts = tsLong.toString();
+
+
+        final HashMap<String, Object> timeStampHash = new HashMap<>();
+        timeStampHash.put("timeStamp", ts);
+        timeStampHash.put("id", userIdChattingWith);
+        timeStampHash.put("username", usernameUserChattingWith);
+        timeStampHash.put("photo", userChattingWith_photo);
+        timeStampHash.put("seen", "notseen");
+        timeStampHash.put("chatPending", false);
+        senderChatCreateRef.updateChildren(timeStampHash);
+
+        HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+
+        timeStampHashReceiver.put("timeStamp", ts);
+        timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        timeStampHashReceiver.put("username", currentUserName);
+        timeStampHashReceiver.put("photo", currentUserPhoto);
+        timeStampHashReceiver.put("seen", "notseen");
+        timeStampHashReceiver.put("chatPending", true);
+        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
     }
 
 
@@ -3423,6 +3811,57 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         blinkerHandler.removeCallbacks(blinkerHandlerRunnable);
         message_bar.setVisibility(View.VISIBLE);
         blinking = false;
+    }
+
+    private void equilizerAnimation(final RelativeLayout equi) {
+
+        equlizer.setAlpha(1.0f);
+        equlizer.setVisibility(View.VISIBLE);
+
+
+        Random r = new Random();
+        float min = 0.65f;
+        float max = 1.3f;
+
+        float equir = min + r.nextFloat() * (max - min);
+
+
+        Random ri = new Random();
+
+        final int minTime = 150;
+        final int maxTime = 300;
+
+        final int equitime = ri.nextInt((maxTime - minTime) + 1) + minTime;
+
+        equi.animate().scaleY(equir).setDuration(equitime);
+
+        new Handler().postDelayed(new Runnable() {
+
+
+            @Override
+            public void run() {
+                equi.animate().scaleY(1.0f).setDuration(equitime);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (audioRecording)
+                            equilizerAnimation(equi);
+                        else {
+
+                            equlizer.animate().alpha(0.0f).setDuration(300);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    equlizer.setVisibility(View.GONE);
+                                }
+                            }, 300);
+                        }
+
+                    }
+                }, equitime);
+            }
+        }, equitime);
     }
 
     public void setUpBlink() {

@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.shubhamkislay.jetpacklogin.AudioRecorderActivity;
 import com.shubhamkislay.jetpacklogin.EphemeralPhotoActivity;
 import com.shubhamkislay.jetpacklogin.Interface.RevealOptionListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
@@ -66,6 +67,16 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static int MSG_PHOTO_SEEN = 5;
     private static int MSG_SEEN = 6;
     private static int MSG_PHOTO_SENDING = 3;
+    private static int MSG_AUDIO_SENT = 17;
+    private static int MSG_AUDIO_SEEN = 18;
+
+    private static int MSG_AUDIO_SENDING = 19;
+
+    private static int MSG_VIDEO_SENT = 20;
+    private static int MSG_VIDEO_SEEN = 21;
+
+    private static int MSG_VIDEO_SENDING = 22;
+
     private static int MSG_SENT_HIGH = 4;
     private static int MSG_REPLY_LAYOUT = 7;
     private static int MSG_REPLY_GOT_REPLY_LAYOUT = 8;
@@ -147,76 +158,77 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_seen_photo_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_SEEN)
-        {
-            View view = LayoutInflater.from(context).inflate(R.layout.send_message_seen_layout, parent, false);
-
-            return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_PHOTO_SENDING)
-        {
+        } else if (i == MSG_PHOTO_SENDING) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_photo_sending_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
+        } else if (i == MSG_AUDIO_SENT) {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_mesage_audio_layout, parent, false);
 
-        else if(i==MSG_SENT_HIGH)
+            return new SendMessageViewHolder(view);
+        } else if (i == MSG_AUDIO_SEEN)
         {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_message_seen_audio_layout, parent, false);
+
+            return new SendMessageViewHolder(view);
+        } else if (i == MSG_AUDIO_SENDING)
+        {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_message_audio_sending_layout, parent, false);
+
+            return new SendMessageViewHolder(view);
+        } else if (i == MSG_VIDEO_SENT) {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_message_video_layout, parent, false);
+
+            return new SendMessageViewHolder(view);
+        } else if (i == MSG_VIDEO_SEEN) {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_message_seen_video_layout, parent, false);
+
+            return new SendMessageViewHolder(view);
+        } else if (i == MSG_VIDEO_SENDING) {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_message_video_sending_layout, parent, false);
+
+            return new SendMessageViewHolder(view);
+        } else if (i == MSG_SEEN) {
+            View view = LayoutInflater.from(context).inflate(R.layout.send_message_seen_layout, parent, false);
+
+            return new SendMessageViewHolder(view);
+        } else if(i==MSG_SENT_HIGH) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_highlight_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_REPLY_LAYOUT)
-        {
+        } else if(i==MSG_REPLY_LAYOUT) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_reply_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_REPLY_LAYOUT_CHAIN)
-        {
+        } else if(i==MSG_REPLY_LAYOUT_CHAIN) {
             View view = LayoutInflater.from(context).inflate(R.layout.sent_message_reply_layout_chain_seen, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_GOT_REPLY_LAYOUT)
-        {
+        } else if(i==MSG_GOT_REPLY_LAYOUT) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_got_reply_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_REPLY_GOT_REPLY_LAYOUT)
-        {
+        } else if(i==MSG_REPLY_GOT_REPLY_LAYOUT) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_reply_got_reply_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_REPLY_GOT_REPLY_LAYOUT_CHAIN)
-        {
+        } else if(i==MSG_REPLY_GOT_REPLY_LAYOUT_CHAIN) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_reply_got_reply_layout_chain, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_SENT_REPLY)
-        {
+        } else if(i==MSG_SENT_REPLY) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_sent_reply_layout, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==MSG_SENT_REPLY_CHAIN)
-        {
+        } else if(i==MSG_SENT_REPLY_CHAIN) {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_sent_reply_layout_chain, parent, false);
 
             return new SendMessageViewHolder(view);
-        }
-        else if(i==TIMESTAMP_VIEW)
-        {
+        } else if(i==TIMESTAMP_VIEW) {
             View view = LayoutInflater.from(context).inflate(R.layout.time_stamp_view, parent, false);
 
             return new TimeStampViewHolder(view);
-        }
-        else
-        {
+        } else {
             View view = LayoutInflater.from(context).inflate(R.layout.send_message_layout, parent, false);
 
             return new SendMessageViewHolder(view);
@@ -527,6 +539,84 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                         }
                     });
+                } else if (!chatMessage.getPhotourl().equals("none")) {
+
+                    sendMessageViewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+
+                            // intent.putExtra("photoList", (Serializable) photoMessageList);
+                            intent.putExtra("userIdChattingWith", userIdChattingWith);
+                            intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                            intent.putExtra("mKey", chatMessage.getMessageId());
+                            intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                            context.startActivity(intent);
+
+                        }
+                    });
+
+                    sendMessageViewHolder.message_identifier.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+
+                            // intent.putExtra("photoList", (Serializable) photoMessageList);
+                            intent.putExtra("userIdChattingWith", userIdChattingWith);
+                            intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                            intent.putExtra("mKey", chatMessage.getMessageId());
+                            intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                            context.startActivity(intent);
+
+                        }
+                    });
+                } else if (!chatMessage.getAudiourl().equals("none")) {
+
+                    sendMessageViewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            Intent intent = new Intent(context, AudioRecorderActivity.class);
+
+                            // intent.putExtra("photoList", (Serializable) photoMessageList);
+                            intent.putExtra("userIdChattingWith", userIdChattingWith);
+                            intent.putExtra("audiourl", chatMessage.getAudiourl());
+                            intent.putExtra("mKey", chatMessage.getMessageId());
+                            intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                            context.startActivity(intent);
+
+                        }
+                    });
+
+                    sendMessageViewHolder.message_identifier.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            Intent intent = new Intent(context, AudioRecorderActivity.class);
+
+                            // intent.putExtra("photoList", (Serializable) photoMessageList);
+                            intent.putExtra("userIdChattingWith", userIdChattingWith);
+                            intent.putExtra("audiourl", chatMessage.getAudiourl());
+                            intent.putExtra("mKey", chatMessage.getMessageId());
+                            intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                            context.startActivity(intent);
+
+                        }
+                    });
                 } else {
 
                     sendMessageViewHolder.relativeLayout.setOnLongClickListener(new View.OnLongClickListener() {
@@ -784,6 +874,26 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         return MSG_PHOTO_SENDING;
                     } else
                         return MSG_PHOTO_SENT;
+                }
+            } else if (!chatMessage.getAudiourl().equals("none")) {
+                if (chatMessage.getSeen().equals("seen"))
+                    return MSG_AUDIO_SEEN;
+                else {
+                    if (chatMessage.getSentStatus().equals("sending")) {
+
+                        return MSG_AUDIO_SENDING;
+                    } else
+                        return MSG_AUDIO_SENT;
+                }
+            } else if (!chatMessage.getVideourl().equals("none")) {
+                if (chatMessage.getSeen().equals("seen"))
+                    return MSG_VIDEO_SEEN;
+                else {
+                    if (chatMessage.getSentStatus().equals("sending")) {
+
+                        return MSG_VIDEO_SENDING;
+                    } else
+                        return MSG_VIDEO_SENT;
                 }
             } else {
 

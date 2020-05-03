@@ -521,7 +521,7 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
                                         .getCurrentUser()
                                         .getUid());
 
-                        String mKey = databaseReference.push().getKey();
+                        final String mKey = databaseReference.push().getKey();
 
 
                         final HashMap<String,  Object> sendMessageHash = new HashMap<>();
@@ -548,7 +548,16 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
                         sendMessageHash.put("replyMsg"," ");
                         sendMessageHash.put("showGotReplyMsg",false);
                         sendMessageHash.put("gotReplyMsg"," ");
-                        databaseReference.child(mKey).updateChildren(sendMessageHash);
+                        databaseReference.child(mKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("sentStatus", "sent");
+                                hashMap.put("messageId", mKey);
+
+                                databaseReference.child(mKey).updateChildren(hashMap);
+                            }
+                        });
                         receiverReference.child(mKey).updateChildren(sendMessageHash);
 
                         createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
