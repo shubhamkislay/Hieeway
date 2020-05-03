@@ -14,6 +14,8 @@ public class ChatMessage {
     private String gotReplyID;
     private String seen;
     private String photourl;
+    private String audiourl;
+    private String videourl;
     private int textSize;
     private String replyID;
     private Boolean replyTag;
@@ -56,7 +58,7 @@ public class ChatMessage {
                        String senderReplyMessage, String messageTextTwo, String messageTextThree,
                        Boolean ifMessageTwo, Boolean ifMessageThree, int textSize, Boolean replyTag, String gotReplyID,
                        Boolean showReplyMsg, Boolean showGotReplyMsg, String replyMsg, String gotReplyMsg, String publicKeyId,
-                       String timeStamp)
+                       String timeStamp, String audiourl, String videourl)
     {
 
         this.senderId = senderId;
@@ -87,6 +89,9 @@ public class ChatMessage {
         this.gotReplyID = gotReplyID;
         this.publicKeyID = publicKeyId;
         this.timeStamp= timeStamp;
+
+        this.audiourl = audiourl;
+        this.videourl = videourl;
 
 
 
@@ -269,4 +274,21 @@ public class ChatMessage {
     public void setTimestamp(String timestamp) {
         this.timeStamp = timestamp;
     }
+
+    public String getAudiourl() {
+        return audiourl;
+    }
+
+    public void setAudiourl(String audiourl) {
+        this.audiourl = audiourl;
+    }
+
+    public String getVideourl() {
+        return videourl;
+    }
+
+    public void setVideourl(String videourl) {
+        this.videourl = videourl;
+    }
+
 }

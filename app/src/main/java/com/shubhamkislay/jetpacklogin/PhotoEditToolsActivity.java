@@ -452,6 +452,7 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        // String pathAuidio = MediaStore.Audio.Media.CONTENT_TYPE(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
 
@@ -533,6 +534,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
                         sendMessageHash.put("sentStatus","sending");
                         sendMessageHash.put("seen", "notseen");
                         sendMessageHash.put("photourl",mUri);
+                        sendMessageHash.put("audiourl", "none");
+                        sendMessageHash.put("videourl", "none");
                         sendMessageHash.put("gotReplyID","none");
                         sendMessageHash.put("replyTag", false);
                         sendMessageHash.put("replyID","none");

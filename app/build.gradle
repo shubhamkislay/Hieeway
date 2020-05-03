@@ -71,6 +71,9 @@ dependencies {
     implementation 'com.github.castorflex.verticalviewpager:library:19.0.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.0'
     implementation 'com.android.support:palette-v7:28.0.0'
+    implementation 'com.devlomi.record-view:record-view:2.0.1'
+
+
 
 
     implementation 'com.google.firebase:firebase-inappmessaging-display:17.0.4'

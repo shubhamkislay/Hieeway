@@ -84,6 +84,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.shubhamkislay.jetpacklogin.AudioRecorderActivity;
 import com.shubhamkislay.jetpacklogin.CameraActivity;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageActivityViewModelFactory;
 import com.shubhamkislay.jetpacklogin.EphemeralMessageViewModel;
@@ -247,6 +248,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     Boolean textListner_msg = false;
     Boolean textListner_msg_two = false;
     Boolean textListner_msg_three = false;
+    Button record_audio_btn;
 
     public TextView message_log_text, swipe_down,go_live_txt;
     private boolean notSending = true;
@@ -282,6 +284,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
+
+        record_audio_btn = view.findViewById(R.id.record_audio_btn);
+
 
 
         NotificationManager notificationManager = (NotificationManager) getContext().getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
@@ -374,6 +379,19 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         currentUserPublicKey = getArguments().getString("currentUserPublicKey");
         currentUserPrivateKey = getArguments().getString("currentUserPrivateKey");
         currentUserPublicKeyID = getArguments().getString("currentUserPublicKeyID");
+
+
+        record_audio_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AudioRecorderActivity.class);
+                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                intent.putExtra("audiourl", "default");
+
+                startActivity(intent);
+            }
+        });
+
 
 
         DatabaseReference otherUserkeyReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -1112,14 +1130,35 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     ChatMessage chatMessage = photoMessageList.get(0);
 
-                    Intent intent = new Intent(getActivity(), EphemeralPhotoActivity.class);
-                    intent.putExtra("userIdChattingWith", userIdChattingWith);
-                    intent.putExtra("photoUrl",chatMessage.getPhotourl());
-                    intent.putExtra("mKey",chatMessage.getMessageId());
-                    intent.putExtra("sender",chatMessage.getSenderId());
+                    if (!chatMessage.getPhotourl().equals("none")) {
+
+                        Intent intent = new Intent(getActivity(), EphemeralPhotoActivity.class);
+                        intent.putExtra("userIdChattingWith", userIdChattingWith);
+                        intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                        intent.putExtra("mKey", chatMessage.getMessageId());
+                        intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                    startActivity(intent);
+                        startActivity(intent);
+                    } else if (!chatMessage.getAudiourl().equals("none")) {
+                        Intent intent = new Intent(getActivity(), AudioRecorderActivity.class);
+                        intent.putExtra("userIdChattingWith", userIdChattingWith);
+                        intent.putExtra("audiourl", chatMessage.getAudiourl());
+                        intent.putExtra("mKey", chatMessage.getMessageId());
+                        intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                        startActivity(intent);
+                    } else if (!chatMessage.getVideourl().equals("none")) {
+                        /*Intent intent = new Intent(getActivity(), EphemeralPhotoActivity.class);
+                        intent.putExtra("userIdChattingWith", userIdChattingWith);
+                        intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                        intent.putExtra("mKey", chatMessage.getMessageId());
+                        intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                        startActivity(intent);*/
+                    }
                 }
                 else
                 {
@@ -2055,6 +2094,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         chatMessageReceiverCopy.setSentStatus("sending");
         chatMessageReceiverCopy.setSeen("notseen");
         chatMessageReceiverCopy.setPhotourl("none");
+        chatMessageReceiverCopy.setVideourl("none");
+        chatMessageReceiverCopy.setAudiourl("none");
         chatMessageReceiverCopy.setGotReplyID("none");
         chatMessageReceiverCopy.setReplyID(lastMessageID);
         chatMessageReceiverCopy.setTextSize(sendTextSize);
@@ -2079,6 +2120,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         chatMessageSenderCopy.setSentStatus("sending");
         chatMessageSenderCopy.setSeen("notseen");
         chatMessageSenderCopy.setPhotourl("none");
+        chatMessageSenderCopy.setVideourl("none");
+        chatMessageSenderCopy.setAudiourl("none");
         chatMessageSenderCopy.setGotReplyID("none");
         chatMessageSenderCopy.setReplyID(lastMessageID);
         chatMessageSenderCopy.setTextSize(sendTextSize);
@@ -2498,7 +2541,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
             for (ChatMessage chatMessage : messageListReading) {
                 if (chatMessage.getSenderId().equals(userIdChattingWith)) {
-                    if(chatMessage.getPhotourl().equals("none")) {
+                    if (chatMessage.getPhotourl().equals("none")
+                            && chatMessage.getAudiourl().equals("none")
+                            && chatMessage.getVideourl().equals("none")) {
 
                         if(currentUserPublicKeyID.equals(chatMessage.getPublicKeyID()))
                         messageList.add(chatMessage);
@@ -3638,6 +3683,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             sendMessageHash.put("sentStatus",chatMessageReceiverCopy.getSentStatus());
             sendMessageHash.put("seen", chatMessageReceiverCopy.getSeen());
             sendMessageHash.put("photourl",chatMessageReceiverCopy.getPhotourl());
+            sendMessageHash.put("audiourl", chatMessageReceiverCopy.getAudiourl());
+            sendMessageHash.put("videourl", chatMessageReceiverCopy.getVideourl());
             sendMessageHash.put("textSize", chatMessageReceiverCopy.getTextSize());
             sendMessageHash.put("replyID",chatMessageReceiverCopy.getReplyID());
             sendMessageHash.put("gotReplyID",chatMessageReceiverCopy.getGotReplyID());
@@ -3669,6 +3716,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             sendMessageHashSenderCopy.put("sentStatus",chatMessageSenderCopy.getSentStatus());
             sendMessageHashSenderCopy.put("seen", chatMessageSenderCopy.getSeen());
             sendMessageHashSenderCopy.put("photourl",chatMessageSenderCopy.getPhotourl());
+            sendMessageHashSenderCopy.put("audiourl", chatMessageSenderCopy.getAudiourl());
+            sendMessageHashSenderCopy.put("videourl", chatMessageSenderCopy.getVideourl());
             sendMessageHashSenderCopy.put("textSize", chatMessageSenderCopy.getTextSize());
             sendMessageHashSenderCopy.put("replyID",chatMessageSenderCopy.getReplyID());
             sendMessageHashSenderCopy.put("gotReplyID",chatMessageSenderCopy.getGotReplyID());

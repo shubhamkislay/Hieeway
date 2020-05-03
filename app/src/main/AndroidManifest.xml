@@ -27,7 +27,8 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PaletteActivity"></activity>
+        <activity android:name=".AudioRecorderActivity"></activity>
+        <activity android:name=".PaletteActivity" />
         <activity
             android:name=".ViewProfileActivity"
             android:screenOrientation="portrait" />
