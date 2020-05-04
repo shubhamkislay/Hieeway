@@ -584,17 +584,27 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onClick(View v) {
 
-
-                            Intent intent = new Intent(context, AudioRecorderActivity.class);
-
-                            // intent.putExtra("photoList", (Serializable) photoMessageList);
-                            intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("audiourl", chatMessage.getAudiourl());
-                            intent.putExtra("mKey", chatMessage.getMessageId());
-                            intent.putExtra("sender", chatMessage.getSenderId());
+                            if (!chatMessage.getAudiourl().equals("uploading")) {
 
 
-                            context.startActivity(intent);
+                                Intent intent = new Intent(context, AudioRecorderActivity.class);
+
+                                // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                intent.putExtra("audiourl", chatMessage.getAudiourl());
+                                intent.putExtra("mKey", chatMessage.getMessageId());
+                                intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                                context.startActivity(intent);
+
+                            } else {
+                                if (chatMessage.getSentStatus().equals("sent")) {
+                                    Toast.makeText(context, "Error Uploading audio", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Uploading audio", Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
                         }
                     });
@@ -604,16 +614,39 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         public void onClick(View v) {
 
 
-                            Intent intent = new Intent(context, AudioRecorderActivity.class);
-
-                            // intent.putExtra("photoList", (Serializable) photoMessageList);
-                            intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("audiourl", chatMessage.getAudiourl());
-                            intent.putExtra("mKey", chatMessage.getMessageId());
-                            intent.putExtra("sender", chatMessage.getSenderId());
+                            if (!chatMessage.getAudiourl().equals("uploading")) {
 
 
-                            context.startActivity(intent);
+                                Intent intent = new Intent(context, AudioRecorderActivity.class);
+
+                                // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                intent.putExtra("audiourl", chatMessage.getAudiourl());
+                                intent.putExtra("mKey", chatMessage.getMessageId());
+                                intent.putExtra("sender", chatMessage.getSenderId());
+
+
+                                context.startActivity(intent);
+
+                            } else {
+                                if (chatMessage.getSentStatus().equals("sent")) {
+                                    Toast.makeText(context, "Error Uploading audio", Toast.LENGTH_SHORT).show();
+                                    DatabaseReference senderRef = FirebaseDatabase.getInstance().getReference("Messages")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(userIdChattingWith);
+                                    DatabaseReference receiverRef = FirebaseDatabase.getInstance().getReference("Messages")
+                                            .child(userIdChattingWith)
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                                    senderRef.child(chatMessage.getMessageId()).removeValue();
+                                    receiverRef.child(chatMessage.getMessageId()).removeValue();
+
+
+                                } else {
+                                    Toast.makeText(context, "Uploading audio", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
 
                         }
                     });

@@ -1048,144 +1048,218 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_swipe_msg"
         android:id="@+id/bottom_panel"
-        android:animateLayoutChanges="false"
+        android:background="#000"
         android:orientation="vertical">
-
 
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/bottom_bar"
-            android:fitsSystemWindows="true"
-            android:paddingRight="8dp"
-            android:background="@color/backgroundColorTheme"
-            android:layout_alignParentBottom="true">
+            android:layout_height="60dp">
 
-
-            <Button
-                android:layout_width="28dp"
-                android:id="@+id/send_button"
-                android:layout_height="28dp"
-                android:enabled="false"
-                android:alpha="0.15"
-                android:visibility="invisible"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/nav_hieeway_send_btn"/>
-
-            <EditText
+            <RelativeLayout
                 android:id="@+id/message_box_behind"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:minHeight="42dp"
-                android:maxHeight="150dp"
-                android:textColor="@color/textThemeColor"
-
-
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_centerInParent="true"
+                android:layout_margin="1.5dp"
                 android:alpha="0.0"
-                android:layout_toRightOf="@id/camera_background"
-                android:layout_marginEnd="11dp"
-                android:layout_marginRight="11dp"
-                android:layout_marginLeft="7dp"
-                android:layout_marginStart="7dp"
-                android:maxLength="80"
-                android:textSize="17dp"
-                android:inputType="textNoSuggestions"
-                android:paddingTop="12dp"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:paddingBottom="12dp"
-                android:windowSoftInputMode="adjustPan|stateHidden"
-                android:focusable="false"
-                android:focusedByDefault="false"
-                android:focusableInTouchMode="true"
-                android:hint=""
-                android:textColorHint="#505050"
-                android:layout_toLeftOf="@id/send_button"
-                android:layout_centerVertical="true"
                 android:background="@drawable/gradient_wallpaper_list"
-                />
+                android:fitsSystemWindows="true"
+                android:padding="2dp"
+                android:visibility="visible">
 
-            <EditText
-                android:id="@+id/message_box"
-                android:layout_width="wrap_content"
-                android:layout_height="46dp"
-                android:minHeight="42dp"
-                android:maxHeight="150dp"
-                android:textColor="@color/textThemeColor"
 
+                <Button
+                    android:id="@+id/send_button_bck"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="12dp"
+                    android:alpha="1.0"
+                    android:background="@drawable/nav_hieeway_send_btn"
+                    android:enabled="false"
+                    android:visibility="visible" />
+
+
+                <EditText
+                    android:id="@+id/message_box_bck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="8dp"
+
+                    android:layout_marginLeft="8dp"
+
+
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_toLeftOf="@id/send_button_bck"
+                    android:layout_toRightOf="@id/camera_background_bck"
+                    android:background="@android:color/transparent"
+                    android:focusableInTouchMode="true"
+                    android:focusedByDefault="false"
+                    android:fontFamily="sans-serif"
+                    android:hint="Chat here..."
+                    android:inputType="textNoSuggestions"
+                    android:maxHeight="150dp"
+                    android:maxLength="80"
+                    android:minHeight="42dp"
+
+                    android:paddingLeft="12dp"
+                    android:paddingTop="12dp"
+                    android:paddingRight="32dp"
+                    android:paddingBottom="12dp"
+                    android:textColor="@color/textThemeColor"
+                    android:textColorHint="#FFFFFF"
+                    android:textSize="17dp"
+                    android:windowSoftInputMode="adjustPan|stateHidden"
+
+                    />
+
+
+                <Button
+                    android:id="@+id/camera_background_bck"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="4dp"
+                    android:background="@drawable/camera_background_drawable" />
+
+                <Button
+                    android:id="@+id/camera_bck"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="9dp"
+                    android:background="@drawable/ic_camera_alt_white_24dp"
+                    android:backgroundTint="#fff" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/bottom_bar"
+                android:fitsSystemWindows="true"
                 android:layout_centerInParent="true"
-
-
-                android:layout_toRightOf="@id/camera_background"
-                android:layout_marginEnd="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
-                android:maxLength="80"
-                android:textSize="17dp"
-                android:inputType="textNoSuggestions"
-                android:paddingTop="12dp"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:paddingBottom="12dp"
-                android:windowSoftInputMode="adjustPan|stateHidden"
-
-                android:focusedByDefault="false"
-                android:focusableInTouchMode="true"
-                android:hint="Chat here..."
-                android:fontFamily="sans-serif"
-                android:textColorHint="#FFFFFF"
-                android:layout_toLeftOf="@id/send_button"
-                android:layout_centerVertical="true"
+                android:layout_margin="4dp"
                 android:background="@drawable/message_box_drawable"
-
-                />
-
-            <Button
-                android:id="@+id/emoji"
-                android:visibility="gone"
-                android:layout_width="36dp"
-                android:layout_toRightOf="@id/camera_background"
-                android:layout_height="36dp"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-
-                android:background="@drawable/ic_insert_emoticon_white_24dp"
-
-                android:layout_centerVertical="true"/>
-
-            <Button
-                android:id="@+id/camera_background"
-                android:layout_width="40dp"
-                android:layout_alignParentLeft="true"
-                android:layout_height="40dp"
-                android:layout_marginLeft="12dp"
-                android:background="@drawable/camera_background_drawable"
-                android:layout_centerVertical="true"/>
-            <Button
-                android:id="@+id/camera"
-                android:layout_width="30dp"
-                android:layout_alignParentLeft="true"
-                android:layout_height="30dp"
-                android:layout_marginLeft="17.5dp"
-                android:backgroundTint="#fff"
-                android:background="@drawable/ic_camera_alt_white_24dp"
-                android:layout_centerVertical="true"/>
+                android:padding="2dp">
 
 
+                <Button
+                    android:layout_width="28dp"
+                    android:id="@+id/send_button"
+                    android:layout_height="28dp"
+                    android:enabled="false"
+                    android:alpha="0.15"
+                    android:visibility="invisible"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="12dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/nav_hieeway_send_btn"/>
 
+
+                <EditText
+                    android:id="@+id/message_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="46dp"
+                    android:minHeight="42dp"
+                    android:maxHeight="150dp"
+                    android:textColor="@color/textThemeColor"
+
+                    android:layout_centerInParent="true"
+
+
+                    android:layout_toRightOf="@id/camera_background"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginRight="12dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:maxLength="80"
+                    android:textSize="17dp"
+                    android:inputType="textNoSuggestions"
+                    android:paddingTop="12dp"
+                    android:background="@android:color/transparent"
+                    android:paddingRight="32dp"
+                    android:paddingBottom="12dp"
+                    android:windowSoftInputMode="adjustPan|stateHidden"
+
+                    android:focusedByDefault="false"
+                    android:focusableInTouchMode="true"
+                    android:hint="Chat here..."
+                    android:fontFamily="sans-serif"
+                    android:textColorHint="#FFFFFF"
+                    android:layout_toLeftOf="@id/send_button"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="12dp"
+
+                    />
+
+                <Button
+                    android:id="@+id/emoji"
+                    android:visibility="gone"
+                    android:layout_width="36dp"
+                    android:layout_toRightOf="@id/camera_background"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+
+                    android:background="@drawable/ic_insert_emoticon_white_24dp"
+
+                    android:layout_centerVertical="true"/>
+
+                <Button
+                    android:id="@+id/camera_background"
+                    android:layout_width="40dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="4dp"
+                    android:background="@drawable/camera_background_drawable"
+                    android:layout_centerVertical="true"/>
+
+                <Button
+                    android:id="@+id/camera"
+                    android:layout_width="30dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="9dp"
+                    android:background="@drawable/ic_camera_alt_white_24dp"
+                    android:backgroundTint="#fff" />
+
+
+                <RelativeLayout
+                    android:id="@+id/bin"
+                    android:layout_width="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="6.5dp"
+                    android:alpha="0.0"
+                    android:background="@drawable/message_box_drawable"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:layout_height="30dp"
+                    android:paddingEnd="12dp"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="42dp"
+                        android:text="Cancelled"
+                        android:textColor="#000000"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+
+            </RelativeLayout>
         </RelativeLayout>
 
-
-        <br.com.instachat.emojilibrary.model.layout.EmojiKeyboardLayout
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:id="@+id/emoji_keyboard_layout"
-            android:layout_alignParentBottom="true"
-            android:layout_height="263dip"/>
 
     </LinearLayout>
 
@@ -1383,7 +1457,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_swipe_msg"
-        android:layout_marginBottom="2dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_toLeftOf="@id/record_button"
         app:counter_time_color="@color/colorPrimaryDark"
         app:slide_to_cancel_arrow="@drawable/recv_ic_arrow"
@@ -1400,8 +1475,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_swipe_msg"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="9dp"
         android:background="@drawable/record_btn_background"
         android:scaleType="centerInside"
 

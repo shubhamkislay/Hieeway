@@ -90,6 +90,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
     String sender;
     Boolean deleteMessage = true;
     String mKey;
+    Boolean deleteUponExiting = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -429,11 +430,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
             player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    if (deleteMessage)
-                        deleteMessage();
-                        // startPlaying();
-                    else
-                        finish();
+                    deleteAudioMessage();
                 }
             });
         } catch (IOException e) {
@@ -441,24 +438,30 @@ public class AudioRecorderActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteMessage() {
+    private void deleteAudioMessage() {
 
-        DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userIdChattingWith)
-                .child(mKey);
 
-        receiverReference.removeValue();
+        if (!sender.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
-        DatabaseReference senderReference = FirebaseDatabase.getInstance().getReference("Messages")
-                .child(userIdChattingWith)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(mKey);
+            DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIdChattingWith);
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("seen", "seen");
-        senderReference.updateChildren(hashMap);
-        finish();
+
+            receiverReference.child(mKey).removeValue();
+
+            DatabaseReference senderReference = FirebaseDatabase.getInstance().getReference("Messages")
+                    .child(userIdChattingWith)
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(mKey);
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("seen", "seen");
+            senderReference.updateChildren(hashMap);
+
+            finish();
+        } else
+            finish();
 
     }
 
@@ -499,7 +502,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
     private void playOnlineUrl(String audioUrl) throws IOException {
         String url = audioUrl;// your URL here
-        MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
             mediaPlayer.setDataSource(url);
@@ -526,8 +529,25 @@ public class AudioRecorderActivity extends AppCompatActivity {
                 equilizerAnimation(equi_two);
                 equilizerAnimation(equi_five);
                 equilizerAnimation(equi_four);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        deleteUponExiting = true;
+                    }
+                }, 1000);
 
                 mp.start();
+
+                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        if (deleteMessage)
+                            deleteAudioMessage();
+                            // startPlaying();
+                        else
+                            finish();
+                    }
+                });
             }
         });
 
@@ -610,7 +630,11 @@ public class AudioRecorderActivity extends AppCompatActivity {
             mediaPlayer.reset();
             mediaPlayer.release();
             mediaPlayer = null;
+
+            if (deleteUponExiting)
+                deleteAudioMessage();
         }
+
     }
 
 

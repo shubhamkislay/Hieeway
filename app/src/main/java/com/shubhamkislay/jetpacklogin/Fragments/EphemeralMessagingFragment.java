@@ -156,7 +156,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public Boolean blinking = false, message_box_blinking = false;
     private int msg_send_size =0, msg_send_two_size=0, msg_send_three_size=0;
     public String highlightMessageText = "";
-    public EditText message_box, message_box_behind;
+    public EditText message_box;
+    public RelativeLayout message_box_behind;
     boolean continue_message_box_blinking = true;
     private static String fileName = null;
     public Boolean messageHighlight = true, sendButtonEnabled =false;
@@ -299,6 +300,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private Button camera_background;
     private MediaRecorder recorder = null;
     private boolean audioRecording = false;
+    RelativeLayout bin;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -319,6 +321,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         displayHeight = size.y;
 
         record_audio_btn = view.findViewById(R.id.record_audio_btn);
+
+        bin = view.findViewById(R.id.bin);
 
 
 
@@ -409,7 +413,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 camera.setVisibility(View.VISIBLE);
                 camera_background.setVisibility(View.VISIBLE);
                 message_box.setVisibility(View.VISIBLE);
-                message_box_behind.setVisibility(View.VISIBLE);
+
+                //message_box_behind.setVisibility(View.VISIBLE);
             }
         });
 
@@ -418,6 +423,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         //IMPORTANT
         recordButton.setRecordView(recordView);
+
 
 
         recordView.setOnRecordListener(new OnRecordListener() {
@@ -429,7 +435,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 camera.setVisibility(View.INVISIBLE);
                 camera_background.setVisibility(View.INVISIBLE);
                 message_box.setVisibility(View.INVISIBLE);
-                message_box_behind.setVisibility(View.INVISIBLE);
+                bin.setAlpha(0.0f);
+                message_box_behind.setAlpha(0.0f);
 
                 Log.d("RecordView", "onStart");
             }
@@ -440,7 +447,16 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 recorder.reset();
                 recorder.release();
                 audioRecording = false;
+                bin.animate().setDuration(200).alpha(1.0f);
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        bin.setAlpha(0.0f);
+                    }
+                }, 1000);
+                    /*}
+                },500);*/
                 //recorder.
                 // bottom_bar.setVisibility(View.VISIBLE);
                 Log.d("RecordView", "onCancel");
@@ -462,7 +478,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 camera.setVisibility(View.VISIBLE);
                 camera_background.setVisibility(View.VISIBLE);
                 message_box.setVisibility(View.VISIBLE);
-                message_box_behind.setVisibility(View.VISIBLE);
+                bin.setAlpha(0.0f);
+                //message_box_behind.setVisibility(View.VISIBLE);
 
                 stopRecording();
             }
@@ -475,7 +492,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 camera.setVisibility(View.VISIBLE);
                 camera_background.setVisibility(View.VISIBLE);
                 message_box.setVisibility(View.VISIBLE);
-                message_box_behind.setVisibility(View.VISIBLE);
+                bin.setAlpha(0.0f);
+                //message_box_behind.setVisibility(View.VISIBLE);
 
                 recorder.reset();
                 recorder.release();
@@ -2725,7 +2743,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             //Log.e(LOG_TAG, "prepare() failed");
         }
 
-        recorder.start();
+        try {
+            recorder.start();
+        } catch (Exception e) {
+
+        }
     }
 
     private void stopRecording() {
@@ -2758,6 +2780,13 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         uploadTask = storageReference.putFile(uri);
 
+
+        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+
+        archive_btn.setVisibility(View.VISIBLE);
+
+
         uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
             public Task<Uri> then(@NonNull Task task) throws Exception {
@@ -2774,11 +2803,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
 
+                    archive_btn.setVisibility(View.GONE);
                     // progressDialog.dismiss();
                     Uri downloadUri = task.getResult();
 
                     String mUri = downloadUri.toString();
-
 
                     final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
                             .child(FirebaseAuth.getInstance()
@@ -2786,15 +2815,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     .getUid())
                             .child(userIdChattingWith);
 
-                    DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
-                            .child(userIdChattingWith)
-                            .child(FirebaseAuth.getInstance()
-                                    .getCurrentUser()
-                                    .getUid());
-
                     final String mKey = databaseReference.push().getKey();
 
-                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
                     final HashMap<String, Object> sendMessageHash = new HashMap<>();
                     sendMessageHash.put("senderId", FirebaseAuth.getInstance()
@@ -2823,8 +2845,16 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     sendMessageHash.put("showGotReplyMsg", false);
                     sendMessageHash.put("gotReplyMsg", " ");
 
+
+                    DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
+                            .child(userIdChattingWith)
+                            .child(FirebaseAuth.getInstance()
+                                    .getCurrentUser()
+                                    .getUid());
+
+
                     final HashMap<String, Object> sendReceiverMessageHash = new HashMap<>();
-                    sendMessageHash.put("senderId", FirebaseAuth.getInstance()
+                    sendReceiverMessageHash.put("senderId", FirebaseAuth.getInstance()
                             .getCurrentUser()
                             .getUid());
                     sendReceiverMessageHash.put("receiverId", userIdChattingWith);
