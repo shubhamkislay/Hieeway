@@ -200,11 +200,53 @@
                 android:textStyle="bold|italic"
                 android:visibility="gone" />
 
+            <Button
+                android:id="@+id/select_phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/username"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/message_box_drawable"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+
+                android:paddingBottom="8dp"
+                android:text="Phone Number"
+                android:textAllCaps="false"
+                android:textSize="12sp" />
+
+
+            <EditText
+                android:id="@+id/enter_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/select_phone_number"
+                android:inputType="phone" />
+
+            <EditText
+                android:id="@+id/enter_otp"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/enter_phone"
+                android:layout_toLeftOf="@id/validate_otp"
+                android:inputType="number" />
+
+            <Button
+                android:id="@+id/validate_otp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/enter_phone"
+                android:layout_alignParentRight="true"
+                android:text="verify" />
+
             <TextView
                 android:id="@+id/bio_txt"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/username"
+                android:layout_below="@id/enter_otp"
                 android:layout_marginTop="24dp"
                 android:padding="16dp"
                 android:gravity="center"
@@ -285,6 +327,7 @@
 
 
         </RelativeLayout>
+
 
         <RelativeLayout
             android:id="@+id/relay"

@@ -1,5 +1,6 @@
 package com.shubhamkislay.jetpacklogin.Fragments;
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -8,8 +9,12 @@ import android.app.Activity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -26,10 +31,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.palette.graphics.Palette;
 
+import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -49,12 +56,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialPickerConfig;
+import com.google.android.gms.auth.api.credentials.HintRequest;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.shubhamkislay.jetpacklogin.CameraActivity;
 import com.shubhamkislay.jetpacklogin.EditProfileDialog;
 import com.shubhamkislay.jetpacklogin.FeelingDialog;
 import com.shubhamkislay.jetpacklogin.Interface.AddFeelingFragmentListener;
@@ -70,12 +94,18 @@ import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.SharedViewModel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import static android.app.Activity.RESULT_OK;
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
-public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener {
+public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static final int RC_HINT = 3;
     private SharedViewModel sharedViewModel;
 
     ImageView profile_pic_background, center_dp;
@@ -110,6 +140,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout relay;
     private String profilepic;
+    GoogleApiClient mCredentialsApiClient;
+    Button select_phone_number;
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     Point size;
     float displayHeight;
 
@@ -126,6 +160,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout top_fade, bottom_fade, overlay_fade;
     Window window;
     String userPhoto = "default";
+    EditText enter_phone, enter_otp;
+    String phoneNumber;
+    String verificationID;
+    PhoneAuthProvider.ForceResendingToken forceResendingToken;
+    Button validate_otp;
 
 
 /*
@@ -137,6 +176,24 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static boolean isValid(String s) {
+        // The given argument to compile() method
+        // is regular expression. With the help of
+        // regular expression we can validate mobile
+        // number.
+        // 1) Begins with 0 or 91
+        // 2) Then contains 7 or 8 or 9.
+        // 3) Then contains 9 digits
+        Pattern p = Pattern.compile("(0/91)?[7-9][0-9]{9}");
+
+
+        // Pattern class contains matcher() method
+        // to find matching between given number
+        // and regular expression
+        Matcher m = p.matcher(s);
+        return (m.find() && m.group().equals(s));
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -153,6 +210,51 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        select_phone_number = view.findViewById(R.id.select_phone_number);
+
+        enter_phone = view.findViewById(R.id.enter_phone);
+
+        enter_otp = view.findViewById(R.id.enter_otp);
+
+        validate_otp = view.findViewById(R.id.validate_otp);
+
+        validate_otp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkOTP();
+            }
+        });
+
+        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+
+                updatePhoneNumber();
+            }
+
+            @Override
+            public void onVerificationFailed(FirebaseException e) {
+
+            }
+
+            @Override
+            public void onCodeSent(String firebaseVerificationID, PhoneAuthProvider.ForceResendingToken firebaseForceResendingToken) {
+                //  super.onCodeSent(s, forceResendingToken);
+                verificationID = firebaseVerificationID;
+                forceResendingToken = firebaseForceResendingToken;
+            }
+        };
+
+        select_phone_number.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    getCreadenticalApiClient();
+                } catch (Exception e) {
+
+                }
+            }
+        });
 
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -236,7 +338,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             public void onClick(View v) {
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put("token", "default");
-                hashMap.put("online",false);
+                hashMap.put("online", false);
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -247,11 +349,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                         FirebaseAuth.getInstance().signOut();
 
-                        try{
+                        try {
                             startActivity(new Intent(getActivity(), MainActivity.class));
                             getActivity().finish();
                         } catch (Exception e) {
-                            Toast.makeText(getContext(),"Logout done! Close app and restart",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Logout done! Close app and restart", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -324,7 +426,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 stripUnderlines(bio_txt);
                 bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             //
         }
 
@@ -566,6 +668,15 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }, 1000);
     }
 
+    private void updatePhoneNumber() {
+        HashMap<String, Object> phoneHash = new HashMap<>();
+        phoneHash.put("phonenumber", phoneNumber);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .updateChildren(phoneHash);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -581,23 +692,21 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 name.setText(user.getName());
 
 
-
                 try {
                     bio = user.getBio();
-                   // change_nio_edittext.setText(user.getBio());
+                    // change_nio_edittext.setText(user.getBio());
                     bio_txt.setText(user.getBio());
                     stripUnderlines(bio_txt);
                     bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
 
 
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     //
                     bio_txt.setText("Tell something about yourself");
                     bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
                 }
 
-              //  feeling_txt.setText(user.getFeeling());
+                //  feeling_txt.setText(user.getFeeling());
                 feelingNow = user.getFeeling();
 
                 try {
@@ -648,12 +757,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         }
                     }
 
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     //
                 }
 
-                try{
+                try {
                     profilepic = user.getPhoto().replace("s96-c", "s384-c");
                     userPhoto = profilepic;
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
@@ -663,9 +771,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
                     // setPaletteColor();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
 
                 }
 
@@ -677,14 +783,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
     }
 
-    public void setImageSelectionCropListener(ImageSelectionCropListener imageSelectionCropListener)
-    {
+    public void setImageSelectionCropListener(ImageSelectionCropListener imageSelectionCropListener) {
         this.imageSelectionCropListener = imageSelectionCropListener;
-    }
-
-    public  void setEditBioFragmentListener(EditBioFragmentListener editBioFragmentListener)
-    {
-        this.editBioFragmentListener = editBioFragmentListener;
     }
 
     public void setAddFeelingFragmentListener(AddFeelingFragmentListener addFeelingFragmentListener) {
@@ -696,60 +796,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         //setPaletteColor();
     }
 
-    @Override
-    public void changeFeeling(String feeling) {
-        DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        animateEmoji();
-        HashMap<String,Object> feelingHash =  new HashMap<>();
-        feeling_icon.setVisibility(View.VISIBLE);
-        emoji_icon.setVisibility(View.GONE);
-        switch (feeling)
-        {
-            case HAPPY: feelingHash.put("feeling",HAPPY);
-                feelingHash.put("feelingIcon", "default");
-                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
-                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
-                 feeling_txt.setText(HAPPY);
-                 break;
-            case SAD: feelingHash.put("feeling",SAD);
-                feelingHash.put("feelingIcon", "default");
-                feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
-                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
-                feeling_txt.setText(SAD);
-                break;
-            case BORED: feelingHash.put("feeling",BORED);
-                feelingHash.put("feelingIcon", "default");
-                feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
-                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
-                feeling_txt.setText(BORED);
-                break;
-            case ANGRY: feelingHash.put("feeling",ANGRY);
-                feelingHash.put("feelingIcon", "default");
-                feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
-                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
-                feeling_txt.setText(ANGRY);
-                break;
-            case "excited":
-                feelingHash.put("feeling", "excited");
-                feelingHash.put("feelingIcon", "default");
-                feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
-                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
-                feeling_txt.setText(EXCITED);
-                break;
-            case CONFUSED: feelingHash.put("feeling",CONFUSED);
-                feelingHash.put("feelingIcon", "default");
-                feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
-                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
-                feeling_txt.setText(CONFUSED);
-                break;
-        }
+    public void setEditBioFragmentListener(EditBioFragmentListener editBioFragmentListener) {
+        this.editBioFragmentListener = editBioFragmentListener;
     }
 
     private void setColor() {
@@ -886,8 +934,73 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
     }
 
-    private void blinkEditTextBackground() {
+    @Override
+    public void changeFeeling(String feeling) {
+        DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        animateEmoji();
+        HashMap<String, Object> feelingHash = new HashMap<>();
+        feeling_icon.setVisibility(View.VISIBLE);
+        emoji_icon.setVisibility(View.GONE);
+        switch (feeling) {
+            case HAPPY:
+                feelingHash.put("feeling", HAPPY);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
+                feeling_txt.setText(HAPPY);
+                break;
+            case SAD:
+                feelingHash.put("feeling", SAD);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
+                feeling_txt.setText(SAD);
+                break;
+            case BORED:
+                feelingHash.put("feeling", BORED);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
+                feeling_txt.setText(BORED);
+                break;
+            case ANGRY:
+                feelingHash.put("feeling", ANGRY);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
+                feeling_txt.setText(ANGRY);
+                break;
+            case "excited":
+                feelingHash.put("feeling", "excited");
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
+                feeling_txt.setText(EXCITED);
+                break;
+            case CONFUSED:
+                feelingHash.put("feeling", CONFUSED);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
+                feeling_txt.setText(CONFUSED);
+                break;
+        }
+    }
 
+    private void setAddedFeeling(String feelingIcon, String feelingText) {
+        if (!feelingIcon.equals("default")) {
+
+        }
+    }
+
+    private void blinkEditTextBackground() {
 
 
         relativeLayout.animate().alpha(1.0f).setDuration(250);
@@ -900,43 +1013,14 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                     @Override
                     public void run() {
 
-                        if(continue_blinking)
+                        if (continue_blinking)
                             blinkEditTextBackground();
 
                     }
                 }, 300);
             }
 
-        },300);
-
-
-
-
-    }
-
-    private void setAddedFeeling(String feelingIcon, String feelingText) {
-        if (!feelingIcon.equals("default")) {
-
-        }
-    }
-
-    public void animateEmoji()
-    {
-        Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.image_bounce);
-
-        hyperspaceJump.setRepeatMode(Animation.INFINITE);
-
-        emoji_holder_layout.setAnimation(hyperspaceJump);
-        //feeling_txt.setAnimation(hyperspaceJump);
-
-        AnimatorSet animatorSet = new AnimatorSet();
-
-        ObjectAnimator animator = ObjectAnimator.ofFloat(feeling_txt,"alpha",0.0f,1.0f);
-        //ObjectAnimator animatorfeeling_icon = ObjectAnimator.ofFloat(feeling_txt,"alpha",0.0f,1.0f);
-
-        animatorSet.setDuration(2000);
-        animatorSet.playTogether(animator/*,animatorfeeling_icon*/);
-        animatorSet.start();
+        }, 300);
 
 
     }
@@ -966,36 +1050,38 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
     }
 
+    public void animateEmoji() {
+        Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.image_bounce);
 
-    public void setProgressVisibility(Boolean visibility)
-    {
-        if(visibility)
-        {
+        hyperspaceJump.setRepeatMode(Animation.INFINITE);
+
+        emoji_holder_layout.setAnimation(hyperspaceJump);
+        //feeling_txt.setAnimation(hyperspaceJump);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(feeling_txt, "alpha", 0.0f, 1.0f);
+        //ObjectAnimator animatorfeeling_icon = ObjectAnimator.ofFloat(feeling_txt,"alpha",0.0f,1.0f);
+
+        animatorSet.setDuration(2000);
+        animatorSet.playTogether(animator/*,animatorfeeling_icon*/);
+        animatorSet.start();
+
+
+    }
+
+    public void setProgressVisibility(Boolean visibility) {
+        if (visibility) {
 
             center_dp.setAlpha(0.5f);
             upload_progress.setVisibility(View.VISIBLE);
             profile_pic_background.setAlpha(0.0f);
-        }
-        else
-        {
+        } else {
             center_dp.setAlpha(1.0f);
             upload_progress.setVisibility(View.GONE);
             profile_pic_background.setAlpha(1.0f);
         }
 
-    }
-
-    private void stripUnderlines(TextView textView) {
-        Spannable s = new SpannableString(textView.getText());
-        URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
-        for (URLSpan span: spans) {
-            int start = s.getSpanStart(span);
-            int end = s.getSpanEnd(span);
-            s.removeSpan(span);
-            span = new URLSpanNoUnderline(span.getURL());
-            s.setSpan(span, start, end, 0);
-        }
-        textView.setText(s);
     }
 
     @Override
@@ -1010,6 +1096,181 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 break;
         }
     }
+
+    private void stripUnderlines(TextView textView) {
+        Spannable s = new SpannableString(textView.getText());
+        URLSpan[] spans = s.getSpans(0, s.length(), URLSpan.class);
+        for (URLSpan span : spans) {
+            int start = s.getSpanStart(span);
+            int end = s.getSpanEnd(span);
+            s.removeSpan(span);
+            span = new URLSpanNoUnderline(span.getURL());
+            s.setSpan(span, start, end, 0);
+        }
+        textView.setText(s);
+    }
+
+    private void getCreadenticalApiClient() throws Exception {
+        mCredentialsApiClient = new GoogleApiClient.Builder(getActivity())
+                .addConnectionCallbacks(this)
+                .enableAutoManage(getActivity(), this)
+                .addApi(Auth.CREDENTIALS_API)
+                .build();
+
+        showHint();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    private void showHint() {
+        HintRequest hintRequest = new HintRequest.Builder()
+                .setHintPickerConfig(new CredentialPickerConfig.Builder()
+                        .setShowCancelButton(true)
+                        .build())
+                .setPhoneNumberIdentifierSupported(true)
+                .build();
+
+        PendingIntent intent =
+                Auth.CredentialsApi.getHintPickerIntent(mCredentialsApiClient, hintRequest);
+        try {
+            startIntentSenderForResult(intent.getIntentSender(), RC_HINT, null, 0, 0, 0, new Bundle());
+        } catch (IntentSender.SendIntentException e) {
+            // Log.e("Login", "Could not start hint picker Intent", e);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_HINT) {
+            if (resultCode == RESULT_OK) {
+                Credential cred = data.getParcelableExtra(Credential.EXTRA_KEY);
+                //etMobile.setText(cred.getId().substring(3));
+
+                HashMap<String, Object> phoneHash = new HashMap<>();
+                phoneHash.put("phonenumber", cred.getId().substring(3));
+
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .updateChildren(phoneHash);
+            } else {
+
+
+                checkPhoneNumberFromDevice();
+            }
+        }
+    }
+
+    private void checkPhoneNumberFromDevice() {
+
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            requestAllPermissions();
+        } else {
+            TelephonyManager tMgr = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+            String mPhoneNumber = tMgr.getLine1Number();
+
+            if (mPhoneNumber != null) {
+                int trimeSize = mPhoneNumber.length() - 10;
+                if (trimeSize < 0)
+                    trimeSize = 0;
+
+
+                // Toast.makeText(getActivity(), "Phone number fetching: "+mPhoneNumber, Toast.LENGTH_SHORT).show();
+
+                if (mPhoneNumber.length() > 6/*&& isValid(mPhoneNumber)*/) {
+
+                    mPhoneNumber = tMgr.getLine1Number().substring(trimeSize);
+                    HashMap<String, Object> phoneHash = new HashMap<>();
+                    phoneHash.put("phonenumber", mPhoneNumber);
+
+                    FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .updateChildren(phoneHash);
+                } else {
+                    //Toast.makeText(getActivity(), "Phone number not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Starting phone verification", Toast.LENGTH_SHORT).show();
+                    verifyPhoneNumber();
+                }
+            } else {
+                Toast.makeText(getActivity(), "Starting phone verification", Toast.LENGTH_SHORT).show();
+                verifyPhoneNumber();
+            }
+        }
+    }
+
+    private void verifyPhoneNumber() {
+        phoneNumber = enter_phone.getText().toString();
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber, 60, TimeUnit.SECONDS, getActivity(), mCallbacks);
+    }
+
+    private void checkOTP() {
+        enter_otp.getText().toString();
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationID, enter_otp.getText().toString());
+
+
+        FirebaseAuth.getInstance().getCurrentUser().linkWithCredential(credential)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            updatePhoneNumber();
+                        } else {
+                            Toast.makeText(getActivity(), "Verification failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+    }
+
+    private void requestAllPermissions() {
+
+        Dexter.withActivity(getActivity())
+                .withPermissions(Manifest.permission.READ_SMS,
+                        Manifest.permission.READ_PHONE_NUMBERS,
+                        Manifest.permission.READ_PHONE_STATE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                        if (report.areAllPermissionsGranted()) {
+                            checkPhoneNumberFromDevice();
+                        } else {
+                            Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        token.continuePermissionRequest();
+
+                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+                }).check();
+    }
+
 
     private class URLSpanNoUnderline extends URLSpan {
         public URLSpanNoUnderline(String url) {

@@ -4,6 +4,10 @@
 
     <solid android:color="@color/nav_status_color_accent" />
 
+    <gradient
+        android:endColor="@color/colorPrimaryDark"
+        android:startColor="@color/colorPrimary" />
+
     <corners android:radius="17dp"/>
 
 

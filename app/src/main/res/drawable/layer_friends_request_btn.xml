@@ -10,6 +10,9 @@
             <corners android:radius="36dp" />
 
             <solid android:color="#111111" />
+            <size
+                android:width="40dp"
+                android:height="40dp" />
 
 
             <stroke
@@ -23,12 +26,9 @@
 
 
     <item
-        android:bottom="12dp"
+
         android:drawable="@drawable/ic_friend_request_24dp"
-        android:gravity="center"
-        android:left="12dp"
-        android:right="12dp"
-        android:top="12dp">
+        android:gravity="center">
 
 
     </item>

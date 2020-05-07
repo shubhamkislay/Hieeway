@@ -155,8 +155,8 @@
 
                     <Button
                         android:id="@+id/requests_btn_friends_back"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="6dp"
                         android:layout_marginBottom="6dp"
@@ -175,11 +175,11 @@
                         android:layout_marginBottom="8dp"
                         android:layout_centerVertical="true"
                         android:textSize="12sp"
-                        android:layout_width="36dp"
+                        android:layout_width="40dp"
                         android:background="@drawable/layer_friends_request_btn"
                         android:textAllCaps="false"
                         android:padding="4dp"
-                        android:layout_height="36dp" />
+                        android:layout_height="40dp" />
 
 
 

@@ -1061,7 +1061,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:layout_margin="1.5dp"
+                android:layout_margin="2.5dp"
                 android:alpha="0.0"
                 android:background="@drawable/gradient_wallpaper_list"
                 android:fitsSystemWindows="true"
@@ -1241,7 +1241,7 @@
                     android:layout_marginStart="6.5dp"
                     android:alpha="0.0"
                     android:background="@drawable/message_box_drawable"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:backgroundTint="#fff"
                     android:layout_height="30dp"
                     android:paddingEnd="12dp"
                     android:visibility="visible">
@@ -1252,7 +1252,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="42dp"
                         android:text="Cancelled"
-                        android:textColor="#000000"
+                        android:textColor="#000"
                         android:textStyle="bold" />
                 </RelativeLayout>
 
@@ -1476,7 +1476,7 @@
         android:layout_above="@id/bottom_swipe_msg"
         android:layout_alignParentRight="true"
         android:layout_marginRight="9dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/record_btn_background"
         android:scaleType="centerInside"
 

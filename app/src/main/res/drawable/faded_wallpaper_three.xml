@@ -5,6 +5,7 @@
 
     <gradient
         android:endColor="@color/colorPrimaryDark"
+        android:centerColor="@color/colorPrimaryDark"
         android:startColor="@color/colorPrimary" />
 
 
