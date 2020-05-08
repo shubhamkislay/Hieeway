@@ -56,6 +56,7 @@ import com.google.firebase.storage.UploadTask;
 import com.shubhamkislay.jetpacklogin.Fragments.AddFeelingFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ChatsFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.EditBioLayoutFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.EphemeralMessagingFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.FriendListFagment;
 import com.shubhamkislay.jetpacklogin.Fragments.PeopleFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.ProfileFragment;
@@ -130,6 +131,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
     int fragmentId=1;
     private Bitmap bitmap;
+    private String phonenumber = "default";
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -224,7 +226,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         text_profile = findViewById(R.id.text_profile);
 
-        bundle = new Bundle();
+
 
 /*        profileBtnPressed = findViewById(R.id.profile_button_pressed);
         profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);*/
@@ -252,7 +254,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         peopleFragment = new PeopleFragment();
 
+
+        bundle = new Bundle();
+        bundle.putString("phonenumber", phonenumber);
+
+
+
         friendListFagment = new FriendListFagment();
+        friendListFagment.setArguments(bundle);
+
         editBioLayoutFragment = new EditBioLayoutFragment();
 
         addFeelingFragment = new AddFeelingFragment();
@@ -575,6 +585,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 User user = dataSnapshot.getValue(User.class);
+
+                phonenumber = user.getPhonenumber();
 
                 if(!user.getPhoto().equals("default")) {
                     try {

@@ -2,10 +2,13 @@ package com.shubhamkislay.jetpacklogin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -13,9 +16,11 @@ import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,6 +51,12 @@ public class ContactsActivity extends AppCompatActivity {
     private ContactsAdapter contactAdapter;
     private List<User> userList;
     private List<ContactUser> contactsList;
+    private String phonenumber = "default";
+    private ConstraintLayout add_phone_number_layout;
+    private RelativeLayout parent_layout;
+    private Button add_number_btn;
+    private TextView features_list, features_title, phone_title, features_list2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,12 +66,14 @@ public class ContactsActivity extends AppCompatActivity {
 
         activity = ContactsActivity.this;
 
+        parent_layout = findViewById(R.id.parent_layout);
         contacts_recyclerView = findViewById(R.id.contacts_recyclerView);
         contacts_title = findViewById(R.id.contacts_title);
         contacts_counter = findViewById(R.id.contacts_counter);
         sync_btn = findViewById(R.id.sync_btn);
         userList = new ArrayList<>();
         contactsList = new ArrayList<>();
+
 
         contacts_recyclerView.setLayoutManager(new LinearLayoutManager(ContactsActivity.this));
 
@@ -71,8 +84,36 @@ public class ContactsActivity extends AppCompatActivity {
 
         contacts_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
+        add_phone_number_layout = findViewById(R.id.add_phone_number_layout);
+        add_number_btn = findViewById(R.id.add_number_btn);
+        features_list = findViewById(R.id.feautures_list1);
+        features_list2 = findViewById(R.id.feautures_list2);
+        features_title = findViewById(R.id.feature_title);
+        phone_title = findViewById(R.id.phone_title);
 
-        checkSynced();
+        phone_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        features_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        features_list.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        add_number_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        features_list2.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+        Intent intent = getIntent();
+        phonenumber = intent.getStringExtra("phonenumber");
+
+
+        if (!phonenumber.equals("default")) {
+
+            add_phone_number_layout.setVisibility(View.GONE);
+            checkSynced();
+
+        }
+
+
+
+
+
+
 
         sync_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +146,13 @@ public class ContactsActivity extends AppCompatActivity {
 
                                 } else {
                                     synced = true;
-                                    Toast.makeText(ContactsActivity.this, "Synced", Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(ContactsActivity.this, "Synced", Toast.LENGTH_SHORT).show();
+
+                                    Snackbar snackbar = Snackbar
+                                            .make(parent_layout, "Synced", Snackbar.LENGTH_SHORT);
+                                    View snackBarView = snackbar.getView();
+                                    snackBarView.setBackgroundColor(ContextCompat.getColor(ContactsActivity.this, R.color.colorPrimaryDark));
+                                    snackbar.show();
                                     populateUserList();
                                 }
                             } catch (Exception e) {

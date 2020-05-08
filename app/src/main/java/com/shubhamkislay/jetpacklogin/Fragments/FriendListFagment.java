@@ -96,6 +96,7 @@ public class FriendListFagment extends Fragment {
     private boolean friendRequests = false;
     private boolean friendAvailable = false;
     Button contactsbntn;
+    String phonenumber = "default";
 
 
     public FriendListFagment() {
@@ -156,6 +157,8 @@ public class FriendListFagment extends Fragment {
 
 
         search_chat_btn = view.findViewById(R.id.search_chat_btn_friends);
+
+        phonenumber = getArguments().getString("phonenumber");
 
 
         search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
@@ -218,7 +221,10 @@ public class FriendListFagment extends Fragment {
                             public void onPermissionsChecked(MultiplePermissionsReport report) {
 
                                 if (report.areAllPermissionsGranted()) {
-                                    startActivity(new Intent(getActivity(), ContactsActivity.class));
+
+                                    Intent intent = new Intent(getActivity(), ContactsActivity.class);
+                                    intent.putExtra("phonenumber", phonenumber);
+                                    startActivity(intent);
                                 } else {
                                     Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
                                 }
