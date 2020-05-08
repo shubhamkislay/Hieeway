@@ -1,5 +1,7 @@
 package com.shubhamkislay.jetpacklogin.Model;
 
+import androidx.annotation.Nullable;
+
 public class User {
 
     private String email;
@@ -15,13 +17,14 @@ public class User {
     private String feeling;
     private String bio;
     private String feelingIcon;
+    private Boolean synced;
 
 
 
     public User() {
     }
 
-    public User(String email, String name, String phonenumber, String username, String userid, String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling, String bio, String feelingIcon) {
+    public User(String email, String name, String phonenumber, String username, String userid, String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling, String bio, String feelingIcon, Boolean synced) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -34,6 +37,7 @@ public class User {
         this.feeling = feeling;
         this.bio = bio;
         this.feelingIcon = feelingIcon;
+        this.synced = synced;
     }
 
     public String getEmail() {
@@ -139,5 +143,24 @@ public class User {
 
     public void setFeelingIcon(String feelingIcon) {
         this.feelingIcon = feelingIcon;
+    }
+
+    public Boolean getSynced() {
+        return synced;
+    }
+
+    public void setSynced(Boolean synced) {
+        this.synced = synced;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        // return super.equals(obj);
+        User user = (User) obj;
+
+        if (userid.equals(user.getUserid()))
+            return true;
+        else
+            return false;
     }
 }

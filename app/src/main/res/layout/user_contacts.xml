@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:alpha="1.0"
+        android:background="@drawable/nav_btn_back_drawable"
+        android:paddingLeft="24dp"
+        android:paddingTop="8dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp">
+
+
+        <RelativeLayout
+            android:id="@+id/profile_pic_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_photo"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="centerCrop"
+                android:transitionName="imageTransition" />
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@style/SpinKitView.Large.Wave"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="#fff" />
+
+            <ProgressBar
+                android:id="@+id/progressTwo"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="#fff"
+                android:rotation="180" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/phonebook_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toRightOf="@id/profile_pic_layout"
+            android:textColor="#A3A3A3"
+            android:textSize="14dp"
+            android:transitionName="nameTransition"
+            tools:text='sky' />
+
+        <TextView
+            android:id="@+id/phonebook_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toRightOf="@id/profile_pic_layout"
+            android:textColor="#fff"
+            android:textSize="18dp"
+            android:transitionName="nameTransition"
+            tools:text='shubham' />
+
+        <Button
+            android:id="@+id/followingbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/message_box_drawable"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="Friends"
+            android:textAllCaps="false"
+
+            android:textSize="10dp"
+            android:visibility="gone" />
+
+
+        <Button
+            android:id="@+id/acceptBtn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@id/denyBtn"
+            android:background="@drawable/layer_check_option"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="10dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/denyBtn"
+            android:layout_width="24dp"
+
+            android:layout_height="24dp"
+            android:layout_below="@id/acceptBtn"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/layer_deny_option"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="10dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/requestedBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/message_box_drawable"
+            android:backgroundTint="#1B1B1B"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="Requested"
+            android:textAllCaps="false"
+            android:textSize="10dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/followbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/message_box_drawable"
+            android:backgroundTint="#fff"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:text="Add"
+            android:textAllCaps="false"
+            android:textColor="#000"
+            android:textSize="10dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

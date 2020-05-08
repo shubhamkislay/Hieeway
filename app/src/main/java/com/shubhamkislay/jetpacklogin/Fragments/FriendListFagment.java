@@ -1,6 +1,7 @@
 package com.shubhamkislay.jetpacklogin.Fragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -48,7 +51,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.shubhamkislay.jetpacklogin.Adapters.FriendsAdapter;
+import com.shubhamkislay.jetpacklogin.ContactsActivity;
 import com.shubhamkislay.jetpacklogin.GridSpacingItemDecoration;
 import com.shubhamkislay.jetpacklogin.Model.Friend;
 import com.shubhamkislay.jetpacklogin.Model.User;
@@ -86,6 +95,7 @@ public class FriendListFagment extends Fragment {
     private boolean enableRefreshButton = false;
     private boolean friendRequests = false;
     private boolean friendAvailable = false;
+    Button contactsbntn;
 
 
     public FriendListFagment() {
@@ -108,6 +118,8 @@ public class FriendListFagment extends Fragment {
         final Activity activity = getActivity();
 
         userList = new ArrayList<>();
+
+        contactsbntn = view.findViewById(R.id.contactsbntn);
 
         friend_list_recyclerview = view.findViewById(R.id.friend_list_recyclerview);
 
@@ -192,6 +204,37 @@ public class FriendListFagment extends Fragment {
 
             }
         });*/
+
+        contactsbntn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Dexter.withActivity(getActivity())
+                        .withPermissions(
+                                Manifest.permission.READ_CONTACTS)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                                if (report.areAllPermissionsGranted()) {
+                                    startActivity(new Intent(getActivity(), ContactsActivity.class));
+                                } else {
+                                    Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                                token.continuePermissionRequest();
+
+                                // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                            }
+                        }).check();
+            }
+        });
 
         search_chat_btn.setOnClickListener(new View.OnClickListener() {
             @Override
