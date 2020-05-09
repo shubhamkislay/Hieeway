@@ -1,6 +1,7 @@
 package com.shubhamkislay.jetpacklogin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -55,6 +56,7 @@ public class ContactsActivity extends AppCompatActivity {
     private ConstraintLayout add_phone_number_layout;
     private RelativeLayout parent_layout;
     private Button add_number_btn;
+    private static final int FETCH_NUMBER = 2;
     private TextView features_list, features_title, phone_title, features_list2;
 
 
@@ -97,6 +99,13 @@ public class ContactsActivity extends AppCompatActivity {
         add_number_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         features_list2.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
+        add_number_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(ContactsActivity.this, PhoneAuthenticationActivity.class), FETCH_NUMBER);
+            }
+        });
+
 
         Intent intent = getIntent();
         phonenumber = intent.getStringExtra("phonenumber");
@@ -107,6 +116,25 @@ public class ContactsActivity extends AppCompatActivity {
             add_phone_number_layout.setVisibility(View.GONE);
             checkSynced();
 
+        } else {
+            FirebaseDatabase.getInstance().getReference("Users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                User user = dataSnapshot.getValue(User.class);
+                                if (!user.getPhonenumber().equals("default"))
+                                    add_phone_number_layout.setVisibility(View.GONE);
+                                checkSynced();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
         }
 
 
@@ -148,15 +176,16 @@ public class ContactsActivity extends AppCompatActivity {
                                     synced = true;
                                     // Toast.makeText(ContactsActivity.this, "Synced", Toast.LENGTH_SHORT).show();
 
-                                    Snackbar snackbar = Snackbar
+                                    /*Snackbar snackbar = Snackbar
                                             .make(parent_layout, "Synced", Snackbar.LENGTH_SHORT);
                                     View snackBarView = snackbar.getView();
                                     snackBarView.setBackgroundColor(ContextCompat.getColor(ContactsActivity.this, R.color.colorPrimaryDark));
-                                    snackbar.show();
+                                    snackbar.show();*/
                                     populateUserList();
                                 }
                             } catch (Exception e) {
                                 getContactList();
+
                                 HashMap<String, Object> syncHash = new HashMap<>();
                                 syncHash.put("synced", true);
                                 FirebaseDatabase.getInstance().getReference("Users")
@@ -316,6 +345,29 @@ public class ContactsActivity extends AppCompatActivity {
 
         return Iso2Phone.getPhone(iso);
 
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if (requestCode == FETCH_NUMBER) {
+            if (resultCode == RESULT_OK) {
+                userList.clear();
+                phonenumber = data.getData().toString();
+                add_phone_number_layout.setVisibility(View.GONE);
+                checkSynced();
+            }
+        }
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 }
