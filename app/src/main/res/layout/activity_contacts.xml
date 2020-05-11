@@ -40,12 +40,12 @@
         <Button
 
             android:id="@+id/sync_btn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
-            android:background="@drawable/ic_sync_black_24dp"
+            android:background="@drawable/layer_sync_btn"
 
             android:visibility="visible" />
     </RelativeLayout>
@@ -57,6 +57,38 @@
         android:layout_below="@id/top_bar"
         android:visibility="visible"
         android:padding="8dp" />
+
+    <RelativeLayout
+        android:id="@+id/sync_msg_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/sync_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/progress"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="Syncing contacts"
+            android:textColor="#fff"
+            android:textSize="32sp" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_centerInParent="true" />
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:rotation="180" />
+
+    </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/add_phone_number_layout"

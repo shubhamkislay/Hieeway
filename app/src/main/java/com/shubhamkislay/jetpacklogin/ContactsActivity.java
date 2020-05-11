@@ -15,8 +15,10 @@ import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -61,11 +63,11 @@ public class ContactsActivity extends AppCompatActivity {
     private List<ContactUser> contactsList;
     private String phonenumber = "default";
     private ConstraintLayout add_phone_number_layout;
-    private RelativeLayout parent_layout;
+    Cursor phone;
     private Button add_number_btn;
     private static final int FETCH_NUMBER = 2;
-    private TextView features_list, features_title, phone_title, features_list2;
-
+    private RelativeLayout parent_layout, sync_msg_layout;
+    private TextView features_list, features_title, phone_title, features_list2, sync_txt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +101,15 @@ public class ContactsActivity extends AppCompatActivity {
         features_list2 = findViewById(R.id.feautures_list2);
         features_title = findViewById(R.id.feature_title);
         phone_title = findViewById(R.id.phone_title);
+        sync_msg_layout = findViewById(R.id.sync_msg_layout);
+        sync_txt = findViewById(R.id.sync_txt);
 
         phone_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         features_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         features_list.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         add_number_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         features_list2.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        sync_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         add_number_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,28 +269,49 @@ public class ContactsActivity extends AppCompatActivity {
 
                             isSyncing = true;
                             count = 0;
-                            Cursor phone;
+
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null);
                             } else {
                                 phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
                             }
 
-                            while (phone.moveToNext()) {
-                                String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                                String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                                number = number.replace(" ", "");
-                                number = number.replace("-", "");
-                                number = number.replace("(", "");
-                                number = number.replace(")", "");
+                            sync_msg_layout.setVisibility(View.VISIBLE);
+                            //  sync_btn.setVisibility(View.GONE);
 
-                                if (!String.valueOf(number.charAt(0)).equals("+"))
-                                    number = getCountryIso() + number;
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    while (phone.moveToNext()) {
+                                        String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                        String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                        number = number.replace(" ", "");
+                                        number = number.replace("-", "");
+                                        number = number.replace("(", "");
+                                        number = number.replace(")", "");
+
+                                        if (!String.valueOf(number.charAt(0)).equals("+"))
+                                            number = getCountryIso() + number;
 
 
-                                getUserDetails(number, name);
+                                        Log.v("Name", "" + name);
+                                        getUserDetails(number, name, phone.moveToNext());
 
-                            }
+                                /*if(!phone.moveToNext()) {
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            sync_msg_layout.setVisibility(View.GONE);
+                                            sync_btn.setVisibility(View.VISIBLE);
+                                        }
+                                    },5000);*/
+
+                                        // }
+
+                                    }
+                                }
+                            }).start();
+
                         } else {
                             Toast.makeText(ContactsActivity.this, "Permxission not given!", Toast.LENGTH_SHORT).show();
                             finish();
@@ -310,7 +336,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
-    private void getUserDetails(final String number, final String name) {
+    private void getUserDetails(final String number, final String name, final Boolean continueProgress) {
 
         DatabaseReference findUserRef = FirebaseDatabase.getInstance().getReference("Users");
         Query query = findUserRef.orderByChild("phonenumber").equalTo(number);
@@ -359,9 +385,33 @@ public class ContactsActivity extends AppCompatActivity {
 
 
                         }
+
+                        if (!continueProgress) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sync_msg_layout.setVisibility(View.GONE);
+                                    // sync_btn.setVisibility(View.VISIBLE);
+                                }
+                            }, 5000);
+                        }
                     }
-                    contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
-                    contacts_recyclerView.setAdapter(contactAdapter);
+                    if (!continueProgress) {
+                        contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                        contacts_recyclerView.setAdapter(contactAdapter);
+                    }
+                } else {
+                    if (!continueProgress) {
+                        contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                        contacts_recyclerView.setAdapter(contactAdapter);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                sync_msg_layout.setVisibility(View.GONE);
+                                sync_btn.setVisibility(View.VISIBLE);
+                            }
+                        }, 5000);
+                    }
                 }
             }
 
