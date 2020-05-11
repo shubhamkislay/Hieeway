@@ -65,10 +65,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.shubhamkislay.jetpacklogin.Fragments.RegisterEmailEntryFragment;
+import com.shubhamkislay.jetpacklogin.Fragments.RegisterPhoneNumberFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.RegisterUsernameEntryFragment;
 import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
+import com.shubhamkislay.jetpacklogin.Model.User;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     RegisterEmailEntryFragment registerEmailEntryFragment;
     RegisterAuthenticateActivity registerAuthenticateActivity;
     RegisterUsernameEntryFragment registerUsernameEntryFragment;
+    RegisterPhoneNumberFragment registerPhoneNumberFragment;
     private GoogleSignInClient mGoogleSignInClient;
     Button change_frag_btn;
     int fragment_number=0;
@@ -152,11 +155,15 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerAuthenticateActivity = new RegisterAuthenticateActivity();
         registerEmailEntryFragment = new RegisterEmailEntryFragment();
         registerUsernameEntryFragment = new RegisterUsernameEntryFragment();
+
+        registerPhoneNumberFragment = new RegisterPhoneNumberFragment();
+
         fragmentList = new ArrayList<>();
 
         fragmentList.add(registerAuthenticateActivity);
         fragmentList.add(registerEmailEntryFragment);
         fragmentList.add(registerUsernameEntryFragment);
+        fragmentList.add(registerPhoneNumberFragment);
 
 
         firebaseAuth = FirebaseAuth.getInstance();
@@ -222,8 +229,18 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                 .replace(R.id.framelayout, registerAuthenticateActivity).commit();
                         break;
 
-                    case 3: fragment_number =1;
+                    case 3:
+                        fragment_number = 4;
                        // animateArrow();
+                        animateArrow();
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                .replace(R.id.framelayout, registerPhoneNumberFragment).commit();
+                        break;
+
+                    case 4:
+                        fragment_number = 1;
+                        // animateArrow();
                         get_started.setVisibility(View.GONE);
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
@@ -733,8 +750,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void onComplete(@NonNull Task<Void> task) {
 
                 //pg.dismiss();
-                startActivity(new Intent(MainActivity.this,NavButtonTest.class));
-                finish();
+                /*startActivity(new Intent(MainActivity.this,NavButtonTest.class));
+                finish();*/
+
+                animateArrow();
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                        .replace(R.id.framelayout, registerPhoneNumberFragment).commit();
 
             }
         });
@@ -774,6 +796,10 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
+
+                    User user = dataSnapshot.getValue(User.class);
+
+
                     HashMap<String, Object> hashMap = new HashMap<>();
 
                     hashMap.put("token", device_token);
@@ -783,9 +809,16 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     databaseReference.updateChildren(hashMap);
 
 
+                    if (user.getPhonenumber().equals("default")) {
+                        animateArrow();
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                .replace(R.id.framelayout, registerPhoneNumberFragment).commit();
+                    } else {
 
-                    startActivity(new Intent(MainActivity.this,NavButtonTest.class));
-                    finish();
+                        startActivity(new Intent(MainActivity.this, NavButtonTest.class));
+                        finish();
+                    }
                 }
                 else
                 {

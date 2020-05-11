@@ -201,19 +201,16 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
 
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .updateChildren(phoneHash).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(PhoneAuthenticationActivity.this, "Phone number verifed :)", Toast.LENGTH_SHORT);
+                .updateChildren(phoneHash);
 
-                Intent data = new Intent();
+        Toast.makeText(PhoneAuthenticationActivity.this, "Phone number verifed :)", Toast.LENGTH_SHORT);
+
+        Intent data = new Intent();
 
 //---set the data to pass back---
-                data.setData(Uri.parse(phonenumber));
-                setResult(RESULT_OK, data);
-                finish();
-            }
-        });
+        data.setData(Uri.parse(phonenumber));
+        setResult(RESULT_OK, data);
+        finish();
 
     }
 

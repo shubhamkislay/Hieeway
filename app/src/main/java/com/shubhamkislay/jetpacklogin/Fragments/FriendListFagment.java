@@ -12,6 +12,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.annotation.Nullable;
@@ -61,6 +62,7 @@ import com.shubhamkislay.jetpacklogin.ContactsActivity;
 import com.shubhamkislay.jetpacklogin.GridSpacingItemDecoration;
 import com.shubhamkislay.jetpacklogin.Model.Friend;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.NavButtonTest;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.RequestTrackerActivity;
 
@@ -213,32 +215,10 @@ public class FriendListFagment extends Fragment {
             public void onClick(View v) {
 
 
-                Dexter.withActivity(getActivity())
-                        .withPermissions(
-                                Manifest.permission.READ_CONTACTS)
-                        .withListener(new MultiplePermissionsListener() {
-                            @Override
-                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                Intent intent = new Intent(getActivity(), ContactsActivity.class);
+                intent.putExtra("phonenumber", phonenumber);
+                startActivity(intent);
 
-                                if (report.areAllPermissionsGranted()) {
-
-                                    Intent intent = new Intent(getActivity(), ContactsActivity.class);
-                                    intent.putExtra("phonenumber", phonenumber);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
-                                token.continuePermissionRequest();
-
-                                // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
-                            }
-                        }).check();
             }
         });
 
@@ -470,6 +450,28 @@ public class FriendListFagment extends Fragment {
         }, 400);
 
         return view;
+    }
+
+    public void getUserPhonenumber() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                User user = dataSnapshot.getValue(User.class);
+
+                phonenumber = user.getPhonenumber();
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void searchFriends(final String username) {
@@ -770,6 +772,7 @@ public class FriendListFagment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        getUserPhonenumber();
         if (enableRefreshButton) {
             friendRequests = false;
             friendAvailable = false;

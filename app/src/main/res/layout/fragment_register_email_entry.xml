@@ -10,6 +10,7 @@
     <Button
         android:id="@+id/email_login"
         android:gravity="center"
+        android:visibility="gone"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="top|right"
@@ -26,6 +27,8 @@
             android:id="@+id/greet_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
             android:gravity="center_vertical|center"
             android:textColor="#fff"
             android:textSize="100sp"

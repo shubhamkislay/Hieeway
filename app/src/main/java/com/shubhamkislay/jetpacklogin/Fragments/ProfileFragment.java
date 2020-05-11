@@ -103,7 +103,7 @@ import java.util.regex.Pattern;
 import static android.app.Activity.RESULT_OK;
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
-public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener {
 
     private static final int RC_HINT = 3;
     private SharedViewModel sharedViewModel;
@@ -140,10 +140,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout relay;
     private String profilepic;
-    GoogleApiClient mCredentialsApiClient;
-    Button select_phone_number;
 
-    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     Point size;
     float displayHeight;
 
@@ -160,11 +157,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout top_fade, bottom_fade, overlay_fade;
     Window window;
     String userPhoto = "default";
-    EditText enter_phone, enter_otp;
-    String phoneNumber;
-    String verificationID;
     PhoneAuthProvider.ForceResendingToken forceResendingToken;
-    Button validate_otp;
+
 
 
 /*
@@ -210,51 +204,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         final View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        select_phone_number = view.findViewById(R.id.select_phone_number);
 
-        enter_phone = view.findViewById(R.id.enter_phone);
 
-        enter_otp = view.findViewById(R.id.enter_otp);
 
-        validate_otp = view.findViewById(R.id.validate_otp);
 
-        validate_otp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkOTP();
-            }
-        });
 
-        mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-
-                updatePhoneNumber();
-            }
-
-            @Override
-            public void onVerificationFailed(FirebaseException e) {
-
-            }
-
-            @Override
-            public void onCodeSent(String firebaseVerificationID, PhoneAuthProvider.ForceResendingToken firebaseForceResendingToken) {
-                //  super.onCodeSent(s, forceResendingToken);
-                verificationID = firebaseVerificationID;
-                forceResendingToken = firebaseForceResendingToken;
-            }
-        };
-
-        select_phone_number.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    getCreadenticalApiClient();
-                } catch (Exception e) {
-
-                }
-            }
-        });
 
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -668,14 +622,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }, 1000);
     }
 
-    private void updatePhoneNumber() {
-        HashMap<String, Object> phoneHash = new HashMap<>();
-        phoneHash.put("phonenumber", phoneNumber);
 
-        FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .updateChildren(phoneHash);
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -1110,166 +1057,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         textView.setText(s);
     }
 
-    private void getCreadenticalApiClient() throws Exception {
-        mCredentialsApiClient = new GoogleApiClient.Builder(getActivity())
-                .addConnectionCallbacks(this)
-                .enableAutoManage(getActivity(), this)
-                .addApi(Auth.CREDENTIALS_API)
-                .build();
-
-        showHint();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    private void showHint() {
-        HintRequest hintRequest = new HintRequest.Builder()
-                .setHintPickerConfig(new CredentialPickerConfig.Builder()
-                        .setShowCancelButton(true)
-                        .build())
-                .setPhoneNumberIdentifierSupported(true)
-                .build();
-
-        PendingIntent intent =
-                Auth.CredentialsApi.getHintPickerIntent(mCredentialsApiClient, hintRequest);
-        try {
-            startIntentSenderForResult(intent.getIntentSender(), RC_HINT, null, 0, 0, 0, new Bundle());
-        } catch (IntentSender.SendIntentException e) {
-            // Log.e("Login", "Could not start hint picker Intent", e);
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_HINT) {
-            if (resultCode == RESULT_OK) {
-                Credential cred = data.getParcelableExtra(Credential.EXTRA_KEY);
-                //etMobile.setText(cred.getId().substring(3));
-
-                HashMap<String, Object> phoneHash = new HashMap<>();
-                phoneHash.put("phonenumber", cred.getId().substring(3));
-
-                FirebaseDatabase.getInstance().getReference("Users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .updateChildren(phoneHash);
-            } else {
-
-
-                checkPhoneNumberFromDevice();
-            }
-        }
-    }
-
-    private void checkPhoneNumberFromDevice() {
-
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
-            requestAllPermissions();
-        } else {
-            TelephonyManager tMgr = (TelephonyManager) getActivity().getSystemService(Context.TELEPHONY_SERVICE);
-            String mPhoneNumber = tMgr.getLine1Number();
-
-            if (mPhoneNumber != null) {
-                int trimeSize = mPhoneNumber.length() - 10;
-                if (trimeSize < 0)
-                    trimeSize = 0;
-
-
-                // Toast.makeText(getActivity(), "Phone number fetching: "+mPhoneNumber, Toast.LENGTH_SHORT).show();
-
-                if (mPhoneNumber.length() > 6/*&& isValid(mPhoneNumber)*/) {
-
-                    mPhoneNumber = tMgr.getLine1Number().substring(trimeSize);
-                    HashMap<String, Object> phoneHash = new HashMap<>();
-                    phoneHash.put("phonenumber", mPhoneNumber);
-
-                    FirebaseDatabase.getInstance().getReference("Users")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .updateChildren(phoneHash);
-                } else {
-                    //Toast.makeText(getActivity(), "Phone number not available", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getActivity(), "Starting phone verification", Toast.LENGTH_SHORT).show();
-                    verifyPhoneNumber();
-                }
-            } else {
-                Toast.makeText(getActivity(), "Starting phone verification", Toast.LENGTH_SHORT).show();
-                verifyPhoneNumber();
-            }
-        }
-    }
-
-    private void verifyPhoneNumber() {
-        phoneNumber = enter_phone.getText().toString();
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(phoneNumber, 60, TimeUnit.SECONDS, getActivity(), mCallbacks);
-    }
-
-    private void checkOTP() {
-        enter_otp.getText().toString();
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationID, enter_otp.getText().toString());
-
-
-        FirebaseAuth.getInstance().getCurrentUser().linkWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            updatePhoneNumber();
-                        } else {
-                            Toast.makeText(getActivity(), "Verification failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-    }
-
-    private void requestAllPermissions() {
-
-        Dexter.withActivity(getActivity())
-                .withPermissions(Manifest.permission.READ_SMS,
-                        Manifest.permission.READ_PHONE_NUMBERS,
-                        Manifest.permission.READ_PHONE_STATE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport report) {
-
-                        if (report.areAllPermissionsGranted()) {
-                            checkPhoneNumberFromDevice();
-                        } else {
-                            Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
-                        token.continuePermissionRequest();
-
-                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
-                    }
-                }).check();
-    }
 
 
     private class URLSpanNoUnderline extends URLSpan {

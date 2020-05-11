@@ -8,10 +8,12 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
@@ -29,6 +31,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.shubhamkislay.jetpacklogin.Adapters.ContactsAdapter;
 import com.shubhamkislay.jetpacklogin.Adapters.PeopleAdapter;
 import com.shubhamkislay.jetpacklogin.Model.ContactUser;
@@ -116,25 +123,6 @@ public class ContactsActivity extends AppCompatActivity {
             add_phone_number_layout.setVisibility(View.GONE);
             checkSynced();
 
-        } else {
-            FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                User user = dataSnapshot.getValue(User.class);
-                                if (!user.getPhonenumber().equals("default"))
-                                    add_phone_number_layout.setVisibility(View.GONE);
-                                checkSynced();
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
         }
 
 
@@ -258,29 +246,64 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     private void getContactList() {
-        isSyncing = true;
-        Cursor phone;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null);
-        } else {
-            phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        }
-
-        while (phone.moveToNext()) {
-            String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            number = number.replace(" ", "");
-            number = number.replace("-", "");
-            number = number.replace("(", "");
-            number = number.replace(")", "");
-
-            if (!String.valueOf(number.charAt(0)).equals("+"))
-                number = getCountryIso() + number;
 
 
-            getUserDetails(number, name);
+        Dexter.withActivity(ContactsActivity.this)
+                .withPermissions(Manifest.permission.READ_CONTACTS)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
 
-        }
+                        if (report.areAllPermissionsGranted()) {
+
+                            count = 0;
+                            contacts_counter.setText("" + count);
+                            userList.clear();
+                            contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                            contacts_recyclerView.setAdapter(contactAdapter);
+
+                            isSyncing = true;
+                            count = 0;
+                            Cursor phone;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null);
+                            } else {
+                                phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+                            }
+
+                            while (phone.moveToNext()) {
+                                String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                                number = number.replace(" ", "");
+                                number = number.replace("-", "");
+                                number = number.replace("(", "");
+                                number = number.replace(")", "");
+
+                                if (!String.valueOf(number.charAt(0)).equals("+"))
+                                    number = getCountryIso() + number;
+
+
+                                getUserDetails(number, name);
+
+                            }
+                        } else {
+                            Toast.makeText(ContactsActivity.this, "Permxission not given!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        token.continuePermissionRequest();
+
+                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+                }).check();
+
+
+
         //  isSyncing = false;
         // Toast.makeText(ContactsActivity.this,"No of accounts: "+userList.size(),Toast.LENGTH_SHORT).show();
 
@@ -303,7 +326,21 @@ public class ContactsActivity extends AppCompatActivity {
 
 
                         //if(user.getPhonenumber().equals(number))
+                        if (userList.contains(user)) {
+
+
+                            HashMap<String, Object> hashMap = new HashMap<>();
+                            hashMap.put("userID", user.getUserid());
+                            hashMap.put("name", name);
+
+                            FirebaseDatabase.getInstance().getReference("Contacts")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(user.getUserid()).updateChildren(hashMap);
+                        }
+
                         if (!userList.contains(user) && !user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+
                             userList.add(user);
                             phoneBookNameHashMap.put(user.getUserid(), name);
                             count = count + 1;
@@ -315,7 +352,8 @@ public class ContactsActivity extends AppCompatActivity {
 
                             FirebaseDatabase.getInstance().getReference("Contacts")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .push().updateChildren(hashMap);
+                                    .child(user.getUserid()).updateChildren(hashMap);
+
 
                             isSyncing = false;
 
@@ -355,6 +393,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         if (requestCode == FETCH_NUMBER) {
             if (resultCode == RESULT_OK) {
+                count = 0;
                 userList.clear();
                 phonenumber = data.getData().toString();
                 add_phone_number_layout.setVisibility(View.GONE);
