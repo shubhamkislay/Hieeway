@@ -18,6 +18,8 @@ import com.google.android.material.appbar.CollapsingToolbarLayout;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -65,6 +67,7 @@ import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.NavButtonTest;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.RequestTrackerActivity;
+import com.shubhamkislay.jetpacklogin.SharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +102,7 @@ public class FriendListFagment extends Fragment {
     private boolean friendAvailable = false;
     Button contactsbntn;
     String phonenumber = "default";
+    private SharedViewModel sharedViewModel;
 
 
     public FriendListFagment() {
@@ -160,12 +164,23 @@ public class FriendListFagment extends Fragment {
 
         search_chat_btn = view.findViewById(R.id.search_chat_btn_friends);
 
-        phonenumber = getArguments().getString("phonenumber");
+        //  phonenumber = getArguments().getString("phonenumber");
 
 
         search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+        sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
+
+        sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+
+                phonenumber = user.getPhonenumber();
+            }
+        });
         //search_chat_btn_back = view.findViewById(R.id.search_chat_btn_back);
 
         //close_search = view.findViewById(R.id.close_search);
@@ -772,7 +787,7 @@ public class FriendListFagment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getUserPhonenumber();
+        //getUserPhonenumber();
         if (enableRefreshButton) {
             friendRequests = false;
             friendAvailable = false;

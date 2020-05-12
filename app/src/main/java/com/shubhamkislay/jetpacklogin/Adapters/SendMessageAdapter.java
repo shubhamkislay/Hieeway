@@ -40,6 +40,7 @@ import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.RevealMessageDialog;
 import com.shubhamkislay.jetpacklogin.RevealedMessageActivity;
+import com.shubhamkislay.jetpacklogin.VideoPlayActivity;
 
 import java.security.Key;
 import java.security.KeyFactory;
@@ -539,18 +540,18 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                         }
                     });
-                } else if (!chatMessage.getPhotourl().equals("none")) {
+                } else if (!chatMessage.getVideourl().equals("none")) {
 
                     sendMessageViewHolder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
 
-                            Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+                            Intent intent = new Intent(context, VideoPlayActivity.class);
 
                             // intent.putExtra("photoList", (Serializable) photoMessageList);
                             intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                            intent.putExtra("videoUrl", chatMessage.getVideourl());
                             intent.putExtra("mKey", chatMessage.getMessageId());
                             intent.putExtra("sender", chatMessage.getSenderId());
 
@@ -565,11 +566,11 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         public void onClick(View v) {
 
 
-                            Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+                            Intent intent = new Intent(context, VideoPlayActivity.class);
 
                             // intent.putExtra("photoList", (Serializable) photoMessageList);
                             intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                            intent.putExtra("videoUrl", chatMessage.getVideourl());
                             intent.putExtra("mKey", chatMessage.getMessageId());
                             intent.putExtra("sender", chatMessage.getSenderId());
 

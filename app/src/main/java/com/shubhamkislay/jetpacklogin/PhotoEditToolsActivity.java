@@ -103,6 +103,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
     String userphotoUrl;
     String currentUsername;
     String currentUserPhoto;
+    String otherUserPublicKeyID;
+    String currentUserPublicKeyID;
 
 
     String currentPhotoPath;
@@ -184,13 +186,15 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
             }
         };
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         userChattingWithId = intent.getStringExtra("userChattingWithId");
         usernameChattingWith = intent.getStringExtra("usernameChattingWith");
         userphotoUrl = intent.getStringExtra("userphotoUrl");
         currentUserPhoto = intent.getStringExtra("currentUserPhoto");
         currentUsername = intent.getStringExtra("currentUsername");
+        otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+        currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
 
         senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userChattingWithId);
@@ -266,9 +270,26 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
 
                         imageUri = getImageUri(PhotoEditToolsActivity.this,saveBitmap);
 
-                        uploadImage();
 
-                        startActivity(new Intent(PhotoEditToolsActivity.this,PhotoTreatmentActivity.class));
+                        // createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
+                        Intent intent1 = new Intent(PhotoEditToolsActivity.this, SendMediaService.class);
+
+                        intent1.putExtra("userChattingWithId", userChattingWithId);
+                        intent1.putExtra("imageUri", imageUri.toString());
+                        intent1.putExtra("usernameChattingWith", usernameChattingWith);
+                        intent1.putExtra("userphotoUrl", userphotoUrl);
+                        intent1.putExtra("currentUsername", currentUsername);
+                        intent1.putExtra("currentUserPhoto", currentUserPhoto);
+                        intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                        intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+                        intent1.putExtra("type", "photo");
+
+
+                        startService(intent1);
+
+                        //  uploadImage();
+
+                        //startActivity(new Intent(PhotoEditToolsActivity.this,PhotoTreatmentActivity.class));
 
                         finish();
 

@@ -30,6 +30,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -39,10 +40,14 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -54,6 +59,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -70,6 +76,7 @@ import com.shubhamkislay.jetpacklogin.Utils.BitmapUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -85,6 +92,8 @@ import javax.microedition.khronos.opengles.GL10;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class Camera2BasicFragment extends Fragment
         implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -95,6 +104,8 @@ public class Camera2BasicFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_ALL = 1;
+    static final int REQUEST_VIDEO_CAPTURE = 3;
+    static final int REQUEST_PHOTO_CAPTURE = 4;
 
 
     RelativeLayout relativeLayout;
@@ -157,6 +168,7 @@ public class Camera2BasicFragment extends Fragment
     public int device_width;
     PhotoEditorView photoEditorView;
     PhotoEditor photoEditor;
+    Button record_video;
 
     /**
      * Max preview height that is guaranteed by Camera2 API
@@ -436,6 +448,7 @@ public class Camera2BasicFragment extends Fragment
         }
 
     };
+    private Uri imageUri;
 
     /**
      * Shows a {@link Toast} on the UI thread.
@@ -515,6 +528,8 @@ public class Camera2BasicFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.picture).setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
+        view.findViewById(R.id.record_video).setOnClickListener(this);
+        view.findViewById(R.id.other_app).setOnClickListener(this);
 
 
         /*if(Build.VERSION.SDK_INT>9)
@@ -1095,6 +1110,10 @@ public class Camera2BasicFragment extends Fragment
                     mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(mImageReader.getSurface());
 
+            /*final CaptureRequest.Builder recordBuilder =
+                    mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
+            recordBuilder.addTarget(mImageReader.getSurface());*/
+
             // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE,
                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
@@ -1183,13 +1202,145 @@ public class Camera2BasicFragment extends Fragment
                 break;
 
 
-
             }
             case R.id.switch_camera: {
 
                 switchCamera();
                 break;
             }
+
+            case R.id.record_video: {
+
+                startVideoRecording();
+                break;
+            }
+
+            case R.id.other_app: {
+
+                startOtherAPPCapture();
+                break;
+            }
+        }
+    }
+
+    private void startOtherAPPCapture() {
+        final Intent takeVideoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (Build.VERSION.SDK_INT >= 24) {
+            try {
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        /*Dexter.withActivity(getActivity())
+                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if(report.areAllPermissionsGranted())
+                {
+
+                }
+                else
+                    Toast.makeText(getActivity(),"Permission not granted!",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+            }
+        });*/
+/*
+        imageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),"fname_" +
+                String.valueOf(System.currentTimeMillis()) + ".jpg"));
+        takeVideoIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, imageUri);*/
+        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_PHOTO_CAPTURE);
+        }
+
+    }
+
+    private void startVideoRecording() {
+
+
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        takeVideoIntent.putExtra(android.provider.MediaStore.EXTRA_VIDEO_QUALITY, 0);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 5);
+        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        }
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+            Uri videoUri = data.getData();
+            //videoView.setVideoURI(videoUri);
+            Intent playVideoIntent = new Intent(getActivity(), VideoUploadActivity.class);
+
+
+            playVideoIntent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
+            playVideoIntent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
+            playVideoIntent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+            playVideoIntent.putExtra("videoUri", videoUri.toString());
+            playVideoIntent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+            playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
+            playVideoIntent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
+            playVideoIntent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+
+            startActivity(playVideoIntent);
+            getActivity().finish();
+
+
+            getActivity().startActivity(playVideoIntent);
+            getActivity().finish();
+
+        } else if (requestCode == REQUEST_PHOTO_CAPTURE && resultCode == RESULT_OK) {
+
+            // Uri imageUri = data.getData();
+
+            // Log.e("URI",imageUri.toString());
+            Bitmap bitmap = null;
+
+
+            // Bitmap bmp = (Bitmap) extras.
+
+
+            try {
+
+                if (data.getData() == null) {
+                    bitmap = (Bitmap) data.getExtras().get("data");
+                } else {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            BitmapHelper.getInstance().setBitmap(bitmap);
+
+            //Uri photoUrl = data.getData();
+            // CameraActivity.userphotoUrl = imageUri.toString();
+            //videoView.setVideoURI(videoUri);
+            Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+
+            intent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
+            intent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
+            intent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+            intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+            intent.putExtra("currentUsername", CameraActivity.currentUsername);
+            intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
+            intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+
+            startActivity(intent);
+            getActivity().finish();
+
         }
     }
 
@@ -1212,11 +1363,14 @@ public class Camera2BasicFragment extends Fragment
         {
             Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
 
+
             intent.putExtra("userChattingWithId",CameraActivity.userChattingWithId);
             intent.putExtra("usernameChattingWith",CameraActivity.usernameChattingWith);
             intent.putExtra("userphotoUrl",CameraActivity.userphotoUrl);
             intent.putExtra("currentUserPhoto",CameraActivity.currentUserPhoto);
             intent.putExtra("currentUsername",CameraActivity.currentUsername);
+            intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
+            intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
 
             startActivity(intent);
             getActivity().finish();

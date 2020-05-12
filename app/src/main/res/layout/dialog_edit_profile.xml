@@ -6,6 +6,7 @@
     android:id="@+id/bottom_sheet_dialog_layout"
     android:layout_margin="4dp"
     android:background="@drawable/bottom_sheet_background_drawable"
+    android:backgroundTint="@color/nav_status_color_accent"
     app:behavior_hideable="false"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="@string/bottom_sheet_behavior"
@@ -35,15 +36,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/nav_btn_back_drawable">
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="#1F1F1F">
 
             <TextView
                 android:id="@+id/profile_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:padding="12dp"
-                android:text="Change profile picture"
+                android:text="Profile picture"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -54,15 +56,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/nav_btn_back_drawable">
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="#1F1F1F">
 
             <TextView
                 android:id="@+id/bio_txtview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:padding="12dp"
-                android:text="change bio"
+                android:text="Bio"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
         </RelativeLayout>

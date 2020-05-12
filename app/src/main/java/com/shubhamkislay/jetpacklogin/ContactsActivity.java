@@ -5,17 +5,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -40,15 +47,19 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.shubhamkislay.jetpacklogin.Adapters.ContactsAdapter;
 import com.shubhamkislay.jetpacklogin.Adapters.PeopleAdapter;
+import com.shubhamkislay.jetpacklogin.Interface.SyncServiceListener;
 import com.shubhamkislay.jetpacklogin.Model.ContactUser;
 import com.shubhamkislay.jetpacklogin.Model.Iso2Phone;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
-public class ContactsActivity extends AppCompatActivity {
+import static com.shubhamkislay.jetpacklogin.MyApplication.CONTACT_SERVICE_RUNNUNG;
+
+public class ContactsActivity extends AppCompatActivity implements SyncServiceListener {
 
     HashMap<String, Object> phoneBookNameHashMap;
     Activity activity;
@@ -64,10 +75,14 @@ public class ContactsActivity extends AppCompatActivity {
     private String phonenumber = "default";
     private ConstraintLayout add_phone_number_layout;
     Cursor phone;
+    ContactsListViewModel contactsListViewModel;
     private Button add_number_btn;
     private static final int FETCH_NUMBER = 2;
     private RelativeLayout parent_layout, sync_msg_layout;
     private TextView features_list, features_title, phone_title, features_list2, sync_txt;
+    private SyncService myService;
+    private boolean bound = false;
+    private SharedViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,21 +145,121 @@ public class ContactsActivity extends AppCompatActivity {
 
         }
 
+      /*  if(isServiceRunning("SyncService"))
+            sync_msg_layout.setVisibility(View.VISIBLE);*/
+
+        if (CONTACT_SERVICE_RUNNUNG) {
+            sync_msg_layout.setVisibility(View.VISIBLE);
+            checkIfServiceIsStillRuning();
+        }
 
 
+        contactsListViewModel = ViewModelProviders.of(this).get(ContactsListViewModel.class);
+        contactsListViewModel.getContacts().observe(this, new Observer<List<ContactUser>>() {
+            @Override
+            public void onChanged(List<ContactUser> contactUsers) {
+                // Toast.makeText(ContactsActivity.this,"REfreshed"+contactUsers.size(),Toast.LENGTH_SHORT).show();
+
+                mapToUserList(contactUsers);
+            }
+        });
+
+      /*  sharedViewModel = ViewModelProviders.of(ContactsActivity.this).get(SharedViewModel.class);
 
 
+        sharedViewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+
+                phonenumber = user.getPhonenumber();
+                if(phonenumber.equals("default"))
+                    add_phone_number_layout.setVisibility(View.VISIBLE);
+                else
+                    add_phone_number_layout.setVisibility(View.GONE);
+            }
+        });*/
 
 
         sync_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isSyncing)
-                    getContactList();
+                    // getContactList();
+                    if (!CONTACT_SERVICE_RUNNUNG)
+                        checkPermissionContact();
+
+
+                    /*if(!isServiceRunning("SyncService")) {
+                        sync_msg_layout.setVisibility(View.VISIBLE);
+                        checkPermissionContact();
+                    }*/
+                    else
+                        Toast.makeText(ContactsActivity.this, "Service is running", Toast.LENGTH_SHORT).show();
+                //startSyncService();
+
             }
         });
 
 
+    }
+
+    private void checkIfServiceIsStillRuning() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!CONTACT_SERVICE_RUNNUNG) {
+                    //populateUserList();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sync_msg_layout.setVisibility(View.GONE);
+                        }
+                    }, 5000);
+
+                } else
+                    checkIfServiceIsStillRuning();
+            }
+        }, 3000);
+    }
+
+
+    public void startSyncService() {
+        CONTACT_SERVICE_RUNNUNG = true;
+
+        Intent serviceInent = new Intent(this, SyncService.class);
+        serviceInent.putExtra("userID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        serviceInent.putExtra("phonenumber", phonenumber);
+
+
+        sync_msg_layout.setVisibility(View.VISIBLE);
+        //bindService(serviceInent, serviceConnection, Context.BIND_AUTO_CREATE);
+        startService(serviceInent);
+        checkIfServiceIsStillRuning();
+    }
+
+/*    private ServiceConnection serviceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            // cast the IBinder and get MyService instance
+            SyncService.LocalBinder binder = (SyncService.LocalBinder) service;
+            myService = binder.getService();
+            bound = true;
+            myService.setSyncServiceListener(ContactsActivity.this);
+            myService.getContactList();// register
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            bound = false;
+        }
+    };*/
+
+    public void stopSyncService() {
+        Intent serviceInent = new Intent(this, SyncService.class);
+
+        stopService(serviceInent);
     }
 
     private void checkSynced() {
@@ -157,7 +272,10 @@ public class ContactsActivity extends AppCompatActivity {
                             User user = dataSnapshot.getValue(User.class);
                             try {
                                 if (!user.getSynced()) {
-                                    getContactList();
+
+                                    //getContactList();
+                                    if (!CONTACT_SERVICE_RUNNUNG)
+                                        checkPermissionContact();
 
                                     HashMap<String, Object> syncHash = new HashMap<>();
                                     syncHash.put("synced", true);
@@ -174,10 +292,14 @@ public class ContactsActivity extends AppCompatActivity {
                                     View snackBarView = snackbar.getView();
                                     snackBarView.setBackgroundColor(ContextCompat.getColor(ContactsActivity.this, R.color.colorPrimaryDark));
                                     snackbar.show();*/
-                                    populateUserList();
+
+                                    //  populateUserList();
                                 }
                             } catch (Exception e) {
-                                getContactList();
+
+                                // getContactList();
+                                if (!CONTACT_SERVICE_RUNNUNG)
+                                    checkPermissionContact();
 
                                 HashMap<String, Object> syncHash = new HashMap<>();
                                 syncHash.put("synced", true);
@@ -223,6 +345,8 @@ public class ContactsActivity extends AppCompatActivity {
     private void mapToUserList(List<ContactUser> contactsList) {
 
         userList.clear();
+        count = 0;
+
         for (final ContactUser contactUser : contactsList) {
             FirebaseDatabase.getInstance().getReference("Users")
                     .child(contactUser.getUserID())
@@ -231,14 +355,17 @@ public class ContactsActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 User user = dataSnapshot.getValue(User.class);
-                                count += 1;
-                                contacts_counter.setText("" + count);
-                                userList.add(user);
-                                phoneBookNameHashMap.put(user.getUserid(), contactUser.getName());
+                                if (!userList.contains(user)) {
+                                    count += 1;
+                                    contacts_counter.setText("" + count);
+                                    userList.add(user);
+                                    phoneBookNameHashMap.put(user.getUserid(), contactUser.getName());
+                                }
 
-                                contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
-                                contacts_recyclerView.setAdapter(contactAdapter);
+
                             }
+                            contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                            contacts_recyclerView.setAdapter(contactAdapter);
                         }
 
                         @Override
@@ -250,7 +377,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
-    private void getContactList() {
+    /*private void getContactList() {
 
 
         Dexter.withActivity(ContactsActivity.this)
@@ -297,14 +424,14 @@ public class ContactsActivity extends AppCompatActivity {
                                         Log.v("Name", "" + name);
                                         getUserDetails(number, name, phone.moveToNext());
 
-                                /*if(!phone.moveToNext()) {
+                                *//*if(!phone.moveToNext()) {
                                     new Handler().postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
                                             sync_msg_layout.setVisibility(View.GONE);
                                             sync_btn.setVisibility(View.VISIBLE);
                                         }
-                                    },5000);*/
+                                    },5000);*//*
 
                                         // }
 
@@ -336,92 +463,136 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
-    private void getUserDetails(final String number, final String name, final Boolean continueProgress) {
+*/
+    private void checkPermissionContact() {
+        Dexter.withActivity(ContactsActivity.this)
+                .withPermissions(Manifest.permission.READ_CONTACTS)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
 
-        DatabaseReference findUserRef = FirebaseDatabase.getInstance().getReference("Users");
-        Query query = findUserRef.orderByChild("phonenumber").equalTo(number);
+                        if (report.areAllPermissionsGranted()) {
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
+                            sync_msg_layout.setVisibility(View.VISIBLE);
 
 
-                        //if(user.getPhonenumber().equals(number))
-                        if (userList.contains(user)) {
+                            startSyncService();
 
 
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("userID", user.getUserid());
-                            hashMap.put("name", name);
-
-                            FirebaseDatabase.getInstance().getReference("Contacts")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(user.getUserid()).updateChildren(hashMap);
+                        } else {
+                            Toast.makeText(ContactsActivity.this, "Permxission not given!", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
 
-                        if (!userList.contains(user) && !user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-
-
-                            userList.add(user);
-                            phoneBookNameHashMap.put(user.getUserid(), name);
-                            count = count + 1;
-                            contacts_counter.setText("" + count);
-
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("userID", user.getUserid());
-                            hashMap.put("name", name);
-
-                            FirebaseDatabase.getInstance().getReference("Contacts")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(user.getUserid()).updateChildren(hashMap);
-
-
-                            isSyncing = false;
-
-
-                        }
-
-                        if (!continueProgress) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    sync_msg_layout.setVisibility(View.GONE);
-                                    // sync_btn.setVisibility(View.VISIBLE);
-                                }
-                            }, 5000);
-                        }
                     }
-                    if (!continueProgress) {
-                        contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
-                        contacts_recyclerView.setAdapter(contactAdapter);
-                    }
-                } else {
-                    if (!continueProgress) {
-                        contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
-                        contacts_recyclerView.setAdapter(contactAdapter);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                sync_msg_layout.setVisibility(View.GONE);
-                                sync_btn.setVisibility(View.VISIBLE);
-                            }
-                        }, 5000);
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
 
-            }
-        });
+                        token.continuePermissionRequest();
+
+                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+                }).check();
     }
 
+
+    @Override
+    public void afterExecution() {
+
+        sync_msg_layout.setVisibility(View.GONE);
+
+    }
+
+    /* private void getUserDetails(final String number, final String name, final Boolean continueProgress) {
+
+         DatabaseReference findUserRef = FirebaseDatabase.getInstance().getReference("Users");
+         Query query = findUserRef.orderByChild("phonenumber").equalTo(number);
+
+         query.addListenerForSingleValueEvent(new ValueEventListener() {
+             @Override
+             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                 if (dataSnapshot.exists()) {
+                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                         User user = snapshot.getValue(User.class);
+
+
+                         //if(user.getPhonenumber().equals(number))
+                         if (userList.contains(user)) {
+
+
+                             HashMap<String, Object> hashMap = new HashMap<>();
+                             hashMap.put("userID", user.getUserid());
+                             hashMap.put("name", name);
+
+                             FirebaseDatabase.getInstance().getReference("Contacts")
+                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                     .child(user.getUserid()).updateChildren(hashMap);
+                         }
+
+                         if (!userList.contains(user) && !user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+
+                             userList.add(user);
+                             phoneBookNameHashMap.put(user.getUserid(), name);
+                             count = count + 1;
+                             contacts_counter.setText("" + count);
+
+                             HashMap<String, Object> hashMap = new HashMap<>();
+                             hashMap.put("userID", user.getUserid());
+                             hashMap.put("name", name);
+
+                             FirebaseDatabase.getInstance().getReference("Contacts")
+                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                     .child(user.getUserid()).updateChildren(hashMap);
+
+
+
+
+
+                         }
+
+                         if (!continueProgress) {
+                             new Handler().postDelayed(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     sync_msg_layout.setVisibility(View.GONE);
+                                     // sync_btn.setVisibility(View.VISIBLE);
+                                 }
+                             }, 5000);
+                         }
+                     }
+                     if (!continueProgress) {
+
+                         isSyncing = false;
+                         contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                         contacts_recyclerView.setAdapter(contactAdapter);
+                     }
+                 } else {
+                     if (!continueProgress) {
+                         contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                         contacts_recyclerView.setAdapter(contactAdapter);
+                         isSyncing = false;
+                         new Handler().postDelayed(new Runnable() {
+                             @Override
+                             public void run() {
+                                 sync_msg_layout.setVisibility(View.GONE);
+                                // sync_btn.setVisibility(View.VISIBLE);
+                             }
+                         }, 5000);
+                     }
+                 }
+             }
+
+             @Override
+             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+             }
+         });
+     }
+ */
     private String getCountryIso() {
 
         String iso = null;
@@ -454,9 +625,36 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
+    private boolean isServiceRunning(String serviceName) {
+        boolean serviceRunning = false;
+        ActivityManager am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> l = am.getRunningServices(50);
+        Iterator<ActivityManager.RunningServiceInfo> i = l.iterator();
+        while (i.hasNext()) {
+            ActivityManager.RunningServiceInfo runningServiceInfo = i
+                    .next();
+
+            if (runningServiceInfo.service.getClassName().equals(serviceName)) {
+                serviceRunning = true;
+
+                if (runningServiceInfo.foreground) {
+                    //service run in foreground
+                }
+            }
+        }
+        return serviceRunning;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /*if(isSyncing)
+            startSyncService();*/
     }
 }

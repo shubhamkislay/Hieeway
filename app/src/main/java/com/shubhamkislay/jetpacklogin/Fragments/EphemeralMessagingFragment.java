@@ -121,6 +121,7 @@ import com.shubhamkislay.jetpacklogin.TypeWriter;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
 import com.shubhamkislay.jetpacklogin.UserPicViewModelFactory;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
+import com.shubhamkislay.jetpacklogin.VideoPlayActivity;
 import com.shubhamkislay.jetpacklogin.ViewProfileActivity;
 
 import java.io.File;
@@ -691,6 +692,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     intent.putExtra("username", usernameChattingWith);
                     intent.putExtra("currentUsername", currentUsername);
                     intent.putExtra("currentUserPhoto", currentUserPhoto);
+                    intent.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+                    intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+
 
                     // intent.putExtra("userChattingWithId", currentUserPhoto);
 
@@ -1333,14 +1337,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         startActivity(intent);
                     } else if (!chatMessage.getVideourl().equals("none")) {
-                        /*Intent intent = new Intent(getActivity(), EphemeralPhotoActivity.class);
+                        Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
                         intent.putExtra("userIdChattingWith", userIdChattingWith);
-                        intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                        intent.putExtra("videoUrl", chatMessage.getVideourl());
                         intent.putExtra("mKey", chatMessage.getMessageId());
                         intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                        startActivity(intent);*/
+                        startActivity(intent);
                     }
                 }
                 else
@@ -3066,6 +3070,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 intent.putExtra("username", usernameChattingWith);
                                 intent.putExtra("currentUsername", currentUsername);
                                 intent.putExtra("currentUserPhoto", currentUserPhoto);
+                                intent.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+                                intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+
 
                                 // intent.putExtra("userChattingWithId", currentUserPhoto);
 

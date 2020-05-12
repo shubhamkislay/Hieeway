@@ -26,6 +26,8 @@ import java.util.HashMap;
 public class MyApplication extends Application {
     public static final String CHANNEL_1_ID = "messages";
     public static final String CHANNEL_2_ID = "feelings";
+    public static final String CHANNEL_3_ID = "contacts";
+    public static Boolean CONTACT_SERVICE_RUNNUNG = false;
     public static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
     public static Palette.Swatch darkMutedSwatch;
 
@@ -60,6 +62,13 @@ public class MyApplication extends Application {
                     NotificationManager.IMPORTANCE_HIGH);
             channel1.setVibrationPattern(new long[]{300, 300, 300});
 
+
+            NotificationChannel channel3 = new NotificationChannel(
+                    CHANNEL_3_ID,
+                    "contacts",
+                    NotificationManager.IMPORTANCE_LOW);
+            // channel1.setVibrationPattern(new long[]{300, 300, 300});
+
             if (defaultSoundUri != null) {
                 AudioAttributes att = new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_NOTIFICATION)
@@ -81,6 +90,8 @@ public class MyApplication extends Application {
                         .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                         .build();
                 channel2.setSound(defaultSoundUri, att);
+
+
             }
 
             channel2.setDescription("feeling changes");
@@ -89,6 +100,7 @@ public class MyApplication extends Application {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.createNotificationChannel(channel1);
             manager.createNotificationChannel(channel2);
+            manager.createNotificationChannel(channel3);
 
         }
     }
