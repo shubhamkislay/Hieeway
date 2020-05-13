@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 public class VideoUploadActivity extends AppCompatActivity {
@@ -34,9 +35,13 @@ public class VideoUploadActivity extends AppCompatActivity {
         userphotoUrl = intent.getStringExtra("userphotoUrl");
         currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
         otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+        usernameChattingWith = intent.getStringExtra("usernameChattingWith");
         send_video_btn = findViewById(R.id.send_video_btn);
 
+        // MediaController controller = new MediaController(this);
+
         videoView.setVideoURI(videoUri);
+        // videoView.setMediaController(controller);
         videoView.start();
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
