@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 
@@ -38,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
@@ -103,7 +105,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     ProfileFragment profileFragment;
     FriendListFagment friendListFagment;
     AddFeelingFragment addFeelingFragment;
-    RelativeLayout splash_layout;
+    public MediaPlayer mediaPlayer;
     private Bundle bundle;
 
     ConstraintLayout nav_bar;
@@ -118,7 +120,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     TextView master_head;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
-    RelativeLayout nav_parent_layout;
+    RelativeLayout splash_layout, video_splash_layout;
 
     private static final int IMAGE_REQUEST=1;
     DatabaseReference databaseReference;
@@ -128,10 +130,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
     RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
-
+    RelativeLayout nav_parent_layout, app_logo;
     int fragmentId=1;
     private Bitmap bitmap;
     private String phonenumber = "default";
+    Window window;
+    private VideoView view;
+    private boolean videoPlayBack = true;
+    private boolean continueAppLogoAnim = true;
+    private int stopPosition;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -140,10 +147,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         setContentView(R.layout.activity_nav_button_test);
 
         splash_layout = findViewById(R.id.splash_layout);
+        video_splash_layout = findViewById(R.id.video_splash_layout);
         background_screen = findViewById(R.id.background_screen);
 
         profileBtnPressed = findViewById(R.id.profile_button_pressed);
         profileBtnUnpressed = findViewById(R.id.profile_button_unpressed);
+
+        master_head = findViewById(R.id.master_head);
+        app_logo = findViewById(R.id.app_logo);
 
         nav_bar = findViewById(R.id.nav_bar);
 
@@ -151,6 +162,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         getUserImageIntoNavButton();
         nav_parent_layout = findViewById(R.id.nav_parent_layout);
+
+        master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
         /**
          *When you set the background as a gradiant animation list drawable, then you can uncomment the following code
@@ -164,10 +177,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         animationDrawable.start();*/
 
 
-
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
-        Window window = getWindow();
+        window = getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -176,7 +188,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_status_color_accent));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
 
 
 
@@ -187,8 +199,54 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
    // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
+        view = (VideoView) findViewById(R.id.videoView);
+        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+                + R.raw.hieeway_splashscreen);
+        // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
+        view.setVideoURI(video);
 
-        startSplash();
+
+        view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+
+                mediaPlayer = mp;
+                mediaPlayer.start();
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        startSplash();
+
+                        mediaPlayer.pause();
+                        stopPosition = view.getCurrentPosition();
+                    }
+                }, 1500);
+
+            }
+        });
+
+
+        view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+
+                // app_logo.animate().alpha(1.0f).setDuration(500);
+                appLogoAnimation(false);
+                view.setVisibility(View.GONE);
+                // startSplash();
+                animateArrow();
+
+
+                /*if(videoPlayBack)
+                view.start();*/
+
+            }
+        });
+
+
         //initiateNavActivity();
 /*        new Handler().postDelayed(new Runnable() {
             @Override
@@ -199,6 +257,30 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         },2000);*/
 
 
+    }
+
+    public void appLogoAnimation(Boolean reverse) {
+        float alpha = 1.0f;
+        if (reverse)
+            alpha = 0.0f;
+        app_logo.animate().alpha(alpha).setDuration(500);
+        /*new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                app_logo.animate().alpha(0.0f).setDuration(500);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if(continueAppLogoAnim)
+                            appLogoAnimation();
+
+
+                    }
+                },500);
+            }
+        },500);*/
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -1318,7 +1400,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         typeWriter = findViewById(R.id.logo_txt);
 
-        master_head = findViewById(R.id.master_head);
+
 
         text_home = findViewById(R.id.text_home);
 
@@ -1332,31 +1414,34 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         // overridePendingTransition(R.anim.enter_left_to_right, R.anim.exit_left_to_right);
 
 
-        final Animation hyperspaceJump = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.image_bounce);
+        /*final Animation hyperspaceJump = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.image_bounce);
 
         hyperspaceJump.setRepeatMode(Animation.INFINITE);
 
         splash_logo.setAnimation(hyperspaceJump);
-
+*/
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         displayHeight = size.y;
 
-        typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        /*typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
         typeWriter.setCharacterDelay(75);
-        typeWriter.animateText("Hieeway");
+        typeWriter.animateText("Hieeway");*/
 
+        initiateNavActivity();
 
-       // animateArrow();
-        new Handler().postDelayed(new Runnable() {
+        //animateArrow();
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                initiateNavActivity();
+
+
+               // animateArrow();
             }
-        },1250);
+        },1250);*/
 
 
 
@@ -1367,6 +1452,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public void animateArrow() {
 
 
+        appLogoAnimation(true);
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_status_color_accent));
         animatorY = ObjectAnimator.ofFloat(send_arrow,"translationY",-displayHeight -(displayHeight)/3);
         animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 
@@ -1400,6 +1487,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 final Animation accel = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.accelerate_image);
                 final Animation accelFaster = AnimationUtils.loadAnimation(NavButtonTest.this, R.anim.accelerate_image_faster);
 
+        video_splash_layout.animate().alpha(0.0f).setDuration(300);
 
                 accel.setRepeatMode(Animation.INFINITE);
                 accelFaster.setRepeatMode(Animation.INFINITE);
@@ -1414,7 +1502,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     public void run() {
 
                         typeWriter.animate().translationYBy(-displayHeight / 1.5f).setDuration(arrowAnimDuration / 2);
+                        continueAppLogoAnim = false;
 
+
+                        /*new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                initiateNavActivity();
+                            }
+                        },arrowAnimDuration);*/
 
 
 
@@ -1455,7 +1551,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 /*Intent intent = new Intent(NavButtonTest.this,MainActivity.class);
                 startActivity(intent);
                 finish();*/
+                videoPlayBack = false;
+                // view.stopPlayback();
                 splash_layout.setVisibility(View.GONE);
+                send_arrow.setVisibility(View.GONE);
                 //initiateNavActivity();
             }
         },arrowAnimDuration);
@@ -1508,7 +1607,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     @Override
     public void playArrowAnimation() {
 
-        animateArrow();
+        // animateArrow();
+        //view.seekTo(stopPosition);
+
+        if (mediaPlayer != null)
+            mediaPlayer.start();
     }
 
 

@@ -458,7 +458,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                                 public void run() {
                                     animationArrowListener.playArrowAnimation();
                                 }
-                            },700);
+                            }, 500);
 
 
                             //chatStampSize = chatStamps.size();
