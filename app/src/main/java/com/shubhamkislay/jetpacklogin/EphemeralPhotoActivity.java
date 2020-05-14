@@ -21,6 +21,8 @@ import com.bumptech.glide.request.target.Target;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 
 import java.util.HashMap;
@@ -132,6 +134,10 @@ public class EphemeralPhotoActivity extends AppCompatActivity {
                                 HashMap<String,Object> updateSeen = new HashMap<>();
                                 updateSeen.put("seen","seen");
                                 updateSeen.put("sentStatus","sent");
+                                updateSeen.put("photourl", "played");
+
+                                StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(photoUrl);
+                                photoRef.delete();
 
                                 deletePhotoMessageSender.updateChildren(updateSeen);
                                 deletePhotoMessageReceiver.removeValue();

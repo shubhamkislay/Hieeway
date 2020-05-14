@@ -447,6 +447,9 @@ public class AudioRecorderActivity extends AppCompatActivity {
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(userIdChattingWith);
 
+            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(audioUrl);
+            photoRef.delete();
+
 
             receiverReference.child(mKey).removeValue();
 
@@ -457,6 +460,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("seen", "seen");
+            hashMap.put("audiourl", "played");
             senderReference.updateChildren(hashMap);
 
             finish();
@@ -536,7 +540,9 @@ public class AudioRecorderActivity extends AppCompatActivity {
                     }
                 }, 1000);
 
+
                 mp.start();
+
 
                 mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override

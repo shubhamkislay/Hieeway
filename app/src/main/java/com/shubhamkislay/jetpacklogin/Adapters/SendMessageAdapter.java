@@ -507,17 +507,21 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onClick(View v) {
 
+                            if (!chatMessage.getPhotourl().equals("played")) {
 
-                            Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+                                Intent intent = new Intent(context, EphemeralPhotoActivity.class);
 
-                            // intent.putExtra("photoList", (Serializable) photoMessageList);
-                            intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("photoUrl", chatMessage.getPhotourl());
-                            intent.putExtra("mKey", chatMessage.getMessageId());
-                            intent.putExtra("sender", chatMessage.getSenderId());
+                                // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                                intent.putExtra("mKey", chatMessage.getMessageId());
+                                intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                            context.startActivity(intent);
+                                context.startActivity(intent);
+                            } else {
+                                Toast.makeText(context, "Photo is deleted", Toast.LENGTH_SHORT).show();
+                            }
 
                         }
                     });
@@ -546,17 +550,21 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         @Override
                         public void onClick(View v) {
 
+                            if (!chatMessage.getVideourl().equals("played")) {
 
-                            Intent intent = new Intent(context, VideoPlayActivity.class);
+                                Intent intent = new Intent(context, VideoPlayActivity.class);
 
-                            // intent.putExtra("photoList", (Serializable) photoMessageList);
-                            intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("videoUrl", chatMessage.getVideourl());
-                            intent.putExtra("mKey", chatMessage.getMessageId());
-                            intent.putExtra("sender", chatMessage.getSenderId());
+                                // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                intent.putExtra("videoUrl", chatMessage.getVideourl());
+                                intent.putExtra("mKey", chatMessage.getMessageId());
+                                intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                            context.startActivity(intent);
+                                context.startActivity(intent);
+                            } else {
+                                Toast.makeText(context, "Video is deleted", Toast.LENGTH_SHORT).show();
+                            }
 
                         }
                     });
@@ -566,17 +574,21 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         public void onClick(View v) {
 
 
-                            Intent intent = new Intent(context, VideoPlayActivity.class);
+                            if (!chatMessage.getVideourl().equals("played")) {
 
-                            // intent.putExtra("photoList", (Serializable) photoMessageList);
-                            intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("videoUrl", chatMessage.getVideourl());
-                            intent.putExtra("mKey", chatMessage.getMessageId());
-                            intent.putExtra("sender", chatMessage.getSenderId());
+                                Intent intent = new Intent(context, VideoPlayActivity.class);
+
+                                // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                intent.putExtra("videoUrl", chatMessage.getVideourl());
+                                intent.putExtra("mKey", chatMessage.getMessageId());
+                                intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                            context.startActivity(intent);
-
+                                context.startActivity(intent);
+                            } else {
+                                Toast.makeText(context, "Video is deleted", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                 } else if (!chatMessage.getAudiourl().equals("none")) {
@@ -588,16 +600,20 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             if (!chatMessage.getAudiourl().equals("uploading")) {
 
 
-                                Intent intent = new Intent(context, AudioRecorderActivity.class);
+                                if (!chatMessage.getAudiourl().equals("played")) {
+                                    Intent intent = new Intent(context, AudioRecorderActivity.class);
 
-                                // intent.putExtra("photoList", (Serializable) photoMessageList);
-                                intent.putExtra("userIdChattingWith", userIdChattingWith);
-                                intent.putExtra("audiourl", chatMessage.getAudiourl());
-                                intent.putExtra("mKey", chatMessage.getMessageId());
-                                intent.putExtra("sender", chatMessage.getSenderId());
+                                    // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                    intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                    intent.putExtra("audiourl", chatMessage.getAudiourl());
+                                    intent.putExtra("mKey", chatMessage.getMessageId());
+                                    intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                                context.startActivity(intent);
+                                    context.startActivity(intent);
+                                } else {
+                                    Toast.makeText(context, "Audio is deleted", Toast.LENGTH_SHORT).show();
+                                }
 
                             } else {
                                 if (chatMessage.getSentStatus().equals("sent")) {
@@ -618,16 +634,20 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             if (!chatMessage.getAudiourl().equals("uploading")) {
 
 
-                                Intent intent = new Intent(context, AudioRecorderActivity.class);
+                                if (!chatMessage.getAudiourl().equals("played")) {
+                                    Intent intent = new Intent(context, AudioRecorderActivity.class);
 
-                                // intent.putExtra("photoList", (Serializable) photoMessageList);
-                                intent.putExtra("userIdChattingWith", userIdChattingWith);
-                                intent.putExtra("audiourl", chatMessage.getAudiourl());
-                                intent.putExtra("mKey", chatMessage.getMessageId());
-                                intent.putExtra("sender", chatMessage.getSenderId());
+                                    // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                    intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                    intent.putExtra("audiourl", chatMessage.getAudiourl());
+                                    intent.putExtra("mKey", chatMessage.getMessageId());
+                                    intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                                context.startActivity(intent);
+                                    context.startActivity(intent);
+                                } else {
+                                    Toast.makeText(context, "Audio is deleted", Toast.LENGTH_SHORT).show();
+                                }
 
                             } else {
                                 if (chatMessage.getSentStatus().equals("sent")) {

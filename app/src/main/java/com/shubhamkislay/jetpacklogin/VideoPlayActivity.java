@@ -32,6 +32,8 @@ import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -231,11 +233,14 @@ public class VideoPlayActivity extends AppCompatActivity implements SurfaceHolde
         HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put("seen", "seen");
+        hashMap.put("videourl", "played");
         FirebaseDatabase.getInstance().getReference("Messages")
                 .child(sender)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(mKey)
                 .updateChildren(hashMap);
+        StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(videoUrl);
+        photoRef.delete();
 
         finish();
     }
