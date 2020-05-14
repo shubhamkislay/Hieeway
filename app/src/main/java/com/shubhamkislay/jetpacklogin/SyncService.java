@@ -82,6 +82,7 @@ public class SyncService extends Service {
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
                 .setContentTitle("Syncing your contacts")
                 .setSmallIcon(R.drawable.ic_action_contacts_phonebook)
+                .setProgress(0, 0, true)
                 // .setContentIntent(pendingIntent)
                 .build();
 

@@ -63,6 +63,9 @@ dependencies {
     implementation 'com.github.rockerhieu:emojicon:v1.4.2'
     implementation 'com.github.yalantis:ucrop:2.2.2-native'
 
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.8.0'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.0'
+
     //implementation 'io.agora.rtc:full-sdk:2.4.1'
     implementation 'io.agora.rtc:full-sdk:2.9.0'
     implementation 'com.github.hani-momanii:SuperNova-Emoji:1.1'

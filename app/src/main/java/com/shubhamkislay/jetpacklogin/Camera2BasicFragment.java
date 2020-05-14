@@ -1267,8 +1267,8 @@ public class Camera2BasicFragment extends Fragment
 
 
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        takeVideoIntent.putExtra(android.provider.MediaStore.EXTRA_VIDEO_QUALITY, 0);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 5);
+        takeVideoIntent.putExtra(android.provider.MediaStore.EXTRA_VIDEO_QUALITY, 5);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 7);
         if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         }
@@ -1297,9 +1297,6 @@ public class Camera2BasicFragment extends Fragment
             startActivity(playVideoIntent);
             getActivity().finish();
 
-
-            getActivity().startActivity(playVideoIntent);
-            getActivity().finish();
 
         } else if (requestCode == REQUEST_PHOTO_CAPTURE && resultCode == RESULT_OK) {
 

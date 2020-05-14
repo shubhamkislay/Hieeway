@@ -71,6 +71,7 @@ import com.shubhamkislay.jetpacklogin.Interface.GoogleButtonListener;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Interface.UsernameListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
+import com.shubhamkislay.jetpacklogin.Utils.MutedVideoView;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -138,6 +139,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
     String email,  name,  photourl, username;
+    MutedVideoView video_view;
+    private MediaPlayer mediaPlayer;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -172,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         get_started_back = findViewById(R.id.get_started_back);
 
+        video_view = findViewById(R.id.video_view);
 
         splash_layout = findViewById(R.id.splash_layout);
         background_screen = findViewById(R.id.background_screen);
@@ -200,51 +204,146 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 switch (fragment_number)
                 {
                     case 0: fragment_number =1;
-                        animateArrow();
-                        get_started.setVisibility(View.GONE);
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerEmailEntryFragment).commit();
 
-                        registerEmailEntryFragment.setGoogleButtonListener(MainActivity.this);
+                        try {
+                            if (mediaPlayer != null)
+
+                                mediaPlayer.start();
+                        } catch (Exception e) {
+
+                        }
+                        get_started.setVisibility(View.GONE);
+                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                animateArrow();
+                                // get_started.setVisibility(View.GONE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getSupportFragmentManager().beginTransaction()
+                                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                                .replace(R.id.framelayout, registerEmailEntryFragment).commit();
+
+                                        registerEmailEntryFragment.setGoogleButtonListener(MainActivity.this);
+                                    }
+                                }, arrowAnimDuration);
+
+                            }
+                        });
+
 
                         break;
 
                     case 1: fragment_number =2;
-                        animateArrow();
-                        get_started.setVisibility(View.INVISIBLE);
-                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+                        get_started.setVisibility(View.GONE);
+                        //animateArrow();
+                        //  get_started.setVisibility(View.GONE);
+
+
+                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                animateArrow();
+                                //  get_started.setVisibility(View.GONE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
+                                        getSupportFragmentManager().beginTransaction()
+                                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                                .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+                                    }
+                                }, arrowAnimDuration);
+
+                            }
+                        });
 
                         //registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
 
                         break;
 
                     case 2: fragment_number =3;
-                        animateArrow();
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerAuthenticateActivity).commit();
+                        // animateArrow();
+
+
+                        get_started.setVisibility(View.GONE);
+                        //animateArrow();
+                        //  get_started.setVisibility(View.GONE);
+
+
+                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                animateArrow();
+                                //  get_started.setVisibility(View.GONE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getSupportFragmentManager().beginTransaction()
+                                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                                .replace(R.id.framelayout, registerAuthenticateActivity).commit();
+
+                                    }
+                                }, arrowAnimDuration);
+
+                            }
+                        });
                         break;
 
                     case 3:
                         fragment_number = 4;
                        // animateArrow();
-                        animateArrow();
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerPhoneNumberFragment).commit();
+
+                        get_started.setVisibility(View.GONE);
+
+
+                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                animateArrow();
+                                //  get_started.setVisibility(View.GONE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getSupportFragmentManager().beginTransaction()
+                                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                                .replace(R.id.framelayout, registerAuthenticateActivity).commit();
+
+                                    }
+                                }, arrowAnimDuration);
+
+                            }
+                        });
+
                         break;
 
                     case 4:
                         fragment_number = 1;
                         // animateArrow();
+                        // get_started.setVisibility(View.GONE);
+
+
                         get_started.setVisibility(View.GONE);
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
-                                .replace(R.id.framelayout, registerEmailEntryFragment).commit();
+
+
+                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                animateArrow();
+                                //  get_started.setVisibility(View.GONE);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        getSupportFragmentManager().beginTransaction()
+                                                .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                                                .replace(R.id.framelayout, registerEmailEntryFragment).commit();
+
+                                    }
+                                }, arrowAnimDuration);
+
+                            }
+                        });
                         break;
 
 
@@ -305,6 +404,42 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     else
                     {
                         splash_layout.setVisibility(View.VISIBLE);
+
+                        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+                                + R.raw.hiee_splash);
+        /*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
+                + R.raw.high_image_splash_alt);*/
+
+                        // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
+                        video_view.setVideoURI(video);
+
+                        video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mp) {
+
+                                mediaPlayer = mp;
+                                mediaPlayer.setVolume(0, 0);
+                                mediaPlayer.start();
+
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        // progressBar.setAlpha(0.25f);
+
+                                        // startSplash();
+
+                                        get_started.setText("Continue with profile setup");
+                                        // animateArrow();
+                                        startSplash();
+                                        mediaPlayer.pause();
+                                        //stopPosition = view.getCurrentPosition();
+                                    }
+                                }, 1500);
+
+                            }
+                        });
                         String public_key,publickeyid,device_token;
 
                         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
@@ -322,9 +457,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
                         fragment_number =1;
-                        get_started.setText("Continue with profile setup");
-                       // animateArrow();
-                        startSplash();
+
                         registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
 
                         registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,databaseReference, device_token,public_key,publickeyid);
@@ -367,11 +500,48 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     finish();
                 }
             });*/
-            splash_layout.setVisibility(View.VISIBLE);
-            startSplash();
+
+            Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+                    + R.raw.hiee_splash);
+        /*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
+                + R.raw.high_image_splash_alt);*/
+
+            // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
+            video_view.setVideoURI(video);
+
+            video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+
+                    mediaPlayer = mp;
+                    mediaPlayer.setVolume(0, 0);
+                    mediaPlayer.start();
 
 
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            // progressBar.setAlpha(0.25f);
+
+                            // startSplash();
+
+                            //  get_started.setText("Continue with profile setup");
+                            // animateArrow();
+                            startSplash();
+                            mediaPlayer.pause();
+                            //stopPosition = view.getCurrentPosition();
+                        }
+                    }, 1500);
+
+                    splash_layout.setVisibility(View.VISIBLE);
+                    startSplash();
+
+
+                }
+            });
         }
+
 
     }
 
@@ -576,11 +746,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         display.getSize(size);
         displayHeight = size.y;
 
-        typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //typeWriter.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
-        typeWriter.setCharacterDelay(75);
-        typeWriter.animateText("Hieeway");
+        /*typeWriter.setCharacterDelay(75);
+        typeWriter.animateText("Hieeway");*/
 
        // animateArrow();
         new Handler().postDelayed(new Runnable() {
@@ -591,7 +761,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 get_started.setVisibility(View.VISIBLE);
                 //get_started_back.setVisibility(View.VISIBLE);
 
-                animateBottomNavMenuText(get_started,get_started_back);
+                // animateBottomNavMenuText(get_started,get_started_back);
             }
         },1250);
 
@@ -607,8 +777,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         animatorY = ObjectAnimator.ofFloat(send_arrow,"translationY",-displayHeight -(displayHeight)/3);
         animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 
-        alphagetStartedBtn = ObjectAnimator.ofFloat(get_started,"alpha",1.0f,0.0f);
-        alphagetStartedBtnBack = ObjectAnimator.ofFloat(get_started_back,"alpha",1.0f,0.0f);
+        /*alphagetStartedBtn = ObjectAnimator.ofFloat(get_started,"alpha",1.0f,0.0f);
+        alphagetStartedBtnBack = ObjectAnimator.ofFloat(get_started_back,"alpha",1.0f,0.0f);*/
 
 
         alphaArrow = ObjectAnimator.ofFloat(send_arrow,"alpha",1.0f,0.0f);
@@ -673,7 +843,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         animatorSet.start();
 
 
-        animateBottomNavMenuText(get_started,get_started_back);
+        // animateBottomNavMenuText(get_started,get_started_back);
 /*        get_started_back.setText("Change Fragment");
         get_started.setText("Change Fragment");*/
 

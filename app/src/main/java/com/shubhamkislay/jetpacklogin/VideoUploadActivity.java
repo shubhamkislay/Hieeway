@@ -74,6 +74,7 @@ public class VideoUploadActivity extends AppCompatActivity {
 
 
         startService(intent1);
+
         finish();
 
     }

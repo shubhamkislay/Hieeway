@@ -401,11 +401,41 @@
             android:background="@drawable/splash_logo"
             android:paddingBottom="500dp" />
 
-        <VideoView
+
+        <com.shubhamkislay.jetpacklogin.Utils.MutedVideoView
             android:id="@+id/videoView"
+            android:layout_centerHorizontal="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="25dp" />
+
+        <RelativeLayout
+            android:id="@+id/progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_above="@id/master_head"
+
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0">
+
+            <ProgressBar
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:rotation="180"
+                android:visibility="visible" />
+
+            <ProgressBar
+
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:visibility="visible" />
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/master_head"
@@ -431,7 +461,7 @@
         android:layout_marginBottom="-450dp"
         android:alpha="0.0"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:src="@drawable/hiewaylogomessagebacknewcomp" />
+        android:src="@drawable/hiewaylogomessagebackfresh" />
 
 
 </RelativeLayout>

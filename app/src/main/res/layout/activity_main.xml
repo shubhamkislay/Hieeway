@@ -16,7 +16,7 @@
 
     <RelativeLayout
         android:id="@+id/splash_layout"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent">
@@ -48,9 +48,11 @@
             android:src="@drawable/splash_logo_gradient"
             android:visibility="gone"/>
 
+
         <com.shubhamkislay.jetpacklogin.TypeWriter
             android:id="@+id/logo_txt"
             android:layout_marginLeft="8dp"
+            android:visibility="gone"
             android:layout_marginRight="8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -62,6 +64,12 @@
             android:text="Hieeway"
             android:textColor="#fff"/>
 
+        <com.shubhamkislay.jetpacklogin.Utils.MutedVideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp" />
 
 
         <TextView
@@ -87,12 +95,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="-100dp"
-        android:layout_marginRight="-100dp"
-        android:layout_marginBottom="-700dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="-420dp"
         android:alpha="0.0"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:src="@drawable/hiewaylogomessageback"
+        android:src="@drawable/hiewaylogomessagebackfresh"
         />
     <Button
 

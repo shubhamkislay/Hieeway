@@ -36,6 +36,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +71,8 @@ import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
 import static com.shubhamkislay.jetpacklogin.MyApplication.darkMutedSwatch;
+
+import com.shubhamkislay.jetpacklogin.Utils.MutedVideoView;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -127,6 +130,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     StorageReference storageReference;
     private Button uploadButton;
     private StorageTask uploadTask;
+    RelativeLayout progressBar;
 
 
     RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
@@ -135,7 +139,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private Bitmap bitmap;
     private String phonenumber = "default";
     Window window;
-    private VideoView view;
+    private MutedVideoView view, videoViewalt;
     private boolean videoPlayBack = true;
     private boolean continueAppLogoAnim = true;
     private int stopPosition;
@@ -160,10 +164,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         profileFragment = new ProfileFragment();
 
+        progressBar = findViewById(R.id.progress);
+
+
         getUserImageIntoNavButton();
         nav_parent_layout = findViewById(R.id.nav_parent_layout);
 
         master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         /**
          *When you set the background as a gradiant animation list drawable, then you can uncomment the following code
@@ -199,9 +208,13 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
    // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-        view = (VideoView) findViewById(R.id.videoView);
+        view = findViewById(R.id.videoView);
+
         Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
-                + R.raw.hieeway_splashscreen);
+                + R.raw.hiee_splash);
+        /*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
+                + R.raw.high_image_splash_alt);*/
+
         // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
         view.setVideoURI(video);
 
@@ -211,12 +224,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             public void onPrepared(MediaPlayer mp) {
 
                 mediaPlayer = mp;
+                mediaPlayer.setVolume(0, 0);
                 mediaPlayer.start();
 
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
+                        // progressBar.setAlpha(0.25f);
 
                         startSplash();
 
@@ -234,8 +250,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             public void onCompletion(MediaPlayer mp) {
 
                 // app_logo.animate().alpha(1.0f).setDuration(500);
-                appLogoAnimation(false);
+                // appLogoAnimation(false);
                 view.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 // startSplash();
                 animateArrow();
 
@@ -1609,9 +1626,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         // animateArrow();
         //view.seekTo(stopPosition);
+        progressBar.setAlpha(0.0f);
 
-        if (mediaPlayer != null)
-            mediaPlayer.start();
+        try {
+            if (mediaPlayer != null)
+                mediaPlayer.start();
+        } catch (Exception e) {
+
+        }
     }
 
 

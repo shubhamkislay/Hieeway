@@ -1219,7 +1219,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onClick(View v) {
 
 
-                startActivity(new Intent(getActivity(), NavButtonTest.class));
+                //startActivity(new Intent(getActivity(), NavButtonTest.class));
                 getActivity().finish();
 
             }

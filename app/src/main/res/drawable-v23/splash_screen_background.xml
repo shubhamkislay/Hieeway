@@ -18,8 +18,7 @@
         <item android:width="200dp"
             android:height="200dp"
             android:drawable="@drawable/splash_logo"
-            android:gravity="center_horizontal|top"
-            android:top="300dp"/>
+            android:gravity="center_horizontal|center_vertical" />
 
 
 

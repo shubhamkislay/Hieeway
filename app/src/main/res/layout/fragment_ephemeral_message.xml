@@ -1277,9 +1277,9 @@
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:layout_marginBottom="-450dp"
-            android:alpha="1.0"
+            android:alpha="0.0"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:src="@drawable/hiewaylogomessagebacknewcomp"
+            android:src="@drawable/hiewaylogomessagebackfresh"
             />
 
         <TextView
@@ -1296,15 +1296,15 @@
             android:id="@+id/receive_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-700dp"
+            android:layout_marginLeft="0dp"
             android:rotation="180"
-            android:layout_marginLeft="-100dp"
-            android:layout_marginRight="-100dp"
+            android:layout_marginTop="-450dp"
+            android:layout_marginRight="0dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:alpha="0.0"
 
-            android:src="@drawable/hiewaylogomessageback"
+            android:src="@drawable/hiewaylogomessagebackfresh"
 
             />
 
