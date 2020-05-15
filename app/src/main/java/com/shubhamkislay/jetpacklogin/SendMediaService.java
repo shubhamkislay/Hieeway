@@ -6,7 +6,9 @@ import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
+import android.util.Base64;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
@@ -26,7 +28,21 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.util.HashMap;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
 
 import static br.com.instachat.emojilibrary.model.Emoji.TAG;
 import static com.shubhamkislay.jetpacklogin.MyApplication.CHANNEL_3_ID;
@@ -37,11 +53,15 @@ public class SendMediaService extends Service {
     public String mKey;
     DatabaseReference databaseReference, receiverReference;
     String userChattingWithId, usernameChattingWith, userphotoUrl, currentUsername, currentUserPhoto, currentUserPublicKeyID, otherUserPublicKeyID, type;
-    Uri imageUri;
+    Uri imageUri, encryptedUri;
     StorageReference storageReference;
     StorageTask uploadTask;
     Intent stopSelfIntent;
     private PendingIntent pIntentlogin;
+    Timestamp timestamp;
+    private InputStream inputStream;
+    private FileOutputStream fos;
+    private int read;
 
     @Override
     public void onCreate() {
@@ -70,6 +90,8 @@ public class SendMediaService extends Service {
 
         } else {
 
+            timestamp = new Timestamp(System.currentTimeMillis());
+
             imageUri = Uri.parse(intent.getStringExtra("imageUri"));
             userChattingWithId = intent.getStringExtra("userChattingWithId");
             usernameChattingWith = intent.getStringExtra("usernameChattingWith");
@@ -78,6 +100,7 @@ public class SendMediaService extends Service {
             currentUserPhoto = intent.getStringExtra("currentUserPhoto");
             otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
             currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
+            mKey = intent.getStringExtra("mKey");
             type = intent.getStringExtra("type");
 
             databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
@@ -92,7 +115,7 @@ public class SendMediaService extends Service {
                             .getCurrentUser()
                             .getUid());
 
-            mKey = databaseReference.push().getKey();
+
 
 
             storageReference = FirebaseStorage.getInstance().getReference("uploads");
@@ -142,7 +165,7 @@ public class SendMediaService extends Service {
 
                 startForeground(1, notification);
 
-                uploadVideo();
+                encrpytVideo();
             }
         }
 
@@ -150,8 +173,94 @@ public class SendMediaService extends Service {
         return START_NOT_STICKY;
     }
 
-    private void uploadVideo() {
+    private void encrpytVideo() {
+
+        try {
+            //  AssetFileDescriptor videoAsset = getContentResolver().openAssetFileDescriptor(data.getData(), "r");
+            // FileInputStream fis = videoAsset.createInputStream();
+            // FileInputStream fis = new FileInputStream(getContentResolver().openFileDescriptor(videoUri, "r").getFileDescriptor());
+
+            // FileInputStream fis = new FileInputStream(String.valueOf(getContentResolver().acquireContentProviderClient(videoUri)));
+            inputStream = getContentResolver().openInputStream(imageUri);
+
+            File root = new File(Environment.getExternalStorageDirectory(), "Hieeway Videos");
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+            final File outfile = new File(root, mKey + ".mp4");
+            fos = new FileOutputStream(outfile);
+
+
+            final Cipher cipher = Cipher.getInstance("AES");
+
+            // encrypt the plain text using the public key
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            SecretKey skey = kgen.generateKey();
+
+            cipher.init(Cipher.ENCRYPT_MODE, skey);
+
+
+            String secKey = Base64.encodeToString(skey.getEncoded(), Base64.DEFAULT);
+
+
+            /**
+             * changing key in string form back to SecretKey object
+             *
+             * String seckey = publicKey;
+             * byte[] encodedKey     = Base64.decode(secKey, Base64.DEFAULT);
+             * SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+             *
+             * */
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        CipherInputStream cis = new CipherInputStream(inputStream, cipher);
+
+                        while (true) {
+
+
+                            if (!((read = cis.read()) != -1)) break;
+
+
+                            fos.write((char) read);
+                            fos.flush();
+
+
+                        }
+                        fos.close();
+                        encryptedUri = Uri.fromFile(outfile);
+                        uploadVideo(encryptedUri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+
+        } catch (FileNotFoundException e) {
+            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (IOException e) {
+            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            // Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
+
+    private void uploadVideo(Uri encryptedUri) {
         Log.v("SendMediaService", "Uploading...");
+        imageUri = encryptedUri;
         if (imageUri != null) {
 
 
@@ -211,6 +320,7 @@ public class SendMediaService extends Service {
                         sendMessageHash.put("messageTextThree", "");
                         sendMessageHash.put("showReplyMsg", false);
                         sendMessageHash.put("replyMsg", " ");
+                        sendMessageHash.put("timeStamp", timestamp.toString());
                         sendMessageHash.put("showGotReplyMsg", false);
                         sendMessageHash.put("gotReplyMsg", " ");
 
@@ -237,6 +347,7 @@ public class SendMediaService extends Service {
                         receiveMessageHash.put("messageTextThree", "");
                         receiveMessageHash.put("showReplyMsg", false);
                         receiveMessageHash.put("replyMsg", " ");
+                        receiveMessageHash.put("timeStamp", timestamp.toString());
                         receiveMessageHash.put("showGotReplyMsg", false);
                         receiveMessageHash.put("gotReplyMsg", " ");
 
@@ -275,6 +386,7 @@ public class SendMediaService extends Service {
             // Toast.makeText(PhotoEditToolsActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
         }
     }
+
 
     private void stopUploading(String messageKey, String userChattingWithId) {
         //  try{
@@ -349,6 +461,7 @@ public class SendMediaService extends Service {
                         Uri downloadUri = task.getResult();
 
                         String mUri = downloadUri.toString();
+                        mKey = databaseReference.push().getKey();
 
 
                         stopSelfIntent.putExtra("messageKey", mKey);
@@ -377,6 +490,7 @@ public class SendMediaService extends Service {
                         sendMessageHash.put("messageTextThree", "");
                         sendMessageHash.put("showReplyMsg", false);
                         sendMessageHash.put("replyMsg", " ");
+                        sendMessageHash.put("timeStamp", timestamp.toString());
                         sendMessageHash.put("showGotReplyMsg", false);
                         sendMessageHash.put("gotReplyMsg", " ");
 
@@ -403,6 +517,7 @@ public class SendMediaService extends Service {
                         receiveMessageHash.put("messageTextThree", "");
                         receiveMessageHash.put("showReplyMsg", false);
                         receiveMessageHash.put("replyMsg", " ");
+                        receiveMessageHash.put("timeStamp", timestamp.toString());
                         receiveMessageHash.put("showGotReplyMsg", false);
                         receiveMessageHash.put("gotReplyMsg", " ");
 

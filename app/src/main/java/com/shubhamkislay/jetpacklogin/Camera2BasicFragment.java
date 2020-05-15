@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -49,6 +51,7 @@ import androidx.core.content.ContextCompat;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.LruCache;
@@ -65,6 +68,9 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -74,11 +80,21 @@ import com.shubhamkislay.jetpacklogin.Helper.BitmapHelper;
 import com.shubhamkislay.jetpacklogin.Utils.BitmapUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -86,7 +102,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.DeflaterOutputStream;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.microedition.khronos.opengles.GL10;
 
 import ja.burhanrashid52.photoeditor.PhotoEditor;
@@ -109,6 +132,8 @@ public class Camera2BasicFragment extends Fragment
 
 
     RelativeLayout relativeLayout;
+    public String mKey;
+    DatabaseReference databaseReference;
     private static final String FRAGMENT_DIALOG = "dialog";
     GL10 gl;
 
@@ -449,6 +474,9 @@ public class Camera2BasicFragment extends Fragment
 
     };
     private Uri imageUri;
+    private InputStream inputStream;
+    private int read;
+    private FileOutputStream fos;
 
     /**
      * Shows a {@link Toast} on the UI thread.
@@ -1275,13 +1303,54 @@ public class Camera2BasicFragment extends Fragment
 
     }
 
+    public String encryptRSAToString(String clearText, String publicKey) {
+        String encryptedBase64 = "";
+        try {
+            KeyFactory keyFac = KeyFactory.getInstance("RSA");
+            KeySpec keySpec = new X509EncodedKeySpec(Base64.decode(publicKey.trim().getBytes(), Base64.DEFAULT));
+            Key key = keyFac.generatePublic(keySpec);
+
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+
+
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] encryptedBytes = cipher.doFinal(clearText.getBytes("UTF-8"));
+            encryptedBase64 = new String(Base64.encode(encryptedBytes, Base64.DEFAULT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return encryptedBase64.replaceAll("(\\r|\\n)", "");
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getActivity().managedQuery(contentUri, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+
+            databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                    .child(FirebaseAuth.getInstance()
+                            .getCurrentUser()
+                            .getUid())
+                    .child(CameraActivity.userChattingWithId);
+
+            mKey = databaseReference.push().getKey();
+
             Uri videoUri = data.getData();
-            //videoView.setVideoURI(videoUri);
+
+
             Intent playVideoIntent = new Intent(getActivity(), VideoUploadActivity.class);
 
 
@@ -1293,9 +1362,14 @@ public class Camera2BasicFragment extends Fragment
             playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
             playVideoIntent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
             playVideoIntent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+            playVideoIntent.putExtra("mKey", mKey);
 
             startActivity(playVideoIntent);
             getActivity().finish();
+
+
+
+
 
 
         } else if (requestCode == REQUEST_PHOTO_CAPTURE && resultCode == RESULT_OK) {

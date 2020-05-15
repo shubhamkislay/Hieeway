@@ -531,16 +531,21 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         public void onClick(View v) {
 
 
-                            Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+                            if (!chatMessage.getPhotourl().equals("played")) {
 
-                            // intent.putExtra("photoList", (Serializable) photoMessageList);
-                            intent.putExtra("userIdChattingWith", userIdChattingWith);
-                            intent.putExtra("photoUrl", chatMessage.getPhotourl());
-                            intent.putExtra("mKey", chatMessage.getMessageId());
-                            intent.putExtra("sender", chatMessage.getSenderId());
+                                Intent intent = new Intent(context, EphemeralPhotoActivity.class);
+
+                                // intent.putExtra("photoList", (Serializable) photoMessageList);
+                                intent.putExtra("userIdChattingWith", userIdChattingWith);
+                                intent.putExtra("photoUrl", chatMessage.getPhotourl());
+                                intent.putExtra("mKey", chatMessage.getMessageId());
+                                intent.putExtra("sender", chatMessage.getSenderId());
 
 
-                            context.startActivity(intent);
+                                context.startActivity(intent);
+                            } else {
+                                Toast.makeText(context, "Photo is deleted", Toast.LENGTH_SHORT).show();
+                            }
 
                         }
                     });
