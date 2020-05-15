@@ -210,23 +210,25 @@ public class SyncService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (phone.moveToNext()) {
-                    String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    number = number.replace(" ", "");
-                    number = number.replace("-", "");
-                    number = number.replace("(", "");
-                    number = number.replace(")", "");
+                if (phone.getCount() > 0) {
 
-                    if (!String.valueOf(number.charAt(0)).equals("+")) {
-                        if (String.valueOf(number.charAt(0)).equals("0"))
-                            number = number.substring(1);
-                        number = getCountryIso() + number;
+                    while (phone.moveToNext()) {
+                        String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                        number = number.replace(" ", "");
+                        number = number.replace("-", "");
+                        number = number.replace("(", "");
+                        number = number.replace(")", "");
 
-                    }
+                        if (!String.valueOf(number.charAt(0)).equals("+")) {
+                            if (String.valueOf(number.charAt(0)).equals("0"))
+                                number = number.substring(1);
+                            number = getCountryIso() + number;
 
-                    Log.v("Contact", "name: " + name + " number: " + number);
-                    getUserDetails(number, name, phone.moveToNext());
+                        }
+
+                        Log.v("Contact", "name: " + name + " number: " + number);
+                        getUserDetails(number, name, phone.moveToNext());
 
                                 /*if(!phone.moveToNext()) {
                                     new Handler().postDelayed(new Runnable() {
@@ -237,9 +239,14 @@ public class SyncService extends Service {
                                         }
                                     },5000);*/
 
-                    // }
+                        // }
 
+                    }
+                } else {
+                    CONTACT_SERVICE_RUNNUNG = false;
+                    stopSelf();
                 }
+
             }
         }).start();
 

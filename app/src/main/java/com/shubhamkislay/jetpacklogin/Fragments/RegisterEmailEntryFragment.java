@@ -150,7 +150,7 @@ public class RegisterEmailEntryFragment extends Fragment {
             }
         });
 
-        greet_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //  greet_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         new Handler().postDelayed(new Runnable() {
             @Override

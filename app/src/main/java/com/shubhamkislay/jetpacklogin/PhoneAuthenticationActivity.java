@@ -145,7 +145,7 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
                         PhoneAuthProvider.getInstance().verifyPhoneNumber(phonenumber, 60, TimeUnit.SECONDS, PhoneAuthenticationActivity.this, mCallbacks);
                         enter_details.setText("");
                         agreeBtn.setText("Verify OTP");
-                        questionText.setText("Enter the OTP received");
+                        questionText.setText("Enter the OTP received on " + phonenumber);
                         verifyOTP = true;
                     }
                 }

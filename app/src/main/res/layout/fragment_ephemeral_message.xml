@@ -1471,6 +1471,7 @@
 
     <com.devlomi.record_view.RecordButton
         android:id="@+id/record_button"
+        android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_swipe_msg"
@@ -1481,6 +1482,19 @@
         android:scaleType="centerInside"
 
         app:mic_icon="@drawable/recv_ic_mic_white" />
+
+    <ImageButton
+        android:id="@+id/disablerecord_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_swipe_msg"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/record_btn_background"
+        android:scaleType="centerInside"
+        android:src="@drawable/recv_ic_mic_white"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

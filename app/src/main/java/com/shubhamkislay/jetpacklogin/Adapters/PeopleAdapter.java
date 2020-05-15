@@ -75,6 +75,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
 
+
         final User user = mUsers.get(i);
 
         viewHolder.username.setText(user.getUsername());
@@ -83,7 +84,6 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
         viewHolder.progressBar.setVisibility(View.VISIBLE);
         viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
-
 
 
         try {
@@ -98,7 +98,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 requestOptions.centerCrop();*/
                 requestOptions.placeholder(R.drawable.no_profile);
                 try {
-                   // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
+                    // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
 
                     Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto()).addListener(new RequestListener<Drawable>() {
                         @Override
@@ -113,8 +113,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                             return false;
                         }
                     }).into(viewHolder.user_photo);
-                }catch (Exception e)
-                {
+                } catch (Exception e) {
                     viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.hieeway_background_blurred));
                 }
 
@@ -147,27 +146,23 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
 
             }
-        }catch (Exception e)
-        {
-            Log.e("Null pointer exp","Internet issue");
+        } catch (Exception e) {
+            Log.e("Null pointer exp", "Internet issue");
         }
 
 
+        checkFriendShip(viewHolder.friendsBtn, viewHolder.addFriendBtn, viewHolder.requestBtn, viewHolder.acceptBtn, viewHolder.denyBtn, user.getUserid());
 
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-
-         checkFriendShip(viewHolder.friendsBtn,viewHolder.addFriendBtn,viewHolder.requestBtn,viewHolder.acceptBtn,viewHolder.denyBtn,user.getUserid());
-
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if(viewHolder.friendsBtn.getVisibility()==View.VISIBLE) {
-                            Intent intent = new Intent(mContext, VerticalPageActivity.class);
-                            intent.putExtra("username", user.getUsername());
-                            intent.putExtra("userid", user.getUserid());
-                            intent.putExtra("photo", user.getPhoto());
-                            intent.putExtra("live", "no");
+                if (viewHolder.friendsBtn.getVisibility() == View.VISIBLE) {
+                    Intent intent = new Intent(mContext, VerticalPageActivity.class);
+                    intent.putExtra("username", user.getUsername());
+                    intent.putExtra("userid", user.getUserid());
+                    intent.putExtra("photo", user.getPhoto());
+                    intent.putExtra("live", "no");
 
 
                         /*Pair[] pairs = new Pair[1];
@@ -180,90 +175,79 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
                         mContext.startActivity(intent,options.toBundle());*/
 
-                            mContext.startActivity(intent);
-                        }
-                        else
-                        {
-                            //Toast.makeText(mContext,"Can't send messages as the user is not your friend",Toast.LENGTH_SHORT).show();
+                    mContext.startActivity(intent);
+                } else {
+                    //Toast.makeText(mContext,"Can't send messages as the user is not your friend",Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(mContext, ViewProfileActivity.class);
+                    Intent intent = new Intent(mContext, ViewProfileActivity.class);
 
 
-                            intent.putExtra("username", user.getUsername());
-                            intent.putExtra("name", user.getUsername());
-                            intent.putExtra("feeling_txt", user.getFeeling());
-                            intent.putExtra("bio_txt", user.getBio());
-                            intent.putExtra("userId", user.getUserid());
-                            intent.putExtra("currentUsername", currentUsername);
-                            if (viewHolder.acceptBtn.getVisibility() == View.VISIBLE)
-                                intent.putExtra("friendStatus", "got");
-                            else if (viewHolder.requestBtn.getVisibility() == View.VISIBLE)
-                                intent.putExtra("friendStatus", "requested");
-                            else
-                                intent.putExtra("friendStatus", "notFriend");
+                    intent.putExtra("username", user.getUsername());
+                    intent.putExtra("name", user.getName());
+                    intent.putExtra("feeling_txt", user.getFeeling());
+                    intent.putExtra("bio_txt", user.getBio());
+                    intent.putExtra("userId", user.getUserid());
+                    intent.putExtra("currentUsername", currentUsername);
+                    if (viewHolder.acceptBtn.getVisibility() == View.VISIBLE)
+                        intent.putExtra("friendStatus", "got");
+                    else if (viewHolder.requestBtn.getVisibility() == View.VISIBLE)
+                        intent.putExtra("friendStatus", "requested");
+                    else
+                        intent.putExtra("friendStatus", "notFriend");
 
-                            intent.putExtra("feelingEmoji", user.getFeelingIcon());
-                            intent.putExtra("photourl", user.getPhoto());
+                    intent.putExtra("feelingEmoji", user.getFeelingIcon());
+                    intent.putExtra("photourl", user.getPhoto());
 
-                            mContext.startActivity(intent);
+                    mContext.startActivity(intent);
 
-                        }
+                }
 
-                    }
-                });
-
-
+            }
+        });
 
 
-                viewHolder.addFriendBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        viewHolder.addFriendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
-
-                        viewHolder.addFriendBtn.setVisibility(View.GONE);
-                        DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child(user.getUserid());
-
+                viewHolder.addFriendBtn.setVisibility(View.GONE);
+                DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(user.getUserid());
 
 
+                HashMap<String, Object> hashMap = new HashMap<>();
+
+                hashMap.put("friendId", user.getUserid());
+                hashMap.put("status", "requested");
+                hashMap.put("username", user.getUsername());
+
+                requestSentReference.updateChildren(hashMap);
 
 
-                        HashMap<String, Object> hashMap = new HashMap<>();
+                DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
+                        .child(user.getUserid())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                        hashMap.put("friendId",user.getUserid());
-                        hashMap.put("status","requested");
-                        hashMap.put("username",user.getUsername());
-
-                        requestSentReference.updateChildren(hashMap);
+                HashMap<String, Object> receiveHashMap = new HashMap<>();
 
 
-                        DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
-                                .child(user.getUserid())
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                receiveHashMap.put("friendId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                receiveHashMap.put("status", "got");
+                receiveHashMap.put("username", currentUsername);
 
-                        HashMap<String,Object> receiveHashMap = new HashMap<>();
+                requestReceiveReference.updateChildren(receiveHashMap);
 
-
-                        receiveHashMap.put("friendId",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        receiveHashMap.put("status","got");
-                        receiveHashMap.put("username",currentUsername);
-
-                        requestReceiveReference.updateChildren(receiveHashMap);
-
-                        notifyDataSetChanged();
+                notifyDataSetChanged();
 
 
-
-
-                    }
-                });
+            }
+        });
 
         viewHolder.acceptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
 
                 viewHolder.acceptBtn.setVisibility(View.GONE);
@@ -272,13 +256,11 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                         .child(user.getUserid());
 
 
-
-
                 HashMap<String, Object> hashMap = new HashMap<>();
 
-                hashMap.put("friendId",user.getUserid());
-                hashMap.put("status","friends");
-                hashMap.put("username",user.getUsername());
+                hashMap.put("friendId", user.getUserid());
+                hashMap.put("status", "friends");
+                hashMap.put("username", user.getUsername());
 
                 requestSentReference.updateChildren(hashMap);
 
@@ -296,18 +278,16 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                         .child(user.getUserid())
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                HashMap<String,Object> receiveHashMap = new HashMap<>();
+                HashMap<String, Object> receiveHashMap = new HashMap<>();
 
 
-                receiveHashMap.put("friendId",FirebaseAuth.getInstance().getCurrentUser().getUid());
-                receiveHashMap.put("status","friends");
-                receiveHashMap.put("username",currentUsername);
+                receiveHashMap.put("friendId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                receiveHashMap.put("status", "friends");
+                receiveHashMap.put("username", currentUsername);
 
                 requestReceiveReference.updateChildren(receiveHashMap);
 
                 notifyDataSetChanged();
-
-
 
 
             }
@@ -339,7 +319,6 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 notifyDataSetChanged();
 
 
-
             }
         });
 
@@ -350,7 +329,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
                 viewHolder.requestBtn.setVisibility(View.GONE);
 
-               // notifyItemRemoved(viewHolder.getAdapterPosition());
+                // notifyItemRemoved(viewHolder.getAdapterPosition());
 
                 DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

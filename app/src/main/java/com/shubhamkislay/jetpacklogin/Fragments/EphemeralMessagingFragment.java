@@ -305,6 +305,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private MediaRecorder recorder = null;
     private boolean audioRecording = false;
     RelativeLayout bin;
+    private ImageView disablerecord_button;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -315,8 +316,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_ephemeral_message, container, false);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+
+        /**
+         * The below code is used to block screenshots
+         */
+        /*getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);*/
 
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -327,6 +332,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         record_audio_btn = view.findViewById(R.id.record_audio_btn);
 
         bin = view.findViewById(R.id.bin);
+        disablerecord_button = (ImageView) view.findViewById(R.id.disablerecord_button);
 
 
 
@@ -400,11 +406,33 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         //recordButton.setListenForRecord(false);
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            disablerecord_button.setVisibility(View.VISIBLE);
+            recordButton.setVisibility(View.GONE);
+            //recordButton.setEnabled(false);
+        } else {
+            disablerecord_button.setVisibility(View.GONE);
+            recordButton.setVisibility(View.VISIBLE);
+        }
+
+        disablerecord_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    requestAudioPermisson();
+                    Toast.makeText(getContext(), "Requesting Audio Permission", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         //ListenForRecord must be false ,otherwise onClick will not be called
         recordButton.setOnRecordClickListener(new OnRecordClickListener() {
             @Override
             public void onClick(View v) {
+                //requestAudioPermisson();
                 // Toast.makeText(AudioRecorderActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
                 //  Log.d("RecordButton","RECORD BUTTON CLICKED");
             }
@@ -435,6 +463,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onStart() {
                 //Start Recording..
 
+                /*if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED )
+                    requestAudioPermisson();
+
+                else {*/
+
                 startRecording();
                 // bottom_bar.setVisibility(View.INVISIBLE);
                 camera.setVisibility(View.INVISIBLE);
@@ -444,6 +478,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 message_box_behind.setAlpha(0.0f);
 
                 Log.d("RecordView", "onStart");
+                // }
 
             }
 
@@ -2232,6 +2267,55 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
        // updateUserPresence(false);
 
         return view;
+    }
+
+    private void requestAudioPermisson() {
+
+
+
+        /*Dexter.withActivity(getActivity())
+                .withPermission(Manifest.permission.RECORD_AUDIO)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        disablerecord_button.setVisibility(View.GONE);
+                        recordButton.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                    }
+                }).check();*/
+
+        Dexter.withActivity(getActivity())
+                .withPermissions(Manifest.permission.RECORD_AUDIO)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                        if (report.areAllPermissionsGranted()) {
+                            disablerecord_button.setVisibility(View.GONE);
+                            recordButton.setVisibility(View.VISIBLE);
+                        } else {
+                            Toast.makeText(getActivity(), "Please give audio record permission", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        token.continuePermissionRequest();
+
+                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+                }).check();
     }
 
     private ChatMessageCompound setUpSendingChat()

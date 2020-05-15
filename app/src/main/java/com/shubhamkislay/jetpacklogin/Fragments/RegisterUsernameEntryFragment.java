@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.shubhamkislay.jetpacklogin.CustomImageView;
 import com.shubhamkislay.jetpacklogin.Interface.ImageSelectionCropListener;
@@ -356,11 +357,17 @@ public class RegisterUsernameEntryFragment extends Fragment {
                                     progressBackgrounnd.setVisibility(View.INVISIBLE);
                                     progressbar.setVisibility(View.INVISIBLE);
                                     username_found.setVisibility(View.VISIBLE);
-                                    enter_btn.setVisibility(View.VISIBLE);
+                                    enter_btn.setVisibility(View.INVISIBLE);
 
                                 }
                               //  usernameTextView.set
 
+                            } else {
+                                intent_change_btn.setVisibility(View.VISIBLE);
+                                progressBackgrounnd.setVisibility(View.INVISIBLE);
+                                progressbar.setVisibility(View.INVISIBLE);
+                                username_found.setVisibility(View.VISIBLE);
+                                enter_btn.setVisibility(View.INVISIBLE);
                             }
                         }
 
@@ -373,6 +380,30 @@ public class RegisterUsernameEntryFragment extends Fragment {
                         }
                     });
                 }
+
+                /*DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                Query query = rootRef.child("Users").orderByChild("username").equalTo(username);
+                query.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists())
+                        {
+                            Toast.makeText(getContext(),"Username unavailable",Toast.LENGTH_SHORT).show();
+                            progressBackgrounnd.setVisibility(View.INVISIBLE);
+                            progressbar.setVisibility(View.INVISIBLE);
+                            enter_btn.setVisibility(View.VISIBLE);
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                            */
+
             }
         });
 

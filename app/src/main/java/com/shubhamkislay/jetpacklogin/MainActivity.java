@@ -236,6 +236,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         break;
 
                     case 1: fragment_number =2;
+                        try {
+                            if (mediaPlayer != null)
+
+                                mediaPlayer.start();
+                        } catch (Exception e) {
+
+                        }
                         get_started.setVisibility(View.GONE);
                         //animateArrow();
                         //  get_started.setVisibility(View.GONE);
@@ -266,6 +273,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     case 2: fragment_number =3;
                         // animateArrow();
 
+                        try {
+                            if (mediaPlayer != null)
+
+                                mediaPlayer.start();
+                        } catch (Exception e) {
+
+                        }
 
                         get_started.setVisibility(View.GONE);
                         //animateArrow();
@@ -294,6 +308,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     case 3:
                         fragment_number = 4;
                        // animateArrow();
+                        try {
+                            if (mediaPlayer != null)
+
+                                mediaPlayer.start();
+                        } catch (Exception e) {
+
+                        }
 
                         get_started.setVisibility(View.GONE);
 
@@ -322,6 +343,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         fragment_number = 1;
                         // animateArrow();
                         // get_started.setVisibility(View.GONE);
+                        try {
+                            if (mediaPlayer != null)
+
+                                mediaPlayer.start();
+                        } catch (Exception e) {
+
+                        }
 
 
                         get_started.setVisibility(View.GONE);
@@ -352,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             }
         });
 
-        get_started.setOnTouchListener(new View.OnTouchListener() {
+        /*get_started.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -376,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         });
 
 
-
+*/
 
 
 
@@ -432,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                                         get_started.setText("Continue with profile setup");
                                         // animateArrow();
+                                        //   fragment_number = 0;
                                         startSplash();
                                         mediaPlayer.pause();
                                         //stopPosition = view.getCurrentPosition();
@@ -758,7 +787,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void run() {
                 //initiateNavActivity();
                // animateArrow();
-                get_started.setVisibility(View.VISIBLE);
+                if (fragment_number == 0 || fragment_number == 1)
+                    get_started.setVisibility(View.VISIBLE);
                 //get_started_back.setVisibility(View.VISIBLE);
 
                 // animateBottomNavMenuText(get_started,get_started_back);

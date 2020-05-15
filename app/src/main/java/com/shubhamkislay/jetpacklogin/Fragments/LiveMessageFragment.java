@@ -111,8 +111,11 @@ public class LiveMessageFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_page3, container, false);
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+        /**
+         * The below code is used to block screenshots
+         */
+        /*getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);*/
 
         final String usernameChattingWith = getArguments().getString("usernameChattingWith");
         userChattingWithId = getArguments().getString("userIdChattingWith");

@@ -30,6 +30,7 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:gravity="center_vertical|center"
+            android:fontFamily="sans-serif"
             android:textColor="#fff"
             android:textSize="100sp"
             android:textStyle="bold"

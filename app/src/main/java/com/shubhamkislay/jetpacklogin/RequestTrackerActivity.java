@@ -100,8 +100,8 @@ public class RequestTrackerActivity extends AppCompatActivity {
 
                                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        User user = dataSnapshot.getValue(User.class);
+                                    public void onDataChange(@NonNull DataSnapshot snapshot1) {
+                                        User user = snapshot1.getValue(User.class);
                                         userList.add(user);
                                         progressBar.setVisibility(View.GONE);
                                         progressBarTwo.setVisibility(View.GONE);
