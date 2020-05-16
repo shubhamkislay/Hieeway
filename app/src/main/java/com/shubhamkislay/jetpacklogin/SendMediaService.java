@@ -34,7 +34,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.KeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.sql.Timestamp;
 import java.util.HashMap;
 
@@ -200,7 +204,7 @@ public class SendMediaService extends Service {
             cipher.init(Cipher.ENCRYPT_MODE, skey);
 
 
-            String secKey = Base64.encodeToString(skey.getEncoded(), Base64.DEFAULT);
+            final String mediaKey = Base64.encodeToString(skey.getEncoded(), Base64.DEFAULT);
 
 
             /**
@@ -219,20 +223,28 @@ public class SendMediaService extends Service {
                     try {
                         CipherInputStream cis = new CipherInputStream(inputStream, cipher);
 
+                        byte[] d = new byte[10 * 1024 * 1024];
+
                         while (true) {
 
 
-                            if (!((read = cis.read()) != -1)) break;
+                            if (!((read = inputStream.read(d)) != -1)) break;
 
 
-                            fos.write((char) read);
+                            fos.write(d, 0, (char) read);
                             fos.flush();
 
 
                         }
                         fos.close();
                         encryptedUri = Uri.fromFile(outfile);
-                        uploadVideo(encryptedUri);
+                        /*String senderMediaKey = encryptRSAToString(mediaKey,CameraActivity.currentUserPublicKey);
+                        String receiverMediaKey = encryptRSAToString(mediaKey,CameraActivity.otherUserPublicKey);*/
+
+                        String senderMediaKey = encryptRSAToString(mediaKey, CameraActivity.currentUserPublicKey);
+                        String receiverMediaKey = encryptRSAToString(mediaKey, CameraActivity.otherUserPublicKey);
+
+                        uploadVideo(imageUri, senderMediaKey, receiverMediaKey);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -258,7 +270,7 @@ public class SendMediaService extends Service {
         }
     }
 
-    private void uploadVideo(Uri encryptedUri) {
+    private void uploadVideo(Uri encryptedUri, final String senderMediaKey, final String receiverMediaKey) {
         Log.v("SendMediaService", "Uploading...");
         imageUri = encryptedUri;
         if (imageUri != null) {
@@ -322,6 +334,7 @@ public class SendMediaService extends Service {
                         sendMessageHash.put("replyMsg", " ");
                         sendMessageHash.put("timeStamp", timestamp.toString());
                         sendMessageHash.put("showGotReplyMsg", false);
+                        sendMessageHash.put("mediaKey", senderMediaKey);
                         sendMessageHash.put("gotReplyMsg", " ");
 
                         final HashMap<String, Object> receiveMessageHash = new HashMap<>();
@@ -349,6 +362,7 @@ public class SendMediaService extends Service {
                         receiveMessageHash.put("replyMsg", " ");
                         receiveMessageHash.put("timeStamp", timestamp.toString());
                         receiveMessageHash.put("showGotReplyMsg", false);
+                        receiveMessageHash.put("mediaKey", receiverMediaKey);
                         receiveMessageHash.put("gotReplyMsg", " ");
 
                         databaseReference.child(mKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -419,6 +433,27 @@ public class SendMediaService extends Service {
 
         return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
 
+    }
+
+    public String encryptRSAToString(String clearText, String publicKey) {
+        String encryptedBase64 = "";
+        try {
+            KeyFactory keyFac = KeyFactory.getInstance("RSA");
+            KeySpec keySpec = new X509EncodedKeySpec(Base64.decode(publicKey.trim().getBytes(), Base64.DEFAULT));
+            Key key = keyFac.generatePublic(keySpec);
+
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] encryptedBytes = cipher.doFinal(clearText.getBytes("UTF-8"));
+            encryptedBase64 = new String(Base64.encode(encryptedBytes, Base64.DEFAULT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return encryptedBase64.replaceAll("(\\r|\\n)", "");
     }
 
     private void uploadImage() {

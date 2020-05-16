@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.shubhamkislay.jetpacklogin.RevealReplyActivity;
 import com.shubhamkislay.jetpacklogin.Adapters.SendMessageAdapter;
 import com.shubhamkislay.jetpacklogin.ArchiveActivityViewModel;
@@ -418,6 +420,26 @@ public class SendMessageFragment extends Fragment {
         deleteMessageSenderRef.removeValue();
         reportReceiverReference.removeValue();
         reportSenderReference.removeValue();
+
+        String deleteUrl = "default";
+
+        if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played")
+                || !chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played")
+                || !chatMessage.getAudiourl().equals("default") || !chatMessage.getAudiourl().equals("played")) {
+            if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played"))
+                deleteUrl = chatMessage.getPhotourl();
+            else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
+                deleteUrl = chatMessage.getVideourl();
+            else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
+                deleteUrl = chatMessage.getAudiourl();
+
+            if (!deleteUrl.equals("default")) {
+                StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(deleteUrl);
+                photoRef.delete();
+            }
+
+        }
+
 
 
         if (deleteForAll) {

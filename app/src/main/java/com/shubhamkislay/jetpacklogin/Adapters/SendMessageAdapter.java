@@ -310,7 +310,7 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                 try {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-                    Date parsedDate = dateFormat.parse(chatMessage.getTimestamp());
+                    Date parsedDate = dateFormat.parse(chatMessage.getTimeStamp());
 
 
                     Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
@@ -516,6 +516,10 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 intent.putExtra("photoUrl", chatMessage.getPhotourl());
                                 intent.putExtra("mKey", chatMessage.getMessageId());
                                 intent.putExtra("sender", chatMessage.getSenderId());
+                                intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                                intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+
 
 
                                 context.startActivity(intent);
@@ -540,6 +544,9 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 intent.putExtra("photoUrl", chatMessage.getPhotourl());
                                 intent.putExtra("mKey", chatMessage.getMessageId());
                                 intent.putExtra("sender", chatMessage.getSenderId());
+                                intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                                intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
 
 
                                 context.startActivity(intent);
@@ -564,6 +571,10 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 intent.putExtra("videoUrl", chatMessage.getVideourl());
                                 intent.putExtra("mKey", chatMessage.getMessageId());
                                 intent.putExtra("sender", chatMessage.getSenderId());
+                                intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                                intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+                                intent.putExtra("mediaKey", chatMessage.getMediaKey());
 
 
                                 context.startActivity(intent);
@@ -588,6 +599,9 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 intent.putExtra("videoUrl", chatMessage.getVideourl());
                                 intent.putExtra("mKey", chatMessage.getMessageId());
                                 intent.putExtra("sender", chatMessage.getSenderId());
+                                intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                                intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
 
 
                                 context.startActivity(intent);
@@ -613,6 +627,9 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     intent.putExtra("audiourl", chatMessage.getAudiourl());
                                     intent.putExtra("mKey", chatMessage.getMessageId());
                                     intent.putExtra("sender", chatMessage.getSenderId());
+                                    intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                    intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                                    intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
 
 
                                     context.startActivity(intent);
@@ -647,6 +664,9 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                     intent.putExtra("audiourl", chatMessage.getAudiourl());
                                     intent.putExtra("mKey", chatMessage.getMessageId());
                                     intent.putExtra("sender", chatMessage.getSenderId());
+                                    intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                    intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                                    intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
 
 
                                     context.startActivity(intent);

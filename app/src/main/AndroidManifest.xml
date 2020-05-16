@@ -31,7 +31,8 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VideoPlayActivity"></activity>
+        <activity android:name=".VideoEncryptionActivity"></activity>
+        <activity android:name=".VideoPlayActivity" />
         <activity android:name=".VideoUploadActivity" />
         <activity android:name=".PhoneAuthenticationActivity" />
         <activity android:name=".ContactsActivity" />

@@ -416,7 +416,7 @@ public class RevealMessageDialog extends Dialog {
                     sendMessageHash.put("replyMsg",searchedMessage.getReplyMsg());
                     sendMessageHash.put("showGotReplyMsg",searchedMessage.getShowGotReplyMsg());
                     sendMessageHash.put("gotReplyMsg",searchedMessage.getGotReplyMsg());
-                    sendMessageHash.put("timeStamp",searchedMessage.getTimestamp());
+                    sendMessageHash.put("timeStamp", searchedMessage.getTimeStamp());
 
                     requestMessageRef.child(searchedMessage.getMessageId()).updateChildren(sendMessageHash);
                 }

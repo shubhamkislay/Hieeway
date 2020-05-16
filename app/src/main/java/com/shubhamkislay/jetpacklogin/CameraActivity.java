@@ -15,6 +15,7 @@ public class CameraActivity extends AppCompatActivity {
     public static String otherUserPublicKeyID;
     public static String currentUserPublicKeyID;
     public static String otherUserPublicKey;
+    public static String currentUserPublicKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class CameraActivity extends AppCompatActivity {
         otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
         currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
         otherUserPublicKey = intent.getStringExtra("otherUserPublicKey");
+        currentUserPublicKey = intent.getStringExtra("currentUserPublicKey");
 
 
 

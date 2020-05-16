@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context=".VideoEncryptionActivity">
+
+    <ImageButton
+        android:id="@+id/videoRecord"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/message_box_drawable"
+        android:src="@drawable/ic_videocam_black_24dp" />
+
+    <TextView
+        android:id="@+id/originalVideoTextFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/videoRecord"
+        android:layout_margin="24dp"
+        android:background="@drawable/message_box_drawable"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="original file" />
+
+    <TextView
+        android:id="@+id/encryptedlVideoTextFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/originalVideoTextFile"
+        android:layout_margin="24dp"
+        android:background="@drawable/message_box_drawable"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="encrypted file" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
+</RelativeLayout>

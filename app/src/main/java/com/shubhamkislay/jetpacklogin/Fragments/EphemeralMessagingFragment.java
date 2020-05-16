@@ -730,6 +730,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     intent.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
                     intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                     intent.putExtra("otherUserPublicKey", otherUserPublicKey);
+                    intent.putExtra("currentUserPublicKey", currentUserPublicKey);
+
 
 
                     // intent.putExtra("userChattingWithId", currentUserPhoto);
@@ -2393,7 +2395,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         chatMessageReceiverCopy.setShowGotReplyMsg(false);
         chatMessageReceiverCopy.setGotReplyMsg(" ");
         chatMessageReceiverCopy.setReplyMsg(" ");
-        chatMessageReceiverCopy.setTimestamp(timestamp.toString());
+        chatMessageReceiverCopy.setTimeStamp(timestamp.toString());
 
 
         chatMessageSenderCopy.setMessageId("notAssigned");
@@ -2419,7 +2421,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         chatMessageSenderCopy.setShowGotReplyMsg(false);
         chatMessageSenderCopy.setGotReplyMsg(" ");
         chatMessageSenderCopy.setReplyMsg(" ");
-        chatMessageSenderCopy.setTimestamp(timestamp.toString());
+        chatMessageSenderCopy.setTimeStamp(timestamp.toString());
 
 
 
@@ -3157,6 +3159,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 intent.putExtra("currentUserPhoto", currentUserPhoto);
                                 intent.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
                                 intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                                intent.putExtra("otherUserPublicKey", otherUserPublicKey);
+                                intent.putExtra("currentUserPublicKey", currentUserPublicKey);
+
 
 
                                 // intent.putExtra("userChattingWithId", currentUserPhoto);
@@ -4264,7 +4269,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             sendMessageHash.put("replyMsg",chatMessageReceiverCopy.getReplyMsg());
             sendMessageHash.put("showGotReplyMsg",chatMessageReceiverCopy.getShowGotReplyMsg());
             sendMessageHash.put("gotReplyMsg",chatMessageReceiverCopy.getGotReplyMsg());
-            sendMessageHash.put("timeStamp",chatMessageReceiverCopy.getTimestamp());
+            sendMessageHash.put("timeStamp", chatMessageReceiverCopy.getTimeStamp());
 
 
 
@@ -4297,7 +4302,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             sendMessageHashSenderCopy.put("replyMsg",chatMessageSenderCopy.getReplyMsg());
             sendMessageHashSenderCopy.put("showGotReplyMsg",chatMessageSenderCopy.getShowGotReplyMsg());
             sendMessageHashSenderCopy.put("gotReplyMsg",chatMessageSenderCopy.getGotReplyMsg());
-            sendMessageHashSenderCopy.put("timeStamp",chatMessageSenderCopy.getTimestamp());
+            sendMessageHashSenderCopy.put("timeStamp", chatMessageSenderCopy.getTimeStamp());
 
 
 /*            final DatabaseReference messageReportSender = FirebaseDatabase.getInstance().getReference("ReportMessages")

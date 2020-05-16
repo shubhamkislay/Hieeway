@@ -198,7 +198,7 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
         //Ths is try catch block is to add the timestamp
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-            Date parsedDate = dateFormat.parse(chatMessage.getTimestamp());
+            Date parsedDate = dateFormat.parse(chatMessage.getTimeStamp());
 
 
             Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
