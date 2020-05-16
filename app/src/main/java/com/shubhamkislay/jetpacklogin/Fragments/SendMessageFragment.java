@@ -423,7 +423,7 @@ public class SendMessageFragment extends Fragment {
 
         String deleteUrl = "default";
 
-        if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played")
+        /*if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played")
                 || !chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played")
                 || !chatMessage.getAudiourl().equals("default") || !chatMessage.getAudiourl().equals("played")) {
             if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played"))
@@ -438,7 +438,7 @@ public class SendMessageFragment extends Fragment {
                 photoRef.delete();
             }
 
-        }
+        }*/
 
 
 

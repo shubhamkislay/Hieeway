@@ -38,11 +38,52 @@
         android:padding="12dp"
         android:text="encrypted file" />
 
+    <TextView
+        android:id="@+id/decryptedlVideoTextFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/encryptedlVideoTextFile"
+        android:layout_margin="24dp"
+        android:background="@drawable/message_box_drawable"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="decrypted file" />
+
     <VideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/encryptVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
+        android:background="@drawable/message_box_drawable"
+        android:padding="12dp"
+        android:text="Encrypt" />
+
+    <Button
+        android:id="@+id/decryptVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
+        android:background="@drawable/message_box_drawable"
+        android:padding="12dp"
+        android:text="Decrypt" />
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:resize_mode="zoom"
+        app:use_controller="false" />
 
 
 </RelativeLayout>
