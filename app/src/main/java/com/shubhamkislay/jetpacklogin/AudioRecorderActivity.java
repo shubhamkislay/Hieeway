@@ -92,6 +92,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
     String mKey;
     Boolean deleteUponExiting = false;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,19 +146,6 @@ public class AudioRecorderActivity extends AppCompatActivity {
             requestAllPermissions();
 
 
-        record_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN)
-                    startRecording();
-
-                else if (event.getAction() == MotionEvent.ACTION_UP)
-                    stopRecording();
-
-                return false;
-            }
-        });
 
         play_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,225 +184,6 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
         //player.
 
-        RecordView recordView = (RecordView) findViewById(R.id.record_view);
-        RecordButton recordButton = (RecordButton) findViewById(R.id.record_button);
-
-        recordView.setSmallMicColor(Color.parseColor("#ffffff"));
-
-        // recordView.setSlideToCancelText("TEXT");
-
-        //disable Sounds
-        recordView.setSoundEnabled(false);
-
-        //prevent recording under one Second (it's false by default)
-        recordView.setLessThanSecondAllowed(false);
-
-        //set Custom sounds onRecord
-        //you can pass 0 if you don't want to play sound in certain state
-        recordView.setCustomSounds(R.raw.quiet_knock, R.raw.shootem, R.raw.record_error);
-
-        //change slide To Cancel Text Color
-        recordView.setSlideToCancelTextColor(Color.parseColor("#ffffff"));
-        //change slide To Cancel Arrow Color
-        recordView.setSlideToCancelArrowColor(Color.parseColor("#ffffff"));
-        //change Counter Time (Chronometer) color
-        recordView.setCounterTimeColor(Color.parseColor("#ff0000"));
-
-
-        //recordButton.setListenForRecord(false);
-
-        //ListenForRecord must be false ,otherwise onClick will not be called
-        recordButton.setOnRecordClickListener(new OnRecordClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Toast.makeText(AudioRecorderActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
-                //  Log.d("RecordButton","RECORD BUTTON CLICKED");
-            }
-        });
-
-        recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
-            @Override
-            public void onAnimationEnd() {
-                // Log.d("RecordView", "Basket Animation Finished");
-            }
-        });
-
-
-        recordView.setSlideToCancelText("Slide to cancel");
-
-        //IMPORTANT
-        recordButton.setRecordView(recordView);
-
-
-        recordView.setOnRecordListener(new OnRecordListener() {
-            @Override
-            public void onStart() {
-                //Start Recording..
-                startRecording();
-                Log.d("RecordView", "onStart");
-            }
-
-            @Override
-            public void onCancel() {
-                //On Swipe To Cancel
-                recorder.reset();
-                recorder.release();
-
-                //recorder.
-                Log.d("RecordView", "onCancel");
-
-            }
-
-            @Override
-            public void onFinish(long recordTime) {
-                //Stop Recording..
-                /*String time = getHumanTimeText(recordTime);
-                Log.d("RecordView", "onFinish");
-
-
-                Log.d("RecordTime", time);*/
-
-                stopRecording();
-            }
-
-            @Override
-            public void onLessThanSecond() {
-                //When the record time is less than One Second
-                Log.d("RecordView", "onLessThanSecond");
-
-                recorder.reset();
-                recorder.release();
-            }
-        });
-
-
-    }
-
-
-    private void startRecording() {
-        recorder = new MediaRecorder();
-        play_btn.setVisibility(View.GONE);
-        Toast.makeText(AudioRecorderActivity.this, "Recording started", Toast.LENGTH_SHORT).show();
-        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setOutputFile(fileName);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try {
-            recorder.prepare();
-        } catch (IOException e) {
-            //Log.e(LOG_TAG, "prepare() failed");
-        }
-
-        recorder.start();
-    }
-
-    private void stopRecording() {
-
-        Toast.makeText(AudioRecorderActivity.this, "Recording stopped", Toast.LENGTH_SHORT).show();
-        recorder.stop();
-        recorder.release();
-        recorder = null;
-
-        uploadAudio();
-
-        play_btn.setVisibility(View.VISIBLE);
-    }
-
-    private void uploadAudio() {
-
-        progressDialog = new ProgressDialog(AudioRecorderActivity.this);
-        progressDialog.setTitle("Uploading audio...");
-        progressDialog.show();
-
-        Uri uri = Uri.fromFile(new File(fileName));
-
-
-        storageReference = FirebaseStorage.getInstance().getReference().child(System.currentTimeMillis() + "." + getExtension(uri));
-
-
-        uploadTask = storageReference.putFile(uri);
-
-        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task task) throws Exception {
-
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-
-
-                return storageReference.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-
-                    progressDialog.dismiss();
-                    Uri downloadUri = task.getResult();
-
-                    String mUri = downloadUri.toString();
-
-
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                            .child(FirebaseAuth.getInstance()
-                                    .getCurrentUser()
-                                    .getUid())
-                            .child(userIdChattingWith);
-
-                    DatabaseReference receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
-                            .child(userIdChattingWith)
-                            .child(FirebaseAuth.getInstance()
-                                    .getCurrentUser()
-                                    .getUid());
-
-                    String mKey = databaseReference.push().getKey();
-
-
-                    final HashMap<String, Object> sendMessageHash = new HashMap<>();
-                    sendMessageHash.put("senderId", FirebaseAuth.getInstance()
-                            .getCurrentUser()
-                            .getUid());
-                    sendMessageHash.put("receiverId", userIdChattingWith);
-                    sendMessageHash.put("messageId", mKey);
-                    sendMessageHash.put("messageText", "");
-                    sendMessageHash.put("sentStatus", "sending");
-                    sendMessageHash.put("seen", "notseen");
-                    sendMessageHash.put("photourl", "none");
-                    sendMessageHash.put("audiourl", mUri);
-                    sendMessageHash.put("videourl", "none");
-                    sendMessageHash.put("gotReplyID", "none");
-                    sendMessageHash.put("replyTag", false);
-                    sendMessageHash.put("replyID", "none");
-                    sendMessageHash.put("senderReplyMessage", "none");
-                    sendMessageHash.put("ifMessageTwo", false);
-                    sendMessageHash.put("messageTextTwo", "");
-                    sendMessageHash.put("ifMessageThree", false);
-                    sendMessageHash.put("messageTextThree", "");
-                    sendMessageHash.put("showReplyMsg", false);
-                    sendMessageHash.put("replyMsg", " ");
-                    sendMessageHash.put("showGotReplyMsg", false);
-                    sendMessageHash.put("gotReplyMsg", " ");
-                    databaseReference.child(mKey).updateChildren(sendMessageHash);
-                    receiverReference.child(mKey).updateChildren(sendMessageHash);
-
-                    // createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
-                }
-            }
-        });
-
-
-    }
-
-    private String getExtension(Uri uri) {
-
-
-        ContentResolver contentResolver = AudioRecorderActivity.this.getContentResolver();
-
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
 
     }
 
@@ -585,7 +354,6 @@ public class AudioRecorderActivity extends AppCompatActivity {
         });
     }
 
-
     private void equilizerAnimation(final RelativeLayout equi) {
 
         equlizer.setAlpha(1.0f);
@@ -642,6 +410,5 @@ public class AudioRecorderActivity extends AppCompatActivity {
         }
 
     }
-
 
 }

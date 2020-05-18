@@ -38,6 +38,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -56,6 +57,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 public class VideoEncryptionActivity extends AppCompatActivity {
 
@@ -80,83 +82,13 @@ public class VideoEncryptionActivity extends AppCompatActivity {
     private String mKey;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_encryption);
-
-
-        videoRecord = findViewById(R.id.videoRecord);
-        originalVideoTextFile = findViewById(R.id.originalVideoTextFile);
-        encryptedlVideoTextFile = findViewById(R.id.encryptedlVideoTextFile);
-        video_view = findViewById(R.id.video_view);
-
-
-        player_view = findViewById(R.id.player_view);
-
-
-        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
-
-        player_view.setPlayer(player);
-
-        decryptedlVideoTextFile = findViewById(R.id.decryptedlVideoTextFile);
-
-        encryptVideo = findViewById(R.id.encryptVideo);
-        decryptVideo = findViewById(R.id.decryptVideo);
-
-
-        originalVideoTextFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (videoURI != null)
-                    playVideo(videoURI);
-            }
-        });
-        encryptedlVideoTextFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (encryptedVideoUri != null)
-                    playVideo(encryptedVideoUri);
-            }
-        });
-        decryptedlVideoTextFile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (decryptedVideoUri != null)
-                    playVideo(decryptedVideoUri);
-            }
-        });
-
-
-        videoRecord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startVideoRecording();
-            }
-        });
-
-        encryptVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (videoURI != null) {
-                    //  encryptVideoMethod();
-
-                    encryptFile(FOLDER, "xyz.mp4", "encryptedxyz.mp4");
-                }
-            }
-        });
-
-
-        decryptVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (encryptedVideoUri != null) {
-                    // decryptFile();
-                    decryptFile(FOLDER, "encryptedxyz.mp4", "decryptedxyz.mp4", skey);
-                }
-            }
-        });
+    public static byte[] decodeFile(byte[] fileData, final SecretKey mediaKey)
+            throws Exception {
+        byte[] decrypted = null;
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, mediaKey);
+        decrypted = cipher.doFinal(fileData);
+        return decrypted;
     }
 
     private void startVideoRecording() {
@@ -552,6 +484,86 @@ public class VideoEncryptionActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video_encryption);
+
+
+        videoRecord = findViewById(R.id.videoRecord);
+        originalVideoTextFile = findViewById(R.id.originalVideoTextFile);
+        encryptedlVideoTextFile = findViewById(R.id.encryptedlVideoTextFile);
+        video_view = findViewById(R.id.video_view);
+
+
+        player_view = findViewById(R.id.player_view);
+
+
+        player = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
+
+        player_view.setPlayer(player);
+
+        decryptedlVideoTextFile = findViewById(R.id.decryptedlVideoTextFile);
+
+        encryptVideo = findViewById(R.id.encryptVideo);
+        decryptVideo = findViewById(R.id.decryptVideo);
+
+
+        originalVideoTextFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (videoURI != null)
+                    playVideo(videoURI);
+            }
+        });
+        encryptedlVideoTextFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (encryptedVideoUri != null)
+                    playVideo(encryptedVideoUri);
+            }
+        });
+        decryptedlVideoTextFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (decryptedVideoUri != null)
+                    playVideo(decryptedVideoUri);
+            }
+        });
+
+
+        videoRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startVideoRecording();
+            }
+        });
+
+        encryptVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (videoURI != null) {
+                    //  encryptVideoMethod();
+
+                    encryptFile(FOLDER, "xyz.mp4", "encryptedxyz.mp4");
+                }
+            }
+        });
+
+
+        decryptVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (encryptedVideoUri != null) {
+                    // decryptFile();
+                    //  decryptFile(FOLDER, "encryptedxyz.mp4", "decryptedxyz.mp4", skey);
+
+                    decodeFile(skey, "encryptedxyz.mp4");
+                }
+            }
+        });
+    }
 
     public void decryptFile(final String folder, final String inputFileName, final String outputFileName, final SecretKey mediaKey) {
         checkDecryptedVideo();
@@ -568,6 +580,11 @@ public class VideoEncryptionActivity extends AppCompatActivity {
                     File dir = new File(Environment.getExternalStorageDirectory(), folder);
                     if (!dir.exists()) {
                         dir.mkdirs();
+                    }
+
+                    File cache = new File(Environment.getExternalStorageDirectory(), folder);
+                    if (!cache.exists()) {
+                        cache.mkdirs();
                     }
 
                     File inpufile = new File(dir, inputFileName);
@@ -611,6 +628,72 @@ public class VideoEncryptionActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    public byte[] readFile(final String encryptedFileName) {
+        byte[] contents = null;
+
+        File dir = new File(Environment.getExternalStorageDirectory(), FOLDER);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File file = new File(dir, encryptedFileName);
+        int size = (int) file.length();
+        contents = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(
+                    new FileInputStream(file));
+            try {
+                buf.read(contents);
+                buf.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return contents;
+    }
+
+    void decodeFile(SecretKey mediaKey, String inputFile) {
+
+        checkDecryptedVideo();
+        try {
+            byte[] decodedData = decodeFile(readFile(inputFile), mediaKey);
+            // String str = new String(decodedData);
+            //System.out.println("DECODED FILE CONTENTS : " + str);
+            playVideoFromData(decodedData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playVideoFromData(byte[] decodedData) {
+        try {
+            // create temp file that will hold byte array
+            File tempMp3 = File.createTempFile("decrpytedxyz", "mp4", getCacheDir());
+            tempMp3.deleteOnExit();
+            FileOutputStream fos = new FileOutputStream(tempMp3);
+            fos.write(decodedData);
+            fos.close();
+
+            decryptedVideoUri = Uri.parse(tempMp3.getPath());
+
+            // Tried reusing instance of media player
+            // but that resulted in system crashes...
+            /*MediaPlayer mediaPlayer = new MediaPlayer();
+            FileInputStream fis = new FileInputStream(tempMp3);
+            mediaPlayer.setDataSource(fis.getFD());
+            mediaPlayer.prepare();
+            mediaPlayer.start();*/
+        } catch (IOException ex) {
+            ex.printStackTrace();
+
+        }
+
+    }
+
 
     public void newDownload(String url) {
         final DownloadTask downloadTask = new DownloadTask(VideoEncryptionActivity.this);

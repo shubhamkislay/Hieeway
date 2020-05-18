@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,6 +67,13 @@ public class SendMediaService extends Service {
     private InputStream inputStream;
     private FileOutputStream fos;
     private int read;
+    private static final String FOLDER = "Hieeway Test Videos";
+    private static final String ENCRYPTED_FILE_PREFIX = "encrpyted";
+    private FileOutputStream fileOutputStream;
+    private FileInputStream in;
+    private FileOutputStream out;
+    private CipherInputStream cis;
+    private String mediaKey;
 
     @Override
     public void onCreate() {
@@ -79,7 +87,6 @@ public class SendMediaService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -169,7 +176,8 @@ public class SendMediaService extends Service {
 
                 startForeground(1, notification);
 
-                encrpytVideo();
+                // encrpytVideo();
+                saveOriginalFile(imageUri);
             }
         }
 
@@ -270,13 +278,151 @@ public class SendMediaService extends Service {
         }
     }
 
+    private void saveOriginalFile(Uri videoIntentURI) {
+        //checkVideoURI();
+
+        try {
+            File root = new File(Environment.getExternalStorageDirectory(), FOLDER);
+            if (!root.exists()) {
+                root.mkdirs();
+            }
+
+
+            inputStream = getContentResolver().openInputStream(videoIntentURI);
+
+            final String filename = mKey + ".mp4";
+            final File outfile = new File(root, filename);
+            if (!outfile.exists())
+                outfile.createNewFile();
+            fileOutputStream = new FileOutputStream(outfile);
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+
+                        byte[] d = new byte[1024 * 10];
+
+                        while (true) {
+
+
+                            if (!((read = inputStream.read(d)) != -1)) break;
+
+                            fileOutputStream.write(d, 0, (char) read);
+                            fileOutputStream.flush();
+
+                        }
+                        fileOutputStream.close();
+
+                        /*String filePath = Environment.getExternalStorageDirectory() + File.separator + "Hieeway Test Videos"
+                                + File.separator + filename;
+
+                       // videoURI = Uri.parse(filePath);*/
+
+                        encryptFile(FOLDER, filename, ENCRYPTED_FILE_PREFIX + filename);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void encryptFile(final String folder, final String inputFileName, final String outputFileName) {
+
+
+        /*checkEncryptedVideo();
+        encryptedlVideoTextFile.setText("encrypting video");*/
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+
+                    //File oufile = new File(getFilesDir(), outputFileName);
+
+                    //create output directory if it doesn't exist
+                    File dir = new File(Environment.getExternalStorageDirectory(), folder);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+
+                    File inpufile = new File(dir, inputFileName);
+                    if (!inpufile.exists())
+                        inpufile.createNewFile();
+                    File oufile = new File(dir, outputFileName);
+                    if (!oufile.exists())
+                        oufile.createNewFile();
+
+
+                    in = new FileInputStream(inpufile);
+                    out = new FileOutputStream(oufile);
+
+                    Cipher encipher = Cipher.getInstance("AES");
+                    // Cipher decipher = Cipher.getInstance("AES");
+                    KeyGenerator kgen = KeyGenerator.getInstance("AES");
+                    //byte key[] = {0x00,0x32,0x22,0x11,0x00,0x00,0x00,0x00,0x00,0x23,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+                    SecretKey skey = kgen.generateKey();
+                    mediaKey = Base64.encodeToString(skey.getEncoded(), Base64.DEFAULT);
+
+                    encipher.init(Cipher.ENCRYPT_MODE, skey);
+                    cis = new CipherInputStream(in, encipher);
+
+                    //File file = new File(dir, encryptedFileName);
+                    int size = (int) inpufile.length();
+                    byte[] buffer = new byte[size];
+
+                    // byte[] buffer = new byte[1024];
+                    int read;
+                    while ((read = cis.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
+                    }
+                    in.close();
+                    in = null;
+
+                    // write the output file (You have now copied the file)
+                    out.flush();
+                    out.close();
+                    out = null;
+                    encryptedUri = Uri.fromFile(oufile);
+
+                } catch (FileNotFoundException fnfe1) {
+                    Log.e("tag", fnfe1.getMessage());
+                } catch (Exception e) {
+                    Log.e("tag", e.getMessage());
+                }
+                String filePath = Environment.getExternalStorageDirectory() + File.separator + folder
+                        + File.separator + outputFileName;
+
+
+                String senderMediaKey = encryptRSAToString(mediaKey, CameraActivity.currentUserPublicKey);
+                String receiverMediaKey = encryptRSAToString(mediaKey, CameraActivity.otherUserPublicKey);
+
+                uploadVideo(encryptedUri, senderMediaKey, receiverMediaKey);
+
+            }
+        }).start();
+
+
+    }
+
     private void uploadVideo(Uri encryptedUri, final String senderMediaKey, final String receiverMediaKey) {
         Log.v("SendMediaService", "Uploading...");
         imageUri = encryptedUri;
         if (imageUri != null) {
 
 
-            final StorageReference fileReference = storageReference.child(System.currentTimeMillis() + "." + getExtension(imageUri));
+            final StorageReference fileReference = storageReference.child(mKey + ".mp4");
 
             uploadTask = fileReference.putFile(imageUri);
             uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {

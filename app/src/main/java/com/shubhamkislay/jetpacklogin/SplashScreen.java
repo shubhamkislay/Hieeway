@@ -15,6 +15,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.orhanobut.rootchecker.RootChecker;
+
 public class SplashScreen extends AppCompatActivity {
 
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
@@ -30,14 +32,25 @@ public class SplashScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  setContentView(R.layout.activity_splash_screen);
+
 
 
        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        Intent intent = new Intent(SplashScreen.this,MainActivity.class);
-        startActivity(intent);
-        finish();
+        if (!RootChecker.isDeviceRooted()) {
+
+            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            setContentView(R.layout.activity_splash_screen);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                }
+            }, 5000);
+        }
 
       //  startSplash();
 

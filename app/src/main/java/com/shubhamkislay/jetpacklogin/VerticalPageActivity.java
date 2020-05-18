@@ -621,6 +621,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     @Override
     protected void onResume() {
+        super.onResume();
         try {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -635,7 +636,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         }catch (Exception e) {
             //
         }
-        super.onResume();
+
     }
 
     @Override

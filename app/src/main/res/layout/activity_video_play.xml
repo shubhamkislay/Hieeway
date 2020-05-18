@@ -18,7 +18,7 @@
     <com.shubhamkislay.jetpacklogin.Utils.ScalableVideoView
         android:id="@+id/video_view"
         android:layout_width="fill_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
@@ -29,6 +29,7 @@
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="match_parent"
         app:resize_mode="zoom"
         app:use_controller="false" />
@@ -50,11 +51,13 @@
         android:layout_centerVertical="true">
 
         <ProgressBar
+            android:id="@+id/progress_one"
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_centerInParent="true" />
 
         <ProgressBar
+            android:id="@+id/progress_two"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_centerInParent="true"
@@ -66,7 +69,7 @@
 
     <TextView
         android:id="@+id/loading"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/progress_layout"
         android:layout_centerHorizontal="true"
@@ -74,6 +77,44 @@
         android:gravity="center"
         android:text="Loading..."
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/loadingpercent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progress_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@id/loading"
+        android:gravity="center"
+        android:text="Loading..."
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/percentsign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/progress_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@id/loadingpercent"
+        android:gravity="center"
+        android:text="%"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/decryptedBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="12dp"
+        android:background="@drawable/message_box_drawable"
+        android:padding="16dp"
+        android:text="Decrypt and play"
+        android:visibility="gone" />
 
 
 </RelativeLayout>

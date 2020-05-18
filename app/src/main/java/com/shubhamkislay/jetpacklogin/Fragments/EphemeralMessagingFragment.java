@@ -1376,10 +1376,15 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         startActivity(intent);
                     } else if (!chatMessage.getVideourl().equals("none")) {
                         Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+
                         intent.putExtra("userIdChattingWith", userIdChattingWith);
                         intent.putExtra("videoUrl", chatMessage.getVideourl());
                         intent.putExtra("mKey", chatMessage.getMessageId());
                         intent.putExtra("sender", chatMessage.getSenderId());
+                        intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                        intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                        intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+                        intent.putExtra("mediaKey", chatMessage.getMediaKey());
 
 
                         startActivity(intent);
