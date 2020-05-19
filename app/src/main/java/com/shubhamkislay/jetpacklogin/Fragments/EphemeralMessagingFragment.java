@@ -117,6 +117,7 @@ import com.shubhamkislay.jetpacklogin.Model.SendMessageAsyncModel;
 import com.shubhamkislay.jetpacklogin.Model.User;
 import com.shubhamkislay.jetpacklogin.NavButtonTest;
 import com.shubhamkislay.jetpacklogin.R;
+import com.shubhamkislay.jetpacklogin.SendMediaService;
 import com.shubhamkislay.jetpacklogin.TypeWriter;
 import com.shubhamkislay.jetpacklogin.UserPicViewModel;
 import com.shubhamkislay.jetpacklogin.UserPicViewModelFactory;
@@ -1371,6 +1372,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         intent.putExtra("audiourl", chatMessage.getAudiourl());
                         intent.putExtra("mKey", chatMessage.getMessageId());
                         intent.putExtra("sender", chatMessage.getSenderId());
+                        intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                        intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                        intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+                        intent.putExtra("mediaKey", chatMessage.getMediaKey());
 
 
                         startActivity(intent);
@@ -2862,9 +2867,44 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         recorder = null;
         //animateArrow();
 
-        uploadAudio();
+        // uploadAudio();
+        sendAudio();
 
         // play_btn.setVisibility(View.VISIBLE);
+    }
+
+    private void sendAudio() {
+
+        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                .child(FirebaseAuth.getInstance()
+                        .getCurrentUser()
+                        .getUid())
+                .child(userIdChattingWith);
+
+        final String mKey = databaseReference.push().getKey();
+
+        Uri uri = Uri.fromFile(new File(fileName));
+        Intent intent1 = new Intent(getActivity(), SendMediaService.class);
+        intent1.putExtra("userChattingWithId", userIdChattingWith);
+        intent1.putExtra("imageUri", uri.toString());
+        //intent1.putExtra("encrptedVide", videoUri.toString());
+
+        intent1.putExtra("usernameChattingWith", usernameChattingWith);
+        intent1.putExtra("userphotoUrl", photo);
+        intent1.putExtra("currentUsername", currentUsername);
+        intent1.putExtra("currentUserPhoto", currentUserPhoto);
+        intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+        intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+        intent1.putExtra("currentUserPublicKey", currentUserPublicKey);
+        intent1.putExtra("otherUserPublicKey", otherUserPublicKey);
+        intent1.putExtra("mKey", mKey);
+        intent1.putExtra("type", "audio");
+
+
+        getActivity().startService(intent1);
+
+        // finish();
+
     }
 
     private void uploadAudio() {

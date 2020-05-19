@@ -110,13 +110,7 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
     private File tempMp3;
     private TextView loadingpercent, percentsign;
 
-    public static byte[] decodeFile(byte[] fileData, final SecretKey mediaKey) throws Exception {
-        byte[] decrypted = null;
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, mediaKey);
-        decrypted = cipher.doFinal(fileData);
-        return decrypted;
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -442,28 +436,7 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
         }
     }
 
-    public String decryptRSAToString(String encryptedBase64, String privateKey) {
 
-        String decryptedString = "";
-        try {
-            KeyFactory keyFac = KeyFactory.getInstance("RSA");
-            KeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decode(privateKey.trim().getBytes(), Base64.DEFAULT));
-            Key key = keyFac.generatePrivate(keySpec);
-
-            // get an RSA cipher object and print the provider
-            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
-            // encrypt the plain text using the public key
-            cipher.init(Cipher.DECRYPT_MODE, key);
-
-            byte[] encryptedBytes = Base64.decode(encryptedBase64, Base64.DEFAULT);
-            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            decryptedString = new String(decryptedBytes);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return decryptedString;
-    }
 
     private void checkAndPlay() {
         if (videoReady) {
@@ -714,6 +687,14 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
         }).start();
     }
 
+    public static byte[] decodeFile(byte[] fileData, final SecretKey mediaKey) throws Exception {
+        byte[] decrypted = null;
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, mediaKey);
+        decrypted = cipher.doFinal(fileData);
+        return decrypted;
+    }
+
     public byte[] readFile(final String encryptedFileName) {
         byte[] contents = null;
 
@@ -758,6 +739,29 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
         }
     }
 
+    public String decryptRSAToString(String encryptedBase64, String privateKey) {
+
+        String decryptedString = "";
+        try {
+            KeyFactory keyFac = KeyFactory.getInstance("RSA");
+            KeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decode(privateKey.trim().getBytes(), Base64.DEFAULT));
+            Key key = keyFac.generatePrivate(keySpec);
+
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.DECRYPT_MODE, key);
+
+            byte[] encryptedBytes = Base64.decode(encryptedBase64, Base64.DEFAULT);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            decryptedString = new String(decryptedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return decryptedString;
+    }
+
     private void playVideoFromData(byte[] decodedData, String outputFileName) {
         try {
             // create temp file that will hold byte array
@@ -791,49 +795,6 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
         loading.setText("Downloading video...");
         final DownloadTask downloadTask = new DownloadTask(VideoPlayActivity.this);
         downloadTask.execute(url);
-    }
-
-    private void deleteVideoFile(String inputFile) {
-        if (tempMp3 != null)
-            tempMp3.delete();
-        try {
-            // delete the original file
-            File dir = new File(Environment.getExternalStorageDirectory(), FOLDER);
-
-            new File(dir, inputFile + ".mp4").delete();
-        } catch (Exception e) {
-            Log.e("tag", e.getMessage());
-        }
-        try {
-            // delete the original file
-            File dir = new File(Environment.getExternalStorageDirectory(), FOLDER);
-
-            new File(dir, ENCRYPTED_FILE_PREFIX + inputFile + ".mp4").delete();
-        } catch (Exception e) {
-            Log.e("tag", e.getMessage());
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-
-        stopDecrypting = true;
-        if (sender.equals(userIdChattingWith)) {
-            deleteVideoMessage();
-            deleteVideoFile(mKey);
-        }
-        //videoView.
-
-        if (player != null) {
-            player.removeListener(eventListener);
-
-            player.release();
-            player = null;
-        }
-
-
     }
 
     public class DownloadTask extends AsyncTask<String, Integer, String> {
@@ -1004,4 +965,49 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
 
         }
     }
+
+    private void deleteVideoFile(String inputFile) {
+        if (tempMp3 != null)
+            tempMp3.delete();
+        try {
+            // delete the original file
+            File dir = new File(Environment.getExternalStorageDirectory(), FOLDER);
+
+            new File(dir, inputFile + ".mp4").delete();
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        }
+        try {
+            // delete the original file
+            File dir = new File(Environment.getExternalStorageDirectory(), FOLDER);
+
+            new File(dir, ENCRYPTED_FILE_PREFIX + inputFile + ".mp4").delete();
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+
+        stopDecrypting = true;
+        if (sender.equals(userIdChattingWith)) {
+            deleteVideoMessage();
+            deleteVideoFile(mKey);
+        }
+        //videoView.
+
+        if (player != null) {
+            player.removeListener(eventListener);
+
+            player.release();
+            player = null;
+        }
+
+
+    }
+
+
 }
