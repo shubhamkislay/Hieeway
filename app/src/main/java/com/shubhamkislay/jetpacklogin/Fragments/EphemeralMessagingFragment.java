@@ -1363,6 +1363,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         intent.putExtra("photoUrl", chatMessage.getPhotourl());
                         intent.putExtra("mKey", chatMessage.getMessageId());
                         intent.putExtra("sender", chatMessage.getSenderId());
+                        intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                        intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
+                        intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+                        intent.putExtra("mediaKey", chatMessage.getMediaKey());
 
 
                         startActivity(intent);

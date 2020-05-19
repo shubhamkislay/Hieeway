@@ -519,6 +519,7 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                                 intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
                                 intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+                                intent.putExtra("mediaKey", chatMessage.getMediaKey());
 
 
 
@@ -547,6 +548,7 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                                 intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                                 intent.putExtra("publicKeyID", chatMessage.getPublicKeyID());
                                 intent.putExtra("currentUserPrivateKey", currentUserPrivateKey);
+                                intent.putExtra("mediaKey", chatMessage.getMediaKey());
 
 
                                 context.startActivity(intent);

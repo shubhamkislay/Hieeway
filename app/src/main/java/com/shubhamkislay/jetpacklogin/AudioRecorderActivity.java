@@ -80,7 +80,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "AudioRecordTest";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private static final String FOLDER = "Hieeway Test Videos";
+    private static final String FOLDER = "Hieeway Test Resources";
     private static final String ENCRYPTED_FILE_PREFIX = "encrpyted";
     private static final String TAG = "AudioRecordTest";
     private static String fileName = null;

@@ -80,7 +80,7 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
     SurfaceView surfaceView;
     RelativeLayout progress_layout, load_layout;
     private Uri videoUri;
-    private static final String FOLDER = "Hieeway Test Videos";
+    private static final String FOLDER = "Hieeway Test Resources";
     private static final String ENCRYPTED_FILE_PREFIX = "encrpyted";
     private static final String TAG = "VIDEO PLAY ACTIVITY";
     public static boolean videoReady = false;

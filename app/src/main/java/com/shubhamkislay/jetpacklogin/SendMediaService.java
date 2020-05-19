@@ -21,12 +21,18 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.shubhamkislay.jetpacklogin.Model.ChatListItemCreationModel;
+import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +73,7 @@ public class SendMediaService extends Service {
     private InputStream inputStream;
     private FileOutputStream fos;
     private int read;
-    private static final String FOLDER = "Hieeway Test Videos";
+    private static final String FOLDER = "Hieeway Test Resources";
     private static final String ENCRYPTED_FILE_PREFIX = "encrpyted";
     private FileOutputStream fileOutputStream;
     private FileInputStream in;
@@ -157,7 +163,7 @@ public class SendMediaService extends Service {
             if (type.equals("photo")) {
                 Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
                         .setContentTitle("Sending photo")
-                        .setSmallIcon(R.drawable.ic_photos)
+                        .setSmallIcon(R.drawable.ic_image_24dp)
                         .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
                         // .setContentIntent(pendingIntent)
                         .setProgress(0, 0, true)
@@ -166,7 +172,8 @@ public class SendMediaService extends Service {
 
                 startForeground(1, notification);
 
-                uploadImage();
+                // uploadImage();
+                saveOriginalFile(imageUri);
             } else if (type.equals("video")) {
                 Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
                         .setContentTitle("Sending video")
@@ -316,6 +323,9 @@ public class SendMediaService extends Service {
             if (type.equals("audio"))
                 filename = mKey + ".mp3";
 
+            if (type.equals("photo"))
+                filename = mKey + ".jpg";
+
             final File outfile = new File(root, filename);
             if (!outfile.exists())
                 outfile.createNewFile();
@@ -348,8 +358,11 @@ public class SendMediaService extends Service {
                         if (type.equals("video"))
                             encryptVideoFile(FOLDER, filename, ENCRYPTED_FILE_PREFIX + filename);
 
-                        if (type.equals("audio"))
+                        else if (type.equals("audio"))
                             encryptAudioFile(FOLDER, filename, ENCRYPTED_FILE_PREFIX + filename);
+
+                        else if (type.equals("photo"))
+                            encryptPhotoFile(FOLDER, filename, ENCRYPTED_FILE_PREFIX + filename);
 
 
 
@@ -522,10 +535,97 @@ public class SendMediaService extends Service {
                 String senderMediaKey = encryptRSAToString(mediaKey, currentUserPublicKey);
                 String receiverMediaKey = encryptRSAToString(mediaKey, otherUserPublicKey);
 
-                if (type.equals("video"))
+                /*if (type.equals("video"))
                     uploadVideo(encryptedUri, senderMediaKey, receiverMediaKey);
                 else if (type.equals("audio"))
-                    uploadAudio(encryptedUri, senderMediaKey, receiverMediaKey);
+                    uploadAudio(encryptedUri, senderMediaKey, receiverMediaKey);*/
+
+                uploadAudio(encryptedUri, senderMediaKey, receiverMediaKey);
+
+
+            }
+        }).start();
+
+
+    }
+
+    private void encryptPhotoFile(final String folder, final String inputFileName, final String outputFileName) {
+
+
+        /*checkEncryptedVideo();
+        encryptedlVideoTextFile.setText("encrypting video");*/
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+
+                    //File oufile = new File(getFilesDir(), outputFileName);
+
+                    //create output directory if it doesn't exist
+                    File dir = new File(Environment.getExternalStorageDirectory(), folder);
+                    if (!dir.exists()) {
+                        dir.mkdirs();
+                    }
+
+                    File inpufile = new File(dir, inputFileName);
+                    if (!inpufile.exists())
+                        inpufile.createNewFile();
+                    File oufile = new File(dir, outputFileName);
+                    if (!oufile.exists())
+                        oufile.createNewFile();
+
+
+                    in = new FileInputStream(inpufile);
+                    out = new FileOutputStream(oufile);
+
+                    Cipher encipher = Cipher.getInstance("AES");
+                    // Cipher decipher = Cipher.getInstance("AES");
+                    KeyGenerator kgen = KeyGenerator.getInstance("AES");
+                    //byte key[] = {0x00,0x32,0x22,0x11,0x00,0x00,0x00,0x00,0x00,0x23,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+                    SecretKey skey = kgen.generateKey();
+                    mediaKey = Base64.encodeToString(skey.getEncoded(), Base64.DEFAULT);
+
+                    encipher.init(Cipher.ENCRYPT_MODE, skey);
+                    cis = new CipherInputStream(in, encipher);
+
+                    //File file = new File(dir, encryptedFileName);
+                    int size = (int) inpufile.length();
+                    byte[] buffer = new byte[size];
+
+                    // byte[] buffer = new byte[1024];
+                    int read;
+                    while ((read = cis.read(buffer)) != -1) {
+                        out.write(buffer, 0, read);
+                    }
+                    in.close();
+                    in = null;
+
+                    // write the output file (You have now copied the file)
+                    out.flush();
+                    out.close();
+                    out = null;
+                    encryptedUri = Uri.fromFile(oufile);
+
+                } catch (FileNotFoundException fnfe1) {
+                    Log.e("tag", fnfe1.getMessage());
+                } catch (Exception e) {
+                    Log.e("tag", e.getMessage());
+                }
+                String filePath = Environment.getExternalStorageDirectory() + File.separator + folder
+                        + File.separator + outputFileName;
+
+
+                String senderMediaKey = encryptRSAToString(mediaKey, CameraActivity.currentUserPublicKey);
+                String receiverMediaKey = encryptRSAToString(mediaKey, CameraActivity.otherUserPublicKey);
+
+                /*if (type.equals("video"))
+                    uploadVideo(encryptedUri, senderMediaKey, receiverMediaKey);
+                else if (type.equals("audio"))
+                    uploadAudio(encryptedUri, senderMediaKey, receiverMediaKey);*/
+
+                uploadPhoto(encryptedUri, senderMediaKey, receiverMediaKey);
 
 
             }
@@ -796,6 +896,136 @@ public class SendMediaService extends Service {
         }
     }
 
+    private void uploadPhoto(Uri encryptedUri, final String senderMediaKey, final String receiverMediaKey) {
+        Log.v("SendMediaService", "Uploading...");
+        imageUri = encryptedUri;
+        if (imageUri != null) {
+
+
+            final StorageReference fileReference = storageReference.child(mKey + ".jpg");
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task task) throws Exception {
+
+                    if (!task.isSuccessful()) {
+                        stopSelf();
+                        throw task.getException();
+
+                    }
+
+
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+
+                    if (task.isSuccessful()) {
+
+                        Log.v("SendMediaService", "Upload");
+
+                        Uri downloadUri = task.getResult();
+
+                        String mUri = downloadUri.toString();
+
+
+                        stopSelfIntent.putExtra("messageKey", mKey);
+
+
+                        final HashMap<String, Object> sendMessageHash = new HashMap<>();
+                        sendMessageHash.put("senderId", FirebaseAuth.getInstance()
+                                .getCurrentUser()
+                                .getUid());
+                        sendMessageHash.put("receiverId", userChattingWithId);
+                        sendMessageHash.put("messageId", mKey);
+                        sendMessageHash.put("messageText", "");
+                        sendMessageHash.put("sentStatus", "sending");
+                        sendMessageHash.put("seen", "notseen");
+                        sendMessageHash.put("photourl", mUri);
+                        sendMessageHash.put("audiourl", "none");
+                        sendMessageHash.put("publicKeyID", currentUserPublicKeyID);
+                        sendMessageHash.put("videourl", "none");
+                        sendMessageHash.put("gotReplyID", "none");
+                        sendMessageHash.put("replyTag", false);
+                        sendMessageHash.put("replyID", "none");
+                        sendMessageHash.put("senderReplyMessage", "none");
+                        sendMessageHash.put("ifMessageTwo", false);
+                        sendMessageHash.put("messageTextTwo", "");
+                        sendMessageHash.put("ifMessageThree", false);
+                        sendMessageHash.put("messageTextThree", "");
+                        sendMessageHash.put("showReplyMsg", false);
+                        sendMessageHash.put("replyMsg", " ");
+                        sendMessageHash.put("timeStamp", timestamp.toString());
+                        sendMessageHash.put("showGotReplyMsg", false);
+                        sendMessageHash.put("mediaKey", senderMediaKey);
+                        sendMessageHash.put("gotReplyMsg", " ");
+
+                        final HashMap<String, Object> receiveMessageHash = new HashMap<>();
+                        receiveMessageHash.put("senderId", FirebaseAuth.getInstance()
+                                .getCurrentUser()
+                                .getUid());
+                        receiveMessageHash.put("receiverId", userChattingWithId);
+                        receiveMessageHash.put("messageId", mKey);
+                        receiveMessageHash.put("messageText", "");
+                        receiveMessageHash.put("sentStatus", "sending");
+                        receiveMessageHash.put("seen", "notseen");
+                        receiveMessageHash.put("photourl", mUri);
+                        receiveMessageHash.put("audiourl", "none");
+                        receiveMessageHash.put("publicKeyID", otherUserPublicKeyID);
+                        receiveMessageHash.put("videourl", "none");
+                        receiveMessageHash.put("gotReplyID", "none");
+                        receiveMessageHash.put("replyTag", false);
+                        receiveMessageHash.put("replyID", "none");
+                        receiveMessageHash.put("senderReplyMessage", "none");
+                        receiveMessageHash.put("ifMessageTwo", false);
+                        receiveMessageHash.put("messageTextTwo", "");
+                        receiveMessageHash.put("ifMessageThree", false);
+                        receiveMessageHash.put("messageTextThree", "");
+                        receiveMessageHash.put("showReplyMsg", false);
+                        receiveMessageHash.put("replyMsg", " ");
+                        receiveMessageHash.put("timeStamp", timestamp.toString());
+                        receiveMessageHash.put("showGotReplyMsg", false);
+                        receiveMessageHash.put("mediaKey", receiverMediaKey);
+                        receiveMessageHash.put("gotReplyMsg", " ");
+
+                        databaseReference.child(mKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("sentStatus", "sent");
+                                hashMap.put("messageId", mKey);
+
+                                databaseReference.child(mKey).updateChildren(hashMap);
+                            }
+                        });
+                        receiverReference.child(mKey).updateChildren(receiveMessageHash);
+
+                        Log.v("SendMediaService", "Sent");
+
+
+                        // createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
+                        // progressDialog.dismiss();
+
+                        createChatListItem(usernameChattingWith, userphotoUrl, currentUsername, currentUserPhoto);
+
+
+                    } else {
+                        stopSelf();
+                        //Toast.makeText(getBaseContext(),"Uploading failed" ,Toast.LENGTH_SHORT).show();
+                        //  progressDialog.dismiss();
+                    }
+
+                }
+            });
+
+
+        } else {
+            // Toast.makeText(PhotoEditToolsActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
+        }
+    }
 
     private void stopUploading(String messageKey, String userChattingWithId) {
         //  try{
@@ -994,7 +1224,7 @@ public class SendMediaService extends Service {
         Long tsLong = System.currentTimeMillis() / 1000;
         final String ts = tsLong.toString();
 
-        DatabaseReference senderChatCreateRef, receiverChatCreateRef;
+        final DatabaseReference senderChatCreateRef, receiverChatCreateRef;
 
         senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userChattingWithId);
@@ -1003,26 +1233,70 @@ public class SendMediaService extends Service {
                 .child(userChattingWithId).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
-        final HashMap<String, Object> timeStampHash = new HashMap<>();
-        timeStampHash.put("timeStamp", ts);
-        timeStampHash.put("id", userChattingWithId);
-        timeStampHash.put("username", usernameUserChattingWith);
-        timeStampHash.put("photo", userChattingWith_photo);
-        timeStampHash.put("seen", "notseen");
-        timeStampHash.put("chatPending", false);
-        senderChatCreateRef.updateChildren(timeStampHash);
+        senderChatCreateRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
 
-        HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+                ChatStamp chatStamp = mutableData.getValue(ChatStamp.class);
 
-        timeStampHashReceiver.put("timeStamp", ts);
-        timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        timeStampHashReceiver.put("username", currentUserName);
-        timeStampHashReceiver.put("photo", currentUserPhoto);
-        timeStampHashReceiver.put("seen", "notseen");
-        timeStampHashReceiver.put("chatPending", true);
-        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+                HashMap<String, Object> timeStampHash = new HashMap<>();
+
+
+                HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+
+                if (chatStamp == null) {
+
+                    timeStampHash.put("timeStamp", ts);
+                    timeStampHash.put("id", userChattingWithId);
+                    timeStampHash.put("username", usernameUserChattingWith);
+                    timeStampHash.put("photo", userChattingWith_photo);
+                    timeStampHash.put("seen", "notseen");
+                    timeStampHash.put("chatPending", false);
+                    timeStampHash.put("gemCount", 2);
+
+                    timeStampHashReceiver.put("timeStamp", ts);
+                    timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    timeStampHashReceiver.put("username", currentUserName);
+                    timeStampHashReceiver.put("photo", currentUserPhoto);
+                    timeStampHashReceiver.put("seen", "notseen");
+                    timeStampHashReceiver.put("chatPending", true);
+                    timeStampHashReceiver.put("gemCount", 2);
+                    senderChatCreateRef.updateChildren(timeStampHash);
+                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+                } else {
+                    timeStampHash.put("timeStamp", ts);
+                    timeStampHash.put("id", userChattingWithId);
+                    timeStampHash.put("username", usernameUserChattingWith);
+                    timeStampHash.put("photo", userChattingWith_photo);
+                    timeStampHash.put("seen", "notseen");
+                    timeStampHash.put("chatPending", false);
+
+                    timeStampHashReceiver.put("timeStamp", ts);
+                    timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    timeStampHashReceiver.put("username", currentUserName);
+                    timeStampHashReceiver.put("photo", currentUserPhoto);
+                    timeStampHashReceiver.put("seen", "notseen");
+                    timeStampHashReceiver.put("chatPending", true);
+
+                    senderChatCreateRef.updateChildren(timeStampHash);
+                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+                }
+
+
+                return null;
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+            }
+        });
 
         stopSelf();
+
 
     }
 

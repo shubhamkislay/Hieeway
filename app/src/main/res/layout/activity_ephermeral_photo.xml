@@ -6,43 +6,88 @@
     android:background="#000000"
     tools:context=".DispImageActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
-    <ImageView
-        android:id="@+id/fullscreen_content"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:visibility="invisible"
-        android:keepScreenOn="true"
-        android:fitsSystemWindows="true"/>
+        android:layout_height="match_parent">
 
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
+        <!-- The primary full-screen view. This can be replaced with whatever view
+             is needed to present your content, e.g. VideoView, SurfaceView,
+             TextureView, etc. -->
+        <ImageView
+            android:id="@+id/fullscreen_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:keepScreenOn="true"
+            android:fitsSystemWindows="true"/>
 
-    <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/progress"
-        style="@style/SpinKitView.Large.Wave"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center"
-        app:SpinKit_Color="@color/colorAccent"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <!-- This FrameLayout insets its children based on system windows using
+             android:fitsSystemWindows. -->
 
-    <Button
-        android:id="@+id/next_btn"
-        android:visibility="gone"
-        android:layout_width="150dp"
-        android:gravity="center"
-        android:layout_marginBottom="16dp"
-        android:text="Next"
-        android:layout_gravity="center|bottom"
-        android:background="@drawable/home_background_oval"
-        android:layout_height="40dp" />
+        <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/progress"
+            style="@style/SpinKitView.Large.Wave"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/colorAccent"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <TextView
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="Loading..."
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/loadingpercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:layout_toRightOf="@id/loading"
+            android:gravity="center"
+            android:text="Loading..."
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/percentsign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/progress"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:layout_toRightOf="@id/loadingpercent"
+            android:gravity="center"
+            android:text="%"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/next_btn"
+            android:visibility="gone"
+            android:layout_width="150dp"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:text="Next"
+            android:layout_gravity="center|bottom"
+            android:background="@drawable/home_background_oval"
+            android:layout_height="40dp" />
+
+    </RelativeLayout>
 
 
 </FrameLayout>

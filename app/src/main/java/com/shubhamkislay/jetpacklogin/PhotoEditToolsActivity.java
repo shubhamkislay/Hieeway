@@ -160,6 +160,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
         System.loadLibrary("NativeImageProcessor");
     }
 
+    private String mKey;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,7 +271,13 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
                         BitmapHelper.getInstance().setBitmap(saveBitmap);
 
                         imageUri = getImageUri(PhotoEditToolsActivity.this,saveBitmap);
+                        databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                                .child(FirebaseAuth.getInstance()
+                                        .getCurrentUser()
+                                        .getUid())
+                                .child(CameraActivity.userChattingWithId);
 
+                        mKey = databaseReference.push().getKey();
 
                         // createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
                         Intent intent1 = new Intent(PhotoEditToolsActivity.this, SendMediaService.class);
@@ -282,6 +290,7 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
                         intent1.putExtra("currentUserPhoto", currentUserPhoto);
                         intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                         intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+                        intent1.putExtra("mKey", mKey);
                         intent1.putExtra("type", "photo");
 
 
