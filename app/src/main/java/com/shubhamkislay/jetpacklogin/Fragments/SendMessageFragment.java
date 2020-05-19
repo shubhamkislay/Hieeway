@@ -399,7 +399,7 @@ public class SendMessageFragment extends Fragment {
 
     }
 
-    public void deleteMessage(ChatMessage chatMessage,Boolean deleteForAll) {
+    public void deleteMessage(final ChatMessage chatMessage, final Boolean deleteForAll) {
 
         DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -421,24 +421,37 @@ public class SendMessageFragment extends Fragment {
         reportReceiverReference.removeValue();
         reportSenderReference.removeValue();
 
-        String deleteUrl = "default";
 
-        /*if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played")
-                || !chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played")
-                || !chatMessage.getAudiourl().equals("default") || !chatMessage.getAudiourl().equals("played")) {
-            if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played"))
-                deleteUrl = chatMessage.getPhotourl();
-            else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
-                deleteUrl = chatMessage.getVideourl();
-            else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
-                deleteUrl = chatMessage.getAudiourl();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String deleteUrl = "default";
 
-            if (!deleteUrl.equals("default")) {
-                StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(deleteUrl);
-                photoRef.delete();
+                try {
+                    if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played")
+                            || !chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played")
+                            || !chatMessage.getAudiourl().equals("default") || !chatMessage.getAudiourl().equals("played")) {
+                        if (!chatMessage.getPhotourl().equals("default") || !chatMessage.getPhotourl().equals("played"))
+                            deleteUrl = chatMessage.getPhotourl();
+                        else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
+                            deleteUrl = chatMessage.getVideourl();
+                        else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
+                            deleteUrl = chatMessage.getAudiourl();
+
+                        if (!deleteUrl.equals("default")) {
+                            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(deleteUrl);
+                            photoRef.delete();
+                        }
+
+                    }
+                } catch (Exception e) {
+                    //
+                }
+
             }
+        }).start();
 
-        }*/
+
 
 
 
