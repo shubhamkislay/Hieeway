@@ -71,6 +71,7 @@ import com.shubhamkislay.jetpacklogin.R;
 import com.shubhamkislay.jetpacklogin.VerticalPageActivity;
 import com.shubhamkislay.jetpacklogin.VerticalRegisterationActivity;
 import com.shubhamkislay.jetpacklogin.VideoEncryptionActivity;
+import com.shubhamkislay.jetpacklogin.YoutubePlayerActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -310,7 +311,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 });*/
 
 
-                mContext.startActivity(new Intent(mContext, VideoEncryptionActivity.class));
+                Intent intent = new Intent(mContext, YoutubePlayerActivity.class);
+                intent.putExtra("userIdChattingWith", chatStamp.getId());
+                mContext.startActivity(intent);
 
                 //mContext.startActivity(new Intent(mContext, PaletteActivity.class));
 

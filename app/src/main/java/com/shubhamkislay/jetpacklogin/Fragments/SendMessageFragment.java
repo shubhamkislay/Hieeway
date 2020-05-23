@@ -435,7 +435,7 @@ public class SendMessageFragment extends Fragment {
                             deleteUrl = chatMessage.getPhotourl();
                         else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
                             deleteUrl = chatMessage.getVideourl();
-                        else if (!chatMessage.getVideourl().equals("default") || !chatMessage.getVideourl().equals("played"))
+                        else if (!chatMessage.getAudiourl().equals("default") || !chatMessage.getAudiourl().equals("played"))
                             deleteUrl = chatMessage.getAudiourl();
 
                         if (!deleteUrl.equals("default")) {

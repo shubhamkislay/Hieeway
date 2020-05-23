@@ -15,6 +15,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -34,6 +35,7 @@ import com.shubhamkislay.jetpacklogin.Fragments.LiveMessageFragment;
 import com.shubhamkislay.jetpacklogin.Fragments.SendMessageFragment;
 import com.shubhamkislay.jetpacklogin.Interface.LiveMessageEventListener;
 import com.shubhamkislay.jetpacklogin.Interface.MessageHighlightListener;
+import com.shubhamkislay.jetpacklogin.Interface.YoutubeBottomFragmentStateListener;
 import com.shubhamkislay.jetpacklogin.Model.ChatMessage;
 import com.shubhamkislay.jetpacklogin.Model.User;
 
@@ -43,7 +45,7 @@ import java.util.List;
 import static com.shubhamkislay.jetpacklogin.MyApplication.notificationIDHashMap;
 
 
-public class VerticalPageActivity extends AppCompatActivity implements MessageHighlightListener , LiveMessageEventListener {
+public class VerticalPageActivity extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener {
 
 
     private VerticalViewPager verticalViewPager;
@@ -68,6 +70,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
+    private boolean enabled;
     String userFeeling;
     String feelingDefault;
     LiveMessageFragment liveMessageFragment;
@@ -86,6 +89,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     Boolean openSendMessageFragment = false;
     String publicKeyText, privateKeyText, otherUserPublicKey, otherUserPublicKeyID, publicKeyId;
     String feededMessageID = "default";
+    private boolean bottomPageUp = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
+
 
         Display display = getWindowManager().getDefaultDisplay();
         size = new Point();
@@ -424,6 +429,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         liveMessageFragment = new LiveMessageFragment();
         liveMessageFragment.setArguments(bundle);
+        liveMessageFragment.setYoutubeBottomFragmentStateListener(this);
 
 
 
@@ -450,7 +456,15 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
 
         viewPager.setAdapter(pagerAdapter);
-
+        viewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (bottomPageUp)
+                    return true;
+                else
+                    return false;
+            }
+        });
         /**
         * When we add live fragment as well, then
          * viewPager.setCurrentItem(fragmentList.size()-2);
@@ -496,7 +510,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
 
                     liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
-                    liveMessageFragment.createLiveMessageDbInstance();
+                    //liveMessageFragment.createLiveMessageDbInstance();
+                    liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
                     sendMessageFragment.removeListeners();
                   //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
 
@@ -591,6 +606,20 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         });
     }*/
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            try {
+                liveMessageFragment.setBottomSheetBehavior(event);
+                // chatsFragment.setBottomSheetBehavior(event);
+            } catch (Exception e) {
+                //
+            }
+        }
+
+        return super.dispatchTouchEvent(event);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -670,4 +699,20 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         liveMessageFragment = new LiveMessageFragment();
         liveMessageFragment.setArguments(bundle);
     }
+
+    @Override
+    public void setDrag(Boolean state) {
+
+        bottomPageUp = state;
+
+            /*if (bottomPageUp)
+                viewPager.beginFakeDrag();
+            else {
+                if (viewPager.isFakeDragging())
+                    viewPager.endFakeDrag();
+            }*/
+
+    }
+
+
 }

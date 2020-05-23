@@ -3,10 +3,17 @@ package com.shubhamkislay.jetpacklogin.Fragments;
 
 import android.Manifest;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -17,35 +24,65 @@ import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBar;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBarListener;
 import com.shubhamkislay.jetpacklogin.Interface.LiveMessageEventListener;
+import com.shubhamkislay.jetpacklogin.Interface.LiveMessageRequestListener;
+import com.shubhamkislay.jetpacklogin.Interface.YoutubeBottomFragmentStateListener;
+import com.shubhamkislay.jetpacklogin.LiveMessageRequestDialog;
 import com.shubhamkislay.jetpacklogin.LiveMessagingViewModel;
 import com.shubhamkislay.jetpacklogin.LiveMessagingViewModelFactory;
 import com.shubhamkislay.jetpacklogin.LiveVideoViewModel;
 import com.shubhamkislay.jetpacklogin.LiveVideoViewModelFactory;
+import com.shubhamkislay.jetpacklogin.Model.ChatStamp;
 import com.shubhamkislay.jetpacklogin.Model.LiveMessage;
+import com.shubhamkislay.jetpacklogin.Model.VideoItem;
 import com.shubhamkislay.jetpacklogin.R;
+import com.shubhamkislay.jetpacklogin.YouTubeConfig;
+import com.shubhamkislay.jetpacklogin.YoutubePlayerActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -54,11 +91,12 @@ import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
+import io.agora.rtc.video.VideoEncoderConfiguration;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LiveMessageFragment extends Fragment {
+public class LiveMessageFragment extends Fragment implements LiveMessageRequestListener {
 
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler mRtcEventHandler;
@@ -73,6 +111,8 @@ public class LiveMessageFragment extends Fragment {
     private Boolean start = true;
     private Boolean flagActivityClosure = false;
     private LiveVideoViewModel liveVideoViewModel;
+    BottomSheetBehavior bottomSheetBehavior;
+    RelativeLayout bottom_sheet_dialog_layout;
 
     private LiveMessageEventListener liveMessageEventListener;
    // public String userIdChattingWith;
@@ -95,15 +135,29 @@ public class LiveMessageFragment extends Fragment {
     public FrameLayout frameRemoteContainer;
     public Boolean checkResult = false;
     LiveMessage checkMessage;
+    RelativeLayout youtube_layout;
     int beforetextChangeCounter = 0;
     int textChangeCounter = 0;
     int aftertextChangeCounter = 0;
-
+    Boolean resultReady = false;
+    RelativeLayout top_bar;
+    YouTubePlayerSeekBar youtube_player_seekbar;
+    Button youtube_button;
+    YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
+    ValueEventListener valueEventListener;
+    ListView video_listView;
+    EditText search_video_edittext;
+    YouTubePlayerView youtube_player_view;
+    Button search_video_btn;
+    private String videoID = "kJQP7kiw5Fk";
+    private boolean playerInitialised;
+    private List<VideoItem> searchResults;
+    private com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer mYouTubePlayer = null;
+    private boolean initialiseActivity = false;
 
     public LiveMessageFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,6 +179,31 @@ public class LiveMessageFragment extends Fragment {
 
         messageBox = view.findViewById(R.id.message_box);
 
+        youtube_layout = view.findViewById(R.id.youtube_layout);
+        youtube_player_view = view.findViewById(R.id.youtube_player_view);
+        youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
+        bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
+        searchResults = new ArrayList<>();
+        search_video_edittext = view.findViewById(R.id.search_video_edittext);
+        search_video_btn = view.findViewById(R.id.search_video_btn);
+
+        video_listView = view.findViewById(R.id.video_listView);
+
+        getLifecycle().addObserver(youtube_player_view);
+
+
+        top_bar = view.findViewById(R.id.top_bar);
+
+
+        youtube_button = view.findViewById(R.id.youtube_btn);
+
+        search_video_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchOnYoutube(search_video_edittext.getText().toString());
+            }
+        });
+
 
 
         firstPersonVideo = view.findViewById(R.id.first_person_video);
@@ -134,16 +213,199 @@ public class LiveMessageFragment extends Fragment {
 
         frameLocalContainer = (FrameLayout) view.findViewById(R.id.local_video_view_container);
 
+        /*YouTubePlayerSupportFragment frag =
+                (YouTubePlayerSupportFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.youtube_fragment);
+        frag.initialize(YouTubeConfig.getApiKey(), this);
+
+        YouTubePlayerFragmentX youTubePlayerFragment = YouTubePlayerFragmentX.newInstance();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.add(R.id.youtube_fragment, youTubePlayerFragment).commit();*/
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
 
         startLiveVideo = view.findViewById(R.id.startLiveVideo);
         stopLiveVideo = view.findViewById(R.id.stopLiveVideo);
         startLiveVideoTextView = view.findViewById(R.id.startLiveVideoText);
         stopLiveVideoTextView = view.findViewById(R.id.stopLiveVideoText);
 
+        startLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        stopLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float displayHeight = size.y;
+
+
+        bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 3;
+
+
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    youtubeBottomFragmentStateListener.setDrag(true);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                }
+            }
+
+            @Override
+            public void onSlide(View bottomSheet, float slideOffset) {
+            }
+        });
+
+        search_video_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    searchOnYoutube(v.getText().toString());
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        youtube_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                youtubeBottomFragmentStateListener.setDrag(true);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+
+        video_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                VideoItem videoItem = searchResults.get(position);
+                videoID = videoItem.getId();
+
+                /*if(!playerInitialised)
+                youTubePlayerView.initialize(YouTubeConfig.getApiKey(),onInitializedListener);
+                else {
+                    youTubePlayer.cueVideo(videoID);
+                    youTubePlayer.play();
+                }
+
+
+
+*/
+
+                youtube_layout.setVisibility(View.VISIBLE);
+                youtube_player_view.setVisibility(View.VISIBLE);
+
+
+                if (youtube_player_view != null) {
+                    mYouTubePlayer.loadVideo(videoID, 0);
+                    mYouTubePlayer.play();
+                    Rect outRect = new Rect();
+                    bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            youtubeBottomFragmentStateListener.setDrag(false);
+                        }
+                    }, 750);
+                }
+
+
+                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                youtubeVideoHash.put("youtubeUrl", videoID);
+
+                FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userChattingWithId)
+                        .updateChildren(youtubeVideoHash);
+                //  Toast.makeText(YoutubePlayerActivity.this,"Set Video cued",Toast.LENGTH_SHORT).show();
+
+                FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(userChattingWithId)
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .updateChildren(youtubeVideoHash);
+
+            }
+        });
+
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    ChatStamp chatStamp = dataSnapshot.getValue(ChatStamp.class);
+
+                    if (initialiseActivity) {
+                        try {
+                            //  if (!videoID.equals(chatStamp.getYoutubeUrl())) {
+
+                            videoID = chatStamp.getYoutubeUrl();
+                            if (!playerInitialised) {
+                                // youtube_player_view.initialize(YouTubeConfig.getApiKey(), onInitializedListener);
+                            } else {
+                                mYouTubePlayer.cueVideo(videoID, 0);
+                                mYouTubePlayer.play();
+                            }
+
+                            //  }
+                        } catch (NullPointerException e) {
+                            //
+                            videoID = "default";
+                        }
+                    }
+
+                }
+                initialiseActivity = true;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
 
         connectingUserVideo = view.findViewById(R.id.send_pending);
 
         connectedUserVideo = view.findViewById(R.id.send_pending_comp);
+
+
+        youtube_player_view.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer youTubePlayer) {
+                super.onReady(youTubePlayer);
+
+                mYouTubePlayer = youTubePlayer;
+                playerInitialised = true;
+                // mYouTubePlayer.addListener(youtube_player_seekbar);
+
+            }
+
+            @Override
+            public void onStateChange(com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer youTubePlayer, PlayerConstants.PlayerState state) {
+                super.onStateChange(youTubePlayer, state);
+                mYouTubePlayer = youTubePlayer;
+
+                if (state == PlayerConstants.PlayerState.PLAYING) {
+                    top_bar.setVisibility(View.GONE);
+                }
+                if (state == PlayerConstants.PlayerState.ENDED) {
+                    top_bar.setVisibility(View.VISIBLE);
+                    youtube_layout.setVisibility(View.GONE);
+                    youtube_player_view.setVisibility(View.GONE);
+                }
+
+
+            }
+
+
+        });
+
+
+
+
+
+
 
 
 
@@ -151,6 +413,22 @@ public class LiveMessageFragment extends Fragment {
         username = view.findViewById(R.id.username);
 
         backBtn = view.findViewById(R.id.back_button);
+
+        username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                youtube_layout.setVisibility(View.VISIBLE);
+                youtube_player_view.setVisibility(View.VISIBLE);
+
+
+                if (youtube_player_view != null) {
+                    mYouTubePlayer.loadVideo(videoID, 0);
+                    mYouTubePlayer.play();
+                }
+
+                // youtube_player_view.initialize(onInitializedListener,true);
+            }
+        });
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -371,7 +649,12 @@ public class LiveMessageFragment extends Fragment {
                 });
             }
 
-
+            @Override
+            public void onUserOffline(int uid, int reason) {
+                super.onUserOffline(uid, reason);
+                //mRtcEngine.stopPreview();
+                leaveChannel();
+            }
         };
 
         stopLiveVideo.setOnClickListener(new View.OnClickListener() {
@@ -538,6 +821,102 @@ public class LiveMessageFragment extends Fragment {
 
     }
 
+    private void searchOnYoutube(final String keywords) {
+        CheckSearchResult();
+        new Thread() {
+            public void run() {
+                YouTubeConfig yc = new YouTubeConfig(getActivity());
+                searchResults = yc.search(keywords);
+                resultReady = true;
+
+            }
+        }.start();
+    }
+
+    public void CheckSearchResult() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (resultReady)
+                    updateVideosFound();
+                else
+                    CheckSearchResult();
+            }
+        }, 1000);
+    }
+
+    private void updateVideosFound() {
+        ArrayAdapter<VideoItem> adapter = new ArrayAdapter<VideoItem>(getActivity().getApplicationContext(), R.layout.youtube_video_item, searchResults) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = getLayoutInflater().inflate(R.layout.youtube_video_item, parent, false);
+                }
+                ImageView thumbnail = (ImageView) convertView.findViewById(R.id.video_thumbnail);
+                TextView title = (TextView) convertView.findViewById(R.id.video_title);
+                TextView description = (TextView) convertView.findViewById(R.id.video_description);
+
+                VideoItem searchResult = searchResults.get(position);
+
+
+                Glide.with(getActivity().getApplicationContext()).load(searchResult.getThumbnailURL()).into(thumbnail);
+                title.setText(searchResult.getTitle());
+                description.setText(searchResult.getDescription());
+                return convertView;
+            }
+        };
+
+        try {
+            video_listView.setAdapter(adapter);
+        } catch (NullPointerException e) {
+            //
+        }
+    }
+
+    public void setYoutubeBottomFragmentStateListener(YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener) {
+        this.youtubeBottomFragmentStateListener = youtubeBottomFragmentStateListener;
+    }
+
+    public void setBottomSheetBehavior(MotionEvent event) {
+        try {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+
+                Rect outRect = new Rect();
+                bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    // youtubeBottomFragmentStateListener.setDrag(false);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            youtubeBottomFragmentStateListener.setDrag(false);
+                        }
+                    }, 750);
+
+                }
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    public void showLiveMessageDialog(Activity activity) {
+
+        try {
+
+            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, this);
+            // LiveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            liveMessageRequestDialog.setCancelable(false);
+            liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+            liveMessageRequestDialog.show();
+        } catch (NullPointerException e) {
+            liveMessageEventListener.changeFragment();
+
+        }
+    }
+
     public void createLiveMessageDbInstance() {
         try {
 
@@ -692,6 +1071,7 @@ public class LiveMessageFragment extends Fragment {
         return checkResult;
     }
 
+
    /* private void checkForRequest() {
 
 
@@ -835,7 +1215,14 @@ public class LiveMessageFragment extends Fragment {
         mRtcEngine.disableAudio();
         mRtcEngine.enableLocalAudio(false);
         mRtcEngine.stopAudioRecording();
-        mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P_3, false);
+
+        // mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P_3, false);
+
+        mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
+                VideoEncoderConfiguration.VD_240x180,
+                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
+                VideoEncoderConfiguration.STANDARD_BITRATE,
+                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
         setupLocalVideo();
     }
 
@@ -845,6 +1232,8 @@ public class LiveMessageFragment extends Fragment {
         surfaceView.setZOrderMediaOverlay(true);
         frameLocalContainer.addView(surfaceView);
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, 0));
+
+
     }
 
     private void joinChannel() {
@@ -893,6 +1282,7 @@ public class LiveMessageFragment extends Fragment {
             mRtcEngine.disableAudio();
             mRtcEngine.stopPreview();
 
+
             mRtcEngine.clearVideoWatermarks();
             mRtcEngine.stopPreview();
             RtcEngine.destroy();
@@ -917,9 +1307,16 @@ public class LiveMessageFragment extends Fragment {
     }
 
 
+    @Override
+    public void startLiveMessaging() {
 
+        createLiveMessageDbInstance();
+    }
 
-
+    @Override
+    public void stopLiveMessaging() {
+        liveMessageEventListener.changeFragment();
+    }
 
 
 }

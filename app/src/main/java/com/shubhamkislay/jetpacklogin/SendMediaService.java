@@ -290,9 +290,6 @@ public class SendMediaService extends Service {
         } catch (FileNotFoundException e) {
             //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
             e.printStackTrace();
-        } catch (IOException e) {
-            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
-            e.printStackTrace();
         } catch (NoSuchPaddingException e) {
             //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
             e.printStackTrace();
