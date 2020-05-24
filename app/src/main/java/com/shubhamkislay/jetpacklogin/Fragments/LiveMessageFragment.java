@@ -511,7 +511,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         } catch (NullPointerException e) {
                             //
                             // videoID = "default";
-                            Toast.makeText(getActivity(), "Youtube URL not available", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(getActivity(), "Youtube URL not available", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -569,7 +569,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         float displayHeight = size.y;
 
 
-        bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 1 / 3;
+        bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
