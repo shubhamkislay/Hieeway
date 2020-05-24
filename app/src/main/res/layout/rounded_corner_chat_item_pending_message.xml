@@ -19,12 +19,7 @@
         android:layout_height="308dp">
 
 
-
-
-
-
-
-        <com.shubhamkislay.jetpacklogin.CustomImageView
+        <com.hieeway.hieeway.CustomImageView
             android:id="@+id/user_photo"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"

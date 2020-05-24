@@ -25,7 +25,7 @@
             android:layout_height="260dp">
 
 
-            <com.shubhamkislay.jetpacklogin.CustomImageView
+            <com.hieeway.hieeway.CustomImageView
                 android:id="@+id/user_photo"
                 android:layout_width="130dp"
                 android:foregroundGravity="center"

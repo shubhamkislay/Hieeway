@@ -27,7 +27,7 @@
         android:src="@drawable/splash_logo_gradient"
         android:layout_centerInParent="true"/>
 
-    <com.shubhamkislay.jetpacklogin.TypeWriter
+    <com.hieeway.hieeway.TypeWriter
         android:id="@+id/logo_txt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

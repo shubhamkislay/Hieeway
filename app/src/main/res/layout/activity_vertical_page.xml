@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".VerticalPageActivity">
 
-    <com.shubhamkislay.jetpacklogin.VerticalViewPager
+    <com.hieeway.hieeway.VerticalViewPager
         android:id="@+id/pager"
         android:splitMotionEvents="false"
 android:visibility="gone"
@@ -15,7 +15,7 @@ android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.shubhamkislay.jetpacklogin.FlingableViewPager
+    <com.hieeway.hieeway.FlingableViewPager
         android:id="@+id/flingpager"
         android:visibility="gone"
         android:rotation="0"

@@ -680,7 +680,7 @@
                 <!---->
 
 
-                <com.shubhamkislay.jetpacklogin.TypeWriter
+                <com.hieeway.hieeway.TypeWriter
                     android:id="@+id/message_text_type_writer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

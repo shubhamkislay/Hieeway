@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.shubhamkislay.jetpacklogin.TypeWriter
+        <com.hieeway.hieeway.TypeWriter
             android:id="@+id/greet_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
