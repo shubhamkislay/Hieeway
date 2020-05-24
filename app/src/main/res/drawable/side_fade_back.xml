@@ -6,6 +6,6 @@
     <gradient
         android:angle="180"
         android:endColor="@android:color/transparent"
-        android:startColor="#000" />
+        android:startColor="@color/nav_status_color_accent" />
 
 </shape>

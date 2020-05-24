@@ -1491,7 +1491,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         AnimatorSet visibleAnimate =  new AnimatorSet();
 
-        visibleAnimate.setDuration(arrowAnimDuration * 4);
+        visibleAnimate.setDuration(arrowAnimDuration * 5);
 
 
 

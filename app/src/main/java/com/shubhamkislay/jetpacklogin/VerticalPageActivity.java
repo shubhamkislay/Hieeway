@@ -90,6 +90,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     String publicKeyText, privateKeyText, otherUserPublicKey, otherUserPublicKeyID, publicKeyId;
     String feededMessageID = "default";
     private boolean bottomPageUp = false;
+    public static String userIDCHATTINGWITH = "";
+    public static String userNameChattingWith = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +113,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         final String usernameChattingWith = intent.getStringExtra("username");
         userIdChattingWith = intent.getStringExtra("userid");
+        userIDCHATTINGWITH = userIdChattingWith;
+        userNameChattingWith = usernameChattingWith;
         final String photo = intent.getStringExtra("photo");
         live = intent.getStringExtra("live");
 
@@ -509,7 +513,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 {
 
 
+                    //liveMessageFragment.initialiseLiveragment(VerticalPageActivity.this);
+
                     liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
+
                     //liveMessageFragment.createLiveMessageDbInstance();
                     liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
                     sendMessageFragment.removeListeners();
@@ -522,6 +529,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 {
                     //if(observingSendFragment)
                         //sendMessageFragment.removeObserveLiveChatList();
+                    if (pageSelected == 2) {
+                        liveMessageFragment.destoryLiveFragment();
+                    }
+
                     sendMessageFragment.removeListeners();
 
                    // Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();

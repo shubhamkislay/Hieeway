@@ -74,7 +74,7 @@ public class LiveVideoViewModel extends ViewModel {
                 if(dataSnapshot.exists()) {
 
                     LiveMessage liveMessage = dataSnapshot.getValue(LiveMessage.class);
-                    if(liveMessage!=null)
+                    //   if(liveMessage!=null)
                     setValue(liveMessage);
 
                 }

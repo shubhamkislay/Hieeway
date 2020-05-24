@@ -67,6 +67,29 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <RelativeLayout
+                android:id="@+id/youtube_layout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_centerInParent="true"
+                android:layout_weight="1"
+                android:visibility="gone">
+
+                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                    android:id="@+id/youtube_player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:visibility="visible"
+                    app:autoPlay="false"
+                    app:showFullScreenButton="false"
+                    app:showSeekBar="false"
+                    app:showVideoCurrentTime="true"
+                    app:showVideoDuration="true"
+                    app:useWebUi="false" />
+
+
+            </RelativeLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -245,27 +268,6 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:id="@+id/youtube_layout"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_centerInParent="true"
-                android:layout_weight="1"
-                android:visibility="gone">
-
-                <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                    android:id="@+id/youtube_player_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:visibility="visible"
-                    app:autoPlay="false"
-                    app:showFullScreenButton="false"
-                    app:showSeekBar="true"
-                    app:showVideoCurrentTime="false"
-                    app:showVideoDuration="true" />
-
-
-            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
