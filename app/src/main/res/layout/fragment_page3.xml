@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_centerInParent="true"
-                android:layout_weight="1"
+                android:layout_weight="4"
                 android:visibility="gone">
 
                 <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -87,6 +87,18 @@
                     app:showVideoDuration="true"
                     app:useWebUi="false" />
 
+                <TextView
+                    android:id="@+id/sync_video_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="Syncing Video"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
 
             </RelativeLayout>
 
@@ -96,7 +108,8 @@
                 android:layout_height="0dp"
                 android:orientation="horizontal"
                 android:animateLayoutChanges="true"
-                android:layout_weight="1">
+                android:layout_margin="4dp"
+                android:layout_weight="3">
 
                 <RelativeLayout
                     android:visibility="gone"
@@ -150,16 +163,24 @@
 
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:id="@+id/other_user_blinker"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/message_bar_ticker" />
+
                 <TextView
                     android:layout_gravity="top|start"
                     android:id="@+id/receiver_message"
 
                     android:layout_width="match_parent"
                     android:background="@drawable/layer_message_box_receiver"
-                    android:paddingStart="24dp"
+                    android:layout_marginStart="8dp"
+                    android:backgroundTint="#000"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/second_person_video"
-                    android:layout_marginStart="16dp"
+                    android:paddingStart="8dp"
                     android:layout_marginEnd="16dp"
                     android:autoSizeMinTextSize="1dp"
                     android:autoSizeStepGranularity="1sp"
@@ -274,7 +295,7 @@
                 android:layout_height="0dp"
                 android:orientation="horizontal"
                 android:animateLayoutChanges="true"
-                android:layout_weight="1">
+                android:layout_weight="3">
 
 
                 <TextView
@@ -285,11 +306,11 @@
                     android:layout_toLeftOf="@id/first_person_video"
                     android:layout_width="match_parent"
 
-                    android:paddingRight="24dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:backgroundTint="#000"
                     android:autoSizeMinTextSize="1dp"
                     android:autoSizeStepGranularity="1sp"
                     android:breakStrategy="simple"
@@ -299,11 +320,20 @@
                     android:textColorHint="#979797"
                     tools:hint="Hi how are you doing is  evry thing allright with you ??"
                     android:textStyle="bold"
+                    android:paddingRight="8dp"
                     android:hyphenationFrequency="full"
                     android:textColor="#fff"
                     app:autoSizeMaxTextSize="28dp"
                     app:autoSizeTextType="uniform"
                     tools:ignore="UnusedAttribute" />
+
+                <RelativeLayout
+                    android:id="@+id/current_user_blinker"
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/message_bar_ticker_white" />
 
                 <RelativeLayout
 

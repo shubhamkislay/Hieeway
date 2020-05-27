@@ -75,17 +75,28 @@ dependencies {
     implementation 'com.orhanobut:rootchecker:1.0.0-SNAPSHOT@aar'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.8.0'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.0'
+    implementation 'com.spotify.android:auth:1.1.0' // Maven dependency
+
+    /*implementation project(':spotify-app-remote-release-0.7.0')
+    implementation "com.google.code.gson:gson:2.8.5"*/
+    // All other dependencies for your app should also be here:
+    implementation 'androidx.browser:browser:1.0.0'
     //implementation 'io.agora.rtc:full-sdk:2.4.1'
     //implementation 'com.google.apis:google-api-services-youtube:v3-rev20200423-1.30.9'
 
     implementation('com.google.api-client:google-api-client-android:1.22.0') {
         exclude group: 'org.apache.httpcomponents'
-        exclude group:'com.google.guava'
+        exclude group: 'com.google.guava'
     }
     implementation('com.google.apis:google-api-services-youtube:v3-rev183-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
-        exclude group:'com.google.guava'
+        exclude group: 'com.google.guava'
     }
+
+    implementation project(':spotify-app-remote-release-0.4.0')
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.0.0'
+
     //implementation 'com.google.apis:google-api-services-youtube:v3-rev181-1.22.0'
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
     implementation 'io.agora.rtc:full-sdk:2.9.0'

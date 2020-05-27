@@ -18,61 +18,66 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
-        android:name="com.hieeway.hieeway.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_hieeway_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.hieeway.hieeway.YoutubePlayerActivity"></activity>
-        <activity android:name="com.hieeway.hieeway.VideoEncryptionActivity" />
-        <activity android:name="com.hieeway.hieeway.VideoPlayActivity" />
-        <activity android:name="com.hieeway.hieeway.VideoUploadActivity" />
-        <activity android:name="com.hieeway.hieeway.PhoneAuthenticationActivity" />
-        <activity android:name="com.hieeway.hieeway.ContactsActivity" />
-        <activity android:name="com.hieeway.hieeway.AudioRecorderActivity" />
-        <activity android:name="com.hieeway.hieeway.PaletteActivity" />
+        <activity android:name=".SpotifyActivity"></activity>
+        <activity android:name=".YoutubePlayerActivity" />
+        <activity android:name=".VideoEncryptionActivity" />
+        <activity android:name=".VideoPlayActivity" />
+        <activity android:name=".VideoUploadActivity" />
+        <activity android:name=".PhoneAuthenticationActivity" />
+        <activity android:name=".ContactsActivity" />
+        <activity android:name=".AudioRecorderActivity" />
+        <activity android:name=".PaletteActivity" />
         <activity
-            android:name="com.hieeway.hieeway.ViewProfileActivity"
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".ViewProfileActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.ProfilePhotoActivity"
+            android:name=".ProfilePhotoActivity"
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <activity
-            android:name="com.hieeway.hieeway.VerticalRegisterationActivity"
+            android:name=".VerticalRegisterationActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.WebRTCActivity"
+            android:name=".WebRTCActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.RevealReplyActivity"
+            android:name=".RevealReplyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.RevealedMessageActivity"
+            android:name=".RevealedMessageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.EncryptionActivity"
+            android:name=".EncryptionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.NavButtonTest"
+            android:name=".NavButtonTest"
             android:screenOrientation="portrait" />
         <activity
             android:name=".NavButtonTestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.RequestTrackerActivity"
+            android:name=".RequestTrackerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.EphemeralPhotoActivity"
+            android:name=".EphemeralPhotoActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".EphermeralPhotoActivity"
@@ -81,30 +86,30 @@
             android:name=".ephemeral_photo_activity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.AutoTextSizeChangeActivity"
+            android:name=".AutoTextSizeChangeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.VerticalPageActivity"
+            android:name=".VerticalPageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.hieeway.hieeway.PhotoTreatmentActivity"
+            android:name=".PhotoTreatmentActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.TestJavaEmojiKeyBoard"
+            android:name=".TestJavaEmojiKeyBoard"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.hieeway.hieeway.FireVideo"
+            android:name=".FireVideo"
             android:screenOrientation="portrait"
             android:theme="@style/BlackStatusBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.hieeway.hieeway.LiveMessagingActivity"
+            android:name=".LiveMessagingActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.hieeway.hieeway.SplashScreen"
+            android:name=".SplashScreen"
             android:screenOrientation="portrait"
             android:theme="@style/SplashScreen">
             <intent-filter>
@@ -115,58 +120,58 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hieeway.hieeway.EphemeralChainMessageActivity"
+            android:name=".EphemeralChainMessageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="com.hieeway.hieeway.SwipeButtonActivity" />
+        <activity android:name=".SwipeButtonActivity" />
         <activity
-            android:name="com.hieeway.hieeway.ArchiveActivity"
+            android:name=".ArchiveActivity"
             android:label="@string/title_activity_archive"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.EphemeralMessageActivity"
+            android:name=".EphemeralMessageActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.hieeway.hieeway.PhotoViewerUploadActivity"
+            android:name=".PhotoViewerUploadActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.ImageUpload"
+            android:name=".ImageUpload"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.PhotoActivity"
+            android:name=".PhotoActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.PhotoViewActivity"
+            android:name=".PhotoViewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.PhotoEditToolsActivity"
+            android:name=".PhotoEditToolsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name="com.hieeway.hieeway.CameraActivity"
+            android:name=".CameraActivity"
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.AlphaActivity"
+            android:name=".AlphaActivity"
             android:label="@string/title_activity_alpha"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.hieeway.hieeway.LoginActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.RegisterActivity"
+            android:name=".RegisterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.HomeActivity"
+            android:name=".HomeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.hieeway.hieeway.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -177,22 +182,35 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.hieeway.hieeway.NotificationReceiver" />
+        <receiver android:name=".NotificationReceiver" />
 
         <service
-            android:name="com.hieeway.hieeway.MyMessagingService"
+            android:name=".MyMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name="com.hieeway.hieeway.SyncService" />
-        <service android:name="com.hieeway.hieeway.SendMediaService" />
+        <service android:name=".SyncService" />
+        <service android:name=".SendMediaService" />
 
         <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.spotify.music.playbackstatechanged" />
+                <action android:name="com.spotify.music.metadatachanged" />
+                <action android:name="com.spotify.music.queuechanged" />
+            </intent-filter>
+
         </receiver>
     </application>
 

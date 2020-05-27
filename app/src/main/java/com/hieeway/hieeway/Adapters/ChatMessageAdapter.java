@@ -63,8 +63,14 @@ import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.CheckPendingMessageAsyncModel;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
+
+import com.hieeway.hieeway.RevealReplyActivity;
+import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.VerticalPageActivity;
 import com.hieeway.hieeway.YoutubePlayerActivity;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,6 +79,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import hani.momanii.supernova_emoji_library.emoji.Sport;
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements DeleteOptionsListener {
 
@@ -101,6 +109,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     private  String publicKeyId = null;
     int spanCount;
     public static final int MSG_FIRST_ROW= 1,MSG_NOT_PEND=0,MSG_FIRST_ITEM = 2;
+
+    private static final int REQUEST_CODE = 1337;
+    private static final String REDIRECT_URI = "yourcustomprotocol://callback";
+    private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
 
 
     public ChatMessageAdapter(Context mContext, List<ChatStamp> mUsers, Activity activity/*, DeleteOptionsListener deleteOptionsListener*/) {
@@ -284,6 +296,15 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                     }
                 }, 200);*/
+/*                Intent intent = new Intent(mContext, RevealReplyActivity.class);
+
+
+                intent.putExtra("userIdChattingWith", chatStamp.getId());
+                intent.putExtra("currentUserPrivateKey", privateKeyText);
+                intent.putExtra("currentUserPublicKeyID", publicKeyId);
+
+
+                mContext.startActivity(intent);*/
 
 
                 /**
@@ -304,11 +325,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 });*/
 
 
-                Intent intent = new Intent(mContext, YoutubePlayerActivity.class);
+                /*Intent intent = new Intent(mContext, YoutubePlayerActivity.class);
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
-                mContext.startActivity(intent);
+                mContext.startActivity(intent);*/
 
-                //mContext.startActivity(new Intent(mContext, PaletteActivity.class));
+
+                mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
 
 
             }

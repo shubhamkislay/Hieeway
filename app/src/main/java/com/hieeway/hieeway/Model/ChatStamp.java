@@ -12,13 +12,14 @@ public class ChatStamp implements Comparable<ChatStamp>{
     private Boolean chatPending;
     private int gemCount;
     private String youtubeUrl;
+    private float videoSec;
 
 
     public ChatStamp() {
     }
 
 
-    public ChatStamp(String timeStamp, String id, String photo, String username, String seen, Boolean chatPending, int gemCount, String youtubeUrl) {
+    public ChatStamp(String timeStamp, String id, String photo, String username, String seen, Boolean chatPending, int gemCount, String youtubeUrl, float videoSec) {
         this.timeStamp = timeStamp;
         this.id = id;
         this.photo = photo;
@@ -27,6 +28,8 @@ public class ChatStamp implements Comparable<ChatStamp>{
         this.chatPending = chatPending;
         this.gemCount = gemCount;
         this.youtubeUrl = youtubeUrl;
+        this.videoSec = videoSec;
+
 
     }
 
@@ -99,5 +102,13 @@ public class ChatStamp implements Comparable<ChatStamp>{
 
     public void setYoutubeUrl(String youtubeUrl) {
         this.youtubeUrl = youtubeUrl;
+    }
+
+    public float getVideoSec() {
+        return videoSec;
+    }
+
+    public void setVideoSec(float videoSec) {
+        this.videoSec = videoSec;
     }
 }

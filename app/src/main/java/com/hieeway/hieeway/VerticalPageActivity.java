@@ -91,6 +91,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private boolean bottomPageUp = false;
     public static String userIDCHATTINGWITH = "";
     public static String userNameChattingWith = "";
+    public static String USER_PRIVATE_KEY = "";
+    public static String OTHER_USER_PUBLIC_KEY = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +132,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         privateKeyText = sharedPreferences.getString(PRIVATE_KEY, null);
         publicKeyText = sharedPreferences.getString(PUBLIC_KEY, null);
         publicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, null);
+
+        USER_PRIVATE_KEY = privateKeyText;
 
 
         if (intent.getExtras() != null) {
@@ -383,6 +387,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                     User user = dataSnapshot.getValue(User.class);
                     try {
                         otherUserPublicKey = user.getPublicKey();
+                        OTHER_USER_PUBLIC_KEY = otherUserPublicKey;
                         otherUserPublicKeyID = user.getPublicKeyId();
                     }
                     catch (Exception e)
@@ -633,12 +638,21 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+        if (!bottomPageUp) {
+            super.onBackPressed();
+            finish();
+        } else {
+            try {
+                liveMessageFragment.closeBottomSheet();
+            } catch (Exception e) {
+
+            }
+        }
     }
 
     @Override
     protected void onPause() {
+
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
         try {
@@ -650,13 +664,14 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             databaseReference.setValue(false);
             //databaseReference.onDisconnect().setValue(false);
 
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
         super.onPause();
 
+
     }
+
 
     @Override
     protected void onResume() {
@@ -712,6 +727,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     @Override
     public void setDrag(Boolean state) {
+
 
         bottomPageUp = state;
 

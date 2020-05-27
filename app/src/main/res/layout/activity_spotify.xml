@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context="com.hieeway.hieeway.SpotifyActivity">
+
+    <Button
+        android:id="@+id/spotify_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/message_box_drawable"
+        android:backgroundTint="#008F00"
+        android:padding="16dp"
+        android:text="Login to spotify"
+        android:visibility="gone" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/track_cover"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/profile_pic" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_fade_dark_background" />
+
+    <TextView
+        android:id="@+id/track_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/artist_name"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="4dp"
+        android:textColor="#fff"
+        android:textSize="32sp"
+        android:textStyle="bold|italic"
+        tools:text="Shape of you" />
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:paddingTop="0dp"
+        android:paddingBottom="16dp"
+        android:textColor="#FFFFFF"
+
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Shape of you" />
+
+</RelativeLayout>

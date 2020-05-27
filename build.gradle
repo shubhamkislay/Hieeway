@@ -26,6 +26,10 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/"}
 
         mavenCentral()
+
+        flatDir {
+            dirs 'libs'
+        }
         
     }
 }

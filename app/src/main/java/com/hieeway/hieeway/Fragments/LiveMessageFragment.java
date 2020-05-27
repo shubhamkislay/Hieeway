@@ -7,10 +7,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -18,8 +20,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -49,13 +55,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.CustomUiController;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBar;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
@@ -72,16 +81,28 @@ import com.hieeway.hieeway.Model.VideoItem;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.YouTubeConfig;
 
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+
+import java.security.Key;
+import java.security.KeyFactory;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+import javax.crypto.Cipher;
 
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
+import static com.hieeway.hieeway.VerticalPageActivity.OTHER_USER_PUBLIC_KEY;
+import static com.hieeway.hieeway.VerticalPageActivity.USER_PRIVATE_KEY;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
 
@@ -90,7 +111,7 @@ import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
  */
 public class LiveMessageFragment extends Fragment implements LiveMessageRequestListener {
 
-    DatabaseReference urlRef;
+    DatabaseReference urlRef, seekRef;
     private IRtcEngineEventHandler mRtcEventHandler;
     private DatabaseReference databaseReferenceUserChattingWith;
     private DatabaseReference databaseReferenceUser;
@@ -105,7 +126,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private LiveVideoViewModel liveVideoViewModel;
     BottomSheetBehavior bottomSheetBehavior;
     RelativeLayout bottom_sheet_dialog_layout;
-
+    RelativeLayout video_search_progress;
     private LiveMessageEventListener liveMessageEventListener;
    // public String userIdChattingWith;
     public String usernameChattingWith;
@@ -136,21 +157,30 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     YouTubePlayerSeekBar youtube_player_seekbar;
     Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
-    ValueEventListener valueEventListener;
+    ValueEventListener valueEventListener, seekValueEventListener;
     ListView video_listView;
     EditText search_video_edittext;
     YouTubePlayerView youtube_player_view;
     Button search_video_btn;
+    RelativeLayout current_user_blinker, other_user_blinker;
     private String videoID = "kJQP7kiw5Fk";
     private boolean playerInitialised;
     private List<VideoItem> searchResults;
     private com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer mYouTubePlayer = null;
-    private boolean initialiseActivity = false;
+    private boolean initialiseActivity = false, initialiseSeekEvent = false;
     private AbstractYouTubePlayerListener abstractYouTubePlayerListener;
     private boolean startedLivingMessaging;
     private boolean videoStarted;
     private boolean wasInCall = false;
     private boolean joiningLive = false;
+    private boolean showCurrentUserTypingAnimation = false;
+    private boolean showOtherUserTypingAnimation = false;
+    private boolean confirmShowOtherUserTypingAnimation = false;
+    private boolean bottomSheetVisible = false;
+    private boolean isKeyboardOpen = false;
+    private CustomUiController customUiController = null;
+    private TextView sync_video_txt;
+
 
     public LiveMessageFragment() {
         // Required empty public constructor
@@ -304,11 +334,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         stopLiveVideo = view.findViewById(R.id.stopLiveVideo);
         startLiveVideoTextView = view.findViewById(R.id.startLiveVideoText);
         stopLiveVideoTextView = view.findViewById(R.id.stopLiveVideoText);
+        current_user_blinker = view.findViewById(R.id.current_user_blinker);
+        other_user_blinker = view.findViewById(R.id.other_user_blinker);
+        video_search_progress = view.findViewById(R.id.video_search_progress);
+        sync_video_txt = view.findViewById(R.id.sync_video_txt);
+
+
+
 
 
         username.setText(userNameChattingWith);
         startLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         stopLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        sync_video_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         getLifecycle().addObserver(youtube_player_view);
@@ -318,6 +356,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onClick(View v) {
                 searchOnYoutube(search_video_edittext.getText().toString());
+                video_search_progress.setVisibility(View.VISIBLE);
             }
         });
 
@@ -327,6 +366,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             public void onClick(View v) {
                 youtubeBottomFragmentStateListener.setDrag(true);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                bottomSheetVisible = true;
+                if (isKeyboardOpen) {
+                    youtube_layout.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -339,6 +382,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 Toast.makeText(getActivity(), "Video ID: " + videoID, Toast.LENGTH_SHORT);
                 HashMap<String, Object> youtubeVideoHash = new HashMap<>();
                 youtubeVideoHash.put("youtubeUrl", videoID);
+                youtubeVideoHash.put("videoSec", 0.0);
 
                 FirebaseDatabase.getInstance().getReference("ChatList")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -355,6 +399,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 Rect outRect = new Rect();
                 bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomSheetVisible = false;
 
 
                 new Handler().postDelayed(new Runnable() {
@@ -448,7 +493,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         });
 
 
-        username.setOnClickListener(new View.OnClickListener() {
+        /*username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 youtube_layout.setVisibility(View.VISIBLE);
@@ -462,7 +507,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 // youtube_player_view.initialize(onInitializedListener,true);
             }
-        });
+        });*/
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -472,7 +517,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 getActivity().finish();
             }
         });
-
 
 
         valueEventListener = new ValueEventListener() {
@@ -488,6 +532,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             videoID = chatStamp.getYoutubeUrl();
 
                             if (!videoID.equals("default")) {
+
                                 youtube_layout.setVisibility(View.VISIBLE);
                                 youtube_player_view.setVisibility(View.VISIBLE);
 
@@ -504,6 +549,34 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         }
                     }
 
+                    /*String youtubeUrl = dataSnapshot.getValue(String.class);
+
+                    if(initialiseActivity)
+                    {
+                        try{
+
+                            videoID = youtubeUrl;
+
+                            if(!videoID.equals("default"))
+                            {
+
+                                youtube_layout.setVisibility(View.VISIBLE);
+                                youtube_player_view.setVisibility(View.VISIBLE);
+
+                                mYouTubePlayer.loadVideo(videoID, 0);
+                                mYouTubePlayer.play();
+                            }
+
+
+
+
+                        }catch (NullPointerException e)
+                        {
+
+                        }
+                    }*/
+
+
                 }
                 initialiseActivity = true;
 
@@ -516,7 +589,65 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         };
         urlRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userIDCHATTINGWITH)
+        //.child("youtubeUrl")
+        ;
+
+        seekValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    ChatStamp seek = dataSnapshot.getValue(ChatStamp.class);
+
+                    if (initialiseSeekEvent) {
+                        try {
+
+
+                            if (seek.getVideoSec() != 0.0) {
+                                // Toast.makeText(getActivity(),"Seek to: "+seek.getVideoSec(),Toast.LENGTH_SHORT).show();
+                                //mYouTubePlayer.loadVideo(videoID,seek.getVideoSec());
+                                if (playerInitialised) {
+
+                                    youtube_player_view.setVisibility(View.INVISIBLE);
+                                    sync_video_txt.setVisibility(View.VISIBLE);
+                                    customUiController.setYoutube_player_seekbarVisibility(false);
+                                    mYouTubePlayer.loadVideo(videoID, seek.getVideoSec());
+                                    mYouTubePlayer.play();
+                                }
+
+
+                            }
+
+
+                        } catch (NullPointerException e) {
+
+                        }
+                    }
+
+
+                }
+                initialiseSeekEvent = true;
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+
+        seekRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userIDCHATTINGWITH);
+        //.child("videoSec");
+
+
+        final View customUiView = youtube_player_view.inflateCustomPlayerUi(R.layout.youtube_player_custom_view);
+
+
+
 
         abstractYouTubePlayerListener = new AbstractYouTubePlayerListener() {
             @Override
@@ -524,6 +655,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 super.onReady(youTubePlayer);
 
                 mYouTubePlayer = youTubePlayer;
+                customUiController = new CustomUiController(customUiView, mYouTubePlayer, getContext());
+
+                //mYouTubePlayer.addListener(customUiController);
                 playerInitialised = true;
                 // mYouTubePlayer.addListener(youtube_player_seekbar);
 
@@ -536,16 +670,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 if (state == PlayerConstants.PlayerState.PLAYING) {
                     top_bar.setVisibility(View.GONE);
+
+
+                    if (customUiController != null) {
+                        customUiController.setYoutube_player_seekbarVisibility(true);
+                        youtube_player_view.setVisibility(View.VISIBLE);
+                        sync_video_txt.setVisibility(View.INVISIBLE);
+                    }
                     videoStarted = true;
                 }
                 if (state == PlayerConstants.PlayerState.ENDED) {
+
                     top_bar.setVisibility(View.VISIBLE);
                     youtube_layout.setVisibility(View.GONE);
                     youtube_player_view.setVisibility(View.GONE);
                     videoStarted = false;
                 }
 
+            }
 
+            @Override
+            public void onCurrentSecond(YouTubePlayer youTubePlayer, float second) {
+                //Toast.makeText(getActivity(),"Time: "+second,Toast.LENGTH_SHORT).show();
             }
 
 
@@ -566,6 +712,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     youtubeBottomFragmentStateListener.setDrag(true);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    bottomSheetVisible = true;
 
                 }
             }
@@ -580,11 +727,45 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     searchOnYoutube(v.getText().toString());
+                    video_search_progress.setVisibility(View.VISIBLE);
                     return false;
                 }
                 return true;
             }
         });
+
+        search_video_edittext.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    //got focus
+                    youtube_layout.setVisibility(View.GONE);
+                } else {
+                    //lost focus
+                    if (videoStarted)
+                        youtube_layout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        KeyboardVisibilityEvent.setEventListener(
+                getActivity(),
+                new KeyboardVisibilityEventListener() {
+                    @Override
+                    public void onVisibilityChanged(boolean isOpen) {
+                        // some code depending on keyboard visiblity status
+                        isKeyboardOpen = isOpen;
+                        if (isOpen && bottomSheetVisible) {
+                            //got focus
+                            youtube_layout.setVisibility(View.GONE);
+                        } else {
+                            //lost focus
+                            if (videoStarted)
+                                youtube_layout.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                });
 
 
 
@@ -601,6 +782,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     liveMessagingViewModel.updateLiveMessage("");
                     senderTextView.setText("");
                     messageBox.setText("");
+                    showCurrentUserTypingAnimation = false;
+
                 }
                 else
                 {
@@ -616,6 +799,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 {
 
                     receiverTextView.setText("");
+                    showOtherUserTypingAnimation = false;
+
 
                 } else {
                 }
@@ -635,7 +820,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     if(s.length()<1) {
                         // receiverTextView.animate().alpha(0.0f).setDuration(250);
 
-                        receiving = true;
+                        confirmShowOtherUserTypingAnimation = false;
+
+                        /*receiving = true;
+
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -644,17 +832,23 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 receiverTextView.setText(s);
                                 receiving = false;
 
+
                             }
                         }, 500);
 
-                        receiverTextView.setText(s);
+                        receiverTextView.setText(s);*/
 
                     }
 
                     else
                     {
 
-                        receiverTextView.setText(s);
+
+                        receiverTextView.setText(decryptRSAToString(s, USER_PRIVATE_KEY));
+                        if (!showOtherUserTypingAnimation) {
+                            showOtherUserTypingAnimation = true;
+                            otherUserTypingAnimation();
+                        }
                         //  receiverTextView.animate().alpha(1.0f).setDuration(250);
 
                     }
@@ -663,6 +857,26 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
+        /*receiverTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if(s.length()>0)
+                    confirmShowOtherUserTypingAnimation = true;
+                else
+                    confirmShowOtherUserTypingAnimation = false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });*/
         messageBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -687,7 +901,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     // senderTextView.setAlpha(1.0f);
                     senderTextView.setText(s);
 
-                    liveMessagingViewModel.updateLiveMessage(s.toString());
+
+                    if (s.length() > 0) {
+                        liveMessagingViewModel.updateLiveMessage(encryptRSAToString(s.toString(), OTHER_USER_PUBLIC_KEY));
+                        if (!showCurrentUserTypingAnimation) {
+                            showCurrentUserTypingAnimation = true;
+                            currentUserTypingAnimation();
+                        }
+                    }
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -700,6 +921,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     }, 1000);
 
                 }
+
 
             }
 
@@ -841,6 +1063,65 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         return view;
     }
 
+    public void currentUserTypingAnimation() {
+        if (showCurrentUserTypingAnimation) {
+            current_user_blinker.animate().alpha(0.0f).setDuration(300);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    current_user_blinker.animate().alpha(1.0f).setDuration(300);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (showCurrentUserTypingAnimation)
+                                currentUserTypingAnimation();
+                        }
+                    }, 300);
+
+                }
+            }, 300);
+        } else {
+            current_user_blinker.animate().alpha(1.0f).setDuration(500);
+        }
+    }
+
+    public void otherUserTypingAnimation() {
+        if (showOtherUserTypingAnimation) {
+            other_user_blinker.animate().alpha(0.0f).setDuration(150);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    other_user_blinker.animate().alpha(1.0f).setDuration(150);
+                    try {
+
+                        Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+
+// Vibrate for 500 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            v.vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            v.vibrate(40);
+                        }
+                    } catch (Exception e) {
+                        //
+
+                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (showOtherUserTypingAnimation)
+                                otherUserTypingAnimation();
+                        }
+                    }, 150);
+
+                }
+            }, 150);
+        } else {
+            other_user_blinker.animate().alpha(1.0f).setDuration(150);
+        }
+    }
+
     public void initialiseLiveVideo() {
         joiningLive = true;
         startLiveVideoTextView.setText("Connecting...");
@@ -856,6 +1137,50 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     }
 
+    public String encryptRSAToString(String clearText, String publicKey) {
+        String encryptedBase64 = "";
+        try {
+            KeyFactory keyFac = KeyFactory.getInstance("RSA");
+            KeySpec keySpec = new X509EncodedKeySpec(Base64.decode(publicKey.trim().getBytes(), Base64.DEFAULT));
+            Key key = keyFac.generatePublic(keySpec);
+
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+
+            byte[] encryptedBytes = cipher.doFinal(clearText.getBytes("UTF-8"));
+            encryptedBase64 = new String(Base64.encode(encryptedBytes, Base64.DEFAULT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return encryptedBase64.replaceAll("(\\r|\\n)", "");
+    }
+
+    public String decryptRSAToString(String encryptedBase64, String privateKey) {
+
+        String decryptedString = "";
+        try {
+            KeyFactory keyFac = KeyFactory.getInstance("RSA");
+            KeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decode(privateKey.trim().getBytes(), Base64.DEFAULT));
+            Key key = keyFac.generatePrivate(keySpec);
+
+            // get an RSA cipher object and print the provider
+            final Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING");
+            // encrypt the plain text using the public key
+            cipher.init(Cipher.DECRYPT_MODE, key);
+
+            byte[] encryptedBytes = Base64.decode(encryptedBase64, Base64.DEFAULT);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            decryptedString = new String(decryptedBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return decryptedString;
+    }
+
     public void initialiseLiveragment() {
         //Toast.makeText(activity,"Fragment Initialised",Toast.LENGTH_SHORT).show();
 
@@ -864,6 +1189,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         try {
             urlRef.addValueEventListener(valueEventListener);
+            seekRef.addValueEventListener(seekValueEventListener);
         } catch (NullPointerException e) {
             liveMessageEventListener.changeFragment();
         }
@@ -890,8 +1216,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 @Override
                 public void run() {
 
-                    if (receiverTextView.getText().toString().equals(receiverText))
+                    if (receiverTextView.getText().toString().equals(receiverText)) {
                         receiverTextView.setText("");
+                        showOtherUserTypingAnimation = false;
+                    }
 
                     refreshReceiverText();
 
@@ -939,7 +1267,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         ArrayAdapter<VideoItem> adapter = new ArrayAdapter<VideoItem>(getActivity().getApplicationContext(), R.layout.youtube_video_item, searchResults) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
+                video_search_progress.setVisibility(View.GONE);
                 if (convertView == null) {
+
                     convertView = getLayoutInflater().inflate(R.layout.youtube_video_item, parent, false);
                 }
                 ImageView thumbnail = (ImageView) convertView.findViewById(R.id.video_thumbnail);
@@ -976,6 +1306,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    bottomSheetVisible = false;
+                    if (videoStarted)
+                        youtube_layout.setVisibility(View.VISIBLE);
                     // youtubeBottomFragmentStateListener.setDrag(false);
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -989,6 +1322,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         } catch (Exception e) {
             //
         }
+    }
+
+
+    public void closeBottomSheet() {
+        youtubeBottomFragmentStateListener.setDrag(false);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     public void showLiveMessageDialog(Activity activity) {
@@ -1035,8 +1374,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
             urlRef.removeEventListener(valueEventListener);
+            seekRef.removeEventListener(seekValueEventListener);
             startedLivingMessaging = false;
             initialiseActivity = false;
+            initialiseSeekEvent = false;
 
             stopObservingLiveMessaging = true;
             Toast.makeText(getActivity(), "Live Messaging ended", Toast.LENGTH_SHORT).show();
