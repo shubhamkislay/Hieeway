@@ -180,6 +180,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private boolean isKeyboardOpen = false;
     private CustomUiController customUiController = null;
     private TextView sync_video_txt;
+    private RelativeLayout sync_video_layout;
 
 
     public LiveMessageFragment() {
@@ -338,6 +339,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         other_user_blinker = view.findViewById(R.id.other_user_blinker);
         video_search_progress = view.findViewById(R.id.video_search_progress);
         sync_video_txt = view.findViewById(R.id.sync_video_txt);
+        sync_video_layout = view.findViewById(R.id.sync_video_layout);
 
 
 
@@ -610,7 +612,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 if (playerInitialised) {
 
                                     youtube_player_view.setVisibility(View.INVISIBLE);
-                                    sync_video_txt.setVisibility(View.VISIBLE);
+
+                                    sync_video_layout.setVisibility(View.VISIBLE);
                                     customUiController.setYoutube_player_seekbarVisibility(false);
                                     mYouTubePlayer.loadVideo(videoID, seek.getVideoSec());
                                     mYouTubePlayer.play();
@@ -675,7 +678,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     if (customUiController != null) {
                         customUiController.setYoutube_player_seekbarVisibility(true);
                         youtube_player_view.setVisibility(View.VISIBLE);
-                        sync_video_txt.setVisibility(View.INVISIBLE);
+                        sync_video_layout.setVisibility(View.INVISIBLE);
                     }
                     videoStarted = true;
                 }

@@ -79,7 +79,7 @@
                     android:id="@+id/youtube_player_view"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
-                    android:visibility="visible"
+                    android:visibility="invisible"
                     app:autoPlay="false"
                     app:showFullScreenButton="false"
                     app:showSeekBar="false"
@@ -87,17 +87,40 @@
                     app:showVideoDuration="true"
                     app:useWebUi="false" />
 
-                <TextView
-                    android:id="@+id/sync_video_txt"
+                <RelativeLayout
+                    android:id="@+id/sync_video_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="Syncing Video"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/sync_video_txt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@id/pb"
+                        android:gravity="center"
+                        android:text="Syncing Video"
+                        android:layout_marginBottom="12dp"
+                        android:textColor="#A8A8A8"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="visible" />
+
+
+                    <ProgressBar
+                        android:id="@+id/pb"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_centerInParent="true" />
+
+                    <ProgressBar
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_centerInParent="true"
+                        android:rotation="180" />
+
+
+                </RelativeLayout>
 
 
             </RelativeLayout>
