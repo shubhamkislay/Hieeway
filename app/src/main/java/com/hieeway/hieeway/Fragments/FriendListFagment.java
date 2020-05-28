@@ -629,7 +629,11 @@ public class FriendListFagment extends Fragment {
                                             /*User user = dataSnapshot.getValue(User.class);
                                             userList.add(user);*/
 
-                                            friendsAdapter.notifyDataSetChanged();
+                                            try {
+                                                friendsAdapter.notifyDataSetChanged();
+                                            } catch (Exception e) {
+
+                                            }
 
 
                                         }

@@ -62,6 +62,7 @@ import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.UserPicViewModel;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.utils.FadeViewHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -452,7 +453,11 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    animationArrowListener.playArrowAnimation();
+                                    try {
+                                        animationArrowListener.playArrowAnimation();
+                                    } catch (Exception e) {
+
+                                    }
                                 }
                             }, 500);
 
@@ -477,7 +482,6 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
 
         //animateMenuImage(progress_menu_logo);
-
 
 
         return view;

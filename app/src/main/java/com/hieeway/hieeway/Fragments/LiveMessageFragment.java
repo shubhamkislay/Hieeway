@@ -676,6 +676,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
                     if (customUiController != null) {
+                        customUiController.autoUpdateControlView();
                         customUiController.setYoutube_player_seekbarVisibility(true);
                         youtube_player_view.setVisibility(View.VISIBLE);
                         sync_video_layout.setVisibility(View.INVISIBLE);
