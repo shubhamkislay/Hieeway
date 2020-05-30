@@ -5,6 +5,8 @@ public class VideoItem {
     private String description;
     private String thumbnailURL;
     private String id;
+    private String duration;
+    private String viewCount;
 
     public String getId() {
         return id;
@@ -20,6 +22,14 @@ public class VideoItem {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(String viewCount) {
+        this.viewCount = viewCount;
     }
 
     public String getDescription() {
@@ -38,4 +48,11 @@ public class VideoItem {
         this.thumbnailURL = thumbnail;
     }
 
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
 }
