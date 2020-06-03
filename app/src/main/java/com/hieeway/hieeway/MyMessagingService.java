@@ -100,9 +100,9 @@ public class MyMessagingService extends FirebaseMessagingService {
 
             remoteViews.setImageViewResource(R.id.push_notif_icon,R.mipmap.ic_bird_black);*/
 
-            Intent intent = new Intent(this, SwipeButtonActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+            // Intent intent = new Intent(this, .class);
+            // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_1_ID);
@@ -115,7 +115,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             notificationBuilder.setColor(Color.parseColor("#29A8CF"));
             // notificationBuilder.setSmallIcon(R.drawable.hieeway_logo_splash);
             notificationBuilder.setSmallIcon(R.mipmap.ic_hieeway_logo);
-            notificationBuilder.setContentIntent(pendingIntent);
+            //notificationBuilder.setContentIntent(pendingIntent);
 
 
          /*   remoteViews.setTextViewText(R.id.push_title, "Radyo Türkkuşu");

@@ -7,10 +7,7 @@
     android:background="#000"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/framelayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+
 
 
 
@@ -131,4 +128,9 @@
         android:text="Let's get started"
         android:textAllCaps="false"
         android:visibility="gone"/>
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

@@ -36,8 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.Adapters.SendMessageAdapter;
-import com.hieeway.hieeway.ArchiveActivityViewModel;
-import com.hieeway.hieeway.ArchiveActivityViewModelFactory;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
 import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.Model.ChatStamp;
@@ -56,8 +54,6 @@ import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 public class SendMessageFragment extends Fragment {
 
     public RecyclerView recyclerView;
-    public ArchiveActivityViewModel archiveActivityViewModel;
-    private ArchiveActivityViewModelFactory archiveActivityViewModelFactory;
     private String userIdChattingWith, currentUserPrivateKey, currentUserPublicKeyID;
     private SendMessageAdapter sendMessageAdapter;
     private List<ChatMessage> messageList, sendMessagelist, sendingMessageList, readMessageList;

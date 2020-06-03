@@ -176,7 +176,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private String liveMessage, liveMessageTwo, liveMessageThree;
     private Boolean messageTwoPresent = false, messageThreePresent = false;
     private Button emoji, camera;
-    private ImageView read_message_back;
     private Button read_message_reply;
     public String messageStr = "", messageStrTwo = "", messageStrThree = "";
     public Handler deletionHandler, blinkerHandler;
@@ -302,6 +301,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private boolean audioRecording = false;
     RelativeLayout bin;
     private ImageView disablerecord_button;
+    private boolean isDisablerecord_button = false;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -405,10 +405,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             disablerecord_button.setVisibility(View.VISIBLE);
+            isDisablerecord_button = true;
             recordButton.setVisibility(View.GONE);
             //recordButton.setEnabled(false);
         } else {
             disablerecord_button.setVisibility(View.GONE);
+            isDisablerecord_button = true;
             recordButton.setVisibility(View.VISIBLE);
         }
 
@@ -1219,7 +1221,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         profile_pic = view.findViewById(R.id.profile_pic);
 
-        read_message_back = view.findViewById(R.id.read_message_back);
+
 
 
         sender_reply_body = view.findViewById(R.id.sender_reply_body);
@@ -1492,7 +1494,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                             //   read_message_back.animate().alpha(0.0f);
 
-                            read_message_back.setAlpha(0.0f);
+
 
                         }
 
@@ -1503,22 +1505,18 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             }
             else
             {
-                profile_pic.setImageResource(R.drawable.hieeway_background_blurred);
+                profile_pic.setImageResource(R.drawable.no_profile);
                 profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
             }
         }catch (Exception e)
         {
-            profile_pic.setImageDrawable(getActivity().getDrawable(R.drawable.hieeway_background_blurred));
+            profile_pic.setImageDrawable(getActivity().getDrawable(R.drawable.no_profile));
         }
 
         archive_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                /*Intent intent = new Intent(getContext(), SwipeButtonActivity.class);
-                intent.putExtra("userIdChattingWith", userIdChattingWith);
-
-                startActivity(intent);*/
 
                 Toast.makeText(getActivity(),"Sending Message...",Toast.LENGTH_SHORT).show();
 
@@ -1714,14 +1712,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     try {
                                         if (deliveryStatus.getSentStatus().equals("sending")) {
                                             sending_progress_bar.setVisibility(View.VISIBLE);
-                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(EphemeralChainMessageActivity.this, R.color.colorPending));
+                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorPending));
                                         } else {
-                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(EphemeralChainMessageActivity.this, R.color.colorWhite));
+                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorWhite));
                                             sending_progress_bar.setVisibility(View.GONE);
                                         }
                                     }catch (Exception e)
                                     {
-                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(EphemeralChainMessageActivity.this, R.color.colorWhite));
+                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorWhite));
                                         sending_progress_bar.setVisibility(View.GONE);
                                     }
                                 }
@@ -1865,6 +1863,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     recordView.setVisibility(View.GONE);
                     recordButton.setVisibility(View.GONE);
+                    if (isDisablerecord_button)
+                        disablerecord_button.setVisibility(View.GONE);
 
                     if (!getIsMessageRunning()) {
 
@@ -1956,6 +1956,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     recordView.setVisibility(View.GONE);
                     recordButton.setVisibility(View.GONE);
+                    if (isDisablerecord_button)
+                        disablerecord_button.setVisibility(View.GONE);
 
                     if (!getIsMessageRunning()) {
 
@@ -2011,12 +2013,17 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         sendButton.setAlpha(0.15f);
                         sendButton.setVisibility(View.INVISIBLE);
 
-                        recordView.setVisibility(View.VISIBLE);
-                        recordButton.setVisibility(View.VISIBLE);
+                        if (isDisablerecord_button)
+                            disablerecord_button.setVisibility(View.VISIBLE);
+                        else {
+
+                            recordView.setVisibility(View.VISIBLE);
+                            recordButton.setVisibility(View.VISIBLE);
+                        }
 
 
                         profile_pic.animate().alpha(alphaValueProfilePic).setDuration(setAnimationSendingDuration /** 3 + 650*/);
-                        read_message_back.setAlpha(0.0f);
+
 
                         if (imageLoaded)
                             profile_pic.setBlur(0);
@@ -2664,8 +2671,13 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         sendButton.setEnabled(false);
         sendButton.setVisibility(View.INVISIBLE);
 
-        recordView.setVisibility(View.VISIBLE);
-        recordButton.setVisibility(View.VISIBLE);
+        if (isDisablerecord_button)
+            disablerecord_button.setVisibility(View.VISIBLE);
+        else {
+
+            recordView.setVisibility(View.VISIBLE);
+            recordButton.setVisibility(View.VISIBLE);
+        }
         sendButtonEnabled = false;
 
         send_arrow.setAlpha(1.0f);
@@ -3134,7 +3146,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         } catch (Exception e) {
-            //  Toast.makeText(EphemeralChainMessageActivity.this, "Internet is crawling! You might get issues using the App", Toast.LENGTH_LONG).show();
+            //
         }
 
 

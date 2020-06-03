@@ -457,31 +457,31 @@ public class ViewProfileActivity extends AppCompatActivity {
         switch (feeling) {
             case HAPPY:
                 feeling_icon.setVisibility(View.VISIBLE);
-                feeling_icon.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_happy));
+                feeling_icon.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
                 feeling_txt.setText(HAPPY);
                 break;
             case SAD:
                 feeling_icon.setVisibility(View.VISIBLE);
-                feeling_icon.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_sad));
+                feeling_icon.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
                 feeling_txt.setText(SAD);
                 break;
             case BORED:
                 feeling_icon.setVisibility(View.VISIBLE);
-                feeling_icon.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_bored));
+                feeling_icon.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
                 feeling_txt.setText(BORED);
                 break;
             case ANGRY:
                 feeling_icon.setVisibility(View.VISIBLE);
-                feeling_icon.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_angry));
+                feeling_icon.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
                 feeling_txt.setText(ANGRY);
                 break;
             case EXCITED:
-                feeling_icon.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                feeling_icon.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
                 feeling_txt.setText(EXCITED);
                 break;
             case CONFUSED:
                 feeling_icon.setVisibility(View.VISIBLE);
-                feeling_icon.setBackground(getResources().getDrawable(R.drawable.emoticon_feeling_confused));
+                feeling_icon.setBackground(getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
                 feeling_txt.setText(CONFUSED);
                 break;
         }

@@ -17,6 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
         }
+
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
 
     sourceSets {
@@ -97,6 +102,7 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.5"
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.0.0'
 
+    implementation "androidx.webkit:webkit:1.2.0-alpha01"
     //implementation 'com.google.apis:google-api-services-youtube:v3-rev181-1.22.0'
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
     implementation 'io.agora.rtc:full-sdk:2.9.0'

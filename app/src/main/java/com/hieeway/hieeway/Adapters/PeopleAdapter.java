@@ -113,7 +113,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                         }
                     }).into(viewHolder.user_photo);
                 } catch (Exception e) {
-                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.hieeway_background_blurred));
+                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
                 }
 
 

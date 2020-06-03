@@ -169,7 +169,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                 }catch (Exception e)
                 {
 
-                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.hieeway_background_blurred));
+                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
                 }
             }
         } catch (Exception e) {

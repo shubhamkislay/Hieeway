@@ -29,22 +29,6 @@
 
     </com.jgabrielfreitas.core.BlurImageView>
 
-    <ImageView
-        android:id="@+id/read_message_back"
-        android:alpha="0.0"
-        android:visibility="gone"
-        android:scaleType="fitXY"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="-100dp"
-        android:layout_marginBottom="-100dp"
-        android:layout_marginLeft="-100dp"
-        android:layout_marginStart="-100dp"
-        android:layout_marginEnd="-100dp"
-        android:layout_marginRight="-100dp"
-        android:background="@drawable/hieeway_background_blurred"
-        android:backgroundTint="#2E2E2E"/>
-
 
     <RelativeLayout
 
@@ -1290,7 +1274,7 @@
             android:layout_marginBottom="-410dp"
             android:layout_alignParentBottom="true"
             android:alpha="0.0"
-            android:background="@drawable/arrowback"
+            android:background="@drawable/hiewaylogomessagebackfresh"
             android:backgroundTint="@color/gradientEnd" />
         <ImageView
             android:id="@+id/receive_arrow"

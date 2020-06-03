@@ -54,7 +54,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hieeway.hieeway.ArchiveActivity;
 import com.hieeway.hieeway.DeleteOptionsDialog;
 import com.hieeway.hieeway.EphemeralMessageViewModel;
 import com.hieeway.hieeway.Interface.DeleteOptionsListener;
@@ -64,13 +63,8 @@ import com.hieeway.hieeway.Model.CheckPendingMessageAsyncModel;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
 
-import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.VerticalPageActivity;
-import com.hieeway.hieeway.YoutubePlayerActivity;
-import com.spotify.sdk.android.authentication.AuthenticationClient;
-import com.spotify.sdk.android.authentication.AuthenticationRequest;
-import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,8 +73,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import hani.momanii.supernova_emoji_library.emoji.Sport;
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.ViewHolder> implements DeleteOptionsListener {
 
@@ -251,30 +243,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
 
-        viewHolder.archiveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(mContext, ArchiveActivity.class);
-                        intent.putExtra("userIdChattingWith", chatStamp.getId());
-
-                        mContext.startActivity(intent);
-
-                    }
-                }, 200);
-
-
-            }
-        });
 
         viewHolder.longMsgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //    Intent intent = new Intent(mContext, AutoTextSizeChangeActivity.class);
-          //Intent intent = new Intent(mContext, AlphaActivity.class);
+
 
                 /**
                  * Uncomment the below snippet to get the final version
@@ -310,7 +284,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 /**
                  * WebRTC testing activity
                  */
-                /*Intent intent = new Intent(mContext, WebRTCActivity.class);
+                /*
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
                 mContext.startActivity(intent);*/
                 //mContext.startActivity(new Intent(mContext, VerticalRegisterationActivity.class));
@@ -325,9 +299,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 });*/
 
 
-                /*Intent intent = new Intent(mContext, YoutubePlayerActivity.class);
-                intent.putExtra("userIdChattingWith", chatStamp.getId());
-                mContext.startActivity(intent);*/
+
 
 
                 mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
@@ -528,7 +500,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 }catch (Exception e)
                 {
 
-                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.hieeway_background_blurred));
+                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
                 }
                 /*Glide.with(mContext).asBitmap().load(chatStamp.getPhoto()).into(new SimpleTarget<Bitmap>() {
                     @Override

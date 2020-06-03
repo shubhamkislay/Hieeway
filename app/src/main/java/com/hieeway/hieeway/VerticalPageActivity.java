@@ -28,7 +28,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.VPagerAdapter;
-import com.hieeway.hieeway.Fragments.ArchiveMessageFragment;
 import com.hieeway.hieeway.Fragments.EphemeralMessagingFragment;
 import com.hieeway.hieeway.Fragments.LiveMessageFragment;
 import com.hieeway.hieeway.Fragments.SendMessageFragment;
@@ -54,10 +53,9 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private PagerAdapter pagerAdapter;
     private String userIdChattingWith;
     public EphemeralMessagingFragment ephemeralMessagingFragment;
-    public ArchiveMessageFragment archiveMessageFragment;
+
     public Boolean observingSendFragment = false;
-    public ArchiveActivityViewModel archiveActivityViewModel;
-    private ArchiveActivityViewModelFactory archiveActivityViewModelFactory;
+
     private List<ChatMessage> messageList, sendMessagelist;
     private Bundle bundle;
     private Bundle bundleSendMessage;
@@ -427,8 +425,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         ephemeralMessagingFragment = new EphemeralMessagingFragment();
         ephemeralMessagingFragment.setArguments(bundle);
 
-        /*archiveMessageFragment = new ArchiveMessageFragment();
-        archiveMessageFragment.setArguments(bundle);*/
 
         sendMessageFragment = new SendMessageFragment();
 
@@ -607,19 +603,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     }
 
-
-
-
- /*   private void observeLiveChatList() {
-        archiveActivityViewModelFactory = new ArchiveActivityViewModelFactory(userIdChattingWith);
-        archiveActivityViewModel = ViewModelProviders.of(this, archiveActivityViewModelFactory).get(ArchiveActivityViewModel.class);
-        archiveActivityViewModel.getChatList().observe(this, new Observer<List<ChatMessage>>() {
-            @Override
-            public void onChanged(@Nullable List<ChatMessage> chatMessageList) {
-                archiveMessageFragment.setChatList(chatMessageList);
-            }
-        });
-    }*/
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {

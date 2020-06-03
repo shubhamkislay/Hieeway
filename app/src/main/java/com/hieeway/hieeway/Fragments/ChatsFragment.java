@@ -234,7 +234,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         });
 
         search_chat_btn = view.findViewById(R.id.search_chat_btn);
-        search_chat_btn_back = view.findViewById(R.id.search_chat_btn_back);
+
 
         close_search = view.findViewById(R.id.close_search);
 

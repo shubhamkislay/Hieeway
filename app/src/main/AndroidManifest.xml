@@ -33,14 +33,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SpotifyActivity" />
-        <activity android:name=".YoutubePlayerActivity" />
-        <activity android:name=".VideoEncryptionActivity" />
         <activity android:name=".VideoPlayActivity" />
         <activity android:name=".VideoUploadActivity" />
         <activity android:name=".PhoneAuthenticationActivity" />
         <activity android:name=".ContactsActivity" />
         <activity android:name=".AudioRecorderActivity" />
-        <activity android:name=".PaletteActivity" />
+
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
@@ -54,19 +52,17 @@
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <activity android:name=".VerticalRegisterationActivity" />
         <!--android:screenOrientation="portrait"-->
-        <activity
-            android:name=".WebRTCActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".RevealReplyActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".RevealedMessageActivity"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name=".EncryptionActivity"
+            android:name=".NavButtonTest"
             android:screenOrientation="portrait" />
-        <activity android:name=".NavButtonTest" />
         <!-- android:screenOrientation="portrait"-->
         <activity
             android:name=".NavButtonTestActivity"
@@ -83,29 +79,17 @@
         <activity
             android:name=".ephemeral_photo_activity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".AutoTextSizeChangeActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".VerticalPageActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <!--android:screenOrientation="portrait"-->
         <activity
             android:name=".PhotoTreatmentActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".TestJavaEmojiKeyBoard"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".FireVideo"
-            android:screenOrientation="portrait"
-            android:theme="@style/BlackStatusBar"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".LiveMessagingActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+
+
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="portrait"
@@ -116,31 +100,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".EphemeralChainMessageActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".SwipeButtonActivity" />
-        <activity
-            android:name=".ArchiveActivity"
-            android:label="@string/title_activity_archive"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".EphemeralMessageActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".PhotoViewerUploadActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ImageUpload"
-            android:screenOrientation="portrait" />
+
+
         <activity
             android:name=".PhotoActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".PhotoViewActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".PhotoEditToolsActivity"
             android:screenOrientation="portrait" />
@@ -153,20 +118,12 @@
             android:hardwareAccelerated="true"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".AlphaActivity"
-            android:label="@string/title_activity_alpha"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".RegisterActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".HomeActivity"
-            android:screenOrientation="portrait" />
+
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
@@ -179,7 +136,6 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".NotificationReceiver" />
 
         <service
             android:name=".MyMessagingService"

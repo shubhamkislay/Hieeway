@@ -3,18 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet_dialog_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_height="100dp"
+    android:layout_margin="0dp"
     android:background="@drawable/bottom_sheet_background_drawable"
-    android:backgroundTint="@color/nav_status_color_accent"
-    android:padding="12dp"
+    android:backgroundTint="#000"
+    android:padding="4dp"
+
     app:behavior_hideable="false"
     app:behavior_peekHeight="0dp"
-    android:visibility="gone"
+    android:visibility="visible"
 
     app:layout_behavior="@string/bottom_sheet_behavior">
 
     <RelativeLayout
+        android:layout_margin="4dp"
         android:id="@+id/search_layout"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -28,7 +30,7 @@
             android:layout_marginLeft="12dp"
             android:layout_toRightOf="@id/search_video_btn"
             android:background="@android:color/transparent"
-            android:hint="Youtube search"
+            android:hint="Paste youtube link here"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:singleLine="true"
@@ -53,7 +55,29 @@
         android:layout_below="@id/search_layout"
         android:layout_marginTop="12dp"
         android:divider="@null"
+        android:visibility="gone"
         android:dividerHeight="0dp" />
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_layout"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="16dp"
+
+            android:gravity="center"
+            android:text="Click on share button on the youtube app and press copy link"
+            android:textColor="#3A3A3A"
+            android:textSize="10sp" />
+
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/video_search_progress"

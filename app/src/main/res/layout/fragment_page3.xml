@@ -423,7 +423,7 @@
                     android:layout_marginRight="4dp"
                     android:layout_toRightOf="@id/camera_background"
                     android:background="@drawable/youtube_btn"
-                    android:backgroundTint="#292929"
+                    android:backgroundTint="#FFFFFF"
                     android:visibility="visible" />
 
 

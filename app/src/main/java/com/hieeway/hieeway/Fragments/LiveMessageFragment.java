@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewFeature;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -201,6 +203,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private Pattern compiledPattern;
     private String youtubeUrl = "http://youtube.com/";
     private String newUrl;
+    private String htmlbegin;
+    private String htmlend;
 
 
     public LiveMessageFragment() {
@@ -249,10 +253,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     if (checkMessage.getMessageKey().equals("")) {
                         *//*if (flagActivityClosure)
                             getActivity().finish();
-                            // Toast.makeText(FireVideo.this, "Live Video Stopped!", Toast.LENGTH_SHORT).show();
 
-                        else {
-                            //    Toast.makeText(FireVideo.this, "Start Live Video", Toast.LENGTH_SHORT).show();
 
                             startLiveVideoTextView.setText("Live Expressions");
                             start = true;
@@ -287,9 +288,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     else
                     {
                             *//*if(!flagActivityClosure)
-                                Toast.makeText(FireVideo.this,"This person is calling you!",Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(FireVideo.this,"Calling...",Toast.LENGTH_SHORT).show();*//*
+         *//*
                        // Toast.makeText(getContext(),"chatMessage: "+checkMessage.getMessageKey(),Toast.LENGTH_SHORT).show();
 
                         key = liveMessage.getMessageKey();
@@ -353,7 +352,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         userChattingPersonVideo = view.findViewById(R.id.second_person_video);
         frameRemoteContainer = (FrameLayout) view.findViewById(R.id.remote_video_view_container);
         frameLocalContainer = (FrameLayout) view.findViewById(R.id.local_video_view_container);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_webview_dialog_layout);
+
         startLiveVideo = view.findViewById(R.id.startLiveVideo);
         stopLiveVideo = view.findViewById(R.id.stopLiveVideo);
         startLiveVideoTextView = view.findViewById(R.id.startLiveVideoText);
@@ -366,7 +365,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         youtube_web_view = view.findViewById(R.id.youtube_web_view);
 
 
+        // bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_webview_dialog_layout);
+
         youtube_web_view.getSettings().setJavaScriptEnabled(true);
+        //  youtube_web_view.setBackgroundColor(getActivity().getResources().getColor(R.color.colorBlack));
+
+        htmlbegin = "<div style=\"background-color:#000000 ;  \">";
+        htmlend = " </div>";
 
 
         //youtube_web_view.
@@ -375,7 +382,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         compiledPattern = Pattern.compile(pattern,
                 Pattern.CASE_INSENSITIVE);
 
-
+        /*if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+            WebSettingsCompat.setForceDark(youtube_web_view.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
+        }
+*/
 
         /*youtube_web_view.setWebViewClient(new WebViewClient() {
 
@@ -420,6 +430,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 videoID = getVideoIdFromYoutubeUrl(url);
                 if (!videoID.equals("default")) {
                     youtube_web_view.stopLoading();
+
+
+                    //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
+                    //         "text/html", "utf-8", "");
                     youtube_web_view.loadUrl(youtubeUrl);
 
 
@@ -434,7 +448,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(userIDCHATTINGWITH)
                             .updateChildren(youtubeVideoHash);
-                    //  Toast.makeText(YoutubePlayerActivity.this,"Set Video cued",Toast.LENGTH_SHORT).show();
+
 
                     FirebaseDatabase.getInstance().getReference("ChatList")
                             .child(userIDCHATTINGWITH)
@@ -450,6 +464,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    search_video_edittext.clearFocus();
+                    messageBox.requestFocus();
+                    messageBox.setCursorVisible(true);
+
                     bottomSheetVisible = false;
 
 
@@ -485,8 +503,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         search_video_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchOnYoutube(search_video_edittext.getText().toString());
-                video_search_progress.setVisibility(View.VISIBLE);
+                //  searchOnYoutube(search_video_edittext.getText().toString());
+                onUrlPasted(search_video_edittext.getText().toString());
+                //video_search_progress.setVisibility(View.VISIBLE);
                 time_Iterator = 0;
             }
         });
@@ -497,9 +516,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             public void onClick(View v) {
                 youtubeBottomFragmentStateListener.setDrag(true);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                messageBox.clearFocus();
+                search_video_edittext.requestFocus();
+                search_video_edittext.setCursorVisible(true);
+
                 bottomSheetVisible = true;
                 if (isKeyboardOpen) {
-                    youtube_layout.setVisibility(View.GONE);
+                    // youtube_layout.setVisibility(View.GONE);
                 }
 
 
@@ -521,7 +544,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(userIDCHATTINGWITH)
                         .updateChildren(youtubeVideoHash);
-                //  Toast.makeText(YoutubePlayerActivity.this,"Set Video cued",Toast.LENGTH_SHORT).show();
+
 
                 FirebaseDatabase.getInstance().getReference("ChatList")
                         .child(userIDCHATTINGWITH)
@@ -537,6 +560,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                search_video_edittext.clearFocus();
+                messageBox.requestFocus();
+                messageBox.setCursorVisible(true);
+
                 bottomSheetVisible = false;
 
 
@@ -844,7 +871,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         // bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
 
-        bottom_sheet_webview_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
+        //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
 
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -852,6 +879,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     youtubeBottomFragmentStateListener.setDrag(true);
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                    messageBox.clearFocus();
+                    search_video_edittext.requestFocus();
+                    search_video_edittext.setCursorVisible(true);
+
+
                     bottomSheetVisible = true;
 
                 }
@@ -866,8 +899,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    searchOnYoutube(v.getText().toString());
-                    video_search_progress.setVisibility(View.VISIBLE);
+                    //searchOnYoutube(v.getText().toString());
+                    onUrlPasted(v.getText().toString());
+                    //video_search_progress.setVisibility(View.VISIBLE);
                     time_Iterator = 0;
                     return false;
                 }
@@ -875,7 +909,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
-        search_video_edittext.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        /*search_video_edittext.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
@@ -887,9 +921,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         youtube_layout.setVisibility(View.VISIBLE);
                 }
             }
-        });
+        });*/
 
-        KeyboardVisibilityEvent.setEventListener(
+        /*KeyboardVisibilityEvent.setEventListener(
                 getActivity(),
                 new KeyboardVisibilityEventListener() {
                     @Override
@@ -906,7 +940,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         }
                     }
 
-                });
+                });*/
 
 
 
@@ -960,6 +994,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         confirmShowOtherUserTypingAnimation = false;
 
+
                         /*receiving = true;
 
 
@@ -981,6 +1016,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         receiverTextView.setText(decryptRSAToString(s, USER_PRIVATE_KEY));
                         if (!showOtherUserTypingAnimation) {
+                            closeBottomSheet();
                             showOtherUserTypingAnimation = true;
                             otherUserTypingAnimation();
                         }
@@ -1107,10 +1143,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     if (checkMessage.getMessageKey().equals("")) {
                         /*if (flagActivityClosure)
                             getActivity().finish();
-                            // Toast.makeText(FireVideo.this, "Live Video Stopped!", Toast.LENGTH_SHORT).show();
 
-                        else {
-                            //    Toast.makeText(FireVideo.this, "Start Live Video", Toast.LENGTH_SHORT).show();
                             startLiveVideoTextView.setText("Live Expressions");
                             start = true;
                             stopLiveVideo.setVisibility(View.GONE);
@@ -1140,9 +1173,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         //  Toast.makeText(getContext(),"chatMessage: "+checkMessage.getMessageKey(),Toast.LENGTH_SHORT).show();
                             /*if(!flagActivityClosure)
-                                Toast.makeText(FireVideo.this,"This person is calling you!",Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(FireVideo.this,"Calling...",Toast.LENGTH_SHORT).show();*/
+                             */
                         if (checkMessage.getSenderId().equals(userIDCHATTINGWITH)) {
                             key = liveMessage.getMessageKey();
                             if (!joiningLive) {
@@ -1195,6 +1226,67 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
 
         return view;
+    }
+
+    public void onUrlPasted(String pastedUrl) {
+        videoID = "default";
+        videoID = getVideoIdFromYoutubeUrl(pastedUrl);
+        if (!videoID.equals("default")) {
+            youtube_web_view.stopLoading();
+
+
+            //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
+            //         "text/html", "utf-8", "");
+            youtube_web_view.loadUrl(youtubeUrl);
+
+
+            // Toast.makeText(getActivity(), "VideoID: " + videoID, Toast.LENGTH_SHORT).show();
+
+            // Toast.makeText(getActivity(), "Video ID: " + videoID, Toast.LENGTH_SHORT);
+            HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+            youtubeVideoHash.put("youtubeUrl", videoID);
+            youtubeVideoHash.put("videoSec", 0.0);
+
+            FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIDCHATTINGWITH)
+                    .updateChildren(youtubeVideoHash);
+
+
+            FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(userIDCHATTINGWITH)
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .updateChildren(youtubeVideoHash);
+
+
+            Rect outRect = new Rect();
+
+            //Native UI youtube search using data api
+            // bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+
+            bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            search_video_edittext.clearFocus();
+            messageBox.requestFocus();
+            messageBox.setCursorVisible(true);
+            bottomSheetVisible = false;
+
+
+            search_video_edittext.setText("");
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    youtubeBottomFragmentStateListener.setDrag(false);
+                }
+            }, 750);
+
+        } else {
+            search_video_edittext.setError("invalid url");
+        }
+        youtubeUrl = pastedUrl;
     }
 
 
@@ -1571,6 +1663,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         try {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
 
+                messageBox.clearFocus();
+                search_video_edittext.requestFocus();
+                search_video_edittext.setCursorVisible(true);
+
                 Rect outRect = new Rect();
                 //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
@@ -1578,7 +1674,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    search_video_edittext.clearFocus();
+                    messageBox.requestFocus();
+                    messageBox.setCursorVisible(true);
                     bottomSheetVisible = false;
+
                     if (videoStarted)
                         youtube_layout.setVisibility(View.VISIBLE);
                     // youtubeBottomFragmentStateListener.setDrag(false);
@@ -1600,6 +1700,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public void closeBottomSheet() {
         youtubeBottomFragmentStateListener.setDrag(false);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        search_video_edittext.clearFocus();
+        messageBox.requestFocus();
+        messageBox.setCursorVisible(true);
+
     }
 
     public void showLiveMessageDialog(Activity activity) {
@@ -1637,7 +1741,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(userIDCHATTINGWITH)
                     .updateChildren(youtubeVideoHash);
-            //  Toast.makeText(YoutubePlayerActivity.this,"Set Video cued",Toast.LENGTH_SHORT).show();
+
 
             FirebaseDatabase.getInstance().getReference("ChatList")
                     .child(userIDCHATTINGWITH)
@@ -1922,6 +2026,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private void setupVideoProfile() {
 
         mRtcEngine.enableVideo();
+        //mRtcEngine.enableAudio();
         mRtcEngine.disableAudio();
         mRtcEngine.enableLocalAudio(false);
         mRtcEngine.stopAudioRecording();

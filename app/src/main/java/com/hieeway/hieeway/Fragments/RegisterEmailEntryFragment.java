@@ -344,7 +344,7 @@ public class RegisterEmailEntryFragment extends Fragment {
                                                 // Log and toast
                                                 // String msg = device_token;
 
-                                                // Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                                // Toast.makeText(.this, msg, Toast.LENGTH_SHORT).show();
                                                 databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                                 HashMap<String, Object> hashMap = new HashMap<>();
@@ -363,7 +363,7 @@ public class RegisterEmailEntryFragment extends Fragment {
 
                                                 databaseReference.updateChildren(hashMap);
 
-                                                *//*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
+                                                *//*startActivity(new Intent(.this,NavButtonTest.class));
                                              *//**//*progressBarOne.setVisibility(View.GONE);
                                                 progressBarTwo.setVisibility(View.GONE);*//**//*
                                                 finish();*//*
@@ -431,7 +431,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         // Log and toast
         // String msg = device_token;
 
-        // Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(.this, msg, Toast.LENGTH_SHORT).show();
 
 
 
@@ -452,7 +452,7 @@ public class RegisterEmailEntryFragment extends Fragment {
             }
         },500);
 
-        /*startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
+        /*startActivity(new Intent(.this,NavButtonTest.class));
                                                 *//*progressBarOne.setVisibility(View.GONE);
                                                 progressBarTwo.setVisibility(View.GONE);*//*
         finish();*/

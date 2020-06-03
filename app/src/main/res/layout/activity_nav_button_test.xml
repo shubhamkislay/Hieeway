@@ -23,12 +23,7 @@
         android:foregroundGravity="center" />
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        android:src="@drawable/hieeway_background_blurred"
-        android:scaleType="centerCrop"/>
+
 
 
     <RelativeLayout
@@ -301,15 +296,14 @@
         android:id="@+id/send_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="-700dp"
-        android:layout_marginLeft="-100dp"
-        android:layout_marginRight="-100dp"
-        android:backgroundTint="@color/textThemeColor"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="-420dp"
         android:alpha="0.0"
-        android:visibility="gone"
-        android:src="@drawable/hiewaylogomessageback"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:src="@drawable/hiewaylogomessagebackfresh"
         />
 
     <RelativeLayout

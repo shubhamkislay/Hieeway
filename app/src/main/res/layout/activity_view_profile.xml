@@ -56,7 +56,7 @@
             android:layout_height="39.5dp"
             android:layout_centerInParent="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/emoticon_feeling_happy"
+            android:background="@drawable/ic_emoticon_feeling_happy"
             android:visibility="visible" />
 
         <TextView

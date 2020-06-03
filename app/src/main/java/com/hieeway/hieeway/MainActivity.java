@@ -187,17 +187,10 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         mGoogleSignInClient = GoogleSignIn.getClient(MainActivity.this, gso);
 
 
-
         get_started.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 get_started.setVisibility(View.GONE);
-            }
-        });
-
-        get_started.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 switch (fragment_number)
                 {
                     case 0: fragment_number =1;
@@ -240,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         } catch (Exception e) {
 
                         }
-                        get_started.setVisibility(View.GONE);
+
                         //animateArrow();
                         //  get_started.setVisibility(View.GONE);
 
@@ -278,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                         }
 
-                        get_started.setVisibility(View.GONE);
+
                         //animateArrow();
                         //  get_started.setVisibility(View.GONE);
 
@@ -313,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                         }
 
-                        get_started.setVisibility(View.GONE);
+
 
 
                         video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -349,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         }
 
 
-                        get_started.setVisibility(View.GONE);
+
 
 
                         video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -504,7 +497,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                 }
             });
-            //startActivity(new Intent(MainActivity.this,AlphaActivity.class));
+
 
         }
         else
@@ -513,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             /*loginBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    startActivity(new Intent(MainActivity.this,.class));
                     finish();
 
                 }
@@ -522,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             registerBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this,RegisterActivity.class));
+                    startActivity(new Intent(MainActivity.this,.class));
                     finish();
                 }
             });*/
@@ -554,11 +547,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                             //  get_started.setText("Continue with profile setup");
                             // animateArrow();
+                            if (fragment_number == 0)
+                                get_started.setVisibility(View.VISIBLE);
                             startSplash();
                             mediaPlayer.pause();
                             //stopPosition = view.getCurrentPosition();
                         }
-                    }, 1500);
+                    }, 1800);
 
                     splash_layout.setVisibility(View.VISIBLE);
                     startSplash();
@@ -784,8 +779,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void run() {
                 //initiateNavActivity();
                // animateArrow();
-                if (fragment_number == 0 || fragment_number == 1)
-                    get_started.setVisibility(View.VISIBLE);
+                //if (fragment_number == 0 || fragment_number == 1)
+                //get_started.setVisibility(View.VISIBLE);
                 //get_started_back.setVisibility(View.VISIBLE);
 
                 // animateBottomNavMenuText(get_started,get_started_back);
@@ -1231,7 +1226,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, activityIntent, 0);
 
 
-        Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
+        Intent broadcastIntent = new Intent(this, .class);
         broadcastIntent.putExtra("toastMessage", message);
 
         PendingIntent actionIntent = PendingIntent.getBroadcast(this, 0,

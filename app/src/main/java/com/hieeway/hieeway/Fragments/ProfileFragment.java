@@ -95,7 +95,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     String feelingNow = null;
     EditText change_nio_edittext;
     ProgressBar upload_progress;
-    RelativeLayout relativeLayout;
     String bio = "";
     Boolean continue_blinking = false;
     Boolean isBlinking = false;
@@ -230,7 +229,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         upload_progress = view.findViewById(R.id.upload_progress);
         relay = view.findViewById(R.id.relay);
 
-        relativeLayout = view.findViewById(R.id.edit_text_back);
+
 
         emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
 
@@ -253,7 +252,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // startActivity(new Intent(getActivity(), ImageUpload.class));
+
                 imageSelectionCropListener.imageSelect();
             }
         });
@@ -898,7 +897,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", "excited");
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.emoticon_feeling_excited));
+                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(EXCITED);
                 break;
@@ -919,30 +918,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
     }
 
-    private void blinkEditTextBackground() {
-
-
-        relativeLayout.animate().alpha(1.0f).setDuration(250);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                relativeLayout.animate().alpha(0.0f).setDuration(250);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if (continue_blinking)
-                            blinkEditTextBackground();
-
-                    }
-                }, 300);
-            }
-
-        }, 300);
-
-
-    }
 
 
     public void setBottomSheetBehavior(MotionEvent event) {
