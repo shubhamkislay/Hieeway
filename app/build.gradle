@@ -13,7 +13,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
         }
@@ -28,6 +29,10 @@ android {
         main {
             jniLibs.srcDirs = ['../../../libs']
         }
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
     }
     /*packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
