@@ -201,7 +201,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private int time_Iterator = 0;
     private String pattern;
     private Pattern compiledPattern;
-    private String youtubeUrl = "http://youtube.com/";
+    private String youtubeUrl = "https://youtube.com/";
     private String newUrl;
     private String htmlbegin;
     private String htmlend;
@@ -486,7 +486,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         };
         youtube_web_view.setWebViewClient(webViewClient);
 
-        youtube_web_view.loadUrl("http://youtube.com/");
+        youtube_web_view.loadUrl("https://youtube.com/");
 
         //youtube_web_view.
 
