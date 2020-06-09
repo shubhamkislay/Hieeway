@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -137,6 +138,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     BottomSheetBehavior bottomSheetBehavior;
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout video_search_progress;
+    RelativeLayout control_layout;
     private LiveMessageEventListener liveMessageEventListener;
    // public String userIdChattingWith;
     public String usernameChattingWith;
@@ -174,6 +176,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     Button search_video_btn;
     RelativeLayout current_user_blinker, other_user_blinker;
     private String videoID = "kJQP7kiw5Fk";
+    private Boolean userPresent = false;
     private boolean playerInitialised;
     RelativeLayout bottom_sheet_webview_dialog_layout;
     private com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer mYouTubePlayer = null;
@@ -363,6 +366,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         sync_video_txt = view.findViewById(R.id.sync_video_txt);
         sync_video_layout = view.findViewById(R.id.sync_video_layout);
         youtube_web_view = view.findViewById(R.id.youtube_web_view);
+        control_layout = view.findViewById(R.id.control_layout);
 
 
         // bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
@@ -714,36 +718,43 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         }
                     }
 
-                    /*String youtubeUrl = dataSnapshot.getValue(String.class);
 
-                    if(initialiseActivity)
-                    {
-                        try{
-
-                            videoID = youtubeUrl;
-
-                            if(!videoID.equals("default"))
-                            {
-
-                                youtube_layout.setVisibility(View.VISIBLE);
-                                youtube_player_view.setVisibility(View.VISIBLE);
-
-                                mYouTubePlayer.loadVideo(videoID, 0);
-                                mYouTubePlayer.play();
-                            }
+                    try {
+                        userPresent = chatStamp.getPresent();
+                        if (!userPresent) {
+                            control_layout.setVisibility(View.GONE);
+                            /*youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
+                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            youtube_button.setEnabled(false);
+                            if(initialiseActivity) {
+                                mYouTubePlayer.pause();
+                                youtube_layout.setVisibility(View.GONE);
+                            }*/
 
 
-
-
-                        }catch (NullPointerException e)
-                        {
-
+                        } else {
+                            control_layout.setVisibility(View.VISIBLE);
+                            /*youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+                            youtube_button.setEnabled(true);*/
                         }
-                    }*/
+
+                    } catch (Exception e) {
+                        userPresent = false;
+                        control_layout.setVisibility(View.GONE);
+                        /*youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        youtube_button.setEnabled(false);
+
+                        if(initialiseActivity) {
+                            mYouTubePlayer.pause();
+                            youtube_layout.setVisibility(View.GONE);
+                        }*/
+                    }
 
 
                 }
                 initialiseActivity = true;
+
 
             }
 
@@ -2077,8 +2088,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public void onPause() {
         super.onPause();
 
-
-
         /**
          * Don't put this code here!
          * getActivity().finish();
@@ -2137,6 +2146,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public void onResume() {
         super.onResume();
         // Toast.makeText(getActivity(),"onResumeCalled",Toast.LENGTH_SHORT).show();
+
+
         try {
             //initializeAgoraEngine();
 

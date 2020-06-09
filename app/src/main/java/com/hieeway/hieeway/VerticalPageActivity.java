@@ -38,6 +38,7 @@ import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.Model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
@@ -524,6 +525,13 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                     pageSelected = 2;
 
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("present", true);
+                    FirebaseDatabase.getInstance().getReference("ChatList")
+                            .child(userIDCHATTINGWITH)
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .updateChildren(hashMap);
+
                 }
                 else if(i==1)
                 {
@@ -531,6 +539,13 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         //sendMessageFragment.removeObserveLiveChatList();
                     if (pageSelected == 2) {
                         liveMessageFragment.destoryLiveFragment();
+
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("present", false);
+                        FirebaseDatabase.getInstance().getReference("ChatList")
+                                .child(userIDCHATTINGWITH)
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .updateChildren(hashMap);
                     }
 
                     sendMessageFragment.removeListeners();
@@ -638,6 +653,21 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
+
+        if (pageSelected == 2) {
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("present", false);
+            FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(userIDCHATTINGWITH)
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .updateChildren(hashMap);
+            try {
+                liveMessageFragment.destoryLiveFragment();
+            } catch (Exception e) {
+                //
+            }
+        }
         try {
             sendMessageFragment.removeListeners();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -659,6 +689,15 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (pageSelected == 2) {
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("present", true);
+            FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(userIDCHATTINGWITH)
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .updateChildren(hashMap);
+        }
         try {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

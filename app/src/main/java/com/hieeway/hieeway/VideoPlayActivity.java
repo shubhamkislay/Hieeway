@@ -915,7 +915,7 @@ public class VideoPlayActivity extends AppCompatActivity /*, MediaPlayer.OnBuffe
 
 
             if (result != null) {
-                Toast.makeText(context, "Download failed" /*+ result*/, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Download failed because " + result, Toast.LENGTH_LONG).show();
                 deleteVideoFile(mKey);
                 finish();
             } else {
