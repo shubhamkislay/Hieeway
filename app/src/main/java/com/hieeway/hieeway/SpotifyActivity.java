@@ -143,6 +143,7 @@ public class SpotifyActivity extends AppCompatActivity {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
+
                     Toast.makeText(SpotifyActivity.this, "Connected to spotify :D", Toast.LENGTH_SHORT).show();
                     break;
 

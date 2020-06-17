@@ -22,7 +22,8 @@ public class ChatStamp implements Comparable<ChatStamp>{
     }
 
 
-    public ChatStamp(String timeStamp, String id, String photo, String username, String seen, Boolean chatPending, int gemCount, String youtubeUrl, float videoSec, Boolean present) {
+    public ChatStamp(String timeStamp, String id, String photo, String username, String seen, Boolean chatPending,
+                     int gemCount, String youtubeUrl, float videoSec, Boolean present) {
         this.timeStamp = timeStamp;
         this.id = id;
         this.photo = photo;
@@ -133,4 +134,6 @@ public class ChatStamp implements Comparable<ChatStamp>{
     public void setPresent(Boolean present) {
         this.present = present;
     }
+
+
 }

@@ -2,6 +2,8 @@ package com.hieeway.hieeway.Model;
 
 import androidx.annotation.Nullable;
 
+import com.spotify.protocol.types.ImageUri;
+
 public class User {
 
     private String email;
@@ -18,13 +20,19 @@ public class User {
     private String bio;
     private String feelingIcon;
     private Boolean synced;
+    private String spotifyId;
+    private String spotifySong;
+    private String spotifyArtist;
+    private ImageUri spotifyCover;
 
 
 
     public User() {
     }
 
-    public User(String email, String name, String phonenumber, String username, String userid, String photo, String token, Boolean online, String publicKey, String publicKeyId, String feeling, String bio, String feelingIcon, Boolean synced) {
+    public User(String email, String name, String phonenumber, String username, String userid, String photo, String token, Boolean online, String publicKey,
+                String publicKeyId, String feeling, String bio, String feelingIcon, Boolean synced,
+                String spotifyId, String spotifySong, String spotifyArtist, ImageUri spotifyCover) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -38,6 +46,10 @@ public class User {
         this.bio = bio;
         this.feelingIcon = feelingIcon;
         this.synced = synced;
+        this.spotifyId = spotifyId;
+        this.spotifySong = spotifySong;
+        this.spotifyArtist = spotifyArtist;
+        this.spotifyCover = spotifyCover;
     }
 
     public String getEmail() {
@@ -151,6 +163,38 @@ public class User {
 
     public void setSynced(Boolean synced) {
         this.synced = synced;
+    }
+
+    public String getSpotifyId() {
+        return spotifyId;
+    }
+
+    public void setSpotifyId(String spotifyId) {
+        this.spotifyId = spotifyId;
+    }
+
+    public String getSpotifySong() {
+        return spotifySong;
+    }
+
+    public void setSpotifySong(String spotifySong) {
+        this.spotifySong = spotifySong;
+    }
+
+    public String getSpotifyArtist() {
+        return spotifyArtist;
+    }
+
+    public void setSpotifyArtist(String spotifyArtist) {
+        this.spotifyArtist = spotifyArtist;
+    }
+
+    public ImageUri getSpotifyCover() {
+        return spotifyCover;
+    }
+
+    public void setSpotifyCover(ImageUri spotifyCover) {
+        this.spotifyCover = spotifyCover;
     }
 
     @Override

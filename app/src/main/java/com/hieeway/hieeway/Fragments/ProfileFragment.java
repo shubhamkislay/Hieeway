@@ -31,6 +31,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,6 +44,7 @@ import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -68,6 +70,17 @@ import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.ProfilePhotoActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
+import com.hieeway.hieeway.SpotifyActivity;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.PlayerState;
+import com.spotify.protocol.types.Track;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -111,6 +124,12 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout relay;
     private String profilepic;
+    private static final int REQUEST_CODE = 1337;
+    private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
+    private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
+
+    ImageView track_cover;
+    ImageView spotify_cover;
 
     Point size;
     float displayHeight;
@@ -129,6 +148,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     Window window;
     String userPhoto = "default";
     PhoneAuthProvider.ForceResendingToken forceResendingToken;
+    ImageButton spotify_login;
+    TextView song_name, artist_name;
+    private SpotifyAppRemote mSpotifyAppRemote;
+    private boolean spotifyConnected = false;
+    private String songId;
 
 
 
@@ -206,6 +230,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         username = view.findViewById(R.id.username);
         profile_pic_background = view.findViewById(R.id.profile_pic_background);
         center_dp = view.findViewById(R.id.center_dp);
+        spotify_cover = view.findViewById(R.id.spotify_cover);
+        artist_name = view.findViewById(R.id.artist_name);
+        song_name = view.findViewById(R.id.song_name);
+        spotify_login = view.findViewById(R.id.spotify_login);
 
 
         name = view.findViewById(R.id.name);
@@ -248,6 +276,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         bio_txt_dialog.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         prof_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         bottom_dialog_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        song_name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        artist_name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,6 +286,74 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 imageSelectionCropListener.imageSelect();
             }
         });
+
+
+        spotify_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!spotifyConnected) {
+                    AuthenticationRequest.Builder builder =
+                            new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+                    builder.setScopes(new String[]{"streaming"});
+                    AuthenticationRequest request = builder.build();
+
+                    AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
+                } else {
+
+                }
+            }
+        });
+
+        spotify_cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    mSpotifyAppRemote.getPlayerApi().play(songId);
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Cannot Play song", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .setPreferredThumbnailImageSize(500)
+                        .setPreferredImageSize(500)
+                        .showAuthView(true)
+                        .build();
+
+        SpotifyAppRemote.CONNECTOR.connect(getActivity(), connectionParams,
+                new Connector.ConnectionListener() {
+
+                    @Override
+                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                        mSpotifyAppRemote = spotifyAppRemote;
+                        spotify_login.setVisibility(View.INVISIBLE);
+                        //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                        // Now you can start interacting with App Remote
+                        spotifyConnected = true;
+                        listedToSpotifySong();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        Log.e("MainActivity", throwable.getMessage(), throwable);
+                        spotify_login.setVisibility(View.VISIBLE);
+                        song_name.setText("Connect to spotify");
+
+                        spotifyConnected = false;
+                        Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Something went wrong when attempting to connect! Handle errors here
+                    }
+                });
+
+
+
 
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -328,6 +426,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         bio_txt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 if (!bottomSheetDialogVisible) {
                 /*
 
@@ -573,6 +673,92 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             startBlinking();
         }
         return view;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    // Handle successful response
+                    spotify_login.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getActivity(), "Connected to spotify :D", Toast.LENGTH_SHORT).show();
+                    spotifyConnected = true;
+                    break;
+
+                // Auth flow returned an error
+                case ERROR:
+                    // Handle error response
+
+                    spotify_login.setVisibility(View.VISIBLE);
+                    spotifyConnected = false;
+                    song_name.setText("Connect to spotify");
+                    Toast.makeText(getActivity(), "Cannot connect to spotify" + response.getError(), Toast.LENGTH_SHORT).show();
+                    break;
+
+                // Most likely auth flow was cancelled
+                default:
+                    // Handle other cases
+            }
+        }
+    }
+
+    private void listedToSpotifySong() {
+        //    mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
+
+
+        mSpotifyAppRemote.getPlayerApi()
+                .subscribeToPlayerState()
+                .setEventCallback(new Subscription.EventCallback<PlayerState>() {
+                    @Override
+                    public void onEvent(PlayerState playerState) {
+
+
+                        final Track track = playerState.track;
+                        songId = track.uri;
+
+                        HashMap<String, Object> songHash = new HashMap<>();
+                        songHash.put("spotifyId", songId);
+                        songHash.put("spotifySong", track.name);
+                        songHash.put("spotifyArtist", track.artist.name);
+                        songHash.put("spotifyCover", track.imageUri);
+
+                        //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                        FirebaseDatabase.getInstance()
+                                .getReference("Users")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .updateChildren(songHash);
+
+                        if (track != null) {
+                            Log.d("Spotify Activity", track.name + " by " + track.artist.name);
+                            // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();
+                            song_name.setText(track.name);
+                            artist_name.setText(track.artist.name);
+
+
+                            mSpotifyAppRemote.getImagesApi().getImage(track.imageUri)
+                                    .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                                        @Override
+                                        public void onResult(Bitmap bitmap) {
+
+                                            spotify_cover.setImageBitmap(bitmap);
+                                        }
+                                    });
+
+
+                            //Glide.with(SpotifyActivity.this).load(track.imageUri).into(track_cover);
+                        }
+
+                    }
+                });
+
+
     }
 
     private void startBlinking() {
