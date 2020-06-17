@@ -125,20 +125,19 @@
                     android:background="@drawable/ic_archive_white_24dp"
                     />
 
-                <Button
+                <ImageButton
 
                     android:id="@+id/long_msg_btn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:shadowColor="#759E9E9E"
-                    android:shadowDx="0"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+
                     android:gravity="center"
                     android:layout_gravity="center_horizontal"
                     android:visibility="visible"
-                    android:shadowDy="0"
-                    android:shadowRadius="30"
-                    android:background="@drawable/ic_short_text_black_24dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_short_text_black_24dp"
                     />
+
 
 
             </LinearLayout>
@@ -209,3 +208,6 @@
 
 
 </RelativeLayout>
+
+    <!--android:shadowColor="#759E9E9E"
+    android:shadowDx="0"-->

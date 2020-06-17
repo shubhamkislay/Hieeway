@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet_dialog_layout"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="match_parent"
     android:layout_margin="0dp"
     android:background="@drawable/bottom_sheet_background_drawable"
-    android:backgroundTint="#000"
+    android:backgroundTint="@color/nav_status_color_accent"
     android:padding="4dp"
 
     app:behavior_hideable="false"
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:background="@drawable/message_box_drawable"
-        android:backgroundTint="#090909">
+        android:backgroundTint="#0C0C0C">
 
         <EditText
             android:id="@+id/search_video_edittext"
@@ -30,7 +30,7 @@
             android:layout_marginLeft="12dp"
             android:layout_toRightOf="@id/search_video_btn"
             android:background="@android:color/transparent"
-            android:hint="Paste youtube link here"
+            android:hint="search youtube video"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:singleLine="true"
@@ -55,7 +55,7 @@
         android:layout_below="@id/search_layout"
         android:layout_marginTop="12dp"
         android:divider="@null"
-        android:visibility="gone"
+        android:visibility="visible"
         android:dividerHeight="0dp" />
 
     <RelativeLayout
@@ -71,6 +71,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="16dp"
 
+            android:visibility="gone"
             android:gravity="center"
             android:text="Click on share button on the youtube app and press copy link"
             android:textColor="#3A3A3A"

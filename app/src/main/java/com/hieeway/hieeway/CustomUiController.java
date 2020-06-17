@@ -1,12 +1,17 @@
 package com.hieeway.hieeway;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,6 +20,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.utils.FadeViewHelper;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBar;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBarListener;
@@ -35,9 +41,12 @@ public class CustomUiController implements YouTubePlayerListener {
     Context context;
     private boolean seekVisible = true;
     private boolean playing = true;
+    private boolean displayPreview = false;
 
 
-    public CustomUiController(View customPlayerUI, final YouTubePlayer youTubePlayer, final Context context) {
+    @SuppressLint("ClickableViewAccessibility")
+    public CustomUiController(View customPlayerUI, final YouTubePlayer youTubePlayer, final Context context, String videoID) {
+
 
 
         this.youTubePlayer = youTubePlayer;
@@ -61,6 +70,7 @@ public class CustomUiController implements YouTubePlayerListener {
                 youtube_player_seekbar.setAlpha(1.0f);
             }
         });
+
 
         toggle_view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,12 +110,20 @@ public class CustomUiController implements YouTubePlayerListener {
         youTubePlayer.addListener(fadeViewHelper);
 
 
+
         youtube_player_seekbar.setYoutubePlayerSeekBarListener(new YouTubePlayerSeekBarListener() {
             @Override
             public void seekTo(float v) {
 
 
-                //  youTubePlayer.seekTo(v);
+                //   youTubePlayer.seekTo(v);
+
+                /*try {
+                    youtube_player_preview.seekTo(v);
+                }catch (NullPointerException e)
+                {
+
+                }*/
 
 
                 HashMap<String, Object> youtubeVideoHash = new HashMap<>();
@@ -127,8 +145,44 @@ public class CustomUiController implements YouTubePlayerListener {
 
         });
 
+/*        youtube_player_seekbar.getSeekBar().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getAction() == MotionEvent.ACTION_MOVE){
+                   // Toast.makeText(context,"Duration: "+youtube_player_seekbar.getVideoCurrentTimeTextView().getText(),Toast.LENGTH_SHORT).show();
+                    //seekbar_time.setText(""+youtube_player_seekbar.getVideoCurrentTimeTextView().getText());
+                    //seekbar_time.setText(""+youtube_player_seekbar.getVideoCurrentTimeTextView().getText());
+                    try {
+                        *//*if(youtube_player_preview!=null) {
+                            Float seekTime = Float.parseFloat(youtube_player_seekbar.getVideoCurrentTimeTextView().getText().toString().replace(":", "."));
+                            youtube_player_preview.pause();
+                            youtube_player_preview.seekTo(seekTime);
+                            youtube_player_preview.play();
+                           // youtube_player_preview.pause();
+
+
+                            youtube_player_preview.loadVideo(videoID,seekTime);
+                            youtube_player_preview.play();
+                        }*//*
+                        Float seekTime = Float.parseFloat(youtube_player_seekbar.getVideoCurrentTimeTextView().getText().toString().replace(":", "."));
+
+                        youTubePlayer.loadVideo(videoID,seekTime);
+                    }
+                    catch (Exception e)
+                    {
+                        Toast.makeText(context,"Error preview: "+e.toString(),Toast.LENGTH_SHORT).show();
+                    }
+                    return false;
+                }
+
+                return false;
+            }
+        });*/
+
 
     }
+
 
 
     public void autoUpdateControlView() {

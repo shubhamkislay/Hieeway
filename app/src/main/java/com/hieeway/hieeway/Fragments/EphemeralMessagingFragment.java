@@ -136,6 +136,9 @@ import java.util.Random;
 import javax.crypto.Cipher;
 
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
+import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
+import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
+import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -302,6 +305,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     RelativeLayout bin;
     private ImageView disablerecord_button;
     private boolean isDisablerecord_button = false;
+    private boolean confirmConnected = true;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -1538,6 +1542,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     currentUsername = user.getUsername();
                     currentUserPhoto = user.getPhoto();
+
+                    CURRENT_USERNAME = currentUsername;
+                    CURRENT_USERPHOTO = currentUserPhoto;
+
+
+
                     /* = user.getPublicKey();
                     otherUserPublicKeyID = user.getPublicKeyId();*/
 
@@ -2550,10 +2560,19 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
                 //message_text_sender.setAlpha(0.0f);
-                if (messageList.size() < 1)
-                    message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+        if (messageList.size() < 1) {
+            try {
+                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+            } catch (Exception e) {
+                //
+            }
+        }
                 else
-                    message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+            try {
+                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+            } catch (Exception e) {
+                //
+            }
 
                         notSending = true;
                         message_text_sender.setText("");
@@ -4135,6 +4154,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                   //  updateUserPresence(true);
 
+                    confirmConnected = true;
+
                     if(checkConnectedSatus) {
 
                         try {
@@ -4159,21 +4180,34 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     online_ring.setVisibility(View.INVISIBLE);
                     online_status.setVisibility(View.INVISIBLE);
+                    confirmConnected = false;
                    // updateUserPresence(false);
-                    try {
-                        Snackbar snackbar = Snackbar
-                                .make(app_context_layout, "You are disconnected", Snackbar.LENGTH_SHORT);
-                        View snackBarView = snackbar.getView();
-                        snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
-                        snackbar.show();
-                    }catch (Exception e)
-                    {
-                        //
-                    }
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            if (!confirmConnected) {
+                                try {
+                                    Snackbar snackbar = Snackbar
+                                            .make(app_context_layout, "You are disconnected", Snackbar.LENGTH_SHORT);
+                                    View snackBarView = snackbar.getView();
+                                    snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
+                                    snackbar.show();
+                                    checkConnectedSatus = true;
+                                } catch (Exception e) {
+                                    //
+                                }
+                            } else {
+
+                            }
+                        }
+                    }, 3000);
 
 
 
-                    checkConnectedSatus = true;
+
+
 
 
 

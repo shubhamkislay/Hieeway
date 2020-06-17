@@ -622,7 +622,12 @@ public class FriendListFagment extends Fragment {
                                                 public void run() {
 
                                                     User user = dataSnapshot.getValue(User.class);
-                                                    userList.add(user);
+                                                    try {
+                                                        if (!userList.contains(user))
+                                                            userList.add(user);
+                                                    } catch (Exception e) {
+                                                        //
+                                                    }
 
                                                 }
                                             }).start();

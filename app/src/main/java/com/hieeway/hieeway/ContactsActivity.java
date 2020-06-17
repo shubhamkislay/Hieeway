@@ -125,6 +125,9 @@ public class ContactsActivity extends AppCompatActivity implements SyncServiceLi
         Intent intent = getIntent();
         phonenumber = intent.getStringExtra("phonenumber");
 
+        if (phonenumber == null)
+            phonenumber = "default";
+
 
         if (!phonenumber.equals("default")) {
 

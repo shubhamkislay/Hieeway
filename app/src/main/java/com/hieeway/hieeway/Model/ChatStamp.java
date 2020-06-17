@@ -1,5 +1,7 @@
 package com.hieeway.hieeway.Model;
 
+import androidx.annotation.Nullable;
+
 public class ChatStamp implements Comparable<ChatStamp>{
 
 
@@ -87,8 +89,18 @@ public class ChatStamp implements Comparable<ChatStamp>{
 
     @Override
     public int compareTo(ChatStamp o) {
-        return this.getTimeStamp().compareTo(o.getTimeStamp());
+
+
+        try {
+            return this.getTimeStamp().compareTo(o.getTimeStamp());
+        } catch (Exception e) {
+            return 0;
+        }
+
     }
+
+
+
 
     public int getGemCount() {
         return gemCount;

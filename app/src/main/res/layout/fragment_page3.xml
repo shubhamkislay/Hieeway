@@ -87,6 +87,7 @@
                     app:showVideoDuration="true"
                     app:useWebUi="false" />
 
+
                 <RelativeLayout
                     android:id="@+id/sync_video_layout"
                     android:layout_width="match_parent"
@@ -310,6 +311,73 @@
 
 
             </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/live_video_control_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:animateLayoutChanges="true"
+                android:visibility="gone"
+                android:weightSum="2">
+
+                <RelativeLayout
+                    android:id="@+id/live_video_control_btn_lay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:visibility="visible">
+
+                    <SeekBar
+                        android:id="@+id/video_seekbar"
+                        android:layout_width="75dp"
+                        android:layout_height="50dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/message_send_seeing_background"
+                        android:max="1"
+                        android:min="0"
+                        android:padding="5dp"
+                        android:progressDrawable="@drawable/seek_style"
+                        android:splitTrack="false"
+                        android:thumb="@drawable/seekbar_thum"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/connecting_text_lay"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="#0A0A0A"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/connecting_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_centerHorizontal="true"
+
+                        android:layout_margin="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="Initiating live expressions"
+                        android:textColor="#fff"
+                        android:visibility="visible" />
+
+                    <com.github.ybq.android.spinkit.SpinKitView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@id/connecting_text"
+                        app:SpinKit_Color="@color/colorPrimaryDark"
+                        app:SpinKit_Style="Wave" />
+                </RelativeLayout>
+
+
+            </LinearLayout>
 
 
             <LinearLayout

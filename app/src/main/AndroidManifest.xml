@@ -38,6 +38,7 @@
         <activity android:name=".PhoneAuthenticationActivity" />
         <activity android:name=".ContactsActivity" />
         <activity android:name=".AudioRecorderActivity" />
+        <activity android:name="RegisterAuthenticateActivity" />
 
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"

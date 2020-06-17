@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -229,7 +230,8 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
         public ProgressBar progressBar, progressBarOne, progressBarTwo;
         public ImageView user_photo;
         public RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
-        public Button archiveBtn, longMsgBtn, delete_chat_head_btn;
+        public Button archiveBtn, delete_chat_head_btn;
+        public ImageButton longMsgBtn;
 
 
         public ViewHolder(@NonNull View itemView) {

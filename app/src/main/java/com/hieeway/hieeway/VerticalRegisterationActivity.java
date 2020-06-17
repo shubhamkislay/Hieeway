@@ -42,7 +42,7 @@ public class VerticalRegisterationActivity extends AppCompatActivity {
         registerUsernameEntryFragment = new RegisterUsernameEntryFragment();
         fragmentList = new ArrayList<>();
 
-        fragmentList.add(registerAuthenticateActivity);
+        //fragmentList.add(registerAuthenticateActivity);
         fragmentList.add(registerEmailEntryFragment);
         fragmentList.add(registerUsernameEntryFragment);
 
@@ -63,9 +63,9 @@ public class VerticalRegisterationActivity extends AppCompatActivity {
                         break;
 
                     case 2: fragment_number =3;
-                        getSupportFragmentManager().beginTransaction()
+                        /*getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerAuthenticateActivity).commit();
+                                .replace(R.id.framelayout, registerAuthenticateActivity).commit();*/
                         break;
 
                     case 3: fragment_number =1;

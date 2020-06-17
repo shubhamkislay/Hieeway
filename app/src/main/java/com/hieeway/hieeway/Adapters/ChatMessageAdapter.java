@@ -36,6 +36,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -63,6 +64,7 @@ import com.hieeway.hieeway.Model.CheckPendingMessageAsyncModel;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
 
+import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.VerticalPageActivity;
 
@@ -299,10 +301,20 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 });*/
 
 
+                Intent intent = new Intent(mContext, RevealReplyActivity.class);
 
 
+                intent.putExtra("userIdChattingWith", chatStamp.getId());
+                intent.putExtra("currentUserPrivateKey", privateKeyText);
+                intent.putExtra("currentUserPublicKeyID", publicKeyId);
+                intent.putExtra("photo", chatStamp.getPhoto());
+                intent.putExtra("usernameChattingWith", chatStamp.getUsername());
 
-                mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
+
+                mContext.startActivity(intent);
+
+
+                //mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
 
 
             }
@@ -661,7 +673,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         public ProgressBar progressBar, progressBarOne, progressBarTwo;
         public ImageView user_photo;
         public RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
-        public Button archiveBtn, longMsgBtn, delete_chat_head_btn;
+        public Button archiveBtn, delete_chat_head_btn;
+        public ImageButton longMsgBtn;
 
 
         public ViewHolder(@NonNull View itemView) {

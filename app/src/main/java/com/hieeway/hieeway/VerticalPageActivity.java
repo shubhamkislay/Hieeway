@@ -92,6 +92,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     public static String userNameChattingWith = "";
     public static String USER_PRIVATE_KEY = "";
     public static String OTHER_USER_PUBLIC_KEY = "";
+    public static String CURRENT_USERNAME = "";
+    public static String CURRENT_USERPHOTO = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -525,12 +527,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                     pageSelected = 2;
 
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("present", true);
-                    FirebaseDatabase.getInstance().getReference("ChatList")
-                            .child(userIDCHATTINGWITH)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .updateChildren(hashMap);
 
                 }
                 else if(i==1)
@@ -538,6 +534,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                     //if(observingSendFragment)
                         //sendMessageFragment.removeObserveLiveChatList();
                     if (pageSelected == 2) {
+
                         liveMessageFragment.destoryLiveFragment();
 
                         HashMap<String, Object> hashMap = new HashMap<>();
@@ -663,7 +660,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .updateChildren(hashMap);
             try {
-                liveMessageFragment.destoryLiveFragment();
+                //liveMessageFragment.destoryLiveFragment();
             } catch (Exception e) {
                 //
             }

@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         fragmentList = new ArrayList<>();
 
-        fragmentList.add(registerAuthenticateActivity);
+        //fragmentList.add(registerAuthenticateActivity);
         fragmentList.add(registerEmailEntryFragment);
         fragmentList.add(registerUsernameEntryFragment);
         fragmentList.add(registerPhoneNumberFragment);
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         //  get_started.setVisibility(View.GONE);
 
 
-                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        /*video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
                                 animateArrow();
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                 }, arrowAnimDuration);
 
                             }
-                        });
+                        });*/
                         break;
 
                     case 3:
@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
 
-                        video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        /*video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
                                 animateArrow();
@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                 }, arrowAnimDuration);
 
                             }
-                        });
+                        });*/
 
                         break;
 

@@ -905,6 +905,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         fragmentId=1;
 
+
     }
 
     public void deactivateHomeBtn()
@@ -1607,6 +1608,19 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         }
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fragmentId == 1)
+            super.onBackPressed();
+        else {
+            activateHomeBtn();
+            deactivateFriendsBNtn();
+            deactivateSearchBtn();
+            deactivateProfileBtn();
+            animateBottomNavMenuText(text_home, homeBtnPressed);
+        }
     }
 
     @Override

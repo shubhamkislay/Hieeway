@@ -38,6 +38,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.hieeway.hieeway.Interface.GoogleButtonListener;
 import com.hieeway.hieeway.LoginActivity;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.RegisterAuthenticateActivity;
 import com.hieeway.hieeway.TypeWriter;
 
 import java.security.KeyPair;
@@ -121,7 +122,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         email_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                startActivity(new Intent(getActivity(), RegisterAuthenticateActivity.class));
             }
         });
 
