@@ -306,6 +306,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private ImageView disablerecord_button;
     private boolean isDisablerecord_button = false;
     private boolean confirmConnected = true;
+    TextView sender_reply_body_title;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -381,6 +382,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         equi_three = view.findViewById(R.id.equi_three);
         equi_four = view.findViewById(R.id.equi_four);
         equi_five = view.findViewById(R.id.equi_five);
+
+        sender_reply_body_title = view.findViewById(R.id.sender_reply_body_title);
+
+        sender_reply_body_title.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         recordView.setSmallMicColor(Color.parseColor("#ffffff"));
@@ -4277,6 +4282,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             top_swipe_text.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
 
             message_log_text.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+
 
             swipe_down.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
             go_live_txt.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));

@@ -8,6 +8,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -96,6 +99,7 @@ public class SpotifyActivity extends AppCompatActivity {
                 });
 
 
+
     }
 
     private void listedToSpotifySong() {
@@ -159,5 +163,12 @@ public class SpotifyActivity extends AppCompatActivity {
                     // Handle other cases
             }
         }
+    }
+
+    private Animation outToLeftAnimation() {
+        Animation outtoLeft = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, -1.0f, Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f);
+        outtoLeft.setDuration(500);
+        outtoLeft.setInterpolator(new AccelerateInterpolator());
+        return outtoLeft;
     }
 }

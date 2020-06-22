@@ -64,7 +64,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
 
         viewHolder.longMsgBtn.setVisibility(View.GONE);
-        final User user = mUsers.get(i);
+        final User user = mUsers.get(viewHolder.getAdapterPosition());
         final int position = viewHolder.getAdapterPosition();
 
         viewHolder.username.setText(user.getUsername());

@@ -709,10 +709,10 @@
             android:id="@+id/sender_reply_body_title"
             android:layout_width="match_parent"
             android:paddingTop="8dp"
+            android:textColor="#fff"
             android:layout_height="wrap_content"
             android:textSize="12dp"
             android:layout_alignParentTop="true"
-            android:fontFamily="sans-serif-thin"
             android:text="Next message context"
             android:gravity="center"/>
 

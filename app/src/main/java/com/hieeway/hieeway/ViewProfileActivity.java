@@ -1,12 +1,19 @@
 package com.hieeway.hieeway;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -25,6 +32,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.hieeway.hieeway.Model.User;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.ImageUri;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.HashMap;
 
@@ -48,9 +63,25 @@ public class ViewProfileActivity extends AppCompatActivity {
     String currentUsername;
     Button friend_btn_cancel;
     String feeling_text_label;
+    private static final int REQUEST_CODE = 1337;
+    private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
+    private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
+    final String appPackageName = "com.spotify.music";
+    final String referrer = "adjust_campaign=com.hieeway.hieeway&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
+    Point size;
+    float displayHeight;
+    ImageView spotify_cover;
+    TextView song_name, artist_name;
+    String songId = null, songName = null, artistName = null;
+    ImageUri songUri = null;
+    RelativeLayout connect_spotify;
+    private SpotifyAppRemote mSpotifyAppRemote;
+
 
     String userId;
     Button friend_btn, start_chat;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference findUserDataReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +98,18 @@ public class ViewProfileActivity extends AppCompatActivity {
         ring_blinker_layout = findViewById(R.id.ring_blinker_layout);
         emoji_icon = findViewById(R.id.emoji_icon);
         feeling_txt = findViewById(R.id.feeling_txt);
+        spotify_cover = findViewById(R.id.spotify_cover);
+        song_name = findViewById(R.id.song_name);
+        artist_name = findViewById(R.id.artist_name);
 
         friend_btn = findViewById(R.id.friend_btn);
         friend_btn_cancel = findViewById(R.id.friend_btn_cancel);
         start_chat = findViewById(R.id.start_chat);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        size = new Point();
+        display.getSize(size);
+        displayHeight = size.y;
 
 
         name.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -80,6 +119,8 @@ public class ViewProfileActivity extends AppCompatActivity {
         friend_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         friend_btn_cancel.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         start_chat.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+        connect_spotify = findViewById(R.id.connect_spotify);
 
 
         Intent intent = getIntent();
@@ -92,6 +133,9 @@ public class ViewProfileActivity extends AppCompatActivity {
         currentUsername = intent.getStringExtra("currentUsername");
 
         usernameText = intent.getStringExtra("username");
+
+        center_dp.getLayoutParams().height = (int) displayHeight / 4;
+        center_dp.getLayoutParams().width = (int) displayHeight / 8;
 
 
         Glide.with(this).load(photourl.replace("s96-c", "s384-c")).into(center_dp);
@@ -124,8 +168,98 @@ public class ViewProfileActivity extends AppCompatActivity {
         });
 
 
+        spotify_cover.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mSpotifyAppRemote.getPlayerApi().play(songId);
+                } catch (Exception e) {
+                    Toast.makeText(ViewProfileActivity.this, "Cannot play this song", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+
+        connect_spotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                PackageManager pm = getPackageManager();
+                boolean isSpotifyInstalled;
+
+
+                try {
+                    pm.getPackageInfo("com.spotify.music", 0);
+                    isSpotifyInstalled = true;
+                    Toast.makeText(ViewProfileActivity.this, "Spotify is installed", Toast.LENGTH_SHORT).show();
+                    AuthenticationRequest.Builder builder =
+                            new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+                    builder.setScopes(new String[]{"streaming"});
+                    AuthenticationRequest request = builder.build();
+
+                    AuthenticationClient.openLoginActivity(ViewProfileActivity.this, REQUEST_CODE, request);
+                } catch (PackageManager.NameNotFoundException e) {
+                    isSpotifyInstalled = false;
+
+                    Toast.makeText(ViewProfileActivity.this, "Spotify is not installed", Toast.LENGTH_SHORT).show();
+
+                    try {
+                        Uri uri = Uri.parse("market://details")
+                                .buildUpon()
+                                .appendQueryParameter("id", appPackageName)
+                                .appendQueryParameter("referrer", referrer)
+                                .build();
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    } catch (android.content.ActivityNotFoundException ignored) {
+                        Uri uri = Uri.parse("https://play.google.com/store/apps/details")
+                                .buildUpon()
+                                .appendQueryParameter("id", appPackageName)
+                                .appendQueryParameter("referrer", referrer)
+                                .build();
+                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    }
+
+                }
+            }
+        });
+
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    // Handle successful response
+                    connect_spotify.setVisibility(View.GONE);
+                    Toast.makeText(ViewProfileActivity.this, "Connected to spotify :D", Toast.LENGTH_SHORT).show();
+
+                    break;
+
+                // Auth flow returned an error
+                case ERROR:
+                    // Handle error response
+
+                    connect_spotify.setVisibility(View.VISIBLE);
+                    Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify " + response.getError(), Toast.LENGTH_SHORT).show();
+                    break;
+
+                // Most likely auth flow was cancelled
+                default:
+                    // Handle other cases
+            }
+        }
+    }
     private void checkUserData(Intent intent) {
         // try {
 
@@ -189,14 +323,25 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         });*/
 
-        DatabaseReference findUserDataReference = FirebaseDatabase.getInstance().getReference("Users")
+        findUserDataReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(userId);
 
-        findUserDataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
+
+                    try {
+                        songId = user.getSpotifyId();
+                        songName = user.getSpotifySong();
+                        artistName = user.getSpotifyArtist();
+                        songUri = user.getSpotifyCover();
+                    } catch (Exception e) {
+                        //
+                    }
+
                     try {
                         feeling_txt.setText(user.getFeeling());
                     } catch (Exception e) {
@@ -227,7 +372,11 @@ public class ViewProfileActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        findUserDataReference.addValueEventListener(valueEventListener);
+
+
 
 
     }
@@ -240,6 +389,58 @@ public class ViewProfileActivity extends AppCompatActivity {
             friend_btn.setText("Remove Friend");
 
             startBlinking();
+
+
+            ConnectionParams connectionParams =
+                    new ConnectionParams.Builder(CLIENT_ID)
+                            .setRedirectUri(REDIRECT_URI)
+                            .setPreferredThumbnailImageSize(500)
+                            .setPreferredImageSize(500)
+                            .showAuthView(true)
+                            .build();
+
+
+            SpotifyAppRemote.CONNECTOR.connect(ViewProfileActivity.this, connectionParams,
+                    new Connector.ConnectionListener() {
+
+                        @Override
+                        public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                            mSpotifyAppRemote = spotifyAppRemote;
+
+                            //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                            // Now you can start interacting with App Remote
+
+                            try {
+                                song_name.setText(songName);
+                                artist_name.setText(artistName);
+
+                                mSpotifyAppRemote.getImagesApi().getImage(songUri)
+                                        .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                                            @Override
+                                            public void onResult(Bitmap bitmap) {
+
+                                                spotify_cover.setImageBitmap(bitmap);
+                                            }
+                                        });
+                            } catch (Exception e) {
+                                //
+                            }
+
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            // spotifyConnected = false;
+                            //song_name.setText(songName);
+                            //artist_name.setText(artistName);
+                            connect_spotify.setVisibility(View.VISIBLE);
+
+                            // Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify automatically :( " + throwable.getStackTrace(), Toast.LENGTH_SHORT).show();
+                            // Something went wrong when attempting to connect! Handle errors here
+                        }
+                    });
+
 
 
             try {
@@ -505,4 +706,10 @@ public class ViewProfileActivity extends AppCompatActivity {
         }, 1000);*/
     }
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        findUserDataReference.removeEventListener(valueEventListener);
+    }
 }
