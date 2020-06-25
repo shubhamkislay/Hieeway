@@ -81,6 +81,7 @@ import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -88,6 +89,7 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -845,10 +847,23 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                             //song_name.setAnimation(outToLeftAnimation());
 
                             if (track.artist.name.length() > 1) {
+
+                                String artistNames = null;
+
+                                List<Artist> artists = track.artists;
+                                for (Artist artist : artists) {
+                                    if (artistNames != null)
+                                        artistNames = artistNames + artist.name + ", ";
+                                    else
+                                        artistNames = artist.name + ", ";
+                                }
+                                artistNames = artistNames.substring(0, artistNames.length() - 2);
+
+
                                 HashMap<String, Object> songHash = new HashMap<>();
                                 songHash.put("spotifyId", songId);
                                 songHash.put("spotifySong", track.name);
-                                songHash.put("spotifyArtist", track.artist.name);
+                                songHash.put("spotifyArtist", artistNames);
                                 songHash.put("spotifyCover", track.imageUri);
 
                                 //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));

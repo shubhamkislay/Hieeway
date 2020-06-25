@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="8dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_pic"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_margin="8dp"
+            tools:src="@drawable/no_profile" />
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/profile_pic"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            tools:text="Username" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/song_meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/song_art"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/no_profile" />
+
+        <TextView
+            android:id="@+id/song_name"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/song_art"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:textSize="24sp"
+            tools:text="Song Name" />
+
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/song_name"
+            android:gravity="center"
+            android:textSize="18sp"
+            tools:text="Artist" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/song_meta">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/play_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/message_box_drawable"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="24dp">
+
+                    <ImageButton
+                        android:id="@+id/play_btn"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_play_circle_filled_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/play_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="64dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toRightOf="@id/play_btn"
+                        android:gravity="center"
+                        android:text="Play"
+                        android:textColor="#fff"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/like_box"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/message_box_drawable"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="24dp">
+
+                    <ImageButton
+                        android:id="@+id/like_btn"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:background="@android:color/transparent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_favorite_black_24dp" />
+
+                    <TextView
+                        android:id="@+id/like_txt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="64dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toRightOf="@id/like_btn"
+                        android:gravity="center"
+                        android:text="Like"
+                        android:textColor="#fff"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

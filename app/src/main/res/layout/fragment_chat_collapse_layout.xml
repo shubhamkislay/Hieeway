@@ -171,6 +171,7 @@
 
                     <LinearLayout
 
+                        android:id="@+id/search_bar_lay"
                         android:orientation="horizontal"
                         android:layout_centerVertical="true"
                         android:layout_alignParentRight="true"
@@ -212,6 +213,17 @@
                             android:backgroundTint="@color/nav_btn_background_color" />
 
                     </LinearLayout>
+
+                        <ImageButton
+                            android:id="@+id/spotify_status"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@id/search_bar_lay"
+                            android:background="@drawable/nav_btn_back_drawable"
+                            android:padding="8dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/spotify_icon_rgb_green" />
 
 
                     </RelativeLayout>

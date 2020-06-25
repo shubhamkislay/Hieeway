@@ -575,17 +575,16 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     private void checkUserChangeAccountChange(final String userChattingWith, final String photo, final ImageView user_photo) {
 
+
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(userChattingWith);
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
+                if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
-                    if(!user.getPhoto().equals(photo)&&!user.getPhoto().equals("default"))
-                    {
+                    if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
 
                             HashMap<String, Object> userPhotoChangehash = new HashMap<>();
                             userPhotoChangehash.put("photo", user.getPhoto());
@@ -597,16 +596,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                             try {
                                 Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
-                            }
-                            catch (Exception e)
-                            {
+                            } catch (Exception e) {
 
                                 user_photo.setImageResource(R.drawable.no_profile);
                             }
 
                     }
-                    if(user.getPhoto().equals("default"))
-                    {
+                    if (user.getPhoto().equals("default")) {
                         user_photo.setImageResource(R.drawable.no_profile);
                     }
                 }
@@ -617,6 +613,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
             }
         });
+
     }
 
 
@@ -749,6 +746,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     {
 
         countMessages.clear();
+
         DatabaseReference checkPendingMessagesRef = FirebaseDatabase.getInstance().getReference("Messages")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userChattingWith);
@@ -759,43 +757,35 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                 countMessages.clear();
 
-                for(DataSnapshot snapshot: dataSnapshot.getChildren())
-                {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
 
                     ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
 
                     try {
-                        if(publicKeyId.equals(null))
-                            Toast.makeText(mContext,"PublicKeyId is empty",Toast.LENGTH_SHORT).show();
+                        if (publicKeyId.equals(null))
+                            Toast.makeText(mContext, "PublicKeyId is empty", Toast.LENGTH_SHORT).show();
 
-                        if (chatMessage.getSenderId().equals(userChattingWith)&&chatMessage.getPublicKeyID().equals(publicKeyId))
+                        if (chatMessage.getSenderId().equals(userChattingWith) && chatMessage.getPublicKeyID().equals(publicKeyId))
                             countMessages.add(chatMessage);
-                    }catch (NullPointerException ne)
-                    {
+                    } catch (NullPointerException ne) {
 
                     }
 
 
-
-
                 }
 
-                if(countMessages.size()>0) {
+                if (countMessages.size() > 0) {
                     relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back_new_message));
-                    countMessageText.setText(""+countMessages.size());
+                    countMessageText.setText("" + countMessages.size());
                     countMsgLayout.setVisibility(View.VISIBLE);
-                  //  counterBackgroundLayout.setVisibility(View.VISIBLE);
+                    //  counterBackgroundLayout.setVisibility(View.VISIBLE);
 
-                }
-
-                else {
+                } else {
                     relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back));
                     countMsgLayout.setVisibility(View.INVISIBLE);
-                   // counterBackgroundLayout.setVisibility(View.INVISIBLE);
+                    // counterBackgroundLayout.setVisibility(View.INVISIBLE);
                 }
-
-
 
 
             }
@@ -808,6 +798,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
         countMessages.clear();
+
 
     }
 

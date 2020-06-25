@@ -141,6 +141,8 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         connect_spotify = findViewById(R.id.connect_spotify);
 
+        song_name.setSelected(true);
+
 
         Intent intent = getIntent();
 

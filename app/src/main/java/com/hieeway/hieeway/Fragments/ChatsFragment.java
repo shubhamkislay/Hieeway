@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -39,6 +40,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -59,6 +61,7 @@ import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatStampSizeListener;
 import com.hieeway.hieeway.Interface.DeleteOptionsListener;
 import com.hieeway.hieeway.Model.ChatStamp;
+import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.UserPicViewModel;
@@ -111,6 +114,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private List<ChatStamp> chatStampsListtwo;
     private RelativeLayout delete_for_all_option_layout, delete_for_me_option_layout;
     AnimationArrowListener animationArrowListener;
+    private List<ChatStamp> resetList;
+    private ImageButton spotify_status;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,8 +163,10 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
       //  username = view.findViewById(R.id.username);
         chats_recyclerview = view.findViewById(R.id.chats_recyclerview);
         chatStampsList = new ArrayList<>();
+        resetList = new ArrayList<>();
 
         chatStampsListtwo = new ArrayList<>();
+        spotify_status = view.findViewById(R.id.spotify_status);
 
 
 
@@ -221,7 +228,12 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                // if(s.length()>0)
               //  searchChat(s.toString());
 
-                new SearchUserAsyncTask().execute(s.toString());
+                if (s.toString().length() > 0)
+                    new SearchUserAsyncTask().execute(s.toString());
+
+                else {
+                    resetChatList();
+                }
 
 
             }
@@ -234,6 +246,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         });
 
         search_chat_btn = view.findViewById(R.id.search_chat_btn);
+
 
 
         close_search = view.findViewById(R.id.close_search);
@@ -294,6 +307,10 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                     hideSoftKeyboard(search_bar);
                     search_bar.setText("");
 
+                    /*chatMessageAdapter = new ChatMessageAdapter(getContext(), resetList, activity*//*,ChatsFragment.this*//*);
+                    chats_recyclerview.setAdapter(chatMessageAdapter);*/
+                    //chatMessageAdapter.notifyDataSetChanged();
+
                     search_bar.setVisibility(View.GONE);
 
                     search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_search_black_24dp));
@@ -301,6 +318,15 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 }
 
 
+            }
+        });
+
+
+        spotify_status.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                startActivity(new Intent(getActivity(), MusicFeedActivity.class));
             }
         });
 
@@ -434,6 +460,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                     public void onChanged(@Nullable final List<ChatStamp> chatStamps) {
                         Collections.sort(chatStamps, Collections.<ChatStamp>reverseOrder());
 
+                        resetList = chatStamps;
+
                         chatStampsList = chatStamps;
                         chatStampsListtwo = chatStamps;
                         if (chatStampsList.size() <= 0) {
@@ -485,6 +513,63 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
 
         return view;
+    }
+
+    private void resetChatList() {
+        FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+
+
+                        if (dataSnapshot.exists()) {
+                            chatStampsList.clear();
+                        /*new Thread(new Runnable() {
+                            @Override
+                            public void run() {*/
+
+                            for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+
+                                ChatStamp chatStamp = dataSnapshot1.getValue(ChatStamp.class);
+                                //if(!user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+
+                                try {
+                                    if (!chatStamp.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
+                                        chatStampsList.add(chatStamp);
+
+                                } catch (Exception e) {
+
+                                }
+
+
+                                //chatStampsList.add(chatStamp);
+
+                            }
+
+                            /*peopleAdapter.setList(userlist);*/
+                            // if(username.length()>0)
+                            Collections.sort(chatStampsList, Collections.<ChatStamp>reverseOrder());
+
+
+                            chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
+                            chats_recyclerview.setAdapter(chatMessageAdapter);
+                            chatMessageAdapter.notifyDataSetChanged();
+
+                        }
+                        //           }).start();
+
+
+                        //   }
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public void setBottomSheetBehavior(MotionEvent event) {
@@ -774,14 +859,14 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
 
            // super.onPostExecute(chatStampsList);
-            Collections.sort(chatStampsList, Collections.<ChatStamp>reverseOrder());
+            /*Collections.sort(chatStampsList, Collections.<ChatStamp>reverseOrder());
 
             try {
                 chatMessageAdapter.notifyDataSetChanged();
             }catch (Exception e)
             {
 
-            }
+            }*/
 
         }
     }
