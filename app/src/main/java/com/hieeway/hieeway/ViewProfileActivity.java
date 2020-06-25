@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -83,6 +84,13 @@ public class ViewProfileActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private DatabaseReference findUserDataReference;
 
+
+    ImageView spotify_icon;
+    RelativeLayout music_layout, music_loading_layout;
+    private TextView music_loading_txt;
+    private RelativeLayout connect_spotify_layout;
+    private TextView connect_spotify_text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,16 +110,27 @@ public class ViewProfileActivity extends AppCompatActivity {
         song_name = findViewById(R.id.song_name);
         artist_name = findViewById(R.id.artist_name);
 
+        spotify_icon = findViewById(R.id.spotify_icon);
+
         friend_btn = findViewById(R.id.friend_btn);
         friend_btn_cancel = findViewById(R.id.friend_btn_cancel);
         start_chat = findViewById(R.id.start_chat);
+        music_loading_txt = findViewById(R.id.music_loading_txt);
 
         Display display = getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
 
+        music_loading_layout = findViewById(R.id.music_loading_layout);
+        connect_spotify_layout = findViewById(R.id.connect_spotify_layout);
+        connect_spotify_text = findViewById(R.id.connect_spotify_text);
 
+        music_layout = findViewById(R.id.music_layout);
+
+
+        connect_spotify_text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        music_loading_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         name.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         feeling_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         username.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
@@ -175,6 +194,20 @@ public class ViewProfileActivity extends AppCompatActivity {
                     mSpotifyAppRemote.getPlayerApi().play(songId);
                 } catch (Exception e) {
                     Toast.makeText(ViewProfileActivity.this, "Cannot play this song", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+        spotify_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                    if (launchIntent != null) {
+                        startActivity(launchIntent);//null pointer check in case package name was not found
+                    }
+                } catch (Exception e) {
 
                 }
             }
@@ -338,9 +371,22 @@ public class ViewProfileActivity extends AppCompatActivity {
                         songName = user.getSpotifySong();
                         artistName = user.getSpotifyArtist();
                         songUri = user.getSpotifyCover();
+
+                        if (songName.length() > 0) {
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    music_layout.setVisibility(View.VISIBLE);
+                                }
+                            }, 1000);
+
+                        }
                     } catch (Exception e) {
                         //
+                        music_layout.setVisibility(View.GONE);
                     }
+
 
                     try {
                         feeling_txt.setText(user.getFeeling());
@@ -407,6 +453,17 @@ public class ViewProfileActivity extends AppCompatActivity {
                         public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                             mSpotifyAppRemote = spotifyAppRemote;
 
+                            connect_spotify.setVisibility(View.GONE);
+                            connect_spotify_layout.setVisibility(View.GONE);
+                            spotify_icon.setVisibility(View.VISIBLE);
+                            music_loading_layout.setVisibility(View.GONE);
+                            // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                            // Now you can start interacting with App Remote
+
+
+
+
                             //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
                             // Now you can start interacting with App Remote
@@ -435,6 +492,13 @@ public class ViewProfileActivity extends AppCompatActivity {
                             //song_name.setText(songName);
                             //artist_name.setText(artistName);
                             connect_spotify.setVisibility(View.VISIBLE);
+                            connect_spotify_layout.setVisibility(View.VISIBLE);
+                            spotify_icon.setVisibility(View.GONE);
+                            music_loading_layout.setVisibility(View.GONE);
+
+                            music_layout.setVisibility(View.VISIBLE);
+
+
 
                             // Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify automatically :( " + throwable.getStackTrace(), Toast.LENGTH_SHORT).show();
                             // Something went wrong when attempting to connect! Handle errors here

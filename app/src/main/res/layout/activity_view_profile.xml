@@ -91,7 +91,7 @@
         android:id="@+id/feeling_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/center_dp"
+        android:layout_above="@id/center_dp_layout"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="4dp"
         android:gravity="center"
@@ -102,27 +102,183 @@
         android:visibility="invisible" />
 
 
-    <com.hieeway.hieeway.CustomImageView
-        android:id="@+id/center_dp"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/center_dp_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/name"
-        android:layout_marginBottom="4dp"
-        android:adjustViewBounds="true"
-        android:maxWidth="100dp"
-        android:maxHeight="200dp"
-        android:layout_centerHorizontal="true"
-        android:minWidth="50dp"
-        android:scaleType="centerCrop"
-        android:minHeight="200dp"
-        android:src="@drawable/profile_pic" />
+        android:layout_centerVertical="true"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <com.hieeway.hieeway.CustomImageView
+                android:id="@+id/center_dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:adjustViewBounds="true"
+                android:maxWidth="100dp"
+                android:maxHeight="200dp"
+                android:minWidth="50dp"
+                android:minHeight="200dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_pic" />
+
+            <ProgressBar
+                android:id="@+id/upload_progress"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <RelativeLayout
+
+            android:id="@+id/music_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/music_layout_profile_back"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/music_loading_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/music_loading"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerInParent="true"
+                    app:SpinKit_Color="@color/colorPrimaryDark"
+                    app:SpinKit_Style="Wave" />
+
+                <TextView
+                    android:id="@+id/music_loading_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/music_loading"
+                    android:gravity="center"
+                    android:text="fetching music"
+                    android:textColor="#fff" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/spotify_icon"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="2dp"
+                    android:background="#000"
+                    android:padding="24dp"
+                    android:src="@drawable/spotify_icon_rgb_green"
+                    android:visibility="invisible" />
+
+
+                <ImageView
+                    android:id="@+id/spotify_cover"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="2dp" />
+
+
+                <TextView
+                    android:id="@+id/song_name"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/spotify_cover"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginRight="4dp"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textColor="#fff"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/artist_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/song_name"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="2dp"
+                    android:textColor="#fff"
+                    android:textSize="10sp"
+                    android:visibility="visible"
+                    tools:text="Charlie Puth" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/connect_spotify_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:id="@+id/connect_spotify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/message_box_drawable"
+                    android:backgroundTint="#1DB954"
+                    android:padding="4dp"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:layout_width="100dp"
+                        android:layout_height="32dp"
+                        android:layout_centerInParent="true"
+                        android:paddingTop="2dp"
+                        android:paddingRight="4dp"
+                        android:paddingBottom="2dp"
+                        android:src="@drawable/spotify_logo_rgb_white" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/connect_spotify_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/connect_spotify"
+                    android:layout_margin="12dp"
+                    android:gravity="center"
+                    android:text="Connect with spotify app to add and listen to live music status"
+                    android:textColor="#fff"
+                    android:textSize="12dp" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_below="@id/center_dp_layout"
         android:textColor="#fff"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -139,77 +295,16 @@
         android:textStyle="bold"
         tools:text="username" />
 
-    <RelativeLayout
-        android:id="@+id/connect_spotify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/username"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/message_box_drawable"
-        android:backgroundTint="#1DB954"
-        android:padding="4dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="32dp"
-            android:layout_centerInParent="true"
-            android:paddingTop="2dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="2dp"
-            android:src="@drawable/spotify_logo_rgb_white" />
 
 
-    </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/spotify_cover"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@id/username"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="8dp" />
-
-
-    <TextView
-        android:id="@+id/song_name"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/spotify_cover"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:ellipsize="marquee"
-        android:gravity="center"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:textColor="#fff"
-        android:textSize="16sp"
-        android:textStyle="bold"
-
-        tools:text="Connect to spotify" />
-
-    <TextView
-        android:id="@+id/artist_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/song_name"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="2dp"
-        android:textColor="#fff"
-        android:textSize="12sp"
-        android:visibility="visible"
-        tools:text="Charlie Puth" />
 
     <TextView
         android:id="@+id/bio_txt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_buttons"
-        android:layout_below="@id/artist_name"
+        android:layout_below="@id/username"
         android:layout_margin="24dp"
         android:layout_marginTop="24dp"
         android:autoLink="web"
