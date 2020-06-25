@@ -1001,12 +1001,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileBtnUnpressed.setVisibility(View.GONE);
         profileBtnPressed.setVisibility(View.VISIBLE);
 
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
             }
-        }, 100);
+        }, 100);*/
 
 
         profileBtnPressed.setAlpha(1.0f);
