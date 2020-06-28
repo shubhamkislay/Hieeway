@@ -5,10 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
+
     tools:context="com.hieeway.hieeway.MusicFeedActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/music_recyclerview"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -32,7 +32,9 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MusicFeedActivity"></activity>
+        <activity
+            android:name=".MusicFeedActivity"
+            android:theme="@style/MusicFeed"></activity>
         <activity android:name=".SpotifyActivity" />
         <activity android:name=".VideoPlayActivity" />
         <activity android:name=".VideoUploadActivity" />

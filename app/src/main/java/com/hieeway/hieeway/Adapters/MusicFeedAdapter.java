@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -87,6 +88,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         holder.song_name.setText(user.getSpotifySong());
         holder.artist_name.setText(user.getSpotifyArtist());
         holder.song_name.setSelected(true);
+        holder.artist_name.setSelected(true);
 
         holder.username.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
         holder.song_name.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -114,21 +116,47 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                                 lightMutedSwatch = palette.getLightMutedSwatch();
                                 dominantSwatch = palette.getDominantSwatch();
 
+
                                 // Toast.makeText(getBaseContext(),"Swatches Size: "+palette.getSwatches().size(),Toast.LENGTH_SHORT).show();
-                                if (vibrantSwatch != null)
+
+                                if (vibrantSwatch != null) {
                                     currentSwatch = vibrantSwatch;
-                                else if (darkVibrantSwatch != null)
-                                    currentSwatch = darkVibrantSwatch;
-                                else if (lightVibrantSwatch != null)
+                                    holder.vibrantLay.setBackgroundTintList(ColorStateList.valueOf(vibrantSwatch.getRgb()));
+                                    holder.v_txt.setText("V " + currentSwatch.getPopulation());
+                                }
+                                if (lightVibrantSwatch != null) {
                                     currentSwatch = lightVibrantSwatch;
-                                else if (mutedSwatch != null)
+                                    holder.lightVibrantLay.setBackgroundTintList(ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                                    holder.lv_txt.setText("LV " + currentSwatch.getPopulation());
+                                }
+                                if (mutedSwatch != null) {
                                     currentSwatch = mutedSwatch;
-                                else if (darkMutedSwatch != null)
-                                    currentSwatch = darkMutedSwatch;
-                                else if (lightMutedSwatch != null)
+                                    holder.mutedLay.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                    holder.m_txt.setText("M " + currentSwatch.getPopulation());
+                                }
+                                if (lightMutedSwatch != null) {
                                     currentSwatch = lightMutedSwatch;
-                                else if (dominantSwatch != null)
+                                    holder.lightMutedLay.setBackgroundTintList(ColorStateList.valueOf(lightMutedSwatch.getRgb()));
+                                    holder.lm_txt.setText("LM " + currentSwatch.getPopulation());
+                                }
+                                if (dominantSwatch != null) {
                                     currentSwatch = dominantSwatch;
+                                    holder.dominantLay.setBackgroundTintList(ColorStateList.valueOf(dominantSwatch.getRgb()));
+                                    holder.do_txt.setText("DO " + currentSwatch.getPopulation());
+                                }
+                                if (darkVibrantSwatch != null) {
+                                    currentSwatch = darkVibrantSwatch;
+                                    holder.darkVibrantLay.setBackgroundTintList(ColorStateList.valueOf(darkVibrantSwatch.getRgb()));
+                                    holder.dv_txt.setText("DV " + currentSwatch.getPopulation());
+                                }
+                                if (darkMutedSwatch != null) {
+                                    currentSwatch = darkMutedSwatch;
+                                    holder.darkMutedLay.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+                                    holder.dm_txt.setText("DM " + currentSwatch.getPopulation());
+                                }
+
+
+
 
                                 if (currentSwatch != null) {
                                     int titleColor = currentSwatch.getRgb();
@@ -137,9 +165,113 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                                     notificationBackGroundColor = currentSwatch.getRgb();
                                     setColorized = true;*/
 
-                                    holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(titleColor));
-                                    holder.play_box.setBackgroundTintList(ColorStateList.valueOf(titleColor));
-                                    holder.like_box.setBackgroundTintList(ColorStateList.valueOf(titleColor));
+
+                                    //holder.fade_back.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+
+                                    /*if(darkVibrantSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkVibrantSwatch.getRgb()));
+                                    else if(darkMutedSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getBodyTextColor()));
+                                    else if(mutedSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                    else if(lightMutedSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(lightMutedSwatch.getRgb()));
+                                    else if(vibrantSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(vibrantSwatch.getRgb()));
+                                    else if(lightVibrantSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(lightVibrantSwatch.getRgb()));
+                                    else if(dominantSwatch!=null)
+                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(dominantSwatch.getRgb()));*/
+
+
+                                    if (dominantSwatch != null) {
+                                        if (vibrantSwatch != null && dominantSwatch.getPopulation() == vibrantSwatch.getPopulation()) {
+                                            if (lightMutedSwatch != null && mutedSwatch != null
+                                                    && lightMutedSwatch.getPopulation() > mutedSwatch.getPopulation())
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(lightMutedSwatch.getRgb()));
+                                            else if (lightMutedSwatch != null && mutedSwatch != null
+                                                    && lightMutedSwatch.getPopulation() < mutedSwatch.getPopulation())
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                            else if (lightMutedSwatch != null && mutedSwatch != null && darkMutedSwatch != null)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+                                            else
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(dominantSwatch.getRgb()));
+
+                                        } else if (mutedSwatch != null && dominantSwatch.getPopulation() == mutedSwatch.getPopulation()) {
+                                            if (mutedSwatch != null)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                        } else if (darkVibrantSwatch != null && dominantSwatch.getPopulation() == darkVibrantSwatch.getPopulation()) {
+                                            if (vibrantSwatch != null || mutedSwatch != null) {
+                                                if (vibrantSwatch.getPopulation() > mutedSwatch.getPopulation() && lightVibrantSwatch != null
+                                                        && vibrantSwatch.getPopulation() > 50)
+                                                    holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(vibrantSwatch.getRgb()));
+                                                else {
+                                                    if (darkMutedSwatch != null && darkMutedSwatch.getPopulation() > mutedSwatch.getPopulation()
+                                                            && mutedSwatch.getPopulation() < 50)
+                                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+                                                    else
+                                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                                }
+
+                                            }
+                                        } else if (lightMutedSwatch != null && dominantSwatch.getPopulation() == lightMutedSwatch.getPopulation()) {
+                                            if (darkMutedSwatch != null && mutedSwatch != null
+                                                    && darkMutedSwatch.getPopulation() > mutedSwatch.getPopulation()
+                                                    && mutedSwatch.getPopulation() < 50)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+                                            else if (mutedSwatch != null && mutedSwatch.getPopulation() > 50)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                            else
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(dominantSwatch.getRgb()));
+
+                                        } else if (darkMutedSwatch != null && dominantSwatch.getPopulation() == darkMutedSwatch.getPopulation()) {
+                                            if (vibrantSwatch != null && mutedSwatch != null) {
+                                                if (vibrantSwatch.getPopulation() > mutedSwatch.getPopulation()) {
+                                                    if (darkVibrantSwatch != null && darkVibrantSwatch.getPopulation() < 50 || darkVibrantSwatch == null)
+                                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(vibrantSwatch.getRgb()));
+                                                    else
+                                                        holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkVibrantSwatch.getRgb()));
+                                                } else
+                                                    holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+
+                                            } else if (mutedSwatch != null)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                            else
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(dominantSwatch.getRgb()));
+                                        } else if (lightVibrantSwatch != null && lightVibrantSwatch.getPopulation() == dominantSwatch.getPopulation()) {
+                                            if (mutedSwatch != null && mutedSwatch.getPopulation() > 50)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+                                            else if (vibrantSwatch != null && vibrantSwatch.getPopulation() > 100
+                                                    && mutedSwatch != null && vibrantSwatch.getPopulation() > mutedSwatch.getPopulation()
+                                                    && darkMutedSwatch != null && darkMutedSwatch.getPopulation() < 100)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(vibrantSwatch.getRgb()));
+
+                                            else if (darkMutedSwatch != null)
+                                                holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+
+                                        } else if (mutedSwatch != null && mutedSwatch.getPopulation() > 100)
+                                            holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(mutedSwatch.getRgb()));
+
+                                        else if (darkMutedSwatch != null)
+                                            holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+                                        else
+                                            holder.layout_background.setBackgroundTintList(ColorStateList.valueOf(dominantSwatch.getRgb()));
+                                    }
+
+
+                                    // Toast.makeText(mContext,"lightVibrantSwatch "+lightVibrantSwatch,Toast.LENGTH_LONG).show();
+
+
+                                    // holder.fade_back.setBackgroundTintList(ColorStateList.valueOf(titleColor));
+
+
+                                    //holder.fade_back.setBackgroundTintList(ColorStateList.valueOf(darkMutedSwatch.getRgb()));
+                                        /*holder.play_box.setBackgroundTintList(ColorStateList.valueOf(titleColor));
+                                        holder.like_box.setBackgroundTintList(ColorStateList.valueOf(titleColor));*/
+
+
+
+
                                     // holder.like_btn.setBackgroundTintList(ColorStateList.valueOf(titleColor));
 
                                 }
@@ -181,6 +313,71 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             }
         });
 
+        holder.play_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                    //holder.play_btn.setAlpha(0.6f);
+
+
+                    holder.play_box.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    holder.play_box.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+
+                    //holder.play_btn.animate().alpha(1.0f).setDuration(50);
+                    //holder.like_box.setBackgroundTintList(null);
+
+
+                } else {
+                    //holder.play_box.setBackgroundTintList(null);
+
+                    holder.play_box.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                }
+
+                return false;
+            }
+
+        });
+
+        holder.like_btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                    //holder.play_btn.setAlpha(0.6f);
+
+
+                    holder.like_box.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    holder.like_box.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+
+                    //holder.play_btn.animate().alpha(1.0f).setDuration(50);
+                    // holder.like_box.setBackgroundTintList(null);
+
+
+                } else {
+
+
+                    holder.like_box.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                }
+
+                return false;
+            }
+
+        });
+
+
 
 
 
@@ -197,10 +394,14 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         TextView username;
         ImageView song_art;
         TextView song_name, artist_name;
-        RelativeLayout like_box, layout_background;
+        RelativeLayout like_box, layout_background, fade_back;
         RelativeLayout play_box;
         ImageButton play_btn;
         Button like_btn;
+
+        //colors
+        RelativeLayout darkVibrantLay, lightVibrantLay, vibrantLay, darkMutedLay, lightMutedLay, mutedLay, dominantLay;
+        TextView dm_txt, dv_txt, lm_txt, lv_txt, v_txt, m_txt, do_txt;
 
 
 
@@ -218,6 +419,21 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             like_box = itemView.findViewById(R.id.like_box);
             layout_background = itemView.findViewById(R.id.layout_background);
             like_btn = itemView.findViewById(R.id.like_btn);
+            fade_back = itemView.findViewById(R.id.fade_back);
+            darkVibrantLay = itemView.findViewById(R.id.darkVibrant);
+            lightMutedLay = itemView.findViewById(R.id.lightMuted);
+            lightVibrantLay = itemView.findViewById(R.id.lightVibrant);
+            vibrantLay = itemView.findViewById(R.id.vibrant);
+            darkMutedLay = itemView.findViewById(R.id.darkMuted);
+            mutedLay = itemView.findViewById(R.id.muted);
+            dominantLay = itemView.findViewById(R.id.dominant);
+            dm_txt = itemView.findViewById(R.id.dm_txt);
+            dv_txt = itemView.findViewById(R.id.dv_txt);
+            lm_txt = itemView.findViewById(R.id.lm_txt);
+            lv_txt = itemView.findViewById(R.id.lv_txt);
+            v_txt = itemView.findViewById(R.id.v_txt);
+            m_txt = itemView.findViewById(R.id.m_txt);
+            do_txt = itemView.findViewById(R.id.do_txt);
 
 
         }

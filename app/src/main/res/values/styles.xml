@@ -18,6 +18,11 @@
 
     </style>
 
+    <style name="MusicFeed" parent="Theme.AppCompat.NoActionBar">
+
+        <item name="android:windowTranslucentStatus">true</item>
+
+    </style>
 
     <style name="SplashScreen" parent="Theme.AppCompat.NoActionBar">
 
