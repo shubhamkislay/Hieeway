@@ -34,7 +34,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:gravity="center"
-            android:text="Let's see what your friends are listening to..."
+            android:text="Let's see what your friends\nare listening to..."
             android:textColor="#fff"
             android:textSize="16sp" />
     </RelativeLayout>

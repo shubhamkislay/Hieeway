@@ -2,7 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_background"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="1.0"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:rotation="180" />
 
 
     <RelativeLayout
@@ -42,8 +53,8 @@
             android:layout_width="350dp"
             android:layout_height="350dp"
             android:layout_centerHorizontal="true"
-            android:scaleType="centerInside"
-            android:src="@drawable/no_profile" />
+            android:scaleType="fitXY"
+            android:src="#000" />
 
         <TextView
             android:id="@+id/song_name"
@@ -88,37 +99,42 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <RelativeLayout
-                    android:id="@+id/play_box"
+                <com.dd.ShadowLayout
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/message_box_drawable"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="24dp">
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="24dp"
+                    app:sl_cornerRadius="56dp"
+                    app:sl_dx="0dp"
+                    app:sl_dy="0dp"
+                    app:sl_shadowColor="#20000000"
+                    app:sl_shadowRadius="4dp">
 
-                    <ImageButton
-                        android:id="@+id/play_btn"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:background="@android:color/transparent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_play_circle_filled_black_24dp" />
 
-                    <TextView
-                        android:id="@+id/play_txt"
+                    <RelativeLayout
+                        android:id="@+id/play_box"
                         android:layout_width="wrap_content"
-                        android:layout_height="64dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_toRightOf="@id/play_btn"
-                        android:gravity="center"
-                        android:text="Play"
-                        android:textColor="#fff"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                        android:layout_height="wrap_content"
+
+                        android:background="@drawable/ic_play_circle_filled_black_24dp"
+                        android:backgroundTint="@color/colorBlack"
+                        android:elevation="50dp"
+                        android:padding="4dp">
+
+                        <ImageButton
+                            android:id="@+id/play_btn"
+
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_centerVertical="true"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_play_circle_filled_black_24dp" />
+
+                    </RelativeLayout>
+                </com.dd.ShadowLayout>
 
 
             </RelativeLayout>
@@ -128,37 +144,47 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1">
 
-                <RelativeLayout
-                    android:id="@+id/like_box"
+                <com.dd.ShadowLayout
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/message_box_drawable"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="24dp">
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    app:sl_cornerRadius="56dp"
+                    app:sl_dx="0dp"
+                    app:sl_dy="0dp"
+                    app:sl_shadowColor="#20000000"
+                    app:sl_shadowRadius="8dp">
 
-                    <ImageButton
-                        android:id="@+id/like_btn"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:background="@android:color/transparent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/ic_favorite_black_24dp" />
 
-                    <TextView
-                        android:id="@+id/like_txt"
+                    <RelativeLayout
+                        android:id="@+id/like_box"
                         android:layout_width="wrap_content"
-                        android:layout_height="64dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_toRightOf="@id/like_btn"
-                        android:gravity="center"
-                        android:text="Like"
-                        android:textColor="#fff"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_play_circle_filled_black_24dp"
+                        android:backgroundTint="@color/colorBlack"
+                        android:elevation="50dp"
+                        android:padding="10dp">
+
+                        <RelativeLayout
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/circle" />
+
+                        <Button
+                            android:id="@+id/like_btn"
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/heart_full"
+                            android:backgroundTint="#DDDDDD" />
+
+                    </RelativeLayout>
+
+                </com.dd.ShadowLayout>
 
 
             </RelativeLayout>

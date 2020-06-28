@@ -60,9 +60,12 @@ public class MusicFeedActivity extends AppCompatActivity {
                         .build();
 
 
-        music_recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(music_recyclerview);
+        try {
+            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+        } catch (Exception e) {
+
+        }
+
 
         SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
@@ -107,6 +110,10 @@ public class MusicFeedActivity extends AppCompatActivity {
         seeing_music_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         userList = new ArrayList<>();
+
+        music_recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(music_recyclerview);
 
 
     }

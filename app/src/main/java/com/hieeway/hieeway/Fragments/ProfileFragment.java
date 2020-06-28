@@ -366,6 +366,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             }
         });
         song_name.setSelected(true);
+        artist_name.setSelected(true);
 
 
         // spotify_cover.getLayoutParams().height = (int) displayWidth;
@@ -846,6 +847,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                             //song_name.setAnimation(outToLeftAnimation());
 
+
                             if (track.artist.name.length() > 1) {
 
                                 String artistNames = null;
@@ -872,16 +874,14 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                         .getReference("Users")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .updateChildren(songHash);
-                            }
 
-                            if (track != null) {
                                 Log.d("Spotify Activity", track.name + " by " + track.artist.name);
                                 // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();
                                 //  Toast.makeText(getActivity(),"Track is "+track.name,Toast.LENGTH_SHORT).show();
                                 spotify_icon.setVisibility(View.VISIBLE);
                                 spotify_cover.setVisibility(View.INVISIBLE);
                                 song_name.setText(track.name);
-                                artist_name.setText(track.artist.name);
+                                artist_name.setText(artistNames);
 
 
                                 mSpotifyAppRemote.getImagesApi().getImage(track.imageUri)
