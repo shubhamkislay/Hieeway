@@ -15,6 +15,30 @@
         android:layout_height="match_parent" />
 
     <RelativeLayout
+        android:id="@+id/new_update_lay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/circle"
+        android:backgroundTint="#fff"
+        android:elevation="10dp"
+        android:visibility="gone">
+
+        <ImageButton
+
+            android:id="@+id/new_update"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#fff"
+            android:src="@drawable/ic_swipe_arrow_up_black_24dp"
+            android:textColor="#000" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:visibility="visible"
         android:id="@+id/loading_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

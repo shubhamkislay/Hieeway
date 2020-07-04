@@ -13,11 +13,18 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.hieeway.hieeway.Model.ChatStamp;
+import com.hieeway.hieeway.Model.Music;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -252,8 +259,68 @@ public class MusicBeamService extends Service {
 
                                 final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
+                                FirebaseDatabase.getInstance().getReference("Music")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .runTransaction(new Transaction.Handler() {
+                                            @NonNull
+                                            @Override
+                                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
 
-                                HashMap<String, Object> songHash = new HashMap<>();
+                                                Music music = mutableData.getValue(Music.class);
+                                                try {
+                                                    if (music.getSpotifyId() == null || !music.getSpotifyId().equals(songId)) {
+                                                        HashMap<String, Object> songHash = new HashMap<>();
+                                                        songHash.put("spotifyId", songId);
+                                                        songHash.put("spotifySong", track.name);
+                                                        songHash.put("spotifyArtist", postArtist);
+                                                        songHash.put("spotifyCover", track.imageUri);
+                                                        songHash.put("username", USER_NAME);
+                                                        songHash.put("userId", USER_ID);
+                                                        songHash.put("userPhoto", USER_PHOTO);
+                                                        songHash.put("timestamp", timestamp.toString());
+
+                                                        //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                                                        FirebaseDatabase.getInstance()
+                                                                .getReference("Music")
+                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                .updateChildren(songHash);
+
+                                                    }
+
+
+                                                } catch (NullPointerException e) {
+
+                                                    HashMap<String, Object> songHash = new HashMap<>();
+                                                    songHash.put("spotifyId", songId);
+                                                    songHash.put("spotifySong", track.name);
+                                                    songHash.put("spotifyArtist", postArtist);
+                                                    songHash.put("spotifyCover", track.imageUri);
+                                                    songHash.put("username", USER_NAME);
+                                                    songHash.put("userId", USER_ID);
+                                                    songHash.put("userPhoto", USER_PHOTO);
+                                                    songHash.put("timestamp", timestamp.toString());
+
+                                                    //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                                                    FirebaseDatabase.getInstance()
+                                                            .getReference("Music")
+                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .updateChildren(songHash);
+
+                                                }
+
+                                                return null;
+                                            }
+
+                                            @Override
+                                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                            }
+                                        });
+
+
+                                /*HashMap<String, Object> songHash = new HashMap<>();
                                 songHash.put("spotifyId", songId);
                                 songHash.put("spotifySong", track.name);
                                 songHash.put("spotifyArtist", artistNames);
@@ -268,7 +335,7 @@ public class MusicBeamService extends Service {
                                 FirebaseDatabase.getInstance()
                                         .getReference("Music")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .updateChildren(songHash);
+                                        .updateChildren(songHash);*/
 
                                 Log.d("Spotify Activity", track.name + " by " + track.artist.name);
                                 // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();

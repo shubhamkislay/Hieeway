@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +53,11 @@ public class MusicFeedActivity extends AppCompatActivity {
     Boolean remoteReady = false;
     private SpotifyAppRemote mSpotifyAppRemote;
     private MusicFeedAdapter musicFeedAdapter;
+    ImageButton new_update;
+    RelativeLayout new_update_lay;
+    Boolean initialCheck = false;
+    private boolean secondCheck = false;
+    private boolean listPopulated = false;
 
     @Override
     protected void onResume() {
@@ -83,6 +89,10 @@ public class MusicFeedActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
+
+        new_update = findViewById(R.id.new_update);
+
+        new_update_lay = findViewById(R.id.new_update_lay);
 
 
         SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
@@ -117,12 +127,37 @@ public class MusicFeedActivity extends AppCompatActivity {
         seeing_music_txt = findViewById(R.id.seeing_music_txt);
 
         seeing_music_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //new_update.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         userList = new ArrayList<>();
 
         music_recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(music_recyclerview);
+
+        new_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new_update_lay.setVisibility(View.GONE);
+                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                music_recyclerview.setAdapter(musicFeedAdapter);
+                musicFeedAdapter.notifyDataSetChanged();
+                loading_feed.setVisibility(View.GONE);
+
+
+            }
+        });
+
+        new_update_lay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new_update_lay.setVisibility(View.GONE);
+                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                music_recyclerview.setAdapter(musicFeedAdapter);
+                musicFeedAdapter.notifyDataSetChanged();
+                loading_feed.setVisibility(View.GONE);
+            }
+        });
 
 
     }
@@ -140,9 +175,10 @@ public class MusicFeedActivity extends AppCompatActivity {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 Friend friend = snapshot.getValue(Friend.class);
                                 if (friend.getStatus().equals("friends")) {
+
                                     FirebaseDatabase.getInstance().getReference("Music")
                                             .child(friend.getFriendId())
-                                            .addValueEventListener(new ValueEventListener() {
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
                                                     if (musicSnapshot.exists()) {
@@ -169,6 +205,71 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                         music_recyclerview.setAdapter(musicFeedAdapter);
                                                                         musicFeedAdapter.notifyDataSetChanged();
                                                                         loading_feed.setVisibility(View.GONE);
+
+                                                                    }
+                                                                }, 500);
+
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        listPopulated = true;
+                                                                    }
+                                                                }, 1500);
+
+                                                            } catch (Exception e) {
+                                                                //
+                                                            }
+
+                                                        }
+
+                                                    }
+
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+                                    FirebaseDatabase.getInstance().getReference("Music")
+                                            .child(friend.getFriendId())
+                                            .addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                    if (musicSnapshot.exists()) {
+                                                        Music music = musicSnapshot.getValue(Music.class);
+
+
+                                                        if (!userList.contains(music)) {
+                                                            userList.add(music);
+                                                        } else {
+                                                            userList.remove(music);
+                                                            userList.add(music);
+                                                        }
+
+
+                                                        if (searchedList && sentListSize < userList.size()) {
+                                                            try {
+
+                                                                Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+
+                                                                        if (listPopulated) {
+                                                                            new_update_lay.setVisibility(View.VISIBLE);
+                                                                            /*    else
+                                                                            if (initialCheck) {
+                                                                                if (secondCheck)
+                                                                                    new_update_lay.setVisibility(View.VISIBLE);
+                                                                                else
+                                                                                    secondCheck = true;
+                                                                            } else
+                                                                                initialCheck = true;*/
+                                                                        }
                                                                     }
                                                                 }, 500);
 
@@ -205,7 +306,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                             float displayHeight = size.y;
 
                             loading_feed.animate().translationY(-displayHeight - 100).setDuration(500);
-                            new Handler().postDelayed(new Runnable() {
+                            /*new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     Collections.sort(userList, Collections.<Music>reverseOrder());
@@ -214,7 +315,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                                     musicFeedAdapter.notifyDataSetChanged();
                                     loading_feed.setVisibility(View.GONE);
                                 }
-                            }, 500);
+                            }, 500);*/
 
 
                             searchedList = true;
