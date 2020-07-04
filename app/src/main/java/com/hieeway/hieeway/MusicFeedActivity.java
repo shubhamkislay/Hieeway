@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -49,6 +52,17 @@ public class MusicFeedActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+
+
+        //if(remoteReady)
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_music_feed);
 
         // FirebaseDatabase.getInstance().setPersistenceEnabled(false);
         ConnectionParams connectionParams =
@@ -93,15 +107,6 @@ public class MusicFeedActivity extends AppCompatActivity {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
-
-        //if(remoteReady)
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_feed);
 
         music_recyclerview = findViewById(R.id.music_recyclerview);
         loading_feed = findViewById(R.id.loading_feed);
@@ -152,9 +157,15 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                 if (searchedList && sentListSize < userList.size()) {
                                                                     try {
 
-                                                                        musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
-                                                                        music_recyclerview.setAdapter(musicFeedAdapter);
-                                                                        musicFeedAdapter.notifyDataSetChanged();
+                                                                        new Handler().postDelayed(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                                                                                music_recyclerview.setAdapter(musicFeedAdapter);
+                                                                                musicFeedAdapter.notifyDataSetChanged();
+                                                                                loading_feed.setVisibility(View.GONE);
+                                                                            }
+                                                                        }, 500);
 
                                                                     } catch (Exception e) {
                                                                         //
@@ -179,13 +190,26 @@ public class MusicFeedActivity extends AppCompatActivity {
                             }
 
 
-                            loading_feed.setVisibility(View.GONE);
+                            Display display = getWindowManager().getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            float displayHeight = size.y;
+
+                            loading_feed.animate().translationY(-displayHeight - 100).setDuration(500);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                                    music_recyclerview.setAdapter(musicFeedAdapter);
+                                    musicFeedAdapter.notifyDataSetChanged();
+                                    loading_feed.setVisibility(View.GONE);
+                                }
+                            }, 500);
+
+
                             searchedList = true;
                             sentListSize = userList.size();
 
-                            musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
-                            music_recyclerview.setAdapter(musicFeedAdapter);
-                            musicFeedAdapter.notifyDataSetChanged();
 
                         }
                     }

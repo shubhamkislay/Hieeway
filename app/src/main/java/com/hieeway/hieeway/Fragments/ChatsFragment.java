@@ -45,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
@@ -395,6 +396,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         Point size = new Point();
         display.getSize(size);
         float displayWidth = size.x;
+        float displayHeight = size.y;
+
+        // Toast.makeText(getContext(),"Height: "+displayHeight,Toast.LENGTH_LONG).show();
 
 
         int spanCount; // 3 columns

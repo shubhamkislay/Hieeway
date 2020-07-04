@@ -223,7 +223,7 @@
                             android:background="@drawable/nav_btn_back_drawable"
                             android:padding="8dp"
                             android:scaleType="centerInside"
-                            android:src="@drawable/spotify_icon_rgb_green" />
+                            android:src="@drawable/headphone" />
 
 
                     </RelativeLayout>

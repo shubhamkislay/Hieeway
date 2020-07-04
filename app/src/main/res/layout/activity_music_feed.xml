@@ -17,15 +17,27 @@
     <RelativeLayout
         android:id="@+id/loading_feed"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#000">
 
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/wave"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="32dp"
             android:layout_centerInParent="true"
             app:SpinKit_Color="@color/colorPrimaryDark"
             app:SpinKit_Style="Wave" />
+
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_above="@id/seeing_music_txt"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:alpha="1.0"
+            android:background="@drawable/headphone_large" />
+
 
         <TextView
             android:id="@+id/seeing_music_txt"
@@ -36,7 +48,7 @@
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
             android:gravity="center"
-            android:text="Let's see what your friends\nare listening to..."
+            android:text="Let's see what your friends\nare listening to"
             android:textColor="#fff"
             android:textSize="16sp" />
     </RelativeLayout>
