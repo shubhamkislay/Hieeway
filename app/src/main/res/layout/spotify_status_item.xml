@@ -47,14 +47,27 @@
         <TextView
             android:id="@+id/username"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@id/profile_pic"
             android:fontFamily="sans-serif-thin"
+            android:layout_above="@id/time"
             android:gravity="center"
             android:textColor="#fff"
             android:textSize="16sp"
             tools:text="Username" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_toRightOf="@id/profile_pic"
+            android:textColor="#A6FFFFFF"
+            android:textSize="12sp"
+            tools:text="5 mins ago" />
 
 
     </RelativeLayout>

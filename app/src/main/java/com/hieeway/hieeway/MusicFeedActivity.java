@@ -24,13 +24,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.MusicFeedAdapter;
+import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.MusicAdapterItem;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MusicFeedActivity extends AppCompatActivity {
@@ -40,7 +44,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     final String appPackageName = "com.spotify.music";
     RecyclerView music_recyclerview;
-    List<User> userList;
+    List<Music> userList;
     int sentListSize;
     Boolean searchedList = false;
     RelativeLayout loading_feed;
@@ -128,7 +132,7 @@ public class MusicFeedActivity extends AppCompatActivity {
 
         FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         userList.clear();
@@ -136,49 +140,47 @@ public class MusicFeedActivity extends AppCompatActivity {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 Friend friend = snapshot.getValue(Friend.class);
                                 if (friend.getStatus().equals("friends")) {
-                                    FirebaseDatabase.getInstance().getReference("Users")
+                                    FirebaseDatabase.getInstance().getReference("Music")
                                             .child(friend.getFriendId())
                                             .addValueEventListener(new ValueEventListener() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot userSnapshot) {
-                                                    if (userSnapshot.exists()) {
-                                                        User user = userSnapshot.getValue(User.class);
-                                                        try {
-                                                            if (user.getSpotifySong().length() > 0) {
-                                                                if (!userList.contains(user)) {
-                                                                    userList.add(user);
-                                                                } else {
-                                                                    userList.remove(user);
-                                                                    userList.add(user);
-
-                                                                }
+                                                public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                    if (musicSnapshot.exists()) {
+                                                        Music music = musicSnapshot.getValue(Music.class);
 
 
-                                                                if (searchedList && sentListSize < userList.size()) {
-                                                                    try {
+                                                        if (!userList.contains(music)) {
+                                                            userList.add(music);
+                                                        } else {
+                                                            userList.remove(music);
+                                                            userList.add(music);
+                                                        }
 
-                                                                        new Handler().postDelayed(new Runnable() {
-                                                                            @Override
-                                                                            public void run() {
-                                                                                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
-                                                                                music_recyclerview.setAdapter(musicFeedAdapter);
-                                                                                musicFeedAdapter.notifyDataSetChanged();
-                                                                                loading_feed.setVisibility(View.GONE);
-                                                                            }
-                                                                        }, 500);
 
-                                                                    } catch (Exception e) {
-                                                                        //
+                                                        if (searchedList && sentListSize < userList.size()) {
+                                                            try {
+
+                                                                Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                                                                        music_recyclerview.setAdapter(musicFeedAdapter);
+                                                                        musicFeedAdapter.notifyDataSetChanged();
+                                                                        loading_feed.setVisibility(View.GONE);
                                                                     }
+                                                                }, 500);
 
-                                                                }
-                                                                // Toast.makeText(MusicFeedActivity.this, "User added: "+user.getUsername(), Toast.LENGTH_LONG).show();
+                                                            } catch (Exception e) {
+                                                                //
                                                             }
-                                                        } catch (Exception e) {
-                                                            //
+
                                                         }
 
                                                     }
+
+
                                                 }
 
                                                 @Override
@@ -186,6 +188,13 @@ public class MusicFeedActivity extends AppCompatActivity {
 
                                                 }
                                             });
+
+
+
+
+
+
+
                                 }
                             }
 
@@ -199,6 +208,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    Collections.sort(userList, Collections.<Music>reverseOrder());
                                     musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
                                     music_recyclerview.setAdapter(musicFeedAdapter);
                                     musicFeedAdapter.notifyDataSetChanged();

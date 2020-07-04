@@ -178,6 +178,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                     R.drawable.profile_pic);*/
 
             collapsedView.setImageViewBitmap(R.id.logo, bitmap);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

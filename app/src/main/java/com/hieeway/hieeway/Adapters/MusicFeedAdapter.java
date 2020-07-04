@@ -27,6 +27,8 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.MusicAdapterItem;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
@@ -37,7 +39,13 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Empty;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,7 +55,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     public SpotifyAppRemote spotifyAppRemote;
-    List<User> userList;
+    List<Music> userList;
     Activity activity;
     private Context mContext;
     private Palette.Swatch vibrantSwatch;
@@ -59,7 +67,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private Palette.Swatch darkMutedSwatch;
     private int swatchNumber;
 
-    public MusicFeedAdapter(Context mContext, List<User> userList, Activity activity, SpotifyAppRemote spotifyAppRemote) {
+    public MusicFeedAdapter(Context mContext, List<Music> userList, Activity activity, SpotifyAppRemote spotifyAppRemote) {
         this.mContext = mContext;
         this.userList = userList;
         this.spotifyAppRemote = spotifyAppRemote;
@@ -118,13 +126,13 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull MusicFeedAdapter.ViewHolder holder, int position) {
-        User user = userList.get(position);
+        Music music = userList.get(position);
 
 
-        Glide.with(mContext).load(user.getPhoto()).into(holder.profile_pic);
-        holder.username.setText(user.getUsername() + " is listening to...");
-        holder.song_name.setText(user.getSpotifySong());
-        holder.artist_name.setText(user.getSpotifyArtist());
+        Glide.with(mContext).load(music.getUserPhoto()).into(holder.profile_pic);
+        holder.username.setText(music.getUsername() + " is listening to...");
+        holder.song_name.setText(music.getSpotifySong());
+        holder.artist_name.setText(music.getSpotifyArtist());
         holder.song_name.setSelected(true);
         holder.artist_name.setSelected(true);
 
@@ -132,13 +140,30 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         holder.song_name.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
         holder.artist_name.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
         holder.open_spotify_text.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        holder.time.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         // holder.foreground_lay.animate().alpha(0.0f).setDuration(300);
 
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(music.getTimestamp());
+
+            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+            String ago = prettyTime.format(parsedDate);
 
 
-        spotifyAppRemote.getImagesApi().getImage(user.getSpotifyCover())
+            holder.time.setText("" + ago);
+
+
+        } catch (Exception e) { //this generic but you can control another types of exception
+            // look the origin of excption
+
+
+        }
+
+
+        spotifyAppRemote.getImagesApi().getImage(music.getSpotifyCover())
                 .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
                     @Override
                     public void onResult(Bitmap bitmap) {
@@ -371,10 +396,10 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             @Override
             public void onClick(View v) {
                 try {
-                    spotifyAppRemote.getPlayerApi().play(user.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
+                    spotifyAppRemote.getPlayerApi().play(music.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
                         @Override
                         public void onResult(Empty empty) {
-                            Toast.makeText(mContext, "Playing \"" + user.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Playing \"" + music.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -455,7 +480,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
                 //spotifyAppRemote.getPlayerApi().play(user.getSpotifyId());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("" + user.getSpotifyId()));
+                intent.setData(Uri.parse("" + music.getSpotifyId()));
                 intent.putExtra(Intent.EXTRA_REFERRER,
                         Uri.parse("android-app://" + mContext.getPackageName()));
                 mContext.startActivity(intent);
@@ -471,7 +496,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                 // spotifyAppRemote.getPlayerApi().play(user.getSpotifyId());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 //intent.setData(Uri.parse("spotify:track:"+user.getSpotifySong()));
-                intent.setData(Uri.parse("" + user.getSpotifyId()));
+                intent.setData(Uri.parse("" + music.getSpotifyId()));
                 //spotify:track:2jCnn1QPQ3E8ExtLe6INsx
                 intent.putExtra(Intent.EXTRA_REFERRER,
                         Uri.parse("android-app://" + mContext.getPackageName()));
@@ -486,7 +511,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             public void onClick(View v) {
                 // spotifyAppRemote.getPlayerApi().play(user.getSpotifyId());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("" + user.getSpotifyId()));
+                intent.setData(Uri.parse("" + music.getSpotifyId()));
                 intent.putExtra(Intent.EXTRA_REFERRER,
                         Uri.parse("android-app://" + mContext.getPackageName()));
                 mContext.startActivity(intent);
@@ -514,6 +539,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         RelativeLayout play_box, foreground_lay;
         ImageButton play_btn;
         Button like_btn;
+        TextView time;
 
         //colors
         RelativeLayout darkVibrantLay, lightVibrantLay, vibrantLay, darkMutedLay, lightMutedLay, mutedLay, dominantLay, spotify_icon, open_spotify_lay;
@@ -554,6 +580,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             spotify_icon = itemView.findViewById(R.id.spotify_icon);
             open_spotify_lay = itemView.findViewById(R.id.open_spotify_lay);
             foreground_lay = itemView.findViewById(R.id.foreground_lay);
+            time = itemView.findViewById(R.id.time);
 
 
         }

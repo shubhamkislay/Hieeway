@@ -107,6 +107,7 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.5"
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.0.0'
     implementation 'com.github.dmytrodanylyk.shadow-layout:library:1.0.3'
+    implementation 'org.ocpsoft.prettytime:prettytime:4.0.4.Final'
 
     implementation "androidx.webkit:webkit:1.2.0-alpha01"
     //implementation 'com.google.apis:google-api-services-youtube:v3-rev181-1.22.0'

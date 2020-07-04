@@ -71,8 +71,10 @@ import com.hieeway.hieeway.Interface.FeelingListener;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
 import com.hieeway.hieeway.MainActivity;
 import com.hieeway.hieeway.Model.User;
+import com.hieeway.hieeway.MusicBeamService;
 import com.hieeway.hieeway.ProfilePhotoActivity;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.SendMediaService;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.ViewProfileActivity;
@@ -87,6 +89,10 @@ import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import static com.hieeway.hieeway.NavButtonTest.USER_ID;
+import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
+import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -172,6 +178,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
 
+
+
 /*
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -204,7 +212,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     @Override
     public void onResume() {
         super.onResume();
-        ConnectionParams connectionParams =
+        /*ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
                         .setPreferredThumbnailImageSize(1500)
@@ -245,7 +253,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         // Something went wrong when attempting to connect! Handle errors here
                     }
-                });
+                });*/
+
+        Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
+        getActivity().startService(intent1);
     }
 
 
@@ -871,7 +882,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
                                 FirebaseDatabase.getInstance()
-                                        .getReference("Users")
+                                        .getReference("Music")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .updateChildren(songHash);
 
@@ -943,6 +954,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             public void onChanged(@Nullable User user) {
 
 
+                USER_PHOTO = user.getPhoto();
+                USER_ID = user.getUserid();
+                USER_NAME = user.getUsername();
                 username.setText(user.getUsername());
                 name.setText(user.getName());
 
@@ -1017,6 +1031,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 }
 
                 try {
+
+                    USER_PHOTO = user.getPhoto();
                     profilepic = user.getPhoto().replace("s96-c", "s384-c");
                     userPhoto = profilepic;
                     Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);

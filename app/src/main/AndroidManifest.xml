@@ -135,6 +135,7 @@
         </service>
         <service android:name=".SyncService" />
         <service android:name=".SendMediaService" />
+        <service android:name=".MusicBeamService" />
 
         <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>

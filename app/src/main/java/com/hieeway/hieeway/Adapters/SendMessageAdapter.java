@@ -42,6 +42,8 @@ import com.hieeway.hieeway.RevealMessageDialog;
 import com.hieeway.hieeway.RevealedMessageActivity;
 import com.hieeway.hieeway.VideoPlayActivity;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
 import java.security.Key;
 import java.security.KeyFactory;
 
@@ -51,6 +53,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 
@@ -315,13 +318,16 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                     Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
 
+                    PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+                    String ago = prettyTime.format(parsedDate);
                     // S is the millisecond
                     // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm  dd MMM YYYY");
 
 
-                    sendMessageViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+                    //sendMessageViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
 
+                    sendMessageViewHolder.timestamp.setText("" + ago);
 
                 } catch (Exception e) { //this generic but you can control another types of exception
                     // look the origin of excption

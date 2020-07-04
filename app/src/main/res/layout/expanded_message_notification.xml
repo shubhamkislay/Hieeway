@@ -1,23 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notification_background"
     android:layout_width="match_parent"
-    android:layout_height="256dp"
+    android:layout_height="140dp"
+    android:background="#131313"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_view_expanded"
+    <RelativeLayout
+        android:id="@+id/app_meta"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#181818"
-        android:padding="8dp"
-        android:text="Custom Notification"
-        android:textAlignment="center" />
+        android:layout_height="25dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@id/logo">
 
-    <ImageView
-        android:id="@+id/expanded_image_view"
+        <RelativeLayout
+            android:id="@+id/app_logo"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_stat_hieeway_arrow_title_bar"
+            android:backgroundTint="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+
+            android:layout_toRightOf="@id/app_logo"
+            android:gravity="center_vertical"
+
+            android:text="Hieeway"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/timestamp_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/app_title"
+            android:gravity="center_vertical"
+            android:text="Beacon Active"
+            android:textColor="#D1D1D1"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile_pic" />
+        android:layout_below="@id/artist_name"
+        android:layout_toLeftOf="@id/logo">
 
-</LinearLayout>
+        <RelativeLayout
+            android:id="@+id/stop_beacon"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/divider">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/stop_logo"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/headphone" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/stop_logo"
+                    android:gravity="center_vertical"
+                    android:text="Stop"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true" />
+
+        <RelativeLayout
+            android:id="@+id/open_spotify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/divider">
+
+
+            <RelativeLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+
+                <ImageView
+                    android:id="@+id/spotify_logo"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/spotify_white_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/spotify_logo"
+                    android:gravity="center_vertical"
+                    android:text="Open"
+                    android:textColor="#fff"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/notification_message_collapsed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/app_meta"
+        android:layout_gravity="top"
+        android:layout_marginRight="24dp"
+        android:layout_toLeftOf="@id/logo"
+        android:paddingLeft="24dp"
+        android:paddingTop="0dp"
+        android:singleLine="true"
+        android:text="New message"
+        android:textColor="#fff"
+        android:textSize="15.0sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notification_message_collapsed"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="24dp"
+        android:layout_toLeftOf="@id/logo"
+        android:paddingLeft="24dp"
+        android:singleLine="true"
+        android:text="Tap to see"
+        android:textColor="#797979"
+        android:textSize="14sp" />
+
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/profile_pic" />
+
+    <RelativeLayout
+        android:id="@+id/background_fade"
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+
+        android:layout_marginRight="0dp"
+        android:background="@drawable/left_fade_background"
+        android:rotation="-90"
+        android:visibility="visible" />
+
+</RelativeLayout>

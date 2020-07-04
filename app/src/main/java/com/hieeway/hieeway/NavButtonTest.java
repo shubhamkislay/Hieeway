@@ -136,6 +136,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private boolean videoPlayBack = true;
     private boolean continueAppLogoAnim = true;
     private int stopPosition;
+    public static String USER_NAME;
+    public static String USER_PHOTO;
+    public static String USER_ID;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -679,6 +682,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 User user = dataSnapshot.getValue(User.class);
 
                 phonenumber = user.getPhonenumber();
+
+                USER_ID = user.getUserid();
+                USER_NAME = user.getUsername();
+                USER_PHOTO = user.getPhoto();
 
                 if(!user.getPhoto().equals("default")) {
                     try {
