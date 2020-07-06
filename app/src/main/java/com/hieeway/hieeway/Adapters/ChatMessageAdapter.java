@@ -8,6 +8,9 @@ import android.content.Context;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import static com.hieeway.hieeway.NavButtonTest.USER_ID;
+import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
+import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,6 +57,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.DeleteOptionsDialog;
 import com.hieeway.hieeway.EphemeralMessageViewModel;
@@ -61,7 +66,10 @@ import com.hieeway.hieeway.Interface.DeleteOptionsListener;
 import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.CheckPendingMessageAsyncModel;
+import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.Pal;
 import com.hieeway.hieeway.Model.User;
+import com.hieeway.hieeway.MusicPalService;
 import com.hieeway.hieeway.R;
 
 import com.hieeway.hieeway.RevealReplyActivity;
@@ -253,34 +261,101 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
                 /**
-                 * Uncomment the below snippet to get the final version
-                  */
-
-/*                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        Intent intent = new Intent(mContext, RevealReplyActivity.class);
+                 *
+                 * Testing for music companion (sync streaming)
+                 */
 
 
-                intent.putExtra("userIdChattingWith", chatStamp.getId());
-                intent.putExtra("currentUserPrivateKey", privateKeyText);
-                intent.putExtra("currentUserPublicKeyID", publicKeyId);
+                FirebaseDatabase.getInstance().getReference("Pal")
+                        .child(chatStamp.getId())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    Pal pal = dataSnapshot.getValue(Pal.class);
+
+                                    if (pal.getConnection().equals(chatStamp.getId())) {
+                                        HashMap<String, Object> palHash = new HashMap<>();
+
+                                        palHash.put("connection", "join");
+                                        palHash.put("songID", "default");
 
 
-                        mContext.startActivity(intent);
+                                        FirebaseDatabase.getInstance().getReference("Pal")
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(chatStamp.getId())
+                                                .updateChildren(palHash);
 
-                    }
-                }, 200);*/
-/*                Intent intent = new Intent(mContext, RevealReplyActivity.class);
+                                        FirebaseDatabase.getInstance().getReference("Pal")
+                                                .child(chatStamp.getId())
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .updateChildren(palHash);
+
+                                        Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                        musicPalService.putExtra("otherUserId", chatStamp.getId());
+                                        musicPalService.putExtra("username", chatStamp.getUsername());
+
+                                        activity.startService(musicPalService);
+                                    } else {
+                                        HashMap<String, Object> palHash = new HashMap<>();
+
+                                        palHash.put("connection", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                        palHash.put("songID", "default");
 
 
-                intent.putExtra("userIdChattingWith", chatStamp.getId());
-                intent.putExtra("currentUserPrivateKey", privateKeyText);
-                intent.putExtra("currentUserPublicKeyID", publicKeyId);
+                                        FirebaseDatabase.getInstance().getReference("Pal")
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(chatStamp.getId())
+                                                .updateChildren(palHash);
+
+                                        FirebaseDatabase.getInstance().getReference("Pal")
+                                                .child(chatStamp.getId())
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .updateChildren(palHash);
+
+                                        Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                        musicPalService.putExtra("otherUserId", chatStamp.getId());
+                                        musicPalService.putExtra("username", chatStamp.getUsername());
+
+                                        activity.startService(musicPalService);
+                                    }
 
 
-                mContext.startActivity(intent);*/
+                                } else {
+                                    HashMap<String, Object> palHash = new HashMap<>();
+
+                                    palHash.put("connection", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    palHash.put("songID", "default");
+
+
+                                    FirebaseDatabase.getInstance().getReference("Pal")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(chatStamp.getId())
+                                            .updateChildren(palHash);
+
+                                    FirebaseDatabase.getInstance().getReference("Pal")
+                                            .child(chatStamp.getId())
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .updateChildren(palHash);
+
+                                    Intent musicPalService = new Intent(mContext, MusicPalService.class);
+
+                                    musicPalService.putExtra("otherUserId", chatStamp.getId());
+                                    musicPalService.putExtra("username", chatStamp.getUsername());
+
+                                    mContext.startService(musicPalService);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
 
 
                 /**
@@ -300,8 +375,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                     }
                 });*/
 
+                /**
+                 * Final code below
+                 */
 
-                Intent intent = new Intent(mContext, RevealReplyActivity.class);
+                /*Intent intent = new Intent(mContext, RevealReplyActivity.class);
 
 
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
@@ -311,7 +389,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 intent.putExtra("usernameChattingWith", chatStamp.getUsername());
 
 
-                mContext.startActivity(intent);
+                mContext.startActivity(intent);*/
 
 
                 //mContext.startActivity(new Intent(mContext, SpotifyActivity.class));

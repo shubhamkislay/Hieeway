@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +60,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     Boolean initialCheck = false;
     private boolean secondCheck = false;
     private boolean listPopulated = false;
+    ImageView music_pal;
 
     @Override
     protected void onResume() {
@@ -129,6 +132,8 @@ public class MusicFeedActivity extends AppCompatActivity {
         seeing_music_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         //new_update.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
+        music_pal = findViewById(R.id.music_pal);
+
         userList = new ArrayList<>();
 
         music_recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -145,6 +150,14 @@ public class MusicFeedActivity extends AppCompatActivity {
                 loading_feed.setVisibility(View.GONE);
 
 
+            }
+        });
+
+
+        music_pal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MusicFeedActivity.this, MusicPalActivity.class));
             }
         });
 
