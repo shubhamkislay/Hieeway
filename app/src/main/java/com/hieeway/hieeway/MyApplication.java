@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyApplication extends Application {
     public static final String CHANNEL_1_ID = "messages";
@@ -149,6 +150,14 @@ public class MyApplication extends Application {
                 // Log.w(TAG, "Listener was cancelled");
             }
         });
+    }
+
+    public static class NotificationID {
+        private final static AtomicInteger c = new AtomicInteger(0);
+
+        public static int getID() {
+            return c.incrementAndGet();
+        }
     }
 
 

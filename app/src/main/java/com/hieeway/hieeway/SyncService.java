@@ -74,7 +74,7 @@ public class SyncService extends Service {
                 .build();
 
 
-        startForeground(1, notification);
+        startForeground(MyApplication.NotificationID.getID(), notification);
         getContactList();
 
         return START_NOT_STICKY;

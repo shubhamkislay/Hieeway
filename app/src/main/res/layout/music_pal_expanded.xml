@@ -178,11 +178,10 @@
     <RelativeLayout
         android:id="@+id/background_fade"
         android:layout_width="140dp"
-        android:layout_height="match_parent"
+        android:layout_height="140dp"
         android:layout_alignParentRight="true"
-
-        android:layout_marginRight="0dp"
         android:background="@drawable/left_fade_background"
+        android:rotation="-90"
         android:visibility="visible" />
 
 </RelativeLayout>

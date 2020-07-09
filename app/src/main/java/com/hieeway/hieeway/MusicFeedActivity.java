@@ -195,45 +195,53 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
                                                     if (musicSnapshot.exists()) {
-                                                        Music music = musicSnapshot.getValue(Music.class);
+
+                                                        try {
+                                                            Music music = musicSnapshot.getValue(Music.class);
 
 
-                                                        if (!userList.contains(music)) {
-                                                            userList.add(music);
-                                                        } else {
-                                                            userList.remove(music);
-                                                            userList.add(music);
-                                                        }
-
-
-                                                        if (searchedList && sentListSize < userList.size()) {
-                                                            try {
-
-                                                                Collections.sort(userList, Collections.<Music>reverseOrder());
-
-                                                                new Handler().postDelayed(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
-                                                                        music_recyclerview.setAdapter(musicFeedAdapter);
-                                                                        musicFeedAdapter.notifyDataSetChanged();
-                                                                        loading_feed.setVisibility(View.GONE);
-
-                                                                    }
-                                                                }, 500);
-
-                                                                new Handler().postDelayed(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        listPopulated = true;
-                                                                    }
-                                                                }, 1500);
-
-                                                            } catch (Exception e) {
-                                                                //
+                                                            if (!userList.contains(music)) {
+                                                                userList.add(music);
+                                                            } else {
+                                                                userList.remove(music);
+                                                                userList.add(music);
                                                             }
 
+
+                                                            if (searchedList && sentListSize < userList.size()) {
+                                                                try {
+
+                                                                    Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                    new Handler().postDelayed(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                                                                            music_recyclerview.setAdapter(musicFeedAdapter);
+                                                                            musicFeedAdapter.notifyDataSetChanged();
+                                                                            loading_feed.setVisibility(View.GONE);
+
+                                                                        }
+                                                                    }, 500);
+
+                                                                    new Handler().postDelayed(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            listPopulated = true;
+                                                                        }
+                                                                    }, 1500);
+
+                                                                } catch (Exception e) {
+                                                                    //
+                                                                }
+
+                                                            }
+
+                                                        } catch (Exception e) {
+                                                            //
                                                         }
+
+
 
                                                     }
 

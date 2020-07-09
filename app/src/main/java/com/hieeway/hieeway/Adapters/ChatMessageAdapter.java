@@ -266,95 +266,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                  */
 
 
-                FirebaseDatabase.getInstance().getReference("Pal")
-                        .child(chatStamp.getId())
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    Pal pal = dataSnapshot.getValue(Pal.class);
 
-                                    if (pal.getConnection().equals(chatStamp.getId())) {
-                                        HashMap<String, Object> palHash = new HashMap<>();
-
-                                        palHash.put("connection", "join");
-                                        palHash.put("songID", "default");
-
-
-                                        FirebaseDatabase.getInstance().getReference("Pal")
-                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                .child(chatStamp.getId())
-                                                .updateChildren(palHash);
-
-                                        FirebaseDatabase.getInstance().getReference("Pal")
-                                                .child(chatStamp.getId())
-                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                .updateChildren(palHash);
-
-                                        Intent musicPalService = new Intent(activity, MusicPalService.class);
-
-                                        musicPalService.putExtra("otherUserId", chatStamp.getId());
-                                        musicPalService.putExtra("username", chatStamp.getUsername());
-
-                                        activity.startService(musicPalService);
-                                    } else {
-                                        HashMap<String, Object> palHash = new HashMap<>();
-
-                                        palHash.put("connection", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                        palHash.put("songID", "default");
-
-
-                                        FirebaseDatabase.getInstance().getReference("Pal")
-                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                .child(chatStamp.getId())
-                                                .updateChildren(palHash);
-
-                                        FirebaseDatabase.getInstance().getReference("Pal")
-                                                .child(chatStamp.getId())
-                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                .updateChildren(palHash);
-
-                                        Intent musicPalService = new Intent(activity, MusicPalService.class);
-
-                                        musicPalService.putExtra("otherUserId", chatStamp.getId());
-                                        musicPalService.putExtra("username", chatStamp.getUsername());
-
-                                        activity.startService(musicPalService);
-                                    }
-
-
-                                } else {
-                                    HashMap<String, Object> palHash = new HashMap<>();
-
-                                    palHash.put("connection", FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                    palHash.put("songID", "default");
-
-
-                                    FirebaseDatabase.getInstance().getReference("Pal")
-                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .child(chatStamp.getId())
-                                            .updateChildren(palHash);
-
-                                    FirebaseDatabase.getInstance().getReference("Pal")
-                                            .child(chatStamp.getId())
-                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                            .updateChildren(palHash);
-
-                                    Intent musicPalService = new Intent(mContext, MusicPalService.class);
-
-                                    musicPalService.putExtra("otherUserId", chatStamp.getId());
-                                    musicPalService.putExtra("username", chatStamp.getUsername());
-
-                                    mContext.startService(musicPalService);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
 
 
 
@@ -379,7 +291,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                  * Final code below
                  */
 
-                /*Intent intent = new Intent(mContext, RevealReplyActivity.class);
+                Intent intent = new Intent(mContext, RevealReplyActivity.class);
 
 
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
@@ -389,7 +301,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 intent.putExtra("usernameChattingWith", chatStamp.getUsername());
 
 
-                mContext.startActivity(intent);*/
+                mContext.startActivity(intent);
 
 
                 //mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
@@ -424,7 +336,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 }
                 else
                 {
-                    viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
+                    viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
 
                     viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
                 }

@@ -56,6 +56,7 @@ public class MusicBeamService extends Service {
     private SpotifyAppRemote mSpotifyAppRemote;
     private PendingIntent pIntentlogin, openSpotify;
     private MediaSessionCompat mediaSessionCompat;
+    private int notificationId;
 
 
     @Nullable
@@ -91,6 +92,8 @@ public class MusicBeamService extends Service {
             startActivity(openIntent);
             sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         } else {
+
+            notificationId = MyApplication.NotificationID.getID();
 
             mediaSessionCompat = new MediaSessionCompat(this, "tag");
 
@@ -138,7 +141,7 @@ public class MusicBeamService extends Service {
                                     .build();
 
 
-                            startForeground(1, notification);
+                            startForeground(notificationId, notification);
 
 
                             listedToSpotifySong();
@@ -234,7 +237,7 @@ public class MusicBeamService extends Service {
                                                         .setCustomBigContentView(expandedView)
                                                         .setAutoCancel(true)
                                                         .build();
-                                                startForeground(1, notification);
+                                                startForeground(notificationId, notification);
 
 
 

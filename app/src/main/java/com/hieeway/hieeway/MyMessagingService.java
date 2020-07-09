@@ -131,7 +131,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
         Intent intent;
 
-        int id = NotificationID.getID();
+        int id = MyApplication.NotificationID.getID();
         String userValueIntentExtra;
 
         userValueIntentExtra = remoteMessage.getData().get("userId") + "revealrequestaccepted";
@@ -346,7 +346,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
         Intent intent;
 
-        int id = NotificationID.getID();
+        int id = MyApplication.NotificationID.getID();
         String userValueIntentExtra;
 
         userValueIntentExtra = remoteMessage.getData().get("userId") + "revealrequest";
@@ -560,7 +560,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
         Intent intent;
 
-        int id = NotificationID.getID();
+        int id = MyApplication.NotificationID.getID();
         String userValueIntentExtra;
 
 
@@ -678,7 +678,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
         Intent intent;
 
-        int id = NotificationID.getID();
+        int id = MyApplication.NotificationID.getID();
         String userValueIntentExtra;
 
 
@@ -839,7 +839,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 notificationChannel.setSound(defaultSoundUri, att);
             }
 
-            int id = NotificationID.getID();
+            int id = MyApplication.NotificationID.getID();
 
 
             if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "live"))
@@ -893,7 +893,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
         } else {
 
-            int id = NotificationID.getID();
+            int id = MyApplication.NotificationID.getID();
 
 
             if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "live"))
@@ -961,7 +961,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
         Intent intent;
 
-        int id = NotificationID.getID();
+        int id = MyApplication.NotificationID.getID();
         String userValueIntentExtra;
 
         if (remoteMessage.getData().get("reply").equals("no")) {
@@ -1344,8 +1344,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         }
 
 
-
-        int id = NotificationID.getID();
+        int id = MyApplication.NotificationID.getID();
 
         if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "feeling")) {
             notificationIDHashMap.put(remoteMessage.getData().get("userId") + "feeling", id);
@@ -1947,13 +1946,6 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     }
 
-    public static class NotificationID {
-        private final static AtomicInteger c = new AtomicInteger(0);
-
-        public static int getID() {
-            return c.incrementAndGet();
-        }
-    }
 
     public Palette createPaletteSync(Bitmap bitmap) {
         Palette p = Palette.from(bitmap).generate();

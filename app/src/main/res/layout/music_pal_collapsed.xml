@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/notification_background"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
+    android:layout_height="100dp"
     android:background="#131313"
     android:orientation="vertical">
 
@@ -45,7 +46,7 @@
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@id/app_title"
             android:gravity="center_vertical"
-            android:text="Beacon Active"
+            android:text="Playing on Spotify"
             android:textColor="#D1D1D1"
             android:textSize="12sp"
             android:visibility="visible" />
@@ -57,7 +58,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/artist_name"
-        android:layout_toLeftOf="@id/logo">
+        android:layout_toLeftOf="@id/logo"
+        android:visibility="gone">
 
         <RelativeLayout
             android:id="@+id/stop_beacon"
@@ -86,8 +88,8 @@
                     android:layout_toRightOf="@id/stop_logo"
                     android:gravity="center_vertical"
                     android:text="Stop"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14sp"
+                    android:textColor="#81DAF5"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
@@ -127,7 +129,7 @@
                     android:gravity="center_vertical"
                     android:text="Open"
                     android:textColor="#fff"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
@@ -168,7 +170,7 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="140dp"
+        android:layout_width="75dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
@@ -177,12 +179,12 @@
 
     <RelativeLayout
         android:id="@+id/background_fade"
-        android:layout_width="140dp"
-        android:layout_height="match_parent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_alignParentRight="true"
-
-        android:layout_marginRight="0dp"
+        android:layout_marginRight="-25dp"
         android:background="@drawable/left_fade_background"
+        android:rotation="-90"
         android:visibility="visible" />
 
 </RelativeLayout>

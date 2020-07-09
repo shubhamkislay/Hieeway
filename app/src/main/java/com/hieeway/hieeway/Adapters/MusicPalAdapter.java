@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -29,14 +30,26 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Model.Pal;
 import com.hieeway.hieeway.Model.User;
+import com.hieeway.hieeway.MusicPalService;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.VerticalPageActivity;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import static com.hieeway.hieeway.MusicPalService.MUSIC_PAL_SERVICE_RUNNING;
 
 public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHolder> {
 
@@ -104,14 +117,14 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
 
 
-                    viewHolder.user_photo.animate().alpha(1.0f).setDuration(100);
+                    viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
 
-                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
 
                 } else {
 
-                    viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
-                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                    viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
 
 
                 }
@@ -133,7 +146,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
             } else {
 
-                //  Bitmap bitmap = getBitmapFromURL(chatStamp.getPhoto());
+                //  Bitmap bitmap = getBitmapFromURL(user.getPhoto());
 
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.placeholder(R.color.darkGrey);
@@ -141,7 +154,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
                 // requestOptions.override(200, 400);
 
 
-                // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
+                // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
                 try {
                     Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto().replace("s96-c", "s384-c")).listener(new RequestListener<Drawable>() {
                         @Override
@@ -172,21 +185,271 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
             @Override
             public void onClick(View v) {
 
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(mContext, VerticalPageActivity.class);
-                        intent.putExtra("username", user.getUsername());
-                        intent.putExtra("userid", user.getUserid());
-                        intent.putExtra("photo", user.getPhoto());
-                        intent.putExtra("live", "no");
-                        mContext.startActivity(intent);
+                        /*FirebaseDatabase.getInstance().getReference("Pal")
+                                .child(user.getUserid())
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (dataSnapshot.exists()) {
+                                            Pal pal = dataSnapshot.getValue(Pal.class);
+
+                                            if (pal.getConnection().equals(user.getUserid())) {
+                                                HashMap<String, Object> palHash = new HashMap<>();
+
+                                                palHash.put("connection", "join");
+                                                palHash.put("songID", "default");
 
 
+                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .child(user.getUserid())
+                                                        .updateChildren(palHash);
+
+                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                        .child(user.getUserid())
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .updateChildren(palHash);
+
+                                                Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                                musicPalService.putExtra("otherUserId", user.getUserid());
+                                                musicPalService.putExtra("username", user.getUsername());
+                                                musicPalService.putExtra("userPhoto",user.getPhoto());
+
+                                                activity.startService(musicPalService);
+
+                                                Toast.makeText(mContext,"Connecting your music with "+user.getUsername(),Toast.LENGTH_SHORT).show();
+                                                activity.finish();
+                                            } else {
+                                                HashMap<String, Object> palHash = new HashMap<>();
+
+                                                palHash.put("connection", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                palHash.put("songID", "default");
+
+
+                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .child(user.getUserid())
+                                                        .updateChildren(palHash);
+
+                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                        .child(user.getUserid())
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .updateChildren(palHash);
+
+                                                Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                                musicPalService.putExtra("otherUserId", user.getUserid());
+                                                musicPalService.putExtra("username", user.getUsername());
+                                                musicPalService.putExtra("userPhoto",user.getPhoto());
+
+                                                activity.startService(musicPalService);
+                                                Toast.makeText(mContext,"Connecting your music with "+user.getUsername(),Toast.LENGTH_SHORT).show();
+
+                                                activity.finish();
+                                            }
+
+
+                                        } else {
+                                            HashMap<String, Object> palHash = new HashMap<>();
+
+                                            palHash.put("connection", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                            palHash.put("songID", "default");
+
+
+                                            FirebaseDatabase.getInstance().getReference("Pal")
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(user.getUserid())
+                                                    .updateChildren(palHash);
+
+                                            FirebaseDatabase.getInstance().getReference("Pal")
+                                                    .child(user.getUserid())
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .updateChildren(palHash);
+
+                                            Intent musicPalService = new Intent(mContext, MusicPalService.class);
+
+                                            musicPalService.putExtra("otherUserId", user.getUserid());
+                                            musicPalService.putExtra("username", user.getUsername());
+                                            musicPalService.putExtra("userPhoto",user.getPhoto());
+
+                                            mContext.startService(musicPalService);
+                                            Toast.makeText(mContext,"Connecting your music with "+user.getUsername(),Toast.LENGTH_SHORT).show();
+                                            activity.finish();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });*/
+
+                        if (MUSIC_PAL_SERVICE_RUNNING)
+                            Toast.makeText(mContext, "You are already connected to someone", Toast.LENGTH_SHORT).show();
+
+                        else {
+
+                            FirebaseDatabase.getInstance().getReference("Pal")
+                                    .child(user.getUserid())
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .runTransaction(new Transaction.Handler() {
+                                        @NonNull
+                                        @Override
+                                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                                            try {
+                                                Pal pal = mutableData.getValue(Pal.class);
+                                                if (pal.getConnection().equals("join")) {
+
+
+                                                    FirebaseDatabase.getInstance().getReference("Pal")
+                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                                            if (task.isSuccessful()) {
+                                                                HashMap<String, Object> palHash = new HashMap<>();
+
+                                                                palHash.put("connection", "join");
+                                                                palHash.put("songID", "default");
+
+                                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                        .child(user.getUserid())
+                                                                        .updateChildren(palHash);
+
+                                                                Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                                                musicPalService.putExtra("otherUserId", user.getUserid());
+                                                                musicPalService.putExtra("username", user.getUsername());
+                                                                musicPalService.putExtra("userPhoto", user.getPhoto());
+
+                                                                activity.startService(musicPalService);
+
+                                                                Toast.makeText(mContext, "Connecting your music with " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                                                activity.finish();
+                                                            }
+                                                        }
+                                                    });
+
+
+                                                } else {
+
+
+                                                    FirebaseDatabase.getInstance().getReference("Pal")
+                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                HashMap<String, Object> palHash = new HashMap<>();
+
+                                                                palHash.put("connection", "join");
+                                                                palHash.put("songID", "default");
+
+                                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                        .child(user.getUserid())
+                                                                        .updateChildren(palHash);
+
+                                                            /*HashMap<String, Object> palRequestHash = new HashMap<>();
+
+                                                            palRequestHash.put("connection", "request");
+                                                            palRequestHash.put("songID", "default");
+
+
+                                                            FirebaseDatabase.getInstance().getReference("Pal")
+                                                                    .child(user.getUserid())
+                                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                    .updateChildren(palRequestHash);*/
+
+                                                                Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                                                musicPalService.putExtra("otherUserId", user.getUserid());
+                                                                musicPalService.putExtra("username", user.getUsername());
+                                                                musicPalService.putExtra("userPhoto", user.getPhoto());
+
+                                                                activity.startService(musicPalService);
+
+                                                                Toast.makeText(mContext, "Connecting your music with " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                                                activity.finish();
+                                                            }
+                                                        }
+                                                    });
+
+
+                                                }
+                                            } catch (Exception e) {
+
+
+                                                FirebaseDatabase.getInstance().getReference("Pal")
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                        HashMap<String, Object> palHash = new HashMap<>();
+
+                                                        palHash.put("connection", "join");
+                                                        palHash.put("songID", "default");
+
+                                                        FirebaseDatabase.getInstance().getReference("Pal")
+                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                .child(user.getUserid())
+                                                                .updateChildren(palHash);
+
+                                                        //HashMap<String, Object> palRequestHash = new HashMap<>();
+
+                                                    /*palRequestHash.put("connection", "request");
+                                                    palRequestHash.put("songID", "default");
+
+
+                                                    FirebaseDatabase.getInstance().getReference("Pal")
+                                                            .child(user.getUserid())
+                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .updateChildren(palRequestHash);*/
+
+                                                        Intent musicPalService = new Intent(activity, MusicPalService.class);
+
+                                                        musicPalService.putExtra("otherUserId", user.getUserid());
+                                                        musicPalService.putExtra("username", user.getUsername());
+                                                        musicPalService.putExtra("userPhoto", user.getPhoto());
+
+                                                        activity.startService(musicPalService);
+
+                                                        Toast.makeText(mContext, "Connecting your music with " + user.getUsername(), Toast.LENGTH_SHORT).show();
+                                                        activity.finish();
+
+                                                    }
+                                                });
+
+
+                                            }
+
+                                            return null;
+                                        }
+
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                        }
+                                    });
+
+
+                        }
                     }
-                }, 100);
+                }, 50);
+
 
             }
+
         });
 
     }
