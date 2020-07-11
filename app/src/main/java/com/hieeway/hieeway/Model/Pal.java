@@ -2,8 +2,9 @@ package com.hieeway.hieeway.Model;
 
 public class Pal {
 
-    String connection;
-    String songID;
+    private String connection;
+    private String songID;
+    private String senderId;
 
     public Pal() {
     }
@@ -23,5 +24,13 @@ public class Pal {
 
     public void setConnection(String connection) {
         this.connection = connection;
+    }
+
+    public String getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 }

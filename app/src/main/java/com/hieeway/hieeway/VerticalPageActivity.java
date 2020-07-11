@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -90,6 +91,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private boolean bottomPageUp = false;
     public static String userIDCHATTINGWITH = "";
     public static String userNameChattingWith = "";
+    public static String USERPHOTO = "";
     public static String USER_PRIVATE_KEY = "";
     public static String OTHER_USER_PUBLIC_KEY = "";
     public static String CURRENT_USERNAME = "";
@@ -118,6 +120,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         userIDCHATTINGWITH = userIdChattingWith;
         userNameChattingWith = usernameChattingWith;
         final String photo = intent.getStringExtra("photo");
+        USERPHOTO = photo;
         live = intent.getStringExtra("live");
 
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
@@ -486,18 +489,28 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 viewPager.setCurrentItem(fragmentList.size() - 3);
             else
                 viewPager.setCurrentItem(fragmentList.size() - 2);
-        }
-
-        else
+        } else {
             viewPager.setCurrentItem(fragmentList.size() - 1);
+            //Toast.makeText(VerticalPageActivity.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
+            if (live.equals("live")) {
+                liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
+
+
+                liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
+                sendMessageFragment.removeListeners();
+                //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
+
+                pageSelected = 2;
+
+            }
+        }
 
 
        // observeLiveChatList();
         viewPager.setOffscreenPageLimit(2);
 
 
-
-        viewPager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+        // viewPager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -520,7 +533,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                     liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
 
-                    //liveMessageFragment.createLiveMessageDbInstance();
+
                     liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
                     sendMessageFragment.removeListeners();
                   //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
@@ -650,6 +663,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
+
+        userNameChattingWith = "";
 
         if (pageSelected == 2) {
 

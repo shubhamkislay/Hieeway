@@ -138,6 +138,8 @@
         <service android:name=".SendMediaService" />
         <service android:name=".MusicBeamService" />
         <service android:name=".MusicPalService" />
+        <service android:name=".LiveMessageNotificationService" />
+        <service android:name=".MusicSyncNotification" />
 
         <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>

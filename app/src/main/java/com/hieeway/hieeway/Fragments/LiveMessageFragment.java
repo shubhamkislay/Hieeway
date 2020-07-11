@@ -59,6 +59,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.api.services.youtube.YouTube;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,6 +122,7 @@ import io.agora.rtc.video.VideoEncoderConfiguration;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.OTHER_USER_PUBLIC_KEY;
+import static com.hieeway.hieeway.VerticalPageActivity.USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.USER_PRIVATE_KEY;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
@@ -904,7 +907,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         userPresent = dataSnapshot.getValue(Boolean.class);
                         if (!userPresent) {
                             if (previousPresence)
-                                Toast.makeText(getActivity(), usernameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
                             live_video_control_layout.setVisibility(View.GONE);
                             youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
                             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -919,7 +922,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
                         } else {
-                            Toast.makeText(getActivity(), usernameChattingWith + " joined the live chat! Now you can search and watch videos together", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), userNameChattingWith + " joined the live chat! Now you can search and watch videos together", Toast.LENGTH_LONG).show();
                             live_video_control_layout.setVisibility(View.VISIBLE);
                             youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
                             //youtube_button.setEnabled(true);
@@ -1844,7 +1847,190 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             urlRef.addValueEventListener(valueEventListener);
             seekRef.addValueEventListener(seekValueEventListener);
         } catch (NullPointerException e) {
-            liveMessageEventListener.changeFragment();
+            // liveMessageEventListener.changeFragment();
+
+            valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        String youtubeUrl = dataSnapshot.getValue(String.class);
+
+                        if (initialiseActivity) {
+                            try {
+                                //  if (!videoID.equals(chatStamp.getYoutubeUrl())) {
+
+                                videoID = youtubeUrl;
+
+
+                                if (!videoID.equals("default")) {
+
+
+                                    youtube_layout.setVisibility(View.VISIBLE);
+                                    youtube_player_view.setVisibility(View.VISIBLE);
+
+                                    try {
+                                    /*if (userPresent == chatStamp.getPresent()) {
+                                        //Toast.makeText(getActivity(), "videoID: "+videoID, Toast.LENGTH_SHORT).show();
+                                       // mYouTubePlayer.loadVideo(videoID, 0);
+                                      //  mYouTubePlayer.play();
+                                    }*/
+                                        mYouTubePlayer.loadVideo(videoID, 0);
+                                        mYouTubePlayer.play();
+                                    } catch (Exception e) {
+                                        // Toast.makeText(getActivity(), "videoID: "+videoID, Toast.LENGTH_SHORT).show();
+                                        mYouTubePlayer.loadVideo(videoID, 0);
+                                        mYouTubePlayer.play();
+                                    }
+
+
+                                }
+
+
+                                //  }
+                            } catch (NullPointerException e) {
+                                //
+                                videoID = "default";
+                                // Toast.makeText(getActivity(), "Youtube URL not available", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+
+                    }
+                    initialiseActivity = true;
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+            presentEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        try {
+                            Boolean previousPresence = userPresent;
+
+                            userPresent = dataSnapshot.getValue(Boolean.class);
+                            if (!userPresent) {
+                                if (previousPresence)
+                                    Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
+                                live_video_control_layout.setVisibility(View.GONE);
+                                youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
+                                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                //youtube_button.setEnabled(false);
+                                if (initialiseActivity) {
+                                    mYouTubePlayer.pause();
+                                    youtube_layout.setVisibility(View.GONE);
+                                }
+
+                                leaveChannel();
+                                resetLiveVideoViews();
+
+
+                            } else {
+                                Toast.makeText(getActivity(), userNameChattingWith + " joined the live chat! Now you can search and watch videos together", Toast.LENGTH_LONG).show();
+                                live_video_control_layout.setVisibility(View.VISIBLE);
+                                youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+                                //youtube_button.setEnabled(true);
+                            }
+                        } catch (Exception e) {
+                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            live_video_control_layout.setVisibility(View.GONE);
+                            youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
+                            // youtube_button.setEnabled(false);
+                        }
+
+
+                    } else {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        live_video_control_layout.setVisibility(View.GONE);
+                        youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
+                        // youtube_button.setEnabled(false);
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+
+            seekValueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+
+                        ChatStamp seek = dataSnapshot.getValue(ChatStamp.class);
+
+                        if (initialiseSeekEvent) {
+                            try {
+
+
+                                if (seek.getVideoSec() != 0.0) {
+                                    // Toast.makeText(getActivity(),"Seek to: "+seek.getVideoSec(),Toast.LENGTH_SHORT).show();
+                                    //mYouTubePlayer.loadVideo(videoID,seek.getVideoSec());
+                                    if (playerInitialised) {
+
+                                        youtube_player_view.setVisibility(View.INVISIBLE);
+                                        //Toast.makeText(getActivity(), "videoID: "+videoID, Toast.LENGTH_SHORT).show();
+
+                                        sync_video_layout.setVisibility(View.VISIBLE);
+                                        customUiController.setYoutube_player_seekbarVisibility(false);
+                                        mYouTubePlayer.loadVideo(videoID, seek.getVideoSec());
+                                        mYouTubePlayer.play();
+                                    }
+
+
+                                }
+
+
+                            } catch (NullPointerException e) {
+
+                            }
+                        }
+
+
+                    }
+                    initialiseSeekEvent = true;
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+
+
+            seekRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIDCHATTINGWITH);
+
+            urlRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIDCHATTINGWITH)
+                    .child("youtubeUrl");
+
+            presenceRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIDCHATTINGWITH)
+                    .child("present");
+
+            seekRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIDCHATTINGWITH);
+
+
+            presenceRef.addValueEventListener(presentEventListener);
+            urlRef.addValueEventListener(valueEventListener);
+            seekRef.addValueEventListener(seekValueEventListener);
+
+
         }
         startedLivingMessaging = true;
 
@@ -2184,13 +2370,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         try {
 
 
-            if (!checkResult) {
+            // if (!checkResult) {
                 databaseReferenceUser = FirebaseDatabase.getInstance().getReference("LiveMessages")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(userChattingWithId);
+                        .child(userIDCHATTINGWITH);
 
                 databaseReferenceUserChattingWith = FirebaseDatabase.getInstance().getReference("LiveMessages")
-                        .child(userChattingWithId)
+                        .child(userIDCHATTINGWITH)
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                 HashMap<String, Object> hashMap = new HashMap<>();
@@ -2199,10 +2385,23 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 hashMap.put("iConnect", 0);
                 hashMap.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                databaseReferenceUserChattingWith.updateChildren(hashMap);
-                databaseReferenceUser.updateChildren(hashMap);
+            databaseReferenceUser.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    databaseReferenceUser.updateChildren(hashMap);
+                }
+            });
+
+            databaseReferenceUserChattingWith.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    databaseReferenceUserChattingWith.updateChildren(hashMap);
+                }
+            });
+
+
                 //Toast.makeText(getContext(), "Happy Texting!", Toast.LENGTH_SHORT).show();
-            }
+            //   }
         }catch (Exception e)
         {
 //            Toast.makeText(getContext(),"Null pointer on current user in liveVideoChat Fragment",Toast.LENGTH_SHORT).show();
@@ -2616,10 +2815,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         DatabaseReference senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userChattingWithId);
+                .child(userIDCHATTINGWITH);
 
         DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(userChattingWithId)
+                .child(userIDCHATTINGWITH)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         Long tsLong = System.currentTimeMillis() / 1000;
@@ -2628,9 +2827,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         final HashMap<String, Object> timeStampHash = new HashMap<>();
         timeStampHash.put("timeStamp", ts);
-        timeStampHash.put("id", userChattingWithId);
-        timeStampHash.put("username", usernameChattingWith);
-        timeStampHash.put("photo", photo);
+        timeStampHash.put("id", userIDCHATTINGWITH);
+        timeStampHash.put("username", userNameChattingWith);
+        timeStampHash.put("photo", USERPHOTO);
         timeStampHash.put("seen", "notseen");
         timeStampHash.put("chatPending", false);
 

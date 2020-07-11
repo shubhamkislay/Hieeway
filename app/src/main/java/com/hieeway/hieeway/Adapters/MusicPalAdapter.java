@@ -319,6 +319,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
                                                                 palHash.put("connection", "join");
                                                                 palHash.put("songID", "default");
+                                                                palHash.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                                                                 FirebaseDatabase.getInstance().getReference("Pal")
                                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -353,6 +354,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
                                                                 palHash.put("connection", "join");
                                                                 palHash.put("songID", "default");
+                                                                palHash.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                                                                 FirebaseDatabase.getInstance().getReference("Pal")
                                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -399,6 +401,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
                                                         palHash.put("connection", "join");
                                                         palHash.put("songID", "default");
+                                                        palHash.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                                                         FirebaseDatabase.getInstance().getReference("Pal")
                                                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

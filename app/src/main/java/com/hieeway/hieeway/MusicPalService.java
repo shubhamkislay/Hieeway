@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
@@ -48,6 +49,7 @@ import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 public class MusicPalService extends Service {
 
     public static boolean MUSIC_PAL_SERVICE_RUNNING = false;
+    public static String USER_NAME_MUSIC_SYNC = "";
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     private static String ACTION_STOP_SERVICE = "stop";
@@ -61,7 +63,10 @@ public class MusicPalService extends Service {
     String connectionMsg = "Connecting with ";
     String connectionStatus = "default";
     Boolean musicConnected = false;
+    public static ValueEventListener musicChangeListener = null;
+    public static DatabaseReference databaseReference = null;
     private PendingIntent pIntentlogin, openSpotify, openProfile;
+
 
     private int notificationId;
 
@@ -121,13 +126,25 @@ public class MusicPalService extends Service {
             startActivity(openProfileIntent);
             sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         } else {
+
+
+            if (musicChangeListener != null)
+                databaseReference.removeEventListener(musicChangeListener);
+
+
             MUSIC_PAL_SERVICE_RUNNING = true;
 
             notificationId = MyApplication.NotificationID.getID();
 
             username = intent.getStringExtra("username");
+            // USER_NAME = username;
+            USER_NAME_MUSIC_SYNC = username;
+
             otherUserId = intent.getStringExtra("otherUserId");
+            //  USER_ID = otherUserId;
             userPhoto = intent.getStringExtra("userPhoto");
+            //USER_PHOTO = userPhoto;
+
 
 
             ConnectionParams connectionParams =
@@ -354,9 +371,9 @@ public class MusicPalService extends Service {
                                                         songHash.put("spotifySong", track.name);
                                                         songHash.put("spotifyArtist", postArtist);
                                                         songHash.put("spotifyCover", track.imageUri);
-                                                        songHash.put("username", USER_NAME);
-                                                        songHash.put("userId", USER_ID);
-                                                        songHash.put("userPhoto", USER_PHOTO);
+                                                        songHash.put("username", username);
+                                                        songHash.put("userId", otherUserId);
+                                                        songHash.put("userPhoto", userPhoto);
                                                         songHash.put("timestamp", timestamp.toString());
 
                                                         //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
@@ -389,9 +406,9 @@ public class MusicPalService extends Service {
                                                     songHash.put("spotifySong", track.name);
                                                     songHash.put("spotifyArtist", postArtist);
                                                     songHash.put("spotifyCover", track.imageUri);
-                                                    songHash.put("username", USER_NAME);
-                                                    songHash.put("userId", USER_ID);
-                                                    songHash.put("userPhoto", USER_PHOTO);
+                                                    songHash.put("username", username);
+                                                    songHash.put("userId", otherUserId);
+                                                    songHash.put("userPhoto", userPhoto);
                                                     songHash.put("timestamp", timestamp.toString());
 
                                                     //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
@@ -467,10 +484,11 @@ public class MusicPalService extends Service {
     private void listenToChanges() {
 
 
-        FirebaseDatabase.getInstance().getReference("Pal")
+        databaseReference = FirebaseDatabase.getInstance().getReference("Pal")
                 .child(otherUserId)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addValueEventListener(new ValueEventListener() {
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        musicChangeListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
@@ -521,7 +539,9 @@ public class MusicPalService extends Service {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                     }
-                });
+        };
+
+        databaseReference.addValueEventListener(musicChangeListener);
 
 
     }
