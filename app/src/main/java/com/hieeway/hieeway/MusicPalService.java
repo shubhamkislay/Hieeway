@@ -32,6 +32,8 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Subscription;
 import com.spotify.protocol.types.Artist;
+import com.spotify.protocol.types.Empty;
+import com.spotify.protocol.types.MotionState;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
@@ -69,6 +71,8 @@ public class MusicPalService extends Service {
 
 
     private int notificationId;
+    private Bitmap imageBitmap;
+    private boolean previousConnected = false;
 
     @Nullable
     @Override
@@ -180,7 +184,7 @@ public class MusicPalService extends Service {
 
                             pIntentlogin = PendingIntent.getService(MusicPalService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-                            Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
+                            /*Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
                                     .setContentTitle("Connecting Music Pal with " + username)
                                     .setSmallIcon(R.mipmap.ic_hieeway_logo)
                                     .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Sync", pIntentlogin)
@@ -189,7 +193,64 @@ public class MusicPalService extends Service {
                                     .build();
 
 
-                            startForeground(notificationId, notification);
+                            startForeground(notificationId, notification);*/
+
+
+                            RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.music_pal_expanded);
+
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    try {
+                                        imageBitmap = Glide.with(MusicPalService.this)
+                                                .asBitmap()
+                                                .load(userPhoto)
+                                                .submit(512, 512)
+                                                .get();
+
+
+                                        expandedView.setImageViewBitmap(R.id.logo, imageBitmap);
+
+                                        expandedView.setTextViewText(R.id.notification_message_collapsed, "Connecting your music with");
+                                        expandedView.setTextViewText(R.id.artist_name, "" + username);
+                                        expandedView.setOnClickPendingIntent(R.id.logo, openSpotify);
+
+                                        expandedView.setOnClickPendingIntent(R.id.open_spotify, openSpotify);
+                                        expandedView.setOnClickPendingIntent(R.id.stop_beacon, pIntentlogin);
+
+                                        Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
+                                                .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                                                .setCustomContentView(expandedView)
+                                                .setAutoCancel(true)
+                                                .setContentTitle("Music Sync with " + username)
+                                                .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                                                .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
+                                                .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)
+                                                .build();
+
+                                        startForeground(notificationId, notification);
+
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
+                            }).start();
+
+
+
+                            /*collapsedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
+                            collapsedView.setTextViewText(R.id.artist_name, connectionMsg + username);
+
+
+                            collapsedView.setOnClickPendingIntent(R.id.logo, openProfile);*/
+
+
+
 
 
                             listedToSpotifySong();
@@ -227,12 +288,12 @@ public class MusicPalService extends Service {
                         if (playerState != null) {
                             final Track track = playerState.track;
                             String songId = track.uri;
-                            songID = songId;
+
 
                             //song_name.setAnimation(outToLeftAnimation());
 
 
-                            if (track.artist.name.length() > 1) {
+                            //if (track.artist.name.length() > 1) {
 
                                 String artistNames = null;
 
@@ -354,7 +415,7 @@ public class MusicPalService extends Service {
                                         });
 
 
-                                final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                /*final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
                                 FirebaseDatabase.getInstance().getReference("Music")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -440,7 +501,23 @@ public class MusicPalService extends Service {
                                             public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
 
                                             }
-                                        });
+                                        });*/
+
+
+                            HashMap<String, Object> palHash = new HashMap<>();
+
+                            palHash.put("songID", songId);
+                            // palHash.put("connection", connectionStatus);
+
+
+                            if (!songID.equals(songId)) {
+                                FirebaseDatabase.getInstance().getReference("Pal")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(otherUserId)
+                                        .updateChildren(palHash);
+                            }
+
+                            songID = songId;
 
 
                                 /*HashMap<String, Object> songHash = new HashMap<>();
@@ -466,9 +543,7 @@ public class MusicPalService extends Service {
 
 
                                 //Glide.with(SpotifyActivity.this).load(track.imageUri).into(track_cover);
-                            } else {
-                                // Toast.makeText(getActivity(),"Track is null",Toast.LENGTH_SHORT).show();
-                            }
+
                         } else {
                             // Toast.makeText(getActivity(),"PlayerState is null",Toast.LENGTH_SHORT).show();
                         }
@@ -495,14 +570,19 @@ public class MusicPalService extends Service {
                             Pal pal = dataSnapshot.getValue(Pal.class);
                             if (pal.getConnection().equals("join")) {
 
-                                musicConnected = true;
+
                                 connectionStatus = "join";
                                 connectionMsg = "You are connected with ";
 
-                                if (!songID.equals(pal.getSongID())) {
+                                /*if (!songID.equals(pal.getSongID())) {
                                     if (!pal.getSongID().equals("default"))
-                                        mSpotifyAppRemote.getPlayerApi().play(pal.getSongID());
-                                }
+
+                                }*/
+                                if (musicConnected && !songID.equals(pal.getSongID())
+                                        && !pal.getSongID().equals("default"))
+                                    mSpotifyAppRemote.getPlayerApi().play(pal.getSongID());
+
+                                musicConnected = true;
 
 
                                 songID = pal.getSongID();
@@ -542,6 +622,56 @@ public class MusicPalService extends Service {
         };
 
         databaseReference.addValueEventListener(musicChangeListener);
+
+        DatabaseReference otherRef = FirebaseDatabase.getInstance().getReference("Pal")
+                .child(otherUserId);
+
+        otherRef.onDisconnect().removeValue();
+
+        DatabaseReference thisRef = FirebaseDatabase.getInstance().getReference("Pal")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(otherUserId);
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("connection", "disconnect");
+
+        thisRef.onDisconnect().updateChildren(hashMap);
+
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                boolean connected = dataSnapshot.getValue(Boolean.class);
+
+
+                if (previousConnected) {
+                    if (!connected) {
+
+                        MUSIC_PAL_SERVICE_RUNNING = false;
+
+                        if (musicChangeListener != null)
+                            databaseReference.removeEventListener(musicChangeListener);
+
+                        try {
+                            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                        } catch (Exception e) {
+                            //
+                        }
+                        stopSelf();
+                    }
+                }
+
+                previousConnected = connected;
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
     }

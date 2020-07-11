@@ -200,10 +200,10 @@ public class MusicSyncNotification extends Service {
 // Vibrate for 500 milliseconds
         i += 1;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
         } else {
             //deprecated in API 26
-            v.vibrate(50);
+            v.vibrate(200);
         }
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -213,7 +213,7 @@ public class MusicSyncNotification extends Service {
                 else
                     stopSelf();
             }
-        }, 400);
+        }, 800);
     }
 
     private void startMusicPalService(String userid, String username, String photo) {
