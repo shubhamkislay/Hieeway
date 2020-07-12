@@ -17,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -269,6 +271,9 @@ public class MusicBeamService extends Service {
                                             @Override
                                             public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
 
+                                                String musicKey = FirebaseDatabase.getInstance().getReference("Music")
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
+
                                                 Music music = mutableData.getValue(Music.class);
                                                 try {
                                                     if (music.getSpotifyId() == null || !music.getSpotifyId().equals(songId)) {
@@ -280,14 +285,28 @@ public class MusicBeamService extends Service {
                                                         songHash.put("username", USER_NAME);
                                                         songHash.put("userId", USER_ID);
                                                         songHash.put("userPhoto", USER_PHOTO);
+                                                        songHash.put("musicKey", musicKey);
                                                         songHash.put("timestamp", timestamp.toString());
 
                                                         //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
-                                                        FirebaseDatabase.getInstance()
-                                                                .getReference("Music")
+                                                        FirebaseDatabase.getInstance().getReference("Music")
                                                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                .updateChildren(songHash);
+                                                                .removeValue()
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        FirebaseDatabase.getInstance().getReference("Likes")
+                                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                                .removeValue();
+
+                                                                        FirebaseDatabase.getInstance()
+                                                                                .getReference("Music")
+                                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                                .updateChildren(songHash);
+
+                                                                    }
+                                                                });
 
                                                     }
 
@@ -302,14 +321,24 @@ public class MusicBeamService extends Service {
                                                     songHash.put("username", USER_NAME);
                                                     songHash.put("userId", USER_ID);
                                                     songHash.put("userPhoto", USER_PHOTO);
+                                                    songHash.put("musicKey", musicKey);
                                                     songHash.put("timestamp", timestamp.toString());
 
                                                     //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
-                                                    FirebaseDatabase.getInstance()
-                                                            .getReference("Music")
+                                                    FirebaseDatabase.getInstance().getReference("Music")
                                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .updateChildren(songHash);
+                                                            .removeValue()
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    FirebaseDatabase.getInstance()
+                                                                            .getReference("Music")
+                                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                            .updateChildren(songHash);
+
+                                                                }
+                                                            });
 
                                                 }
 

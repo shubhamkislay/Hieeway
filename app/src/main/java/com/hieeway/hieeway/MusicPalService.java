@@ -89,6 +89,7 @@ public class MusicPalService extends Service {
             //manager.cancel(NOTIFCATION_ID);
 
             MUSIC_PAL_SERVICE_RUNNING = false;
+            USER_NAME_MUSIC_SYNC = "";
 
             try {
                 SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
@@ -591,6 +592,7 @@ public class MusicPalService extends Service {
 
                             } else if (pal.getConnection().equals("disconnect")) {
                                 MUSIC_PAL_SERVICE_RUNNING = false;
+                                USER_NAME_MUSIC_SYNC = "";
 
                                 try {
                                     SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
@@ -651,6 +653,7 @@ public class MusicPalService extends Service {
                     if (!connected) {
 
                         MUSIC_PAL_SERVICE_RUNNING = false;
+                        USER_NAME_MUSIC_SYNC = "";
 
                         if (musicChangeListener != null)
                             databaseReference.removeEventListener(musicChangeListener);

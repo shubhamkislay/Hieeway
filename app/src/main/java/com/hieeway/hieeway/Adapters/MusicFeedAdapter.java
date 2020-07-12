@@ -8,6 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -27,6 +30,16 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Model.Like;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicAdapterItem;
 import com.hieeway.hieeway.Model.User;
@@ -44,6 +57,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -66,6 +80,8 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private Palette.Swatch lightMutedSwatch;
     private Palette.Swatch darkMutedSwatch;
     private int swatchNumber;
+    private Handler mHandler;
+
 
     public MusicFeedAdapter(Context mContext, List<Music> userList, Activity activity, SpotifyAppRemote spotifyAppRemote) {
         this.mContext = mContext;
@@ -78,6 +94,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     @Override
     public MusicFeedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.spotify_status_item, parent, false);
+
 
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
@@ -129,6 +146,17 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         Music music = userList.get(position);
 
 
+        mHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                // This is where you do your work in the UI thread.
+                // Your worker tells you in the message what to do.
+
+
+                Runnable runnable = message.getCallback();
+                new Handler().post(runnable);
+            }
+        };
         Glide.with(mContext).load(music.getUserPhoto()).into(holder.profile_pic);
         holder.username.setText(music.getUsername() + " is listening to...");
         holder.song_name.setText(music.getSpotifySong());
@@ -160,6 +188,33 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             // look the origin of excption
 
 
+        }
+
+        try {
+
+            FirebaseDatabase.getInstance().getReference("Likes")
+                    .child(music.getUserId())
+                    .child(music.getMusicKey())
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Like like = dataSnapshot.getValue(Like.class);
+                            try {
+                                if (like.getSong().equals(music.getSpotifySong()))
+                                    holder.like_btn.setBackgroundTintList(ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorRed)));
+                            } catch (Exception e) {
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+        } catch (Exception e) {
+            //
         }
 
 
@@ -387,7 +442,29 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             public void onClick(View v) {
 
                 //  holder.like_btn.setBackground(mContext.getResources().getDrawable(R.drawable.heart_full));
+
+
+                HashMap<String, Object> likesHashMap = new HashMap<>();
+                likesHashMap.put("song", music.getSpotifySong());
+                likesHashMap.put("artist", music.getSpotifyArtist());
+
+
+                FirebaseDatabase.getInstance().getReference("Likes")
+                        .child(music.getUserId())
+                        .child(music.getMusicKey())
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .updateChildren(likesHashMap);
+
                 holder.like_btn.setBackgroundTintList(ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorRed)));
+
+
+            }
+        });
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+
             }
         });
 

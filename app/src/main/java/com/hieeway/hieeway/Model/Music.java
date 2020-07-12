@@ -14,6 +14,7 @@ public class Music implements Comparable<Music> {
     private String userId;
     private String userPhoto;
     private String username;
+    private String musicKey;
 
     public Music() {
     }
@@ -80,6 +81,14 @@ public class Music implements Comparable<Music> {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getMusicKey() {
+        return musicKey;
+    }
+
+    public void setMusicKey(String musicKey) {
+        this.musicKey = musicKey;
     }
 
     @Override

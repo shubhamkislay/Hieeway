@@ -85,6 +85,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                 sendMessageRevealRequestedNotification(remoteMessage);
             else if (remoteMessage.getData().get("type").equals("revealrequestaccepted"))
                 sendMessageRevealRequestAcceptedNotification(remoteMessage);
+            else if (remoteMessage.getData().get("type").equals("like"))
+                sendMusicLikedNotification(remoteMessage);
             else //if(remoteMessage.getData().get("type").equals("feeling"))
                 sendFeelingNotification(remoteMessage);
 
@@ -680,6 +682,108 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     }
 
+    private void sendMusicLikedNotification(RemoteMessage remoteMessage) {
+        context = this;
+        Intent intent;
+
+        int id = MyApplication.NotificationID.getID();
+        String userValueIntentExtra;
+
+
+        userValueIntentExtra = remoteMessage.getData().get("userId") + "accept";
+
+        /*if (!notificationIDHashMap.containsKey(remoteMessage.getData().get("userId") + "accept")) {
+            notificationIDHashMap.put(remoteMessage.getData().get("userId") + "accept", id);
+        } else {
+            id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "accept");
+        }*/
+
+        intent = new Intent(this, VerticalPageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("username", remoteMessage.getData().get("username"));
+        intent.putExtra("userid", remoteMessage.getData().get("userId"));
+        intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+        intent.putExtra("live", remoteMessage.getData().get("live"));
+        intent.putExtra("userValueIntentExtra", userValueIntentExtra);
+        PendingIntent pendingIntent;
+        pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        try {
+            bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(remoteMessage.getData().get("userPhoto").replace("s96-c", "s384-c"))
+                    .submit(512, 512)
+                    .get();
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder;
+
+        NotificationChannel notificationChannel;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel =
+                    new NotificationChannel("ch_nm", "CHART", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setVibrationPattern(new long[]{300, 300, 300});
+
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                notificationChannel.setSound(defaultSoundUri, att);
+            }
+
+
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, notificationChannel.getId())
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText(remoteMessage.getData().get("content"))
+                            //.setCont
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        } else {
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("label"))
+                            .setContentText(remoteMessage.getData().get("content"))
+                            //.setCont
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        }
+
+
+    }
+
     private void sendFriendRequestNotification(RemoteMessage remoteMessage) {
         context = this;
         Intent intent;
@@ -1050,9 +1154,10 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentIntent(pendingIntent);
 
 
-            if (!MUSIC_PAL_SERVICE_RUNNING
+            /*if (!MUSIC_PAL_SERVICE_RUNNING
                     && !USER_NAME_MUSIC_SYNC.equals(remoteMessage.getData().get("username"))
-                    || !USER_NAME_MUSIC_SYNC.equals(remoteMessage.getData().get("username"))) {
+                    || !USER_NAME_MUSIC_SYNC.equals(remoteMessage.getData().get("username"))) {*/
+            if (!MUSIC_PAL_SERVICE_RUNNING || !USER_NAME_MUSIC_SYNC.equals(remoteMessage.getData().get("username"))) {
                 Intent service = new Intent(this, MusicSyncNotification.class);
                 service.putExtra("username", remoteMessage.getData().get("username"));
                 service.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -1108,7 +1213,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentIntent(pendingIntent);
 
 
-            if (!MUSIC_PAL_SERVICE_RUNNING) {
+            if (!MUSIC_PAL_SERVICE_RUNNING || !USER_NAME_MUSIC_SYNC.equals(remoteMessage.getData().get("username"))) {
                 Intent service = new Intent(this, MusicSyncNotification.class);
                 service.putExtra("username", remoteMessage.getData().get("username"));
                 service.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -1119,6 +1224,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
 
     }
+
     private void sendMessageNotification(final RemoteMessage remoteMessage) {
 
 
@@ -2125,6 +2231,7 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     // Generate palette asynchronously and use it on a different
 // thread using onGenerated()
+
     public void createPaletteAsync(Bitmap bitmap) {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {
