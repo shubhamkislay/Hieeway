@@ -275,6 +275,7 @@ public class MusicBeamService extends Service {
                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
 
                                                 Music music = mutableData.getValue(Music.class);
+
                                                 try {
                                                     if (music.getSpotifyId() == null || !music.getSpotifyId().equals(songId)) {
                                                         HashMap<String, Object> songHash = new HashMap<>();

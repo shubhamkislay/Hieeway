@@ -40,6 +40,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -339,8 +340,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         /**
          * The below code is used to block screenshots
          */
-        /*getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);*/
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
 
         final String usernameChattingWith = getArguments().getString("usernameChattingWith");
         userChattingWithId = getArguments().getString("userIdChattingWith");

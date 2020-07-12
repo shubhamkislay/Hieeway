@@ -212,7 +212,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     @Override
     public void onResume() {
         super.onResume();
-        /*ConnectionParams connectionParams =
+        ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
                         .setPreferredThumbnailImageSize(1500)
@@ -253,10 +253,15 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                         // Something went wrong when attempting to connect! Handle errors here
                     }
-                });*/
+                });
 
-        Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
-        getActivity().startService(intent1);
+        /*Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
+        getActivity().startService(intent1);*/
+
+
+
+
+
     }
 
 
@@ -438,17 +443,18 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                 try {
                     // mSpotifyAppRemote.getPlayerApi().play(songId);
-                    Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                    /*Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
                     if (launchIntent != null) {
                         startActivity(launchIntent);//null pointer check in case package name was not found
-                    }
-                } catch (Exception e) {
-                    //Toast.makeText(getActivity(), "Cannot play this song", Toast.LENGTH_SHORT).show();
-                    Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
-                    if (launchIntent != null) {
-                        startActivity(launchIntent);//null pointer check in case package name was not found
-                    }
+                    }*/
 
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("" + songId));
+                    intent.putExtra(Intent.EXTRA_REFERRER,
+                            Uri.parse("android-app://" + getContext().getPackageName()));
+                    getContext().startActivity(intent);
+                } catch (Exception e) {
+                    //
                 }
             }
         });
@@ -458,10 +464,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             @Override
             public void onClick(View v) {
                 try {
-                    Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
-                    if (launchIntent != null) {
-                        startActivity(launchIntent);//null pointer check in case package name was not found
-                    }
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(Uri.parse("" + songId));
+                    intent.putExtra(Intent.EXTRA_REFERRER,
+                            Uri.parse("android-app://" + getContext().getPackageName()));
+                    getContext().startActivity(intent);
                 } catch (Exception e) {
 
                 }
@@ -873,18 +880,18 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 artistNames = artistNames.substring(0, artistNames.length() - 2);
 
 
-                                HashMap<String, Object> songHash = new HashMap<>();
+                                /*HashMap<String, Object> songHash = new HashMap<>();
                                 songHash.put("spotifyId", songId);
                                 songHash.put("spotifySong", track.name);
                                 songHash.put("spotifyArtist", artistNames);
-                                songHash.put("spotifyCover", track.imageUri);
+                                songHash.put("spotifyCover", track.imageUri);*/
 
                                 //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
 
-                                FirebaseDatabase.getInstance()
+                                /*FirebaseDatabase.getInstance()
                                         .getReference("Music")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .updateChildren(songHash);
+                                        .updateChildren(songHash);*/
 
                                 Log.d("Spotify Activity", track.name + " by " + track.artist.name);
                                 // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();

@@ -168,7 +168,7 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="140dp"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
@@ -178,6 +178,7 @@
     <RelativeLayout
         android:id="@+id/background_fade"
         android:layout_width="140dp"
+        android:layout_marginRight="-70dp"
         android:layout_height="140dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/left_fade_background"

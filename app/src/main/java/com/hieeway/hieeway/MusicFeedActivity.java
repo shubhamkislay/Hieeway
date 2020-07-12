@@ -67,7 +67,8 @@ public class MusicFeedActivity extends AppCompatActivity {
         super.onResume();
 
 
-
+        Intent intent1 = new Intent(this, MusicBeamService.class);
+        startService(intent1);
         //if(remoteReady)
 
     }

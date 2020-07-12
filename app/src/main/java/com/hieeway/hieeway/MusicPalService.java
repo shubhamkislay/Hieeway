@@ -73,6 +73,8 @@ public class MusicPalService extends Service {
     private int notificationId;
     private Bitmap imageBitmap;
     private boolean previousConnected = false;
+    private boolean initialised = false;
+    private boolean syncStart = false;
 
     @Nullable
     @Override
@@ -150,6 +152,27 @@ public class MusicPalService extends Service {
             userPhoto = intent.getStringExtra("userPhoto");
             //USER_PHOTO = userPhoto;
 
+            stopSelfIntent = new Intent(MusicPalService.this, MusicPalService.class);
+
+            stopSelfIntent.setAction(ACTION_STOP_SERVICE);
+
+            //This is optional if you have more than one buttons and want to differentiate between two
+
+
+            pIntentlogin = PendingIntent.getService(MusicPalService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+            Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
+                    .setContentTitle("Connecting with spotify")
+                    .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                    .addAction(R.drawable.ic_cancel_white_24dp, "Stop", pIntentlogin)
+                    // .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .build();
+
+
+            startForeground(notificationId, notification);
+
 
 
             ConnectionParams connectionParams =
@@ -176,25 +199,8 @@ public class MusicPalService extends Service {
                             mSpotifyAppRemote = spotifyAppRemote;
 
 
-                            stopSelfIntent = new Intent(MusicPalService.this, MusicPalService.class);
-
-                            stopSelfIntent.setAction(ACTION_STOP_SERVICE);
-
-                            //This is optional if you have more than one buttons and want to differentiate between two
 
 
-                            pIntentlogin = PendingIntent.getService(MusicPalService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-                            /*Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
-                                    .setContentTitle("Connecting Music Pal with " + username)
-                                    .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                                    .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Sync", pIntentlogin)
-                                    // .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true)
-                                    .build();
-
-
-                            startForeground(notificationId, notification);*/
 
 
                             RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.music_pal_expanded);
@@ -214,8 +220,8 @@ public class MusicPalService extends Service {
 
                                         expandedView.setImageViewBitmap(R.id.logo, imageBitmap);
 
-                                        expandedView.setTextViewText(R.id.notification_message_collapsed, "Connecting your music with");
-                                        expandedView.setTextViewText(R.id.artist_name, "" + username);
+                                        expandedView.setTextViewText(R.id.notification_message_collapsed, "Syncing your music with spotify");
+                                        expandedView.setTextViewText(R.id.artist_name, "Try changing the song");
                                         expandedView.setOnClickPendingIntent(R.id.logo, openSpotify);
 
                                         expandedView.setOnClickPendingIntent(R.id.open_spotify, openSpotify);
@@ -245,19 +251,17 @@ public class MusicPalService extends Service {
 
 
 
-                            /*collapsedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
+                            /*
+                            collapsedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
                             collapsedView.setTextViewText(R.id.artist_name, connectionMsg + username);
+                            collapsedView.setOnClickPendingIntent(R.id.logo, openProfile);
+                            */
 
-
-                            collapsedView.setOnClickPendingIntent(R.id.logo, openProfile);*/
-
-
-
-
-
-                            listedToSpotifySong();
 
                             listenToChanges();
+                            listedToSpotifySong();
+
+
 
 
                         }
@@ -265,7 +269,17 @@ public class MusicPalService extends Service {
                         @Override
                         public void onFailure(Throwable throwable) {
                             Log.e("Music Beam Service", throwable.getMessage(), throwable);
-                            stopSelf();
+                            Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
+                                    .setContentTitle("You are not connected to spotify app")
+                                    .setContentText("Install and login to spotify app")
+                                    .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                    .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
+                                    // .setContentIntent(pendingIntent)
+                                    .setAutoCancel(true)
+                                    .build();
+
+                            startForeground(notificationId, notification);
+
                             // Something went wrong when attempting to connect! Handle errors here
                         }
                     });
@@ -290,6 +304,18 @@ public class MusicPalService extends Service {
                         if (playerState != null) {
                             final Track track = playerState.track;
                             String songId = track.uri;
+
+                            if (!songID.equals(songId)) {
+
+                                HashMap<String, Object> palHash = new HashMap<>();
+                                palHash.put("songID", songId);
+
+                                FirebaseDatabase.getInstance().getReference("Pal")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(otherUserId)
+                                        .updateChildren(palHash);
+                            }
+                            songID = songId;
 
 
                             //song_name.setAnimation(outToLeftAnimation());
@@ -364,9 +390,9 @@ public class MusicPalService extends Service {
                                                 collapsedView.setOnClickPendingIntent(R.id.logo, openProfile);
 
 
-                                                expandedView.setTextViewText(R.id.notification_message_collapsed, "" + track.name);
-                                                expandedView.setTextViewText(R.id.artist_name, "" + postArtist);
-                                                expandedView.setImageViewBitmap(R.id.logo, bitmap);
+                                                expandedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
+                                                expandedView.setTextViewText(R.id.artist_name, connectionMsg + username);
+                                                // expandedView.setImageViewBitmap(R.id.logo, bitmap);
                                                 expandedView.setOnClickPendingIntent(R.id.logo, openSpotify);
 
                                                 expandedView.setOnClickPendingIntent(R.id.open_spotify, openSpotify);
@@ -385,166 +411,20 @@ public class MusicPalService extends Service {
                                                         .build();
 
                                                 startForeground(notificationId, notification);
-                                                //.setColor(getResources().getColor(R.color.colorPrimaryDark))
-                                                //.setColorized(true)
-                                                        /*.setLargeIcon(bitmap)
-                                                        //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
-                                                        .setAutoCancel(true)
-                                                        .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                                                        .setMediaSession(mediaSessionCompat.getSessionToken())
-                                                        .setShowActionsInCompactView(0,1))
-                                                        .build();
+
+
+                                                // palHash.put("connection", connectionStatus);
 
 
 
 
-                                                /*.setContentTitle(""+track.name)
-                                                        .setContentText(""+postArtist)
-                                                        .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                                                        .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
-                                                        .addAction(R.drawable.spotify_white_icon,"Open in Spotify",openSpotify)*/
-                                                //.setColor(getResources().getColor(R.color.colorPrimaryDark))
-                                                //.setColorized(true)
-                                                        /*.setLargeIcon(bitmap)
-                                                        //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
-                                                        .setAutoCancel(true)
-                                                        .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                                                        .setMediaSession(mediaSessionCompat.getSessionToken())
-                                                        .setShowActionsInCompactView(0,1))*/
-                                                // .setContentIntent(pendingIntent)
-                                                //.setProgress(0, 0, true)
+
+
+
+
+
                                             }
                                         });
-
-
-                                /*final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-                                FirebaseDatabase.getInstance().getReference("Music")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .runTransaction(new Transaction.Handler() {
-                                            @NonNull
-                                            @Override
-                                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-
-                                                Music music = mutableData.getValue(Music.class);
-                                                try {
-                                                    if (music.getSpotifyId() == null || !music.getSpotifyId().equals(songId)) {
-                                                        HashMap<String, Object> songHash = new HashMap<>();
-                                                        songHash.put("spotifyId", songId);
-                                                        songHash.put("spotifySong", track.name);
-                                                        songHash.put("spotifyArtist", postArtist);
-                                                        songHash.put("spotifyCover", track.imageUri);
-                                                        songHash.put("username", username);
-                                                        songHash.put("userId", otherUserId);
-                                                        songHash.put("userPhoto", userPhoto);
-                                                        songHash.put("timestamp", timestamp.toString());
-
-                                                        //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
-
-                                                        FirebaseDatabase.getInstance()
-                                                                .getReference("Music")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                .updateChildren(songHash);
-
-
-                                                        HashMap<String, Object> palHash = new HashMap<>();
-
-                                                        palHash.put("songID", songId);
-                                                        // palHash.put("connection", connectionStatus);
-
-
-
-                                                        FirebaseDatabase.getInstance().getReference("Pal")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                .child(otherUserId)
-                                                                .updateChildren(palHash);
-
-                                                    }
-
-
-                                                } catch (Exception e) {
-
-                                                    HashMap<String, Object> songHash = new HashMap<>();
-                                                    songHash.put("spotifyId", songId);
-                                                    songHash.put("spotifySong", track.name);
-                                                    songHash.put("spotifyArtist", postArtist);
-                                                    songHash.put("spotifyCover", track.imageUri);
-                                                    songHash.put("username", username);
-                                                    songHash.put("userId", otherUserId);
-                                                    songHash.put("userPhoto", userPhoto);
-                                                    songHash.put("timestamp", timestamp.toString());
-
-                                                    //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
-
-                                                    FirebaseDatabase.getInstance()
-                                                            .getReference("Music")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .updateChildren(songHash);
-
-
-                                                    HashMap<String, Object> palHash = new HashMap<>();
-
-                                                    palHash.put("songID", songId);
-                                                    // palHash.put("connection", connectionStatus);
-
-
-
-                                                    FirebaseDatabase.getInstance().getReference("Pal")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .child(otherUserId)
-                                                            .updateChildren(palHash);
-
-                                                }
-
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-                                            }
-                                        });*/
-
-
-                            HashMap<String, Object> palHash = new HashMap<>();
-
-                            palHash.put("songID", songId);
-                            // palHash.put("connection", connectionStatus);
-
-
-                            if (!songID.equals(songId)) {
-                                FirebaseDatabase.getInstance().getReference("Pal")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(otherUserId)
-                                        .updateChildren(palHash);
-                            }
-
-                            songID = songId;
-
-
-                                /*HashMap<String, Object> songHash = new HashMap<>();
-                                songHash.put("spotifyId", songId);
-                                songHash.put("spotifySong", track.name);
-                                songHash.put("spotifyArtist", artistNames);
-                                songHash.put("spotifyCover", track.imageUri);
-                                songHash.put("username", USER_NAME);
-                                songHash.put("userId", USER_ID);
-                                songHash.put("userPhoto", USER_PHOTO);
-                                songHash.put("timestamp", timestamp.toString());
-
-                                //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
-
-                                FirebaseDatabase.getInstance()
-                                        .getReference("Music")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .updateChildren(songHash);*/
-
-                                Log.d("Spotify Activity", track.name + " by " + track.artist.name);
-                                // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();
-                                //  Toast.makeText(getActivity(),"Track is "+track.name,Toast.LENGTH_SHORT).show();
-
-
-                                //Glide.with(SpotifyActivity.this).load(track.imageUri).into(track_cover);
 
                         } else {
                             // Toast.makeText(getActivity(),"PlayerState is null",Toast.LENGTH_SHORT).show();
@@ -560,6 +440,7 @@ public class MusicPalService extends Service {
 
     private void listenToChanges() {
 
+        initialised = true;
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Pal")
                 .child(otherUserId)
@@ -580,14 +461,24 @@ public class MusicPalService extends Service {
                                     if (!pal.getSongID().equals("default"))
 
                                 }*/
-                                if (musicConnected && !songID.equals(pal.getSongID())
-                                        && !pal.getSongID().equals("default"))
-                                    mSpotifyAppRemote.getPlayerApi().play(pal.getSongID());
-
                                 musicConnected = true;
 
+                                if (!songID.equals(pal.getSongID()) && !syncStart) {
+                                    if (!pal.getSongID().equals("default")) {
+                                        try {
+                                            mSpotifyAppRemote.getPlayerApi().play(pal.getSongID());
+                                        } catch (Exception e) {
+                                            //
+                                        }
+                                        // songID = pal.getSongID();
+                                        // listedToSpotifySong();
+                                    }
+                                }
 
-                                songID = pal.getSongID();
+                                syncStart = false;
+
+
+
 
 
                             } else if (pal.getConnection().equals("disconnect")) {
@@ -615,6 +506,15 @@ public class MusicPalService extends Service {
 
                         } else {
 
+                            syncStart = true;
+
+                            HashMap<String, Object> palHash = new HashMap<>();
+                            palHash.put("songID", songID);
+
+                            FirebaseDatabase.getInstance().getReference("Pal")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(otherUserId)
+                                    .updateChildren(palHash);
 
                         }
                     }
