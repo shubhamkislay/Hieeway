@@ -84,10 +84,10 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:layout_toRightOf="@id/stop_logo"
-                    android:gravity="center_vertical"
-                    android:text="Stop"
+                    android:gravity="center_vertical|left"
+                    android:text="Stop\nBeacon"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
@@ -124,10 +124,10 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
                     android:layout_toRightOf="@id/spotify_logo"
-                    android:gravity="center_vertical"
-                    android:text="Open"
+                    android:gravity="left|center_vertical"
+                    android:text="Open in\nSpotify"
                     android:textColor="#fff"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>

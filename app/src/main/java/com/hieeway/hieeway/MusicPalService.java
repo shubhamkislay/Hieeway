@@ -223,11 +223,12 @@ public class MusicPalService extends Service {
                                         Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
                                                 .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                                                 .setCustomContentView(expandedView)
+                                                .setCustomBigContentView(expandedView)
                                                 .setAutoCancel(true)
-                                                .setContentTitle("Music Sync with " + username)
-                                                .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                                                .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
-                                                .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)
+                                                /*.setContentTitle("Music Sync with " + username)
+                                                .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)*/
+                                                /*.addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
+                                                .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)*/
                                                 .build();
 
                                         startForeground(notificationId, notification);
@@ -604,7 +605,8 @@ public class MusicPalService extends Service {
 
                                 FirebaseDatabase.getInstance().getReference("Pal")
                                         .child(otherUserId)
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .removeValue();
 
                                 stopSelf();
                             }

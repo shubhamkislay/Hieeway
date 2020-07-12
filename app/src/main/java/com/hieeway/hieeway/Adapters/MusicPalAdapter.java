@@ -310,6 +310,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
                                                     FirebaseDatabase.getInstance().getReference("Pal")
                                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .child(user.getUserid())
                                                             .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
@@ -346,6 +347,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
                                                     FirebaseDatabase.getInstance().getReference("Pal")
                                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                            .child(user.getUserid())
                                                             .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
@@ -393,6 +395,7 @@ public class MusicPalAdapter extends RecyclerView.Adapter<MusicPalAdapter.ViewHo
 
                                                 FirebaseDatabase.getInstance().getReference("Pal")
                                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .child(user.getUserid())
                                                         .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
