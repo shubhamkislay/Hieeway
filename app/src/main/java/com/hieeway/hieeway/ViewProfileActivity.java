@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -81,8 +82,8 @@ public class ViewProfileActivity extends AppCompatActivity {
 
     String userId;
     Button friend_btn, start_chat;
-    private ValueEventListener valueEventListener;
-    private DatabaseReference findUserDataReference;
+    private ValueEventListener valueEventListener, musicListener;
+    private DatabaseReference findUserDataReference, findUserData;
 
 
     ImageView spotify_icon;
@@ -358,37 +359,18 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         });*/
 
-        findUserDataReference = FirebaseDatabase.getInstance().getReference("Users")
+        findUserDataReference = FirebaseDatabase.getInstance().getReference("Music")
+                .child(userId);
+
+        findUserData = FirebaseDatabase.getInstance().getReference("Users")
                 .child(userId);
 
 
-        valueEventListener = new ValueEventListener() {
+        musicListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
-
-                    try {
-                        songId = user.getSpotifyId();
-                        songName = user.getSpotifySong();
-                        artistName = user.getSpotifyArtist();
-                        songUri = user.getSpotifyCover();
-
-                        if (songName.length() > 0) {
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    music_layout.setVisibility(View.VISIBLE);
-                                }
-                            }, 1000);
-
-                        }
-                    } catch (Exception e) {
-                        //
-                        music_layout.setVisibility(View.GONE);
-                    }
-
 
                     try {
                         feeling_txt.setText(user.getFeeling());
@@ -422,9 +404,47 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         };
 
+
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Music music = dataSnapshot.getValue(Music.class);
+
+                    try {
+                        songId = music.getSpotifyId();
+                        songName = music.getSpotifySong();
+                        artistName = music.getSpotifyArtist();
+                        songUri = music.getSpotifyCover();
+
+                        if (songName.length() > 0) {
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    music_layout.setVisibility(View.VISIBLE);
+                                }
+                            }, 1000);
+
+                        }
+                    } catch (Exception e) {
+                        //
+                        music_layout.setVisibility(View.GONE);
+                    }
+
+                }
+
+                findUserData.addListenerForSingleValueEvent(musicListener);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
         findUserDataReference.addValueEventListener(valueEventListener);
-
-
 
 
     }
@@ -776,6 +796,10 @@ public class ViewProfileActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        findUserDataReference.removeEventListener(valueEventListener);
+        try {
+            findUserDataReference.removeEventListener(valueEventListener);
+        } catch (Exception e) {
+            //
+        }
     }
 }

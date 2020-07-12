@@ -51,7 +51,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     int sentListSize;
     Boolean searchedList = false;
     RelativeLayout loading_feed;
-    TextView seeing_music_txt;
+    TextView seeing_music_txt, connecting_spotify_txt;
     Boolean remoteReady = false;
     private SpotifyAppRemote mSpotifyAppRemote;
     private MusicFeedAdapter musicFeedAdapter;
@@ -67,18 +67,6 @@ public class MusicFeedActivity extends AppCompatActivity {
         super.onResume();
 
 
-        Intent intent1 = new Intent(this, MusicBeamService.class);
-        startService(intent1);
-        //if(remoteReady)
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_feed);
-
-        // FirebaseDatabase.getInstance().setPersistenceEnabled(false);
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
@@ -93,11 +81,7 @@ public class MusicFeedActivity extends AppCompatActivity {
         } catch (Exception e) {
 
         }
-
-        new_update = findViewById(R.id.new_update);
-
-        new_update_lay = findViewById(R.id.new_update_lay);
-
+        //if(remoteReady)
 
         SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
@@ -108,7 +92,19 @@ public class MusicFeedActivity extends AppCompatActivity {
 
                         // remoteReady = true;
 
-                        populateMusicList();
+                        connecting_spotify_txt.setText("Launching Music Beacon...");
+
+
+                        Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
+                        startService(intent1);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                populateMusicList();
+                            }
+                        }, 500);
+
                         // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
                         // Now you can start interacting with App Remote
@@ -120,17 +116,37 @@ public class MusicFeedActivity extends AppCompatActivity {
                     public void onFailure(Throwable throwable) {
                         Log.e("MainActivity", throwable.getMessage(), throwable);
 
-                        Toast.makeText(MusicFeedActivity.this, "Cannot connect to spotify app" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MusicFeedActivity.this, "Cannot connect to spotify app", Toast.LENGTH_SHORT).show();
                         finish();
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_music_feed);
+
+        // FirebaseDatabase.getInstance().setPersistenceEnabled(false);
+
+
+        new_update = findViewById(R.id.new_update);
+
+        new_update_lay = findViewById(R.id.new_update_lay);
+
+        connecting_spotify_txt = findViewById(R.id.connecting_spotify_txt);
+
+
+
 
         music_recyclerview = findViewById(R.id.music_recyclerview);
         loading_feed = findViewById(R.id.loading_feed);
         seeing_music_txt = findViewById(R.id.seeing_music_txt);
 
         seeing_music_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        connecting_spotify_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         //new_update.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         music_pal = findViewById(R.id.music_pal);

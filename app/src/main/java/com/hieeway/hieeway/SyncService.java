@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Interface.SyncServiceListener;
 import com.hieeway.hieeway.Model.Iso2Phone;
 import com.hieeway.hieeway.Model.User;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,9 @@ public class SyncService extends Service {
     SyncServiceListener syncServiceListener;
     String phonenumber = "default";
     private List<User> userList;
+    private boolean previousConnected = false;
+    private ValueEventListener valueEventListener;
+    private DatabaseReference findUserRef;
     // Registered callbacks
 
     @Override
@@ -77,7 +81,45 @@ public class SyncService extends Service {
         startForeground(MyApplication.NotificationID.getID(), notification);
         getContactList();
 
+        checkConnection();
+
         return START_NOT_STICKY;
+    }
+
+    private void checkConnection() {
+
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                boolean connected = dataSnapshot.getValue(Boolean.class);
+
+
+                if (previousConnected) {
+                    if (!connected) {
+                        CONTACT_SERVICE_RUNNUNG = false;
+
+                        try {
+                            if (valueEventListener != null)
+                                findUserRef.removeEventListener(valueEventListener);
+                        } catch (Exception e) {
+                            //
+                        }
+                        stopSelf();
+                    }
+                }
+
+                previousConnected = connected;
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Nullable
@@ -99,82 +141,94 @@ public class SyncService extends Service {
 
     public void getUserDetails(final String number, final String name, final Boolean continueProgress) {
 
-        DatabaseReference findUserRef = FirebaseDatabase.getInstance().getReference("Users");
+        findUserRef = FirebaseDatabase.getInstance().getReference("Users");
         Query query = findUserRef.orderByChild("phonenumber").equalTo(number);
-
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                try {
 
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-
-
-                        //if(user.getPhonenumber().equals(number))
-                        if (userList.contains(user)) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user = snapshot.getValue(User.class);
 
 
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("userID", user.getUserid());
-                            hashMap.put("name", name);
-
-                            FirebaseDatabase.getInstance().getReference("Contacts")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(user.getUserid()).updateChildren(hashMap);
-                        }
-
-                        if (!userList.contains(user) && !user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            //if(user.getPhonenumber().equals(number))
+                            if (userList.contains(user)) {
 
 
-                            userList.add(user);
-                            phoneBookNameHashMap.put(user.getUserid(), name);
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("userID", user.getUserid());
+                                hashMap.put("name", name);
+
+                                FirebaseDatabase.getInstance().getReference("Contacts")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(user.getUserid()).updateChildren(hashMap);
+                            }
+
+                            if (!userList.contains(user) && !user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+
+                                userList.add(user);
+                                phoneBookNameHashMap.put(user.getUserid(), name);
                            /* count = count + 1;
                             contacts_counter.setText("" + count);*/
 
-                            HashMap<String, Object> hashMap = new HashMap<>();
-                            hashMap.put("userID", user.getUserid());
-                            hashMap.put("name", name);
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("userID", user.getUserid());
+                                hashMap.put("name", name);
 
-                            FirebaseDatabase.getInstance().getReference("Contacts")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(user.getUserid()).updateChildren(hashMap);
-
-
-                            isSyncing = false;
+                                FirebaseDatabase.getInstance().getReference("Contacts")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(user.getUserid()).updateChildren(hashMap);
 
 
+                                isSyncing = false;
+
+
+                            }
+
+                            if (!continueProgress) {
+                                // syncServiceListener.afterExecution();
+                                CONTACT_SERVICE_RUNNUNG = false;
+                                stopSelf();
+                            }
                         }
-
                         if (!continueProgress) {
+                       /* contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
+                        contacts_recyclerView.setAdapter(contactAdapter);*/
                             // syncServiceListener.afterExecution();
                             CONTACT_SERVICE_RUNNUNG = false;
                             stopSelf();
                         }
-                    }
-                    if (!continueProgress) {
-                       /* contactAdapter = new ContactsAdapter(ContactsActivity.this, userList, activity, phoneBookNameHashMap);
-                        contacts_recyclerView.setAdapter(contactAdapter);*/
-                        // syncServiceListener.afterExecution();
-                        CONTACT_SERVICE_RUNNUNG = false;
-                        stopSelf();
-                    }
-                } else {
-                    if (!continueProgress) {
+                    } else {
+                        if (!continueProgress) {
 
-                        //syncServiceListener.afterExecution();
-                        CONTACT_SERVICE_RUNNUNG = false;
-                        stopSelf();
+                            //syncServiceListener.afterExecution();
+                            CONTACT_SERVICE_RUNNUNG = false;
+                            stopSelf();
+                        }
                     }
+                } catch (Exception e) {
+                    //
+                    CONTACT_SERVICE_RUNNUNG = false;
+                    stopSelf();
+
                 }
+
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        };
+
+        query.addListenerForSingleValueEvent(valueEventListener);
+
+
     }
 
     public void getContactList() {
@@ -199,9 +253,10 @@ public class SyncService extends Service {
             public void run() {
                 if (phone.getCount() > 0) {
 
+                    String number = "", name = "";
                     while (phone.moveToNext()) {
-                        String number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        String name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                        number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                         number = number.replace(" ", "");
                         number = number.replace("-", "");
                         number = number.replace("(", "");
@@ -229,6 +284,8 @@ public class SyncService extends Service {
                         // }
 
                     }
+                    getUserDetails(number, name, false);
+
                 } else {
                     CONTACT_SERVICE_RUNNUNG = false;
                     stopSelf();

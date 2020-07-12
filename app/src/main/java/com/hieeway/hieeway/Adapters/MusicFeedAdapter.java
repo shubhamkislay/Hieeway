@@ -178,7 +178,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             Date parsedDate = dateFormat.parse(music.getTimestamp());
 
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
-            String ago = prettyTime.format(parsedDate);
+            String ago = prettyTime.format(parsedDate).replace("moments ago", "now");
 
 
             holder.time.setText("" + ago);

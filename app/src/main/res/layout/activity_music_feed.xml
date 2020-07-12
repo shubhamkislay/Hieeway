@@ -95,6 +95,20 @@
             android:text="Let's see what your friends\nare listening to"
             android:textColor="#fff"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/connecting_spotify_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="24dp"
+            android:gravity="center"
+            android:text="Connecting to Spotify..."
+            android:textColor="#fff"
+            android:textSize="16sp" />
     </RelativeLayout>
 
 </RelativeLayout>

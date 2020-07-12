@@ -448,11 +448,19 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         startActivity(launchIntent);//null pointer check in case package name was not found
                     }*/
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("" + songId));
-                    intent.putExtra(Intent.EXTRA_REFERRER,
-                            Uri.parse("android-app://" + getContext().getPackageName()));
-                    getContext().startActivity(intent);
+                    if (songId != null) {
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("" + songId));
+                        intent.putExtra(Intent.EXTRA_REFERRER,
+                                Uri.parse("android-app://" + getContext().getPackageName()));
+                        getContext().startActivity(intent);
+                    } else {
+                        Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                        if (launchIntent != null) {
+                            startActivity(launchIntent);//null pointer check in case package name was not found
+                        }
+                    }
                 } catch (Exception e) {
                     //
                 }
@@ -464,11 +472,19 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             @Override
             public void onClick(View v) {
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("" + songId));
-                    intent.putExtra(Intent.EXTRA_REFERRER,
-                            Uri.parse("android-app://" + getContext().getPackageName()));
-                    getContext().startActivity(intent);
+                    if (songId != null) {
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse("" + songId));
+                        intent.putExtra(Intent.EXTRA_REFERRER,
+                                Uri.parse("android-app://" + getContext().getPackageName()));
+                        getContext().startActivity(intent);
+                    } else {
+                        Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                        if (launchIntent != null) {
+                            startActivity(launchIntent);//null pointer check in case package name was not found
+                        }
+                    }
                 } catch (Exception e) {
 
                 }
