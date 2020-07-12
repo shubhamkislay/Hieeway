@@ -215,6 +215,20 @@
                     </LinearLayout>
 
                         <ImageButton
+                            android:id="@+id/spotify_status_back"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="-2dp"
+                            android:layout_toLeftOf="@id/search_bar_lay"
+                            android:background="@drawable/message_counter_drawable_background"
+                            android:padding="6dp"
+
+                            android:scaleType="centerInside"
+                            android:visibility="gone" />
+
+                        <ImageButton
                             android:id="@+id/spotify_status"
                             android:layout_width="42dp"
                             android:layout_height="42dp"

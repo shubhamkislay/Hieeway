@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -55,6 +56,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.ChatMessageAdapter;
+import com.hieeway.hieeway.Adapters.MusicFeedAdapter;
 import com.hieeway.hieeway.ChatsFragmentViewModel;
 import com.hieeway.hieeway.EphemeralMessageViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
@@ -62,6 +64,8 @@ import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatStampSizeListener;
 import com.hieeway.hieeway.Interface.DeleteOptionsListener;
 import com.hieeway.hieeway.Model.ChatStamp;
+import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
@@ -73,10 +77,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
     private SharedViewModel sharedViewModel;
     private ChatsFragmentViewModel chatsFragmentViewModel;
+    public static final String CHECKED_TIMESTAMP = "checked_timestamp";
     private UserPicViewModel userPicViewModel;
     TextView email, logo_title;
     RecyclerView chats_recyclerview;
@@ -90,6 +97,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     ImageView progress_menu_logo;
 
     Boolean searchBtnActive = true;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    List<Music> userList;
+    int sentListSize;
 
     public Context context;
 
@@ -116,7 +126,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private RelativeLayout delete_for_all_option_layout, delete_for_me_option_layout;
     AnimationArrowListener animationArrowListener;
     private List<ChatStamp> resetList;
-    private ImageButton spotify_status;
+    Boolean searchedList = false;
+    private ImageButton spotify_status, spotify_status_back;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -127,6 +138,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
        // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
+        spotify_status_back = view.findViewById(R.id.spotify_status_back);
 
 
 
@@ -155,8 +167,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         }, 0);
 
 
-
-
+        userList = new ArrayList<>();
 
 
 
@@ -327,6 +338,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
             @Override
             public void onClick(View v) {
 
+                //spotify_status_back.setVisibility(View.GONE);
                 startActivity(new Intent(getActivity(), MusicFeedActivity.class));
             }
         });
@@ -516,6 +528,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         //animateMenuImage(progress_menu_logo);
 
 
+
         return view;
     }
 
@@ -605,6 +618,157 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         chatStampSizeListener = (NavButtonTest) activity;
     }*/
 
+    private void populateMusicList() {
+
+
+        FirebaseDatabase.getInstance().getReference("FriendList")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        userList.clear();
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Friend friend = snapshot.getValue(Friend.class);
+                                if (friend.getStatus().equals("friends")) {
+
+                                    FirebaseDatabase.getInstance().getReference("Music")
+                                            .child(friend.getFriendId())
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                    if (musicSnapshot.exists()) {
+
+                                                        try {
+                                                            Music music = musicSnapshot.getValue(Music.class);
+
+
+                                                            if (!userList.contains(music)) {
+                                                                userList.add(music);
+                                                            } else {
+                                                                userList.remove(music);
+                                                                userList.add(music);
+                                                            }
+
+
+                                                            if (searchedList) {
+                                                                if (sentListSize < userList.size()) {
+                                                                    try {
+
+                                                                        Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+
+                                                                        new Handler().postDelayed(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                String checkedTimeStamp = sharedPreferences.getString(CHECKED_TIMESTAMP, "");
+
+                                                                                // Toast.makeText(getContext(),"Saved time: "+checkedTimeStamp+"\nNew Time: "+userList.get(0).getTimestamp(),Toast.LENGTH_SHORT).show();
+
+                                                                                if (checkedTimeStamp.compareTo(userList.get(0).getTimestamp()) != 0) {
+                                                                                    spotify_status_back.setVisibility(View.VISIBLE);
+                                                                                } else {
+                                                                                    spotify_status_back.setVisibility(View.GONE);
+                                                                                }
+
+                                                                            }
+                                                                        }, 500);
+
+
+                                                                    } catch (Exception e) {
+                                                                        //
+                                                                    }
+                                                                }
+                                                                if (userList.size() < 1) {
+                                                                    spotify_status_back.setVisibility(View.GONE);
+                                                                }
+
+                                                            }
+
+
+                                                        } catch (Exception e) {
+                                                            //
+                                                        }
+
+
+                                                    }
+
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+                                    /*FirebaseDatabase.getInstance().getReference("Music")
+                                            .child(friend.getFriendId())
+                                            .addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                    if (musicSnapshot.exists()) {
+                                                        Music music = musicSnapshot.getValue(Music.class);
+
+
+                                                        if (!userList.contains(music)) {
+                                                            userList.add(music);
+                                                        } else {
+                                                            userList.remove(music);
+                                                            userList.add(music);
+                                                        }
+
+
+                                                        if (searchedList && sentListSize < userList.size()) {
+                                                            try {
+
+                                                                Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+
+                                                                    }
+                                                                }, 500);
+
+                                                            } catch (Exception e) {
+                                                                //
+                                                            }
+
+                                                        }
+
+                                                    }
+
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });*/
+
+
+                                }
+                            }
+
+                            searchedList = true;
+                            sentListSize = userList.size();
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+    }
 
     private void searchChat(final String username) {
 
@@ -875,5 +1039,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         }
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateMusicList();
+    }
 }

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -43,6 +44,8 @@ import java.util.List;
 public class MusicFeedActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1337;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String CHECKED_TIMESTAMP = "checked_timestamp";
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     final String appPackageName = "com.spotify.music";
@@ -116,7 +119,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                     public void onFailure(Throwable throwable) {
                         Log.e("MainActivity", throwable.getMessage(), throwable);
 
-                        Toast.makeText(MusicFeedActivity.this, "Cannot connect to spotify app", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MusicFeedActivity.this, "Cannot connect to Spotify app", Toast.LENGTH_SHORT).show();
                         finish();
                         // Something went wrong when attempting to connect! Handle errors here
                     }
@@ -137,6 +140,7 @@ public class MusicFeedActivity extends AppCompatActivity {
         new_update_lay = findViewById(R.id.new_update_lay);
 
         connecting_spotify_txt = findViewById(R.id.connecting_spotify_txt);
+
 
 
 
@@ -229,6 +233,11 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                 try {
 
                                                                     Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                    SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                                    editor.putString(CHECKED_TIMESTAMP, userList.get(0).getTimestamp());
+                                                                    editor.apply();
 
                                                                     new Handler().postDelayed(new Runnable() {
                                                                         @Override
