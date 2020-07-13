@@ -158,7 +158,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             }
         };
         Glide.with(mContext).load(music.getUserPhoto()).into(holder.profile_pic);
-        holder.username.setText(music.getUsername() + " is listening to...");
+        holder.username.setText(music.getUsername() + " played...");
         holder.song_name.setText(music.getSpotifySong());
         holder.artist_name.setText(music.getSpotifyArtist());
         holder.song_name.setSelected(true);
