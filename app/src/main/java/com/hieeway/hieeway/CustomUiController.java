@@ -116,7 +116,7 @@ public class CustomUiController implements YouTubePlayerListener {
             public void seekTo(float v) {
 
 
-                //   youTubePlayer.seekTo(v);
+                //youTubePlayer.seekTo(v);
 
                 /*try {
                     youtube_player_preview.seekTo(v);
@@ -126,7 +126,7 @@ public class CustomUiController implements YouTubePlayerListener {
                 }*/
 
 
-                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                /*HashMap<String, Object> youtubeVideoHash = new HashMap<>();
                 youtubeVideoHash.put("videoSec", v);
 
                 FirebaseDatabase.getInstance().getReference("ChatList")
@@ -137,7 +137,22 @@ public class CustomUiController implements YouTubePlayerListener {
                 FirebaseDatabase.getInstance().getReference("ChatList")
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(userIDCHATTINGWITH)
+                        .updateChildren(youtubeVideoHash);*/
+
+                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                youtubeVideoHash.put("videoSec", v);
+                //youtubeVideoHash.put("youtubeID", videoID);
+
+                FirebaseDatabase.getInstance().getReference("Video")
+                        .child(userIDCHATTINGWITH)
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .updateChildren(youtubeVideoHash);
+
+                FirebaseDatabase.getInstance().getReference("Video")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userIDCHATTINGWITH)
+                        .updateChildren(youtubeVideoHash);
+
 
             }
 

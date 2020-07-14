@@ -490,17 +490,19 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             else
                 viewPager.setCurrentItem(fragmentList.size() - 2);
         } else {
-            viewPager.setCurrentItem(fragmentList.size() - 1);
+
             //Toast.makeText(VerticalPageActivity.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
             if (live.equals("live")) {
+
                 liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
 
 
                 liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
                 sendMessageFragment.removeListeners();
-                //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
 
                 pageSelected = 2;
+
+                viewPager.setCurrentItem(fragmentList.size() - 1);
 
             }
         }
