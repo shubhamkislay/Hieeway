@@ -2231,7 +2231,6 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     // Generate palette asynchronously and use it on a different
 // thread using onGenerated()
-
     public void createPaletteAsync(Bitmap bitmap) {
         Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
             public void onGenerated(Palette p) {

@@ -307,6 +307,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private boolean isDisablerecord_button = false;
     private boolean confirmConnected = true;
     TextView sender_reply_body_title;
+    private Button photo_btn, photo_btn_bg;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -382,6 +383,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         equi_three = view.findViewById(R.id.equi_three);
         equi_four = view.findViewById(R.id.equi_four);
         equi_five = view.findViewById(R.id.equi_five);
+
+        photo_btn_bg = view.findViewById(R.id.photo_btn_bg);
 
         sender_reply_body_title = view.findViewById(R.id.sender_reply_body_title);
 
@@ -1352,7 +1355,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         });
 
 
-        Button photo_btn = view.findViewById(R.id.photo_btn);
+        photo_btn = view.findViewById(R.id.photo_btn);
 
         photo_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -3174,6 +3177,27 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         }
 
 
+        if (photoMessageList.size() > 0) {
+            photo_btn.setVisibility(View.VISIBLE);
+            photo_btn_bg.setVisibility(View.VISIBLE);
+            ChatMessage chatMessage = photoMessageList.get(0);
+
+            if (!chatMessage.getPhotourl().equals("none")) {
+
+
+                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_image_white_24dp));
+
+            } else if (!chatMessage.getAudiourl().equals("none")) {
+
+                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_mic_black_24dp));
+
+            } else if (!chatMessage.getVideourl().equals("none")) {
+                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
+            }
+        } else {
+            photo_btn.setVisibility(View.VISIBLE);
+            photo_btn_bg.setVisibility(View.VISIBLE);
+        }
 
         checkForHint();
         setMessageHighlight(messageHighlight);

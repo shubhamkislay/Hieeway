@@ -341,8 +341,12 @@ public class AudioRecorderActivity extends AppCompatActivity {
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .child(userIdChattingWith);
 
-            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(audioUrl);
-            photoRef.delete();
+            try {
+                StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(audioUrl);
+                photoRef.delete();
+            } catch (Exception e) {
+                //
+            }
 
 
             receiverReference.child(mKey).removeValue();
@@ -680,17 +684,21 @@ public class AudioRecorderActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onPause();
 
-        if (sender.equals(userIdChattingWith)) {
-            deleteAudioMessage();
-            deleteAudioFile(mKey);
-        }
-        if (mediaPlayer != null) {
-            mediaPlayer.reset();
-            mediaPlayer.release();
-            mediaPlayer = null;
+        try {
+            if (sender.equals(userIdChattingWith)) {
+                deleteAudioMessage();
+                deleteAudioFile(mKey);
+            }
+            if (mediaPlayer != null) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+                mediaPlayer = null;
 
             /*if (deleteUponExiting)
                 deleteAudioMessage();*/
+            }
+        } catch (Exception e) {
+            //
         }
 
     }

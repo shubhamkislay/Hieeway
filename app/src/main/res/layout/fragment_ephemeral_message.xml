@@ -222,7 +222,7 @@
 
         <Button
             android:id="@+id/photo_btn_bg"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_width="33dp"
             android:layout_centerVertical="true"
             android:layout_height="33dp"
@@ -233,7 +233,7 @@
 
         <Button
             android:id="@+id/photo_btn"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_width="22dp"
             android:layout_centerVertical="true"
             android:layout_height="22dp"
