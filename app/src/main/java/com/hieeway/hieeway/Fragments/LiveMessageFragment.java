@@ -74,6 +74,7 @@ import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomUiController;
 import com.hieeway.hieeway.Model.YoutubeSync;
+import com.hieeway.hieeway.SyncService;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -227,6 +228,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private boolean blinkReceiver = false;
     private boolean liveChatInitialised = false;
     private String youtubeID = "default";
+    private ValueEventListener singleYoutubeListener;
+    private DatabaseReference singleSeekRef;
 
 
     public LiveMessageFragment() {
@@ -1918,14 +1921,89 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         try {
             presenceRef.addValueEventListener(presentEventListener);
             urlRef.addValueEventListener(valueEventListener);
+            seekRef.onDisconnect().removeValue();
+            seekRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
 
-            new Handler().postDelayed(new Runnable() {
+                    singleYoutubeListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                try {
+                                    YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
+
+                                    HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                                    youtubeVideoHash.put("videoSec", 0);
+                                    youtubeVideoHash.put("youtubeID", youtubeSync.getYoutubeID());
+
+                                    FirebaseDatabase.getInstance().getReference("Video")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(userIDCHATTINGWITH)
+                                            .updateChildren(youtubeVideoHash);
+
+
+                                } catch (Exception e) {
+
+                                }
+
+                            }
+                            seekRef.addValueEventListener(seekValueEventListener);
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    };
+
+
+                    singleSeekRef =
+                            FirebaseDatabase.getInstance().getReference("Video")
+                                    .child(userIDCHATTINGWITH)
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    // singleSeekRef.addListenerForSingleValueEvent(singleYoutubeListener);
+
+                    singleSeekRef.runTransaction(new Transaction.Handler() {
+                        @NonNull
+                        @Override
+                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                            try {
+                                YoutubeSync youtubeSync = mutableData.getValue(YoutubeSync.class);
+                                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                                youtubeVideoHash.put("videoSec", 0);
+                                youtubeVideoHash.put("youtubeID", youtubeSync.getYoutubeID());
+
+                                FirebaseDatabase.getInstance().getReference("Video")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userIDCHATTINGWITH)
+                                        .updateChildren(youtubeVideoHash);
+                            } catch (Exception e) {
+
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                            seekRef.addValueEventListener(seekValueEventListener);
+                        }
+                    });
+
+                }
+            });
+
+            /*new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     seekRef.addValueEventListener(seekValueEventListener);
-                    // seekRef.onDisconnect().removeValue();
+
                 }
-            }, 1000);
+            }, 1000);*/
 
 
             // seekRef.addValueEventListener(seekValueEventListener);
@@ -2634,6 +2712,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     @Override
     public void onPause() {
         super.onPause();
+        singleSeekRef.removeEventListener(singleYoutubeListener);
 
         liveChatInitialised = false;
         /**
@@ -2671,6 +2750,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             Log.v("leaveChannel", e.toString());
         }
     }
+
 
     @Override
     public void onStart() {
