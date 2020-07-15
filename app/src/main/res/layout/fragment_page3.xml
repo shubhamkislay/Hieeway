@@ -74,19 +74,20 @@
                 android:layout_height="0dp"
                 android:layout_centerInParent="true"
                 android:layout_weight="4"
-                android:layout_margin="4dp"
-                android:padding="4dp"
+                android:layout_margin="2dp"
                 android:visibility="gone">
 
                 <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
                     android:id="@+id/youtube_player_view"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="8dp"
                     android:visibility="invisible"
-                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
                     app:autoPlay="false"
                     app:showFullScreenButton="false"
-                    android:background="@drawable/send_message_back_drawable"
+                    android:background="@drawable/live_youtube_back"
                     android:padding="4dp"
                     app:showSeekBar="false"
                     app:showVideoCurrentTime="true"
@@ -98,6 +99,7 @@
                     android:id="@+id/sync_video_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
                     android:visibility="gone">
 
                     <TextView
@@ -586,7 +588,10 @@
     </RelativeLayout>
 
     <include layout="@layout/youtube_webview" />
-    <include layout="@layout/youtube_search_dialog" />
+
+    <include
+        layout="@layout/youtube_search_dialog"
+        android:visibility="gone" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
