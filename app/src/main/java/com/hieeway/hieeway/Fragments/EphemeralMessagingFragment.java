@@ -1489,7 +1489,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         try {
             if (!photo.equals("default")) {
-                Glide.with(getActivity()).load(photo.replace("s96-c", "s384-c"))/*.transition(withCrossFade())*/.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
+                Glide.with(getActivity()).load(photo/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*/.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         return false;
@@ -3195,8 +3195,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
             }
         } else {
-            photo_btn.setVisibility(View.VISIBLE);
-            photo_btn_bg.setVisibility(View.VISIBLE);
+            photo_btn.setVisibility(View.INVISIBLE);
+            photo_btn_bg.setVisibility(View.INVISIBLE);
         }
 
         checkForHint();

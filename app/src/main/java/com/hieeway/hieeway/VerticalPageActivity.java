@@ -102,8 +102,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vertical_page);
 
-
-
         Intent intent = getIntent();
 
         notificationIDHashMap.put(intent.getStringExtra("userValueIntentExtra"), 0);

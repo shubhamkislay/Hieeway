@@ -74,6 +74,8 @@
                 android:layout_height="0dp"
                 android:layout_centerInParent="true"
                 android:layout_weight="4"
+                android:layout_margin="4dp"
+                android:padding="4dp"
                 android:visibility="gone">
 
                 <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -81,8 +83,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:visibility="invisible"
+                    android:layout_centerVertical="true"
                     app:autoPlay="false"
                     app:showFullScreenButton="false"
+                    android:background="@drawable/send_message_back_drawable"
+                    android:padding="4dp"
                     app:showSeekBar="false"
                     app:showVideoCurrentTime="true"
                     app:showVideoDuration="true"
@@ -344,6 +349,8 @@
                         android:splitTrack="false"
                         android:thumb="@drawable/seekbar_thum"
                         android:visibility="visible" />
+
+
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -508,6 +515,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginRight="8dp"
                     android:layout_marginLeft="0dp"
+                    android:layout_toLeftOf="@id/enable_audio"
 
                     android:maxLength="80"
                     android:textSize="17dp"
@@ -517,6 +525,18 @@
                     android:hint="Chat here..."
                     android:textColorHint="#505050"
                     android:padding="12dp" />
+
+                <ImageButton
+                    android:id="@+id/enable_audio"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="4dp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/darkGrey"
+                    android:src="@drawable/ic_phone_in_talk_black_24dp"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/emoji"

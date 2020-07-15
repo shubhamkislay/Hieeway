@@ -50,6 +50,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -231,6 +232,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private ValueEventListener singleYoutubeListener;
     private DatabaseReference singleSeekRef;
     private float youtubeVideoSec = 0;
+    LinearLayout remoteViewlayout;
+    private ImageButton enable_audio;
+    private SurfaceView remotesurfaceView;
+    private boolean audioEnabled = false;
 
 
     public LiveMessageFragment() {
@@ -381,7 +386,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         firstPersonVideo = view.findViewById(R.id.first_person_video);
         userChattingPersonVideo = view.findViewById(R.id.second_person_video);
         frameRemoteContainer = (FrameLayout) view.findViewById(R.id.remote_video_view_container);
+
         frameLocalContainer = (FrameLayout) view.findViewById(R.id.local_video_view_container);
+
 
         startLiveVideo = view.findViewById(R.id.startLiveVideo);
         stopLiveVideo = view.findViewById(R.id.stopLiveVideo);
@@ -396,6 +403,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         control_layout = view.findViewById(R.id.control_layout);
         live_video_control_layout = view.findViewById(R.id.live_video_control_layout);
         video_seekbar = view.findViewById(R.id.video_seekbar);
+
+        enable_audio = view.findViewById(R.id.enable_audio);
 
 
         //bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
@@ -647,6 +656,50 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         youtubeBottomFragmentStateListener.setDrag(false);
                     }
                 }, 750);
+
+            }
+        });
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float diplayWight = size.x;
+        float displayHeight = size.y;
+
+
+        enable_audio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+
+                    if (!audioEnabled) {
+
+                        mRtcEngine.enableLocalAudio(false);
+                        mRtcEngine.enableAudio();
+
+                        mYouTubePlayer.setVolume(50);
+
+
+                        mRtcEngine.muteAllRemoteAudioStreams(false);
+
+                        audioEnabled = true;
+
+                        enable_audio.setBackgroundTintList(getActivity().getResources().getColorStateList(R.color.colorRed));
+                    } else {
+                        mRtcEngine.disableAudio();
+
+                        mYouTubePlayer.setVolume(100);
+                        mRtcEngine.muteAllRemoteAudioStreams(true);
+                        audioEnabled = false;
+
+                        enable_audio.setBackgroundTintList(getActivity().getResources().getColorStateList(R.color.darkGrey));
+                    }
+
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });
@@ -1099,10 +1152,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         });
 
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float displayHeight = size.y;
 
 
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
@@ -2320,6 +2369,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             @Override
                             public void run() {
                                 connectingUserVideo.setVisibility(View.INVISIBLE);
+                                enable_audio.setVisibility(View.VISIBLE);
 
 
 
@@ -2337,6 +2387,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     public void run() {
                         resetLiveVideoViews();
 
+                        enable_audio.setVisibility(View.GONE);
                         blinkReceiver = false;
                     }
                 });
@@ -2425,7 +2476,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private void setupVideoProfile() {
 
         mRtcEngine.enableVideo();
-        //mRtcEngine.enableAudio();
         mRtcEngine.disableAudio();
         mRtcEngine.enableLocalAudio(false);
         mRtcEngine.stopAudioRecording();
@@ -2447,6 +2497,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         frameLocalContainer.addView(surfaceView);
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, 0));
 
+        //mRtcEngine.
+
 
     }
 
@@ -2460,15 +2512,20 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         frameRemoteContainer.removeAllViews();
 
+        //remote_audio_video_view_container.removeAllViews();
+
         /*if (frameRemoteContainer.getChildCount() >= 1) {
             return;
         }*/
 
-        SurfaceView surfaceView = RtcEngine.CreateRendererView(getContext());
 
-        frameRemoteContainer.addView(surfaceView);
-        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
-        surfaceView.setTag(uid);
+        remotesurfaceView = RtcEngine.CreateRendererView(getContext());
+
+        frameRemoteContainer.addView(remotesurfaceView);
+        mRtcEngine.setupRemoteVideo(new VideoCanvas(remotesurfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
+        remotesurfaceView.setTag(uid);
+
+
 
     }
 

@@ -90,7 +90,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
             }
         });
 
-        viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
+        /*viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -122,7 +122,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                 return false;
             }
 
-        });
+        });*/
 
 
 
@@ -181,6 +181,12 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
             @Override
             public void onClick(View v) {
 
+
+                viewHolder.progressBarOne.setVisibility(View.VISIBLE);
+                viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
+                viewHolder.user_photo.setAlpha(0.95f);
+                viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -190,10 +196,14 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                         intent.putExtra("photo", user.getPhoto());
                         intent.putExtra("live", "no");
                         mContext.startActivity(intent);
+                        viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                        viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                        viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
+                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
 
 
                     }
-                }, 100);
+                }, 50);
 
             }
         });

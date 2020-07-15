@@ -312,7 +312,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
 
-        viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
+        /*viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -344,7 +344,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 return false;
             }
 
-        });
+        });*/
 
 
         viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
@@ -528,6 +528,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
             public void onClick(View v) {
 
 
+                viewHolder.user_photo.setAlpha(0.6f);
+
+                viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                viewHolder.progressBarOne.setVisibility(View.VISIBLE);
+                viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -539,6 +544,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                         {
 
                         }
+                       /* viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                        viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);*/
                         Intent intent = new Intent(mContext, VerticalPageActivity.class);
                         intent.putExtra("username", chatStamp.getUsername());
                         intent.putExtra("userid", chatStamp.getId());
