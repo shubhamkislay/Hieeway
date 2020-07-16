@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -76,6 +77,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomUiController;
 import com.hieeway.hieeway.Model.YoutubeSync;
 import com.hieeway.hieeway.SyncService;
+import com.hieeway.hieeway.VerticalPageActivity;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -232,10 +234,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private ValueEventListener singleYoutubeListener;
     private DatabaseReference singleSeekRef;
     private float youtubeVideoSec = 0;
+    private float youtubeSynSec = 0;
     LinearLayout remoteViewlayout;
     private ImageButton enable_audio;
     private SurfaceView remotesurfaceView;
     private boolean audioEnabled = false;
+    private Activity parentActivity;
+    private boolean loadWhenInitialised = false;
 
 
     public LiveMessageFragment() {
@@ -885,7 +890,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             // youtubeVideoSec
 
                             try {
-                                mYouTubePlayer.seekTo(0);
+                                if (!youtubeID.equals("default")) {
+                                    HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                                    youtubeVideoHash.put("videoSec", youtubeVideoSec);
+                                    youtubeVideoHash.put("youtubeID", youtubeID);
+
+
+                                    FirebaseDatabase.getInstance().getReference("Video")
+                                            .child(userIDCHATTINGWITH)
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .updateChildren(youtubeVideoHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            //  mYouTubePlayer.seekTo(0);
+
+                                            FirebaseDatabase.getInstance().getReference("Video")
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(userIDCHATTINGWITH)
+                                                    .updateChildren(youtubeVideoHash);
+                                        }
+                                    });
+                                }
+
                             } catch (Exception e) {
                                 //
                             }
@@ -943,7 +969,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     try {
                         YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
 
-                        youtube_player_view.setVisibility(View.INVISIBLE);
+
 
 
                         try {
@@ -953,17 +979,31 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                             // Toast.makeText(getActivity(), "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
                         }
-                        youtube_layout.setVisibility(View.VISIBLE);
+
                         //youtube_player_view.setVisibility(View.VISIBLE);
 
-                        sync_video_layout.setVisibility(View.VISIBLE);
-                        if (!youtubeSync.getYoutubeID().equals("default"))
+
+                        if (!youtubeSync.getYoutubeID().equals("default")) {
                             youtubeID = youtubeSync.getYoutubeID();
-                        mYouTubePlayer.loadVideo(youtubeID, youtubeSync.getVideoSec());
+                            youtubeSynSec = youtubeSync.getVideoSec();
+                        }
+
+                        loadWhenInitialised = false;
+
+                        mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
                         mYouTubePlayer.play();
+                        sync_video_layout.setVisibility(View.VISIBLE);
+                        youtube_player_view.setVisibility(View.INVISIBLE);
+                        youtube_layout.setVisibility(View.VISIBLE);
                         // seekRef.removeValue();
                     } catch (Exception e) {
-                        //Toast.makeText(getActivity(), "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getActivity(), "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+
+                        loadWhenInitialised = true;
+                        sync_video_layout.setVisibility(View.VISIBLE);
+                        youtube_player_view.setVisibility(View.INVISIBLE);
+                        youtube_layout.setVisibility(View.VISIBLE);
+
                             /*youtube_layout.setVisibility(View.GONE);
                             //youtube_player_view.setVisibility(View.VISIBLE);
 
@@ -1003,6 +1043,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 .child(userIDCHATTINGWITH)
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .updateChildren(diHash);
+
                     }
 
 
@@ -1027,10 +1068,17 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             .updateChildren(disconnectHash);
 
                     if (userPresent)
-                        live_video_control_layout.setVisibility(View.GONE);
+                        live_video_control_layout.setVisibility(View.VISIBLE);
+
+
                 } else {
                     // Log.d(TAG, "not connected");
                     // Log.d(TAG, "not connected");
+
+                    if (userPresent)
+                        live_video_control_layout.setVisibility(View.GONE);
+
+
                     onDisconnectFromDB();
                 }
             }
@@ -1064,6 +1112,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 //mYouTubePlayer.addListener(customUiController);
                 playerInitialised = true;
+
+                if (loadWhenInitialised) {
+                    mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
+                    mYouTubePlayer.play();
+                }
 
 
                 // mYouTubePlayer.addListener(youtube_player_seekbar);
@@ -1768,14 +1821,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
         try {
-            presenceRef.addValueEventListener(presentEventListener);
+
             urlRef.addValueEventListener(valueEventListener);
+            presenceRef.addValueEventListener(presentEventListener);
             seekRef.onDisconnect().removeValue();
-            seekRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            seekRef.addValueEventListener(seekValueEventListener);
+
+
+
+       /*     seekRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
 
-                    FirebaseDatabase.getInstance().getReference("Video")
+                    *//*FirebaseDatabase.getInstance().getReference("Video")
                             .child(userIDCHATTINGWITH)
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .runTransaction(new Transaction.Handler() {
@@ -1788,10 +1846,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 youtubeVideoHash.put("videoSec", 0);
                                 youtubeVideoHash.put("youtubeID", youtubeSync.getYoutubeID());
 
+
                                 FirebaseDatabase.getInstance().getReference("Video")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                         .child(userIDCHATTINGWITH)
                                         .updateChildren(youtubeVideoHash);
+
                             } catch (Exception e) {
 
                             }
@@ -1802,13 +1862,23 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
 
-                            seekRef.addValueEventListener(seekValueEventListener);
+
+                         //   youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    seekRef.addValueEventListener(seekValueEventListener);
+                                }
+                            }, 2000);
+
                         }
-                    });
+                    });*//*
+
+                    seekRef.addValueEventListener(seekValueEventListener);
 
                 }
             });
-
+*/
             /*new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1822,11 +1892,22 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         } catch (NullPointerException e) {
             // liveMessageEventListener.changeFragment();
-            try {
-                getActivity().finish();
-            } catch (Exception ne) {
-                liveMessageEventListener.changeFragment();
-            }
+            //  try {
+            // getActivity().finish();
+
+            Intent intent = new Intent(parentActivity, VerticalPageActivity.class);
+            intent.putExtra("username", usernameChattingWith);
+            intent.putExtra("userid", userChattingWithId);
+            intent.putExtra("photo", photo);
+            intent.putExtra("live", "live");
+
+            parentActivity.startActivity(intent);
+            parentActivity.finish();
+            //} catch (Exception ne) {
+            //liveMessageEventListener.changeFragment();
+
+
+            // }
         }
         startedLivingMessaging = true;
 
@@ -2103,11 +2184,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     }
 
-    public void showLiveMessageDialog(Activity activity) {
+    public void showLiveMessageDialog(Activity activity, String live) {
 
         try {
 
-            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, this);
+            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, this, live);
             // LiveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             liveMessageRequestDialog.setCancelable(false);
             liveMessageRequestDialog.setCanceledOnTouchOutside(false);
@@ -2119,25 +2200,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }
     }
 
-    public void destoryLiveFragment() {
+    public void destoryLiveFragment() throws NullPointerException {
+        try {
 
-        if (startedLivingMessaging) {
-            // Toast.makeText(activity, "Fragment Destroyed", Toast.LENGTH_SHORT).show();
+            if (startedLivingMessaging) {
+                // Toast.makeText(activity, "Fragment Destroyed", Toast.LENGTH_SHORT).show();
 
-            top_bar.setVisibility(View.VISIBLE);
-            youtube_layout.setVisibility(View.GONE);
-            youtube_player_view.setVisibility(View.GONE);
 
-            if (videoStarted)
-                mYouTubePlayer.pause();
+                top_bar.setVisibility(View.VISIBLE);
+                youtube_layout.setVisibility(View.GONE);
+                youtube_player_view.setVisibility(View.GONE);
 
-            HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-            youtubeVideoHash.put("youtubeUrl", "default");
 
-            FirebaseDatabase.getInstance().getReference("ChatList")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .child(userIDCHATTINGWITH)
-                    .updateChildren(youtubeVideoHash);
+                if (videoStarted)
+                    mYouTubePlayer.pause();
+
+                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                youtubeVideoHash.put("youtubeUrl", "default");
+
+                FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userIDCHATTINGWITH)
+                        .updateChildren(youtubeVideoHash);
 
 /*FirebaseDatabase.getInstance().getReference("ChatList")
                     .child(userIDCHATTINGWITH)
@@ -2145,20 +2229,24 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     .updateChildren(youtubeVideoHash);*/
 
 
-            presenceRef.removeEventListener(presentEventListener);
-            urlRef.removeEventListener(valueEventListener);
-            seekRef.removeEventListener(seekValueEventListener);
-            startedLivingMessaging = false;
-            initialiseActivity = false;
-            initialiseSeekEvent = false;
+                presenceRef.removeEventListener(presentEventListener);
+                urlRef.removeEventListener(valueEventListener);
+                seekRef.removeEventListener(seekValueEventListener);
+                startedLivingMessaging = false;
+                initialiseActivity = false;
+                initialiseSeekEvent = false;
 
-            stopObservingLiveMessaging = true;
-            // Toast.makeText(getActivity(), "Live Messaging ended", Toast.LENGTH_SHORT).show();
+                stopObservingLiveMessaging = true;
+                // Toast.makeText(getActivity(), "Live Messaging ended", Toast.LENGTH_SHORT).show();
 
-            stopSignalling();
-            receiverTextView.setText("");
-            senderTextView.setText("");
+                stopSignalling();
+                receiverTextView.setText("");
+                senderTextView.setText("");
 
+
+            }
+        } catch (Exception e) {
+            //
         }
     }
 
@@ -2204,9 +2292,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }
     }
 
-    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener) throws NullPointerException
+    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith) throws NullPointerException
     {
         this.liveMessageEventListener = liveMessageEventListener;
+        this.parentActivity = parentActivity;
+        this.photo = photo;
+        this.usernameChattingWith = usernameChattingWith;
+        this.userChattingWithId = userIdChattingWith;
 
 
     }
@@ -2369,7 +2461,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             @Override
                             public void run() {
                                 connectingUserVideo.setVisibility(View.INVISIBLE);
-                                enable_audio.setVisibility(View.VISIBLE);
+                                //enable_audio.setVisibility(View.VISIBLE);
 
 
 
@@ -2637,9 +2729,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         final HashMap<String, Object> timeStampHash = new HashMap<>();
         timeStampHash.put("timeStamp", ts);
-        timeStampHash.put("id", userIDCHATTINGWITH);
-        timeStampHash.put("username", userNameChattingWith);
-        timeStampHash.put("photo", USERPHOTO);
+        timeStampHash.put("id", userChattingWithId);
+        timeStampHash.put("username", usernameChattingWith);
+        timeStampHash.put("photo", photo);
         timeStampHash.put("seen", "notseen");
         timeStampHash.put("chatPending", false);
 
@@ -2654,7 +2746,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         timeStampHashReceiver.put("seen", "notseen");
         timeStampHashReceiver.put("present", true);
         timeStampHashReceiver.put("chatPending", true);
+
         receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
 
         initialiseLiveragment();
         createLiveMessageDbInstance();
@@ -2673,7 +2767,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        destoryLiveFragment();
+        try {
+            // destoryLiveFragment();
+        } catch (Exception e) {
+
+        }
 
     }
 }

@@ -179,6 +179,7 @@ public class MusicSyncNotification extends Service {
         Notification notification = new NotificationCompat.Builder(MusicSyncNotification.this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                 .setCustomContentView(collapsedView)
+                .setCustomBigContentView(collapsedView)
                 .setAutoCancel(true)
                 /*.setContentTitle("Live Message Request")
                 .setContentText(username+" wants to live chat")

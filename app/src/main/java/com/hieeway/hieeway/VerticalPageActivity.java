@@ -22,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -492,10 +494,11 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             //Toast.makeText(VerticalPageActivity.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
             if (live.equals("live")) {
 
-                liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
+                liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith);
 
 
-                liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
+                liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "live");
+                //liveMessageFragment.startLiveMessaging();
                 sendMessageFragment.removeListeners();
 
                 pageSelected = 2;
@@ -531,10 +534,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                     //liveMessageFragment.initialiseLiveragment(VerticalPageActivity.this);
 
-                    liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this);
+                    liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith);
 
 
-                    liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this);
+                    liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "no");
                     sendMessageFragment.removeListeners();
                   //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
 
@@ -550,12 +553,22 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                         liveMessageFragment.destoryLiveFragment();
 
-                        HashMap<String, Object> hashMap = new HashMap<>();
-                        hashMap.put("present", false);
-                        FirebaseDatabase.getInstance().getReference("ChatList")
-                                .child(userIDCHATTINGWITH)
+                        FirebaseDatabase.getInstance().getReference("Video")
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .updateChildren(hashMap);
+                                .child(userIDCHATTINGWITH)
+                                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("present", false);
+                                FirebaseDatabase.getInstance().getReference("ChatList")
+                                        .child(userIDCHATTINGWITH)
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .updateChildren(hashMap);
+                            }
+                        });
+
+
                     }
 
                     sendMessageFragment.removeListeners();
