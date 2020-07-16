@@ -4,6 +4,7 @@ package com.hieeway.hieeway.Fragments;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -149,7 +150,7 @@ public class RegisterEmailEntryFragment extends Fragment {
             }
         });
 
-        //  greet_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        greet_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         new Handler().postDelayed(new Runnable() {
             @Override
