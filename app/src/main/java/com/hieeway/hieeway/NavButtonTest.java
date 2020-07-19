@@ -42,6 +42,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -685,44 +686,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                User user = dataSnapshot.getValue(User.class);
-
-                phonenumber = user.getPhonenumber();
-
-                USER_ID = user.getUserid();
-                USER_NAME = user.getUsername();
-                USER_PHOTO = user.getPhoto();
-
-                if(!user.getPhoto().equals("default")) {
-                    try {
-                        Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnPressed);
-                        Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnUnpressed);
-
-                        try {
-                            bitmap = Glide.with(NavButtonTest.this)
-                                    .asBitmap()
-                                    .load(user.getPhoto())
-                                    .submit(50, 50)
-                                    .get();
-
-                            profileFragment.setBitmap(bitmap);
-
-                        } catch (Exception e) {
-                            //
-                        }
-
-
-
-                    } catch (Exception e) {
-
-                    }
-                }
-                else
-                {
-                    profileBtnPressed.setImageResource(R.drawable.no_profile);
-                    profileBtnUnpressed.setImageResource(R.drawable.no_profile);
-                }
-
+                loadImageThread(dataSnapshot);
             }
 
             @Override
@@ -730,6 +694,83 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
             }
         });
+    }
+
+    private void loadImageThread(DataSnapshot dataSnapshot) {
+
+        final TaskCompletionSource<Bitmap> source = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+
+                if (dataSnapshot.exists()) {
+
+                    User user = dataSnapshot.getValue(User.class);
+
+                    phonenumber = user.getPhonenumber();
+
+                    USER_ID = user.getUserid();
+                    USER_NAME = user.getUsername();
+                    USER_PHOTO = user.getPhoto();
+
+                    if (!user.getPhoto().equals("default")) {
+                        try {
+                            //  Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnPressed);
+                            //Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnUnpressed);
+
+                            bitmap = Glide.with(NavButtonTest.this)
+                                    .asBitmap()
+                                    .load(user.getPhoto())
+                                    .submit(100, 100)
+                                    .get();
+
+                            // profileFragment.setBitmap(bitmap);
+
+                            source.setResult(bitmap);
+
+
+                        } catch (Exception e) {
+
+                            source.setException(e);
+
+                        }
+                    } else {
+                        //profileBtnPressed.setImageResource(R.drawable.no_profile);
+                        //profileBtnUnpressed.setImageResource(R.drawable.no_profile);
+                        source.setException(new NullPointerException());
+
+                    }
+
+
+                } else {
+                    source.setException(new NullPointerException());
+                }
+
+            }
+        }).start();
+
+
+        Task<Bitmap> task = source.getTask();
+        task.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+            @Override
+            public void onComplete(@NonNull Task<Bitmap> task) {
+                if (task.isSuccessful()) {
+                    Glide.with(NavButtonTest.this).load(task.getResult()).into(profileBtnPressed);
+                    Glide.with(NavButtonTest.this).load(task.getResult()).into(profileBtnUnpressed);
+                    profileFragment.setBitmap(task.getResult());
+                } else {
+                    Toast.makeText(NavButtonTest.this, "Image not uploaded", Toast.LENGTH_SHORT).show();
+                    profileBtnPressed.setImageResource(R.drawable.no_profile);
+                    profileBtnUnpressed.setImageResource(R.drawable.no_profile);
+                }
+            }
+
+
+        });
+
+
     }
 
     private void setPaletteColor() {

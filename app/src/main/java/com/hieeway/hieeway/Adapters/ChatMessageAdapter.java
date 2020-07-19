@@ -55,6 +55,9 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -73,6 +76,7 @@ import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.Pal;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicPalService;
+import com.hieeway.hieeway.NavButtonTest;
 import com.hieeway.hieeway.R;
 
 import com.hieeway.hieeway.RevealReplyActivity;
@@ -235,7 +239,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
             final ChatStamp chatStamp = mChatStamps.get(viewHolder.getAdapterPosition());
             final int position = viewHolder.getAdapterPosition();
-        CheckPendingMessageAsyncModel checkPendingMessageAsyncModel = new CheckPendingMessageAsyncModel();
+
 
         viewHolder.username.setText(chatStamp.getUsername());
 
@@ -249,20 +253,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
 
-        checkPendingMessageAsyncModel.setUserChattingWith(chatStamp.getId());
-        checkPendingMessageAsyncModel.setRelativeLayout(viewHolder.relativeLayout);
-        checkPendingMessageAsyncModel.setCountMsgLayout(viewHolder.count_message_layout);
-        checkPendingMessageAsyncModel.setCountMessageText(viewHolder.count_message_text);
-
-
 
         checkPendingMessages(chatStamp.getId(), viewHolder.relativeLayout,viewHolder.count_message_layout,viewHolder.count_message_text);
         checkUserChangeAccountChange(chatStamp.getId(),chatStamp.getPhoto(),viewHolder.user_photo);
 
-      //  new CheckPendingMessagesAsyncTask().execute(checkPendingMessageAsyncModel);
 
-
-
+        Log.v("ChatMessageAdapter", "onBindViewHolder called!!!!!!");
 
 
 
@@ -487,14 +483,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.placeholder(R.color.darkGrey);
                 //requestOptions.centerCrop();
-               // requestOptions.override(200, 400);
 
-
-
-
-               // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
                 try {
-                    Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto().replace("s96-c", "s384-c")).listener(new RequestListener<Drawable>() {
+                    Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto().replace("s96-c", "s384-c"))
+                            .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             return false;
@@ -516,21 +508,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                             viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
                             return false;
                         }
-                    }).transition(withCrossFade()).into(viewHolder.user_photo);
+                            })
+                            .transition(withCrossFade()).into(viewHolder.user_photo);
                 }catch (Exception e)
                 {
 
                     viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
                 }
-                /*Glide.with(mContext).asBitmap().load(chatStamp.getPhoto()).into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
 
-                        Bitmap roundedCorner = getRoundedCornerBitmap(resource);
-                        viewHolder.user_photo.setImageBitmap(roundedCorner);
-
-                    }
-                });*/
 
             }
         } catch (Exception e) {
@@ -597,30 +582,70 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    User user = dataSnapshot.getValue(User.class);
-                    if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
 
-                            HashMap<String, Object> userPhotoChangehash = new HashMap<>();
-                            userPhotoChangehash.put("photo", user.getPhoto());
-                            DatabaseReference databaseReferenceChatStamp = FirebaseDatabase.getInstance().getReference("ChatList")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(userChattingWith);
 
-                            databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
+                TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
 
-                            try {
-                                Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
-                            } catch (Exception e) {
 
-                                user_photo.setImageResource(R.drawable.no_profile);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dataSnapshot.exists()) {
+                            User user = dataSnapshot.getValue(User.class);
+                            if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
+
+                                HashMap<String, Object> userPhotoChangehash = new HashMap<>();
+                                userPhotoChangehash.put("photo", user.getPhoto());
+                                DatabaseReference databaseReferenceChatStamp = FirebaseDatabase.getInstance().getReference("ChatList")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userChattingWith);
+
+                                databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
+
+                                try {
+                                    //Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
+
+
+                                    Bitmap bitmap = Glide.with(mContext)
+                                            .asBitmap()
+                                            .load(user.getPhoto().replace("s96-c", "s384-c"))
+                                            .submit(300, 300)
+                                            .get();
+
+                                    bitmapTaskCompletionSource.setResult(bitmap);
+
+
+                                } catch (Exception e) {
+
+                                    bitmapTaskCompletionSource.setException(new NullPointerException());
+                                }
+
                             }
+                            if (user.getPhoto().equals("default")) {
+                                bitmapTaskCompletionSource.setException(new NullPointerException());
+                            }
+                        } else {
+                            bitmapTaskCompletionSource.setException(new NullPointerException());
+                        }
+                    }
+                }).start();
+
+                Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+                bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Bitmap> task) {
+
+                        if (task.isSuccessful()) {
+                            Glide.with(mContext).load(task.getResult()).into(user_photo);
+                        } else {
+                            user_photo.setImageResource(R.drawable.no_profile);
+                        }
 
                     }
-                    if (user.getPhoto().equals("default")) {
-                        user_photo.setImageResource(R.drawable.no_profile);
-                    }
-                }
+                });
+
+
+
             }
 
             @Override
@@ -688,37 +713,60 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                countMessages.clear();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                TaskCompletionSource<Integer> integerTaskCompletionSource = new TaskCompletionSource<>();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        countMessages.clear();
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
 
-                    ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                            ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
 
-                    try {
-                        if (publicKeyId.equals(null))
-                            Toast.makeText(mContext, "PublicKeyId is empty", Toast.LENGTH_SHORT).show();
+                            try {
+                                if (publicKeyId.equals(null))
+                                    Toast.makeText(mContext, "PublicKeyId is empty", Toast.LENGTH_SHORT).show();
 
-                        if (chatMessage.getSenderId().equals(userChattingWith) && chatMessage.getPublicKeyID().equals(publicKeyId))
-                            countMessages.add(chatMessage);
-                    } catch (NullPointerException ne) {
+                                if (chatMessage.getSenderId().equals(userChattingWith) && chatMessage.getPublicKeyID().equals(publicKeyId))
+                                    countMessages.add(chatMessage);
+                            } catch (NullPointerException ne) {
+
+                            }
+
+
+                        }
+
+                        integerTaskCompletionSource.setResult(countMessages.size());
 
                     }
+                }).start();
 
+                Task<Integer> integerTask = integerTaskCompletionSource.getTask();
 
-                }
+                integerTask.addOnCompleteListener(new OnCompleteListener<Integer>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Integer> task) {
 
-                if (countMessages.size() > 0) {
-                    relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back_new_message));
-                    countMessageText.setText("" + countMessages.size());
-                    countMsgLayout.setVisibility(View.VISIBLE);
-                    //  counterBackgroundLayout.setVisibility(View.VISIBLE);
+                        if (task.isSuccessful()) {
+                            if (integerTask.getResult() > 0) {
+                                relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back_new_message));
+                                countMessageText.setText("" + integerTask.getResult());
+                                countMsgLayout.setVisibility(View.VISIBLE);
+                                //  counterBackgroundLayout.setVisibility(View.VISIBLE);
 
-                } else {
-                    relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back));
-                    countMsgLayout.setVisibility(View.INVISIBLE);
-                    // counterBackgroundLayout.setVisibility(View.INVISIBLE);
-                }
+                            } else {
+                                relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back));
+                                countMsgLayout.setVisibility(View.INVISIBLE);
+                                // counterBackgroundLayout.setVisibility(View.INVISIBLE);
+                            }
+                        }
+
+                    }
+                });
 
 
             }

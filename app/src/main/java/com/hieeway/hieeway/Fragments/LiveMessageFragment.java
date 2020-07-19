@@ -183,7 +183,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     Boolean resultReady = false;
     RelativeLayout top_bar;
     YouTubePlayerSeekBar youtube_player_seekbar;
-    Button youtube_button;
+    ImageButton youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener;
     ListView video_listView;
@@ -2734,7 +2734,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         timeStampHashReceiver.put("present", true);
         timeStampHashReceiver.put("chatPending", true);
 
-        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+        FirebaseDatabase.getInstance().getReference("Video")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userIDCHATTINGWITH)
+                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+            }
+        });
+
+
 
 
         initialiseLiveragment();

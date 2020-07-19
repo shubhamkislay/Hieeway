@@ -677,6 +677,7 @@ public class FriendListFagment extends Fragment {
                         }
 
                     }
+
                     if (!friendAvailable) {
                         if (friendRequests) {
                             search_result_txt.setVisibility(View.VISIBLE);

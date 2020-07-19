@@ -7,6 +7,9 @@ import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -140,8 +143,14 @@ public class ChatsFragmentViewModel extends ViewModel {
 
             @Override
             public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                userList.clear();
 
+
+                TaskCompletionSource<List<ChatStamp>> taskCompletionSource = new TaskCompletionSource<>();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        userList.clear();
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -149,60 +158,39 @@ public class ChatsFragmentViewModel extends ViewModel {
 
                                 ChatStamp chatStamp = snapshot.getValue(ChatStamp.class);
 
-
-
-                    /*for(ChatStamp chatStamp : chatStampList)
-                    {
-
-                        if(chatStamp.getId().equals(user.getUserid()))
-                        {
-
-*/
                                 try {
                                     if (!chatStamp.getId().equals(firebaseUser.getUid()))
                                         userList.add(chatStamp);
 
-                                }catch (Exception e)
-                                {
+                                }catch (Exception e) {
 
                                 }
 
-                            }catch (Exception e)
-                            {
+                            }catch (Exception e) {
                                 //
                             }
 
 
-                        /*}
-
-
-
-                    }*/
-                            //   Collections.reverse(userList);
-
-
-
-
-
-                    /*assert user != null;
-                    assert firebaseUser != null;
-                    try {
-                        if (!user.getUserid().equals(firebaseUser.getUid()))
-                            userList.add(user);
-                    }catch (Exception e)
-                    {
-                        // Toast.makeText(,"Internet is crawling!",Toast.LENGTH_SHORT).show();
-                        Log.e("Null Pointer Userid","Check your internet connection");
-                    }*/
-
                         }
 
+                        taskCompletionSource.setResult(userList);
 
+                    }
+                }).start();
 
+                Task<List<ChatStamp>> task = taskCompletionSource.getTask();
 
+                task.addOnCompleteListener(new OnCompleteListener<List<ChatStamp>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<ChatStamp>> task) {
 
+                        if (task.isSuccessful()) {
 
-                setValue(userList);
+                            setValue(task.getResult());
+                        }
+
+                    }
+                });
 
 
 
