@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -1500,9 +1501,17 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
                         if (imageReady) {
-                            profile_pic.animate().alpha(1.0f).setDuration(750);
+                            {
+                                profile_pic.animate().alpha(1.0f).setDuration(750);
+                                /*final Matrix matrix = profile_pic.getImageMatrix();
+                                final float imageWidth = resource.getIntrinsicWidth();
+                                final int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels/2;
+                                final float scaleRatio = screenWidth / imageWidth;
+                                matrix.postScale(scaleRatio, scaleRatio);*/
+                            }
 
                             imageLoaded = true;
+
 
                             //   read_message_back.animate().alpha(0.0f);
 

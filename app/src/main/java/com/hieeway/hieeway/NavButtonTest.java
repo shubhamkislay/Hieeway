@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.palette.graphics.Palette;
 
 import android.os.Bundle;
@@ -89,56 +90,52 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private TextView text_search;
     private ImageView searchBtnPressed, searchBtnUnpressed;
 
-    public static final int PERMISSION_PICK_IMAGE = 1000;
+    private static final int PERMISSION_PICK_IMAGE = 1000;
     private TextView text_profile;
     private CircleImageView profileBtnPressed, profileBtnUnpressed;
 
     private FrameLayout frameLayout;
-    EditBioLayoutFragment editBioLayoutFragment;
-
-    ChatsFragment chatsFragment;
-    PeopleFragment peopleFragment;
-    ProfileFragment profileFragment;
-    FriendListFagment friendListFagment;
-    AddFeelingFragment addFeelingFragment;
+    public static String USER_NAME;
+    private EditBioLayoutFragment editBioLayoutFragment;
+    private ChatsFragment chatsFragment;
+    private PeopleFragment peopleFragment;
+    private ProfileFragment profileFragment;
+    private FriendListFagment friendListFagment;
     public MediaPlayer mediaPlayer;
     private Bundle bundle;
-
-    ConstraintLayout nav_bar;
-    Boolean playFrameAnimation = true;
-
-    ImageView sendArrow, background_screen;
-    float buttonSizeAlpha = 1.30f;
-    float displayHeight;
-    ObjectAnimator animatorY, alphaArrow, animateTextLogo, alphaBackgroundScreen, alphaMasterHead, alphaNavBar, alphaFrameLayout;
-    AnimatorSet animatorSet;
-    TypeWriter typeWriter;
-    TextView master_head;
+    private AddFeelingFragment addFeelingFragment;
+    private ConstraintLayout nav_bar;
+    private Boolean playFrameAnimation = true;
+    private ImageView sendArrow, background_screen;
+    private float buttonSizeAlpha = 1.30f;
+    private float displayHeight;
+    private ObjectAnimator animatorY, alphaArrow, animateTextLogo, alphaBackgroundScreen, alphaMasterHead, alphaNavBar, alphaFrameLayout;
+    private AnimatorSet animatorSet;
+    private TypeWriter typeWriter;
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
-    RelativeLayout splash_layout, video_splash_layout;
+    private TextView master_head;
 
     private static final int IMAGE_REQUEST=1;
-    DatabaseReference databaseReference;
-    StorageReference storageReference;
+    private RelativeLayout splash_layout, video_splash_layout;
+    private DatabaseReference databaseReference;
     private Button uploadButton;
     private StorageTask uploadTask;
-    RelativeLayout progressBar;
-
-
-    RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
-    RelativeLayout nav_parent_layout, app_logo;
-    int fragmentId=1;
+    private StorageReference storageReference;
+    private RelativeLayout progressBar;
+    private RelativeLayout home_button_layout, friends_button_layout, people_button_layout, profile_button_layout;
+    private RelativeLayout nav_parent_layout, app_logo;
     private Bitmap bitmap;
     private String phonenumber = "default";
-    Window window;
+    private int fragmentId = 1;
     private MutedVideoView view, videoViewalt;
     private boolean videoPlayBack = true;
     private boolean continueAppLogoAnim = true;
     private int stopPosition;
-    public static String USER_NAME;
+    private Window window;
     public static String USER_PHOTO;
     public static String USER_ID;
+    private FragmentManager menuFragmentManager;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -161,6 +158,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileFragment = new ProfileFragment();
 
         progressBar = findViewById(R.id.progress);
+
+        menuFragmentManager = getSupportFragmentManager();
 
 
         getUserImageIntoNavButton();
@@ -362,16 +361,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         addFeelingFragment = new AddFeelingFragment();
 
-        ArrayList<Fragment> fragmentList = new ArrayList<>();
 
-
-        fragmentList.add(chatsFragment);
-        fragmentList.add(friendListFagment);
-        fragmentList.add(peopleFragment);
-        fragmentList.add(profileFragment);
-
-
-        getSupportFragmentManager().beginTransaction()
+        menuFragmentManager.beginTransaction()
                 .replace(R.id.container_layout, chatsFragment).commit();
 
         homeBtnPressed.setOnTouchListener(new View.OnTouchListener() {
@@ -415,6 +406,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         });
 
 
+        /**
+         * Uncomment
+         */
 
 
         home_button_layout.setOnClickListener(new View.OnClickListener() {
@@ -482,6 +476,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             }
         });
 
+/**
+ * Uncomment
+ */
 
 
 
@@ -550,6 +547,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 return false;
             }
         });
+
+        /**
+         * Uncomment
+         */
 
 
         people_button_layout.setOnClickListener(new View.OnClickListener() {
@@ -628,6 +629,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 return false;
             }
         });
+
+        /**
+         * Uncomment
+         */
+
 
         profile_button_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -826,16 +832,22 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         if(fragmentId>2) {
 
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                    .replace(R.id.container_layout, friendListFagment).commit();
+                    .replace(R.id.container_layout, friendListFagment)
+                    .remove(chatsFragment)
+                    .remove(peopleFragment)
+                    .remove(profileFragment).commit();
         }
 
         else {
 
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
-                    .replace(R.id.container_layout, friendListFagment).commit();
+                    .replace(R.id.container_layout, friendListFagment)
+                    .remove(chatsFragment)
+                    .remove(peopleFragment)
+                    .remove(profileFragment).commit();
         }
 
         fragmentId=2;
@@ -904,11 +916,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         text_home.setVisibility(View.VISIBLE);
 
 
-
-
-        getSupportFragmentManager().beginTransaction()
+        menuFragmentManager.beginTransaction()
                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                .replace(R.id.container_layout, chatsFragment).commit();
+                .replace(R.id.container_layout, chatsFragment)
+                .remove(friendListFagment)
+                .remove(peopleFragment)
+                .remove(profileFragment).commit();
 
         fragmentId=1;
 
@@ -960,7 +973,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         text_search.setVisibility(View.VISIBLE);
 
-/*        getSupportFragmentManager().beginTransaction()
+/*        menuFragmentManager.beginTransaction()
                  .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
                 .replace(R.id.container_layout, peopleFragment).commit();*/
 
@@ -968,14 +981,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         if(fragmentId>3) {
 
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                     .replace(R.id.container_layout, peopleFragment).commit();
         }
 
         else {
 
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
                     .replace(R.id.container_layout, peopleFragment).commit();
         }
@@ -1039,7 +1052,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
         getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
-        getSupportFragmentManager().beginTransaction()
+        menuFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
                 .replace(R.id.container_layout, profileFragment).commit();
         fragmentId=4;
@@ -1661,7 +1674,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
 
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                     .replace(R.id.container_layout, profileFragment).commit();
         }
@@ -1669,7 +1682,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         {
             editBioLayoutFragment = new EditBioLayoutFragment();
             editBioLayoutFragment.setCurrentBio(NavButtonTest.this,currentBio);
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                     .replace(R.id.container_layout, editBioLayoutFragment).commit();
         }
@@ -1686,14 +1699,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
 
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                     .replace(R.id.container_layout, profileFragment).commit();
         } else {
             addFeelingFragment = new AddFeelingFragment();
 
             addFeelingFragment.setAddFeelingFragmentListener(NavButtonTest.this);
-            getSupportFragmentManager().beginTransaction()
+            menuFragmentManager.beginTransaction()
                     .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                     .replace(R.id.container_layout, addFeelingFragment).commit();
         }

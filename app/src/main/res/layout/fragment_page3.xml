@@ -85,6 +85,7 @@
                     android:layout_marginLeft="2dp"
                     android:visibility="invisible"
                     android:layout_marginRight="2dp"
+                    android:hardwareAccelerated="true"
                     app:autoPlay="false"
                     app:showFullScreenButton="false"
                     android:background="@drawable/live_youtube_back"
@@ -494,15 +495,16 @@
 
                 <Button
                     android:id="@+id/youtube_btn"
-                    android:layout_width="36dp"
+                    android:layout_width="32dp"
 
-                    android:layout_height="36dp"
+                    android:layout_height="32dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="12dp"
                     android:layout_marginRight="4dp"
                     android:layout_toRightOf="@id/camera_background"
-                    android:background="@drawable/youtube_btn"
-                    android:backgroundTint="@color/colorWhite"
+
+                    android:background="@drawable/ic_youtube_searched_for_black_24dp"
+
                     android:visibility="visible" />
 
 

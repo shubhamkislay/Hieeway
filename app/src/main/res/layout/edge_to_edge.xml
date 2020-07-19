@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:id="@+id/chatbox_tem"
     android:layout_marginTop="16dp"
-    android:layout_height="240dp"
-    android:layout_margin="0.75dp"
+    android:layout_height="270dp"
+    android:layout_margin="2dp"
     android:padding="1.25dp"
 
     android:gravity="center"
@@ -33,18 +33,20 @@
         <com.hieeway.hieeway.CustomImageView
             android:id="@+id/user_photo"
             android:layout_width="match_parent"
-            android:foregroundGravity="center"
+            android:adjustViewBounds="true"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
+            android:foregroundGravity="bottom"
+            android:scaleType="matrix"
             android:transitionName="imageTransitionnot"
             android:layout_centerHorizontal="true"
-            android:src="@color/darkBack"/>
+            tools:src="@drawable/profile_pic" />
 
         <RelativeLayout
+            android:alpha="0.7"
             android:background="@drawable/chat_user_gradient"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.8"
+            android:visibility="visible"
             android:scaleType="centerCrop">
         </RelativeLayout>
 

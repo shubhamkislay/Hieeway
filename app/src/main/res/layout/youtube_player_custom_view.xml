@@ -23,8 +23,8 @@
 
     <RelativeLayout
         android:id="@+id/play_pause_btn"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="center"
         android:background="@drawable/ic_pause_circle_filled_black_24dp" />
 

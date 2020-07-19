@@ -18,7 +18,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -34,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -88,28 +91,26 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     private Context mContext;
     private List<ChatMessage> countMessages = new ArrayList<>();
-    public static final int ODD_MESSAGE = 1;
-    public static final int EVEN_MESSAGE = 2;
+
 
     public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String PRIVATE_KEY = "privateKey";
-    public static final String PUBLIC_KEY = "publicKey";
-    public String privateKeyText, publicKeyText;
+    private static final String PRIVATE_KEY = "privateKey";
+    private static final String PUBLIC_KEY = "publicKey";
+    private static final String PUBLIC_KEY_ID = "publicKeyID";
 
     private Boolean backgroundHighlight = false;
     private Activity activity;
     private List<ChatStamp> mChatStamps;
     private List<ChatStamp> newListChatStamp = new ArrayList<>();
-    RelativeLayout relativeLayout;
+    private String privateKeyText;
     private EphemeralMessageViewModel ephemeralMessageViewModel;
-    FirebaseAuth firebaseAuth;
-    String userPic = null;
-    Boolean chatPending = false;
-    DeleteOptionsDialog deleteOptionsDialog;
-    DeleteOptionsListener deleteOptionsListener;
-    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    private RelativeLayout relativeLayout;
+    private FirebaseAuth firebaseAuth;
+    private String userPic = null;
+    private Boolean chatPending = false;
+    private DeleteOptionsDialog deleteOptionsDialog;
+    private DeleteOptionsListener deleteOptionsListener;
     private  String publicKeyId = null;
-    int spanCount;
     public static final int MSG_FIRST_ROW= 1,MSG_NOT_PEND=0,MSG_FIRST_ITEM = 2;
 
     private static final int REQUEST_CODE = 1337;
@@ -130,7 +131,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
         privateKeyText = sharedPreferences.getString(PRIVATE_KEY,null);
-        publicKeyText = sharedPreferences.getString(PUBLIC_KEY,null);
+
         publicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID,null);
 
 
@@ -197,6 +198,17 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
             View view = LayoutInflater.from(mContext).inflate(R.layout.edge_to_edge, viewGroup, false);
+
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float dispSize = size.x;
+
+        RelativeLayout chatItem = view.findViewById(R.id.chatbox_tem);
+
+        chatItem.getLayoutParams().height = (int) dispSize * 6 / 10;
+
+
 
 
             return new ChatMessageAdapter.ViewHolder(view);
@@ -311,8 +323,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         });
 
 
-
-        /*viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
+        viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
@@ -344,7 +355,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 return false;
             }
 
-        });*/
+        });
 
 
         viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
@@ -475,7 +486,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.placeholder(R.color.darkGrey);
-                requestOptions.centerCrop();
+                //requestOptions.centerCrop();
                // requestOptions.override(200, 400);
 
 
@@ -494,6 +505,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                            // viewHolder.progressBar.setVisibility(View.INVISIBLE);
 
+
+                            final Matrix matrix = viewHolder.user_photo.getImageMatrix();
+                            final float imageWidth = resource.getIntrinsicWidth();
+                            final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                            final float scaleRatio = screenWidth / imageWidth;
+                            matrix.postScale(scaleRatio, scaleRatio);
+                            viewHolder.user_photo.setImageMatrix(matrix);
                             viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                             viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
                             return false;
@@ -657,89 +675,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         notifyItemRemoved(pos);
     }
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder{
-
-
-        public TextView username, count_message_text;
-       // public CircleImageView user_photo;
-        public RelativeLayout counterBackgroundLayout;
-        public ProgressBar progressBar, progressBarOne, progressBarTwo;
-        public ImageView user_photo;
-        public RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
-        public Button archiveBtn, delete_chat_head_btn;
-        public ImageButton longMsgBtn;
-
-
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            progressBar = itemView.findViewById(R.id.loading_image_progress_bar);
-            progressBarOne = itemView.findViewById(R.id.progress_one);
-            progressBarTwo = itemView.findViewById(R.id.progress_two);
-            username = itemView.findViewById(R.id.username);
-            user_photo = itemView.findViewById(R.id.user_photo);
-            relativeLayout = itemView.findViewById(R.id.chat_back_parent_layout);
-
-          //  counterBackgroundLayout = itemView.findViewById(R.id.message_count_back_chatlist);
-
-            count_message_layout = itemView.findViewById(R.id.count_message_layout);
-            count_message_text = itemView.findViewById(R.id.count_message_text);
-            chatbox_tem_Layout = itemView.findViewById(R.id.chatbox_tem);
-            archiveBtn = itemView.findViewById(R.id.archive_btn);
-            longMsgBtn = itemView.findViewById(R.id.long_msg_btn);
-            delete_chat_head_btn = itemView.findViewById(R.id.delete_chat_head_btn);
-
-
-        }
-
-    }
-
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 12;
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
-    }
-
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            return null;
-        }
-    }
-
-
-
-
-
-
-
-
-    public void checkPendingMessages(final String userChattingWith, final RelativeLayout relativeLayout, final RelativeLayout countMsgLayout, final TextView countMessageText)
+    private void checkPendingMessages(final String userChattingWith, final RelativeLayout relativeLayout, final RelativeLayout countMsgLayout, final TextView countMessageText)
     {
 
         countMessages.clear();
@@ -796,6 +732,43 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
         countMessages.clear();
 
+
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+
+        private TextView username, count_message_text;
+        // public CircleImageView user_photo;
+        private RelativeLayout counterBackgroundLayout;
+        private ProgressBar progressBar, progressBarOne, progressBarTwo;
+        private ImageView user_photo;
+        private RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
+        private Button archiveBtn, delete_chat_head_btn;
+        private ImageButton longMsgBtn;
+
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            progressBar = itemView.findViewById(R.id.loading_image_progress_bar);
+            progressBarOne = itemView.findViewById(R.id.progress_one);
+            progressBarTwo = itemView.findViewById(R.id.progress_two);
+            username = itemView.findViewById(R.id.username);
+            user_photo = itemView.findViewById(R.id.user_photo);
+            relativeLayout = itemView.findViewById(R.id.chat_back_parent_layout);
+
+            //  counterBackgroundLayout = itemView.findViewById(R.id.message_count_back_chatlist);
+
+            count_message_layout = itemView.findViewById(R.id.count_message_layout);
+            count_message_text = itemView.findViewById(R.id.count_message_text);
+            chatbox_tem_Layout = itemView.findViewById(R.id.chatbox_tem);
+            archiveBtn = itemView.findViewById(R.id.archive_btn);
+            longMsgBtn = itemView.findViewById(R.id.long_msg_btn);
+            delete_chat_head_btn = itemView.findViewById(R.id.delete_chat_head_btn);
+
+
+        }
 
     }
 

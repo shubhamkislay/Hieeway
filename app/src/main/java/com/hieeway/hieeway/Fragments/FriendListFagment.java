@@ -67,31 +67,31 @@ import java.util.List;
  */
 public class FriendListFagment extends Fragment {
 
-    public RecyclerView friend_list_recyclerview;
+    private RecyclerView friend_list_recyclerview;
     //private PeopleAdapter peopleAdapter;
 
     private FriendsAdapter friendsAdapter;
     private List<User> userList;
-    ImageView progress_menu_logo, progress_menu_logo_two;
+    private ImageView progress_menu_logo, progress_menu_logo_two;
     private TextView appTitle;
     private Button requests_btn, search_chat_btn;
-    ProgressBar progressBar,progressBarTwo;
-    RelativeLayout search_btn_layout, search_bar_layout;
+    private ProgressBar progressBar, progressBarTwo;
+    private RelativeLayout search_btn_layout, search_bar_layout;
     private CollapsingToolbarLayout toolbar;
-    Button close_search, search_chat_btn_back;
-    EditText search_bar;
-    TextView search_result_txt;
+    private Button close_search, search_chat_btn_back;
+    private EditText search_bar;
+    private TextView search_result_txt;
     private ValueEventListener valueEventListener;
     private Query query;
-    Button requests_btn_friends_back;
+    private Button requests_btn_friends_back;
 
-    Boolean searchBtnActive = true;
-    int friendRequestsCounter = 0;
+    private Boolean searchBtnActive = true;
+    private int friendRequestsCounter = 0;
     private boolean enableRefreshButton = false;
     private boolean friendRequests = false;
     private boolean friendAvailable = false;
-    Button contactsbntn;
-    String phonenumber = "default";
+    private Button contactsbntn;
+    private String phonenumber = "default";
     private SharedViewModel sharedViewModel;
 
 
@@ -381,10 +381,10 @@ public class FriendListFagment extends Fragment {
         boolean includeEdge = true;
 
         if(displayWidth>=1920)
-            spanCount=4;
+            spanCount = 2;
 
         else if(displayWidth>=1080)
-            spanCount=3;
+            spanCount = 2;
 
         else if(displayWidth>=500)
             spanCount=2;
@@ -457,7 +457,7 @@ public class FriendListFagment extends Fragment {
         return view;
     }
 
-    public void getUserPhonenumber() {
+    private void getUserPhonenumber() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -739,7 +739,7 @@ public class FriendListFagment extends Fragment {
         populateWithFriends();
     }
 
-    public void showSoftKeyboard(View view) {
+    private void showSoftKeyboard(View view) {
         if (view.requestFocus()) {
             InputMethodManager imm = (InputMethodManager)
                     getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -747,11 +747,12 @@ public class FriendListFagment extends Fragment {
         }
     }
 
-    public void hideSoftKeyboard(View view) {
+    private void hideSoftKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
-    public void animateMenuImage(ImageView imageView, ImageView imageViewTwo)
+
+    private void animateMenuImage(ImageView imageView, ImageView imageViewTwo)
     {
 
 

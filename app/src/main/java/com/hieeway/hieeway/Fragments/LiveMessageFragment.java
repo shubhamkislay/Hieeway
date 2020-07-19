@@ -569,16 +569,16 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onClick(View v) {
                 // if (userPresent) {
-                    youtubeBottomFragmentStateListener.setDrag(true);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    messageBox.clearFocus();
-                    search_video_edittext.requestFocus();
-                    search_video_edittext.setCursorVisible(true);
+                youtubeBottomFragmentStateListener.setDrag(true);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                messageBox.clearFocus();
+                search_video_edittext.requestFocus();
+                search_video_edittext.setCursorVisible(true);
 
-                    bottomSheetVisible = true;
-                    if (isKeyboardOpen) {
-                        // youtube_layout.setVisibility(View.GONE);
-                    }
+                bottomSheetVisible = true;
+                if (isKeyboardOpen) {
+                    // youtube_layout.setVisibility(View.GONE);
+                }
 
                 /*} else {
                     Toast.makeText(getContext(), usernameChattingWith + " has not joined yet.", Toast.LENGTH_SHORT).show();
@@ -1822,7 +1822,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         try {
 
-            urlRef.addValueEventListener(valueEventListener);
+            //urlRef.addValueEventListener(valueEventListener);
             presenceRef.addValueEventListener(presentEventListener);
             seekRef.onDisconnect().removeValue();
             seekRef.addValueEventListener(seekValueEventListener);
@@ -2215,22 +2215,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 if (videoStarted)
                     mYouTubePlayer.pause();
 
-                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-                youtubeVideoHash.put("youtubeUrl", "default");
-
-                FirebaseDatabase.getInstance().getReference("ChatList")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(userIDCHATTINGWITH)
-                        .updateChildren(youtubeVideoHash);
-
-/*FirebaseDatabase.getInstance().getReference("ChatList")
-                    .child(userIDCHATTINGWITH)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .updateChildren(youtubeVideoHash);*/
-
 
                 presenceRef.removeEventListener(presentEventListener);
-                urlRef.removeEventListener(valueEventListener);
+                // urlRef.removeEventListener(valueEventListener);
                 seekRef.removeEventListener(seekValueEventListener);
                 startedLivingMessaging = false;
                 initialiseActivity = false;

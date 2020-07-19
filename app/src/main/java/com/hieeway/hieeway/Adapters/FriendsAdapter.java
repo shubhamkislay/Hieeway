@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 
@@ -11,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,7 +45,6 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
     private Context mContext;
     private Activity activity;
     private List<User> mUsers;
-    FirebaseAuth firebaseAuth;
     public FriendsAdapter(Context mContext, List<User> mUsers,Activity activity) {
 
 
@@ -55,6 +57,17 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.edge_to_edge, viewGroup, false );
+
+
+        Display display = activity.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float dispSize = size.x;
+
+        RelativeLayout chatItem = view.findViewById(R.id.chatbox_tem);
+
+        chatItem.getLayoutParams().height = (int) dispSize * 6 / 10;
+
         return new FriendsAdapter.ViewHolder(view);
     }
 
@@ -71,7 +84,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
 
         // viewHolder.username.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-medium.otf"));
-        firebaseAuth = FirebaseAuth.getInstance();
+
 
 
         viewHolder.progressBarOne.setVisibility(View.VISIBLE);
@@ -142,8 +155,8 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                 //  Bitmap bitmap = getBitmapFromURL(chatStamp.getPhoto());
 
                 RequestOptions requestOptions = new RequestOptions();
-                requestOptions.placeholder(R.color.darkGrey);
-                requestOptions.centerCrop();
+                requestOptions.placeholder(R.color.darkButtonBackground);
+                //requestOptions.centerCrop();
                 // requestOptions.override(200, 400);
 
 
@@ -161,6 +174,12 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
                             // viewHolder.progressBar.setVisibility(View.INVISIBLE);
+
+                            final Matrix matrix = viewHolder.user_photo.getImageMatrix();
+                            final float imageWidth = resource.getIntrinsicWidth();
+                            final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                            final float scaleRatio = screenWidth / imageWidth;
+                            matrix.postScale(scaleRatio, scaleRatio);
 
                             viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                             viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
@@ -234,14 +253,14 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
     public class ViewHolder extends RecyclerView.ViewHolder{
 
 
-        public TextView username, count_message_text;
+        private TextView username, count_message_text;
         // public CircleImageView user_photo;
-        public RelativeLayout counterBackgroundLayout;
-        public ProgressBar progressBar, progressBarOne, progressBarTwo;
-        public ImageView user_photo;
-        public RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
-        public Button archiveBtn, delete_chat_head_btn;
-        public ImageButton longMsgBtn;
+        private RelativeLayout counterBackgroundLayout;
+        private ProgressBar progressBar, progressBarOne, progressBarTwo;
+        private ImageView user_photo;
+        private RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
+        private Button archiveBtn, delete_chat_head_btn;
+        private ImageButton longMsgBtn;
 
 
         public ViewHolder(@NonNull View itemView) {

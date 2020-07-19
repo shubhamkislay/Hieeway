@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -30,6 +32,10 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -157,7 +163,26 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                 new Handler().post(runnable);
             }
         };
-        Glide.with(mContext).load(music.getUserPhoto()).into(holder.profile_pic);
+        Glide.with(mContext).load(music.getUserPhoto()).addListener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+
+                final Matrix matrix = holder.profile_pic.getImageMatrix();
+                final float imageWidth = resource.getIntrinsicWidth();
+                final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
+                final float scaleRatio = screenWidth / imageWidth;
+                matrix.postScale(scaleRatio, scaleRatio);
+                holder.profile_pic.setImageMatrix(matrix);
+
+                return false;
+            }
+        }).into(holder.profile_pic);
         holder.username.setText(music.getUsername() + " played...");
         holder.song_name.setText(music.getSpotifySong());
         holder.artist_name.setText(music.getSpotifyArtist());
