@@ -11,6 +11,9 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import androidx.annotation.Nullable;
@@ -596,58 +599,72 @@ public class FriendListFagment extends Fragment {
         DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
+
+        friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                populateFriendsThread(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+      /*
+        {
+
         friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 //userList.clear();
-                if(dataSnapshot.exists())
-                {
+                if (dataSnapshot.exists()) {
                     search_result_txt.setVisibility(View.GONE);
                     userList.clear();
-                    for(DataSnapshot snapshot: dataSnapshot.getChildren())
-                    {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Friend friend = snapshot.getValue(Friend.class);
                         try {
                             if (friend.getStatus().equals("friends")) {
 
-                                    final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                                            .child(friend.getFriendId());
+                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(friend.getFriendId());
 
-                                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
+                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
 
-                                                    User user = dataSnapshot.getValue(User.class);
-                                                    try {
-                                                        if (!userList.contains(user))
-                                                            userList.add(user);
-                                                    } catch (Exception e) {
-                                                        //
-                                                    }
-
+                                                User user = dataSnapshot.getValue(User.class);
+                                                try {
+                                                    if (!userList.contains(user))
+                                                        userList.add(user);
+                                                } catch (Exception e) {
+                                                    //
                                                 }
-                                            }).start();
-                                            /*User user = dataSnapshot.getValue(User.class);
-                                            userList.add(user);*/
-
-                                            try {
-                                                friendsAdapter.notifyDataSetChanged();
-                                            } catch (Exception e) {
 
                                             }
+                                        }).start();
+                                        User user = dataSnapshot.getValue(User.class);
+                                        userList.add(user);
 
+                                        try {
+                                            friendsAdapter.notifyDataSetChanged();
+                                        } catch (Exception e) {
 
                                         }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                        }
-                                    });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
 
                                 progressBar.setVisibility(View.INVISIBLE);
                                 progress_menu_logo.setVisibility(View.INVISIBLE);
@@ -662,10 +679,9 @@ public class FriendListFagment extends Fragment {
                                 friendRequestsCounter += 1;
                             }
 
-                        }catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             //
-                          //  Toast.makeText(getContext(),"Can't fetch friends",Toast.LENGTH_SHORT).show();
+                            //  Toast.makeText(getContext(),"Can't fetch friends",Toast.LENGTH_SHORT).show();
 
                             search_result_txt.setVisibility(View.VISIBLE);
                             search_result_txt.setText("Can't fetch friends");
@@ -709,10 +725,8 @@ public class FriendListFagment extends Fragment {
                         }
                     }
 
-
-                }
-                else {
-                  //  Toast.makeText(getContext(),"No friends",Toast.LENGTH_SHORT).show();
+                } else {
+                    //  Toast.makeText(getContext(),"No friends",Toast.LENGTH_SHORT).show();
 
                     search_result_txt.setVisibility(View.VISIBLE);
                     search_result_txt.setText("No friends");
@@ -722,6 +736,7 @@ public class FriendListFagment extends Fragment {
                     progress_menu_logo_two.setVisibility(View.INVISIBLE);
                 }
 
+
             }
 
             @Override
@@ -730,8 +745,153 @@ public class FriendListFagment extends Fragment {
             }
         });
 
+    }
+
+*/
+
+    }
+
+    private void populateFriendsThread(DataSnapshot dataSnapshot) {
+        TaskCompletionSource<List<User>> listTaskCompletionSource = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (dataSnapshot.exists()) {
+                    search_result_txt.setVisibility(View.GONE);
+                    userList.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Friend friend = snapshot.getValue(Friend.class);
+                        try {
+                            if (friend.getStatus().equals("friends")) {
+
+                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                        .child(friend.getFriendId());
+
+                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                User user = dataSnapshot.getValue(User.class);
+                                                try {
+                                                    if (!userList.contains(user))
+                                                        userList.add(user);
+                                                } catch (Exception e) {
+                                                    //
+                                                }
+
+                                            }
+                                        }).start();
+                                            /*User user = dataSnapshot.getValue(User.class);
+                                            userList.add(user);*/
+
+                                        try {
+                                            friendsAdapter.notifyDataSetChanged();
+                                        } catch (Exception e) {
+
+                                        }
 
 
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+
+                                friendAvailable = true;
+
+                            } else if (friend.getStatus().equals("got")) {
+
+                                friendRequests = true;
+                                friendRequestsCounter += 1;
+                            }
+
+                        } catch (Exception e) {
+                            //
+                            //  Toast.makeText(getContext(),"Can't fetch friends",Toast.LENGTH_SHORT).show();
+
+                            /*search_result_txt.setVisibility(View.VISIBLE);
+                            search_result_txt.setText("Can't fetch friends");
+
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);*/
+                        }
+
+                    }
+
+                    listTaskCompletionSource.setResult(userList);
+
+
+                }
+
+
+            }
+        }).start();
+
+        Task<List<User>> listTask = listTaskCompletionSource.getTask();
+
+        listTask.addOnCompleteListener(new OnCompleteListener<List<User>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<User>> task) {
+
+                if (task.isSuccessful()) {
+                    if (!friendAvailable) {
+                        if (friendRequests) {
+                            search_result_txt.setVisibility(View.VISIBLE);
+                            requests_btn_friends_back.setVisibility(View.VISIBLE);
+                            if (friendRequestsCounter > 1)
+                                search_result_txt.setText("You have got " + friendRequestsCounter + " friend requests");
+                            else
+                                search_result_txt.setText("You have got a friend request");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        } else {
+                            search_result_txt.setVisibility(View.VISIBLE);
+                            search_result_txt.setText("No friends");
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        }
+                    } else {
+
+                        progressBar.setVisibility(View.INVISIBLE);
+                        progress_menu_logo.setVisibility(View.INVISIBLE);
+                        progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        progressBarTwo.setVisibility(View.INVISIBLE);
+                        if (friendRequests) {
+                            requests_btn_friends_back.setVisibility(View.VISIBLE);
+                            // friendRequestsCounter
+                            progressBar.setVisibility(View.INVISIBLE);
+                            progress_menu_logo.setVisibility(View.INVISIBLE);
+                            progressBarTwo.setVisibility(View.INVISIBLE);
+                            progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                } else {
+
+                    search_result_txt.setVisibility(View.VISIBLE);
+                    search_result_txt.setText("No friends");
+                    progressBar.setVisibility(View.INVISIBLE);
+                    progress_menu_logo.setVisibility(View.INVISIBLE);
+                    progressBarTwo.setVisibility(View.INVISIBLE);
+                    progress_menu_logo_two.setVisibility(View.INVISIBLE);
+
+                }
+
+            }
+        });
     }
 
     @Override
