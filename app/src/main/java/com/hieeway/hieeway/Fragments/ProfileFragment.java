@@ -58,6 +58,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -212,6 +213,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     @Override
     public void onResume() {
         super.onResume();
+
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
@@ -713,16 +715,42 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             }
         });
 
-        try {
-            bitmap = Glide.with(getActivity())
-                    .asBitmap()
-                    .load(userPhoto)
-                    .submit(5, 5)
-                    .get();
-            //setPaletteColor();
-        } catch (Exception e) {
-            //
-        }
+        TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    Bitmap bitmap = Glide.with(getActivity())
+                            .asBitmap()
+                            .load(userPhoto)
+                            .submit(5, 5)
+                            .get();
+                    //setPaletteColor();
+                    bitmapTaskCompletionSource.setResult(bitmap);
+
+                } catch (Exception e) {
+                    //
+                }
+
+            }
+        }).start();
+
+
+        Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+        bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+            @Override
+            public void onComplete(@NonNull Task<Bitmap> task) {
+                if (task.isSuccessful())
+                    bitmap = task.getResult();
+
+
+            }
+        });
+
+
 /*
         change_nio_edittext.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -970,107 +998,115 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
-
-        sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onChanged(@Nullable User user) {
+            public void run() {
+                sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
+                sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+                    @Override
+                    public void onChanged(@Nullable User user) {
 
 
-                USER_PHOTO = user.getPhoto();
-                USER_ID = user.getUserid();
-                USER_NAME = user.getUsername();
-                username.setText(user.getUsername());
-                name.setText(user.getName());
+                        USER_PHOTO = user.getPhoto();
+                        USER_ID = user.getUserid();
+                        USER_NAME = user.getUsername();
+                        username.setText(user.getUsername());
+                        name.setText(user.getName());
 
 
-                try {
-                    bio = user.getBio();
-                    // change_nio_edittext.setText(user.getBio());
-                    bio_txt.setText(user.getBio());
-                    stripUnderlines(bio_txt);
-                    bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+                        try {
+                            bio = user.getBio();
+                            // change_nio_edittext.setText(user.getBio());
+                            bio_txt.setText(user.getBio());
+                            stripUnderlines(bio_txt);
+                            bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
 
 
-                } catch (Exception e) {
-                    //
-                    bio_txt.setText("Tell something about yourself");
-                    bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
-                }
-
-                //  feeling_txt.setText(user.getFeeling());
-                feelingNow = user.getFeeling();
-
-                try {
-                    if (!user.getFeelingIcon().equals("default")) {
-                        feelingNow = user.getFeeling();
-                        feeling_icon.setVisibility(View.GONE);
-                        emoji_icon.setText(user.getFeelingIcon());
-                        emoji_icon.setVisibility(View.VISIBLE);
-                        feeling_txt.setText(user.getFeeling());
-
-                    } else {
-                        feeling_icon.setVisibility(View.GONE);
-                        feeling_txt.setText(user.getFeeling());
-                        emoji_icon.setVisibility(View.GONE);
-
-                        feelingNow = user.getFeeling();
-                        switch (user.getFeeling()) {
-                            case HAPPY:
-                                feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
-                                feeling_txt.setText(HAPPY);
-                                break;
-                            case SAD:
-                                feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
-                                feeling_txt.setText(SAD);
-                                break;
-                            case BORED:
-                                feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
-                                feeling_txt.setText(BORED);
-                                break;
-                            case ANGRY:
-                                feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
-                                feeling_txt.setText(ANGRY);
-                                break;
-                            case "excited":
-                                feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
-                                feeling_txt.setText(EXCITED);
-                                break;
-                            case CONFUSED:
-                                feeling_icon.setVisibility(View.VISIBLE);
-                                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
-                                feeling_txt.setText(CONFUSED);
-                                break;
+                        } catch (Exception e) {
+                            //
+                            bio_txt.setText("Tell something about yourself");
+                            bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
                         }
+
+                        //  feeling_txt.setText(user.getFeeling());
+                        feelingNow = user.getFeeling();
+
+                        try {
+                            if (!user.getFeelingIcon().equals("default")) {
+                                feelingNow = user.getFeeling();
+                                feeling_icon.setVisibility(View.GONE);
+                                emoji_icon.setText(user.getFeelingIcon());
+                                emoji_icon.setVisibility(View.VISIBLE);
+                                feeling_txt.setText(user.getFeeling());
+
+                            } else {
+                                feeling_icon.setVisibility(View.GONE);
+                                feeling_txt.setText(user.getFeeling());
+                                emoji_icon.setVisibility(View.GONE);
+
+                                feelingNow = user.getFeeling();
+                                switch (user.getFeeling()) {
+                                    case HAPPY:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                                        feeling_txt.setText(HAPPY);
+                                        break;
+                                    case SAD:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                                        feeling_txt.setText(SAD);
+                                        break;
+                                    case BORED:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                                        feeling_txt.setText(BORED);
+                                        break;
+                                    case ANGRY:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                                        feeling_txt.setText(ANGRY);
+                                        break;
+                                    case "excited":
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
+                                        feeling_txt.setText(EXCITED);
+                                        break;
+                                    case CONFUSED:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                                        feeling_txt.setText(CONFUSED);
+                                        break;
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            //
+                        }
+
+                        try {
+
+                            USER_PHOTO = user.getPhoto();
+                            profilepic = user.getPhoto().replace("s96-c", "s384-c");
+                            userPhoto = profilepic;
+                            Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
+                            Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
+
+                            bitmap = ((BitmapDrawable) profile_pic_background.getDrawable()).getBitmap();
+
+
+                            // setPaletteColor();
+                        } catch (Exception e) {
+
+                        }
+
                     }
+                });
 
-                } catch (Exception e) {
-                    //
-                }
-
-                try {
-
-                    USER_PHOTO = user.getPhoto();
-                    profilepic = user.getPhoto().replace("s96-c", "s384-c");
-                    userPhoto = profilepic;
-                    Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
-                    Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
-
-                    bitmap = ((BitmapDrawable) profile_pic_background.getDrawable()).getBitmap();
-
-
-                    // setPaletteColor();
-                } catch (Exception e) {
-
-                }
 
             }
-        });
+        }, 350);
+
 
         //setPaletteColor();
         setColor();

@@ -78,7 +78,7 @@
                         android:minWidth="50dp"
                         android:layout_centerHorizontal="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/profile_pic"
+                        tools:src="@drawable/profile_pic"
                         android:minHeight="200dp" />
 
                     <ProgressBar
