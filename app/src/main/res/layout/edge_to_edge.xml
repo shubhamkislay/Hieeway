@@ -4,7 +4,7 @@
     android:id="@+id/chatbox_tem"
     android:layout_marginTop="16dp"
     android:layout_height="270dp"
-    android:layout_margin="2dp"
+    android:layout_margin="0.25dp"
     android:padding="1.25dp"
 
     android:gravity="center"

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/darkGrey" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/darkGrey" />
+
+        </shape>
+    </item>
+
+
+    <item
+        android:bottom="8dp"
+        android:gravity="center"
+        android:left="8dp"
+        android:right="8dp"
+        android:top="8dp">
+
+        <rotate
+            android:drawable="@drawable/ic_youtube_searched_for_black_24dp"
+            android:fromDegrees="0"
+            android:gravity="left"
+            android:toDegrees="90" />
+
+    </item>
+
+</layer-list>

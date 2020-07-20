@@ -82,6 +82,7 @@ import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.VerticalPageActivity;
+import com.hieeway.hieeway.WebViewActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -274,7 +275,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                  */
 
 
-
+                mContext.startActivity(new Intent(mContext, WebViewActivity.class));
 
 
 
@@ -299,7 +300,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                  * Final code below
                  */
 
-                Intent intent = new Intent(mContext, RevealReplyActivity.class);
+                /*Intent intent = new Intent(mContext, RevealReplyActivity.class);
 
 
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
@@ -309,7 +310,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 intent.putExtra("usernameChattingWith", chatStamp.getUsername());
 
 
-                mContext.startActivity(intent);
+                mContext.startActivity(intent);*/
 
 
                 //mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
@@ -703,7 +704,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
     private void checkPendingMessages(final String userChattingWith, final RelativeLayout relativeLayout, final RelativeLayout countMsgLayout, final TextView countMessageText)
     {
 
-        countMessages.clear();
+        //countMessages.clear();
 
         DatabaseReference checkPendingMessagesRef = FirebaseDatabase.getInstance().getReference("Messages")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -720,7 +721,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                     @Override
                     public void run() {
 
-                        countMessages.clear();
+                        // countMessages.clear();
+
+                        List<ChatMessage> countList = new ArrayList<>();
 
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -732,7 +735,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                                     Toast.makeText(mContext, "PublicKeyId is empty", Toast.LENGTH_SHORT).show();
 
                                 if (chatMessage.getSenderId().equals(userChattingWith) && chatMessage.getPublicKeyID().equals(publicKeyId))
-                                    countMessages.add(chatMessage);
+                                    countList.add(chatMessage);
                             } catch (NullPointerException ne) {
 
                             }
@@ -740,7 +743,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                         }
 
-                        integerTaskCompletionSource.setResult(countMessages.size());
+                        integerTaskCompletionSource.setResult(countList.size());
 
                     }
                 }).start();

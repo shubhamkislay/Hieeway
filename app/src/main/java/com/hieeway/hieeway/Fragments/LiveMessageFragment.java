@@ -42,8 +42,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -183,7 +186,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     Boolean resultReady = false;
     RelativeLayout top_bar;
     YouTubePlayerSeekBar youtube_player_seekbar;
-    ImageButton youtube_button;
+    Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener;
     ListView video_listView;
@@ -194,7 +197,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private String videoID = "kJQP7kiw5Fk";
     private Boolean userPresent = false;
     private boolean playerInitialised;
-    RelativeLayout bottom_sheet_webview_dialog_layout;
+    //RelativeLayout bottom_sheet_webview_dialog_layout;
+    WebView bottom_sheet_webview_dialog_layout;
     private com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer mYouTubePlayer = null;
     private boolean initialiseActivity = false, initialiseSeekEvent = false;
     private AbstractYouTubePlayerListener abstractYouTubePlayerListener;
@@ -374,7 +378,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
-        bottom_sheet_webview_dialog_layout = view.findViewById(R.id.bottom_sheet_webview_dialog_layout);
+        // bottom_sheet_webview_dialog_layout = view.findViewById(R.id.bottom_sheet_webview_dialog_layout);
         searchResults = new ArrayList<>();
         durationAddedResult = new ArrayList<>();
         search_video_edittext = view.findViewById(R.id.search_video_edittext);
@@ -405,6 +409,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         sync_video_txt = view.findViewById(R.id.sync_video_txt);
         sync_video_layout = view.findViewById(R.id.sync_video_layout);
         youtube_web_view = view.findViewById(R.id.youtube_web_view);
+        bottom_sheet_webview_dialog_layout = youtube_web_view;
+
         control_layout = view.findViewById(R.id.control_layout);
         live_video_control_layout = view.findViewById(R.id.live_video_control_layout);
         video_seekbar = view.findViewById(R.id.video_seekbar);
@@ -412,11 +418,18 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         enable_audio = view.findViewById(R.id.enable_audio);
 
 
-        //bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
+        ////bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_webview_dialog_layout);
+        //bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_webview_dialog_layout);
 
-        youtube_web_view.getSettings().setJavaScriptEnabled(true);
+        //youtube_web_view.getSettings().setJavaScriptEnabled(true);
+
+        WebSettings webSettings = youtube_web_view.getSettings();
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
+
         //  youtube_web_view.setBackgroundColor(getActivity().getResources().getColor(R.color.colorBlack));
 
         htmlbegin = "<div style=\"background-color:#000000 ;  \">";
@@ -428,6 +441,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         pattern = "https?://(?:[0-9A-Z-]+\\.)?(?:youtu\\.be/|youtube\\.com\\S*[^\\w\\-\\s])([\\w\\-]{11})(?=[^\\w\\-]|$)(?![?=&+%\\w]*(?:['\"][^<>]*>|</a>))[?=&+%\\w]*";
         compiledPattern = Pattern.compile(pattern,
                 Pattern.CASE_INSENSITIVE);
+
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float diplayWight = size.x;
+        float displayHeight = size.y;
 
         /*if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             WebSettingsCompat.setForceDark(youtube_web_view.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
@@ -477,11 +497,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 videoID = getVideoIdFromYoutubeUrl(url);
                 if (!videoID.equals("default")) {
                     youtube_web_view.stopLoading();
+                    youtube_web_view.loadUrl(youtubeUrl);
 
 
                     //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
                     //         "text/html", "utf-8", "");
-                    youtube_web_view.loadUrl(youtubeUrl);
 
 
                     // Toast.makeText(getActivity(), "VideoID: " + videoID, Toast.LENGTH_SHORT).show();
@@ -511,12 +531,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     //Native UI youtube search using data api
                     //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
-                    /**
-                     * Youtube webview
-                     */
-                    bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
+
+                    youtube_web_view.setVisibility(View.GONE);
+
+
                     search_video_edittext.clearFocus();
                     messageBox.requestFocus();
                     messageBox.setCursorVisible(true);
@@ -537,7 +559,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 // super.doUpdateVisitedHistory(view, url, isReload);
             }
         };
+
+        //youtube_web_view.setWebChromeClient(new WebChromeClient());
         youtube_web_view.setWebViewClient(webViewClient);
+
 
         youtube_web_view.loadUrl("https://youtube.com/");
 
@@ -570,7 +595,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             public void onClick(View v) {
                 // if (userPresent) {
                 youtubeBottomFragmentStateListener.setDrag(true);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                youtube_web_view.setVisibility(View.VISIBLE);
+
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_open);
+                youtube_web_view.setAnimation(animation);
                 messageBox.clearFocus();
                 search_video_edittext.requestFocus();
                 search_video_edittext.setCursorVisible(true);
@@ -645,9 +674,22 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 //Native UI youtube search using data api
                 //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
-                bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+                /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
+
+                // youtube_web_view.setVisibility(View.GONE);
+
+                Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                youtube_web_view.setAnimation(animation);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        youtube_web_view.setVisibility(View.GONE);
+                    }
+                }, 350);
+
                 search_video_edittext.clearFocus();
                 messageBox.requestFocus();
                 messageBox.setCursorVisible(true);
@@ -665,11 +707,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float diplayWight = size.x;
-        float displayHeight = size.y;
+
 
 
         enable_audio.setOnClickListener(new View.OnClickListener() {
@@ -873,7 +911,17 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             // seekRef.removeValue();
                             live_video_control_layout.setVisibility(View.GONE);
                             //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
-                            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                            // youtube_web_view.setVisibility(View.GONE);
+                            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                            youtube_web_view.setAnimation(animation);
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    youtube_web_view.setVisibility(View.GONE);
+                                }
+                            }, 350);
                             //youtube_button.setEnabled(false);
                             if (initialiseActivity) {
                                /* mYouTubePlayer.pause();
@@ -922,7 +970,17 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             //youtube_button.setEnabled(true);
                         }
                     } catch (Exception e) {
-                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        // youtube_web_view.setVisibility(View.GONE);
+                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                        youtube_web_view.setAnimation(animation);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                youtube_web_view.setVisibility(View.GONE);
+                            }
+                        }, 350);
                         live_video_control_layout.setVisibility(View.GONE);
                         //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
                         // youtube_button.setEnabled(false);
@@ -930,7 +988,17 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
                 } else {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    //youtube_web_view.setVisibility(View.GONE);
+                    Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                    youtube_web_view.setAnimation(animation);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            youtube_web_view.setVisibility(View.GONE);
+                        }
+                    }, 350);
                     live_video_control_layout.setVisibility(View.GONE);
                     //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
                     // youtube_button.setEnabled(false);
@@ -1211,12 +1279,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
 
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        /*bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
                     youtubeBottomFragmentStateListener.setDrag(true);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
                     messageBox.clearFocus();
                     search_video_edittext.requestFocus();
@@ -1231,7 +1299,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onSlide(View bottomSheet, float slideOffset) {
             }
-        });
+        });*/
 
         search_video_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -1624,7 +1692,16 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            //youtube_web_view.setVisibility(View.GONE);
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+            youtube_web_view.setAnimation(animation);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    youtube_web_view.setVisibility(View.GONE);
+                }
+            }, 350);
             search_video_edittext.clearFocus();
             messageBox.requestFocus();
             messageBox.setCursorVisible(true);
@@ -2139,7 +2216,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     public void setBottomSheetBehavior(MotionEvent event) {
         try {
-            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            /*if (//bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
+            youtube_web_view.getVisibility() == View.VISIBLE) {
 
                 messageBox.clearFocus();
                 search_video_edittext.requestFocus();
@@ -2148,10 +2226,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 Rect outRect = new Rect();
                 //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
-                bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+               // bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+                   Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.youtube_webview_close);
+                youtube_web_view.setAnimation(animation);
+                new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                youtube_web_view.setVisibility(View.GONE);
+            }
+        }, 750);
                     search_video_edittext.clearFocus();
                     messageBox.requestFocus();
                     messageBox.setCursorVisible(true);
@@ -2168,7 +2255,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     }, 750);
 
                 }
-            }
+            }*/
         } catch (Exception e) {
             //
         }
@@ -2177,7 +2264,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     public void closeBottomSheet() {
         youtubeBottomFragmentStateListener.setDrag(false);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        if (youtube_web_view.getVisibility() == View.VISIBLE) {
+            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+            youtube_web_view.setAnimation(animation);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    youtube_web_view.setVisibility(View.GONE);
+                }
+            }, 350);
+        }
         search_video_edittext.clearFocus();
         messageBox.requestFocus();
         messageBox.setCursorVisible(true);

@@ -493,18 +493,17 @@
                 android:backgroundTint="#141414"
                 android:layout_alignParentBottom="true">
 
-                <ImageButton
+                <Button
                     android:id="@+id/youtube_btn"
-                    android:layout_width="42dp"
+                    android:layout_width="28dp"
 
-                    android:layout_height="42dp"
+                    android:layout_height="28dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="12dp"
                     android:layout_marginRight="4dp"
                     android:layout_toRightOf="@id/camera_background"
 
-                    android:background="@drawable/circle_dark"
-                    android:src="@drawable/ic_youtube_searched_for_black_24dp"
+                    android:background="@drawable/ic_youtube_searched_for_black_24dp"
 
                     android:visibility="visible" />
 
@@ -590,7 +589,7 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <include layout="@layout/youtube_webview" />
+    <include layout="@layout/activity_web_view" />
 
     <include
         layout="@layout/youtube_search_dialog"
