@@ -15,6 +15,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -42,6 +43,7 @@ import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordButton;
 import com.devlomi.record_view.RecordView;
 import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.fragment.app.Fragment;
@@ -94,6 +96,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hieeway.hieeway.MusicPalService;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -133,6 +136,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import javax.crypto.Cipher;
 
@@ -147,73 +151,72 @@ import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 public class EphemeralMessagingFragment extends Fragment implements MessageRunningListener {
 
 
-    public TextView username, button_exterior, message_counter_background, message_no_message_counter_background;
-    public Button  message_counter;
-    String userFeeling;
-
-    public TextView message_text_dummy, message_text, message_text_two, message_text_three;
-    public TextView message_text_sender_dummy, message_text_sender, message_text_two_sender, message_text_three_sender;
-    public BlurImageView profile_pic;
-    public TypeWriter message_text_typewriter;
-    public ProgressBar message_pulse, chain_pulse, sending_progress_bar, message_log_pulse, message_running, message_running_two;
-    public float opacity = 0.0f;
-    public Boolean blinking = false, message_box_blinking = false;
+    private static final int MSG_TYPING_BOX_ID = 1;
+    private static final int MSG_TYPING_BOX_TWO_ID = 2;
+    private static final int MSG_TYPING_BOX_THREE_ID = 3;
+    private TextView username, button_exterior, message_counter_background, message_no_message_counter_background;
+    private Button message_counter;
+    private String userFeeling;
+    private TextView message_text_dummy, message_text, message_text_two, message_text_three;
+    private TextView message_text_sender_dummy, message_text_sender, message_text_two_sender, message_text_three_sender;
+    private BlurImageView profile_pic;
+    private TypeWriter message_text_typewriter;
     private int msg_send_size =0, msg_send_two_size=0, msg_send_three_size=0;
-    public String highlightMessageText = "";
-    public EditText message_box;
-    public RelativeLayout message_box_behind;
-    boolean continue_message_box_blinking = true;
+    private ProgressBar message_pulse, chain_pulse, sending_progress_bar, message_log_pulse, message_running, message_running_two;
+    private float opacity = 0.0f;
+    private Boolean blinking = false, message_box_blinking = false;
+    private String highlightMessageText = "";
     private static String fileName = null;
-    public Boolean messageHighlight = true, sendButtonEnabled =false;
-    public Button sendButton, message_bar, reply_btn, cancel_reply_btn;
-    public RelativeLayout bottom_bar, message_counter_layout, message_space, reply_tag, app_context_layout, sender_reply_body, sender_reply_tag;
-    public RelativeLayout read_message_reply_layout;
-    public View rootView;
-    public Float alphaValueProfilePic = 1.0f;
-    public Boolean enableXtransformation = true;
-    public int textSize;
-    public Boolean replyTag = false;
-    public Boolean ifHintExists =false;
-    public TextView send_arrow_two, archive_btn;
-    public ImageView send_arrow, receiver_arrow;
-    public TextView your_sent_msg, back_button;
+    private EditText message_box;
+    private RelativeLayout message_box_behind;
+    private boolean continue_message_box_blinking = true;
+    private Boolean messageHighlight = true, sendButtonEnabled = false;
+    private Button sendButton, message_bar, reply_btn, cancel_reply_btn;
+    private RelativeLayout bottom_bar, message_counter_layout, message_space, reply_tag, app_context_layout, sender_reply_body, sender_reply_tag;
+    private RelativeLayout read_message_reply_layout;
+    private View rootView;
+    private Float alphaValueProfilePic = 1.0f;
+    private Boolean enableXtransformation = true;
+    private int textSize;
+    private Boolean replyTag = false;
+    private Boolean ifHintExists = false;
     private String liveMessage, liveMessageTwo, liveMessageThree;
     private Boolean messageTwoPresent = false, messageThreePresent = false;
     private Button emoji, camera;
     private Button read_message_reply;
-    public String messageStr = "", messageStrTwo = "", messageStrThree = "";
-    public Handler deletionHandler, blinkerHandler;
-    public Runnable runnable, blinkerThreadRunnable, blinkerHandlerRunnable;
-    public Thread blinkerThread;
-    public List<ChatMessage> messageList, sendMessageList, photoMessageList;
+    private TextView send_arrow_two, archive_btn;
+    private ImageView send_arrow, receiver_arrow;
+    private TextView your_sent_msg, back_button;
+    private String messageStr = "", messageStrTwo = "", messageStrThree = "";
+    private Handler deletionHandler, blinkerHandler;
     private String userIdChattingWith;
-    public int blinkInterval;
-    public Boolean isSenderReplying = false;
-    public ImageView view;
-    public int before_count, after_count;
-    StorageTask uploadTask;
-    StorageReference storageReference;
-    public ToggleButton toggleButton;
-    public Boolean imageReady = true;
-    public Boolean imageLoaded = false;
-    public String lastMessageID = "none";
-    public String senderReplyID = "none";
-    public String otherUserPublicKey = null;
-    public String otherUserPublicKeyID = null;
-    public String currentUserPublicKey = null;
-    public String currentUserPublicKeyID = null;
-    public String currentUserPrivateKey = null;
-    public Boolean senderReplyTag = false;
-    public String senderReplyMessage = "none";
-    public Boolean isSeeingReply = false;
-    public String messageTextOne, messageTextTwo, MessageTextThree;
-    public Boolean setChainBtn = false;
-    public SeekBar textSizeseekBar;
-    public static final int MSG_TYPING_BOX_ID = 1;
-    public static final int MSG_TYPING_BOX_TWO_ID = 2;
-    public static final int MSG_TYPING_BOX_THREE_ID = 3;
-    RelativeLayout equlizer;
-    RelativeLayout equi_one;
+    private Runnable runnable, blinkerThreadRunnable, blinkerHandlerRunnable;
+    private Thread blinkerThread;
+    private List<ChatMessage> messageList, sendMessageList, photoMessageList;
+    private int blinkInterval;
+    private Boolean isSenderReplying = false;
+    private ImageView view;
+    private int before_count, after_count;
+    private StorageTask uploadTask;
+    private StorageReference storageReference;
+    private ToggleButton toggleButton;
+    private Boolean imageReady = true;
+    private Boolean imageLoaded = false;
+    private String lastMessageID = "none";
+    private String senderReplyID = "none";
+    private String otherUserPublicKey = null;
+    private String otherUserPublicKeyID = null;
+    private String currentUserPublicKey = null;
+    private String currentUserPublicKeyID = null;
+    private String currentUserPrivateKey = null;
+    private Boolean senderReplyTag = false;
+    private String senderReplyMessage = "none";
+    private Boolean isSeeingReply = false;
+    private String messageTextOne, messageTextTwo, MessageTextThree;
+    private Boolean setChainBtn = false;
+    private SeekBar textSizeseekBar;
+    private RelativeLayout equlizer;
+    private RelativeLayout equi_one;
     /*    username.setText(intent.getStringExtra("username"));
             name.setText(intent.getStringExtra("name"));
             feeling_txt.setText(intent.getStringExtra("feeling_txt"));
@@ -228,70 +231,70 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         String otherusername;
         String feeling_txt;*/
-    public Button photosNotification;
+    private Button photosNotification;
     private ObjectAnimator UsernameObjectAnimator;
 
     private Handler replyHandler, vibratorHandler;
     private Runnable replyRunnable, vibratorRunnable;
 
-    Switch switchBtn;
-    Boolean softKeyVisible = true;
-    String messageKeySender, messageKeyReceiver;
+    private Switch switchBtn;
+    private Boolean softKeyVisible = true;
+    private String messageKeySender, messageKeyReceiver;
 
-    public int typingID = 1;
+    private int typingID = 1;
 
-    public Button chainBtn;
-    public SwipeButton swipeButton;
-    Boolean swipeState = false;
-    Point size;
-    float displayHeight;
+    private Button chainBtn;
+    private SwipeButton swipeButton;
+    private Boolean swipeState = false;
+    private Point size;
+    private float displayHeight;
 
-    Boolean emojiActive = false;
-    RelativeLayout equi_two;
-    RelativeLayout equi_three;
-    RelativeLayout equi_four;
-    RelativeLayout equi_five;
-    RecordView recordView;
-    RecordButton recordButton;
+    private Boolean emojiActive = false;
+    private RelativeLayout equi_two;
+    private RelativeLayout equi_three;
+    private RelativeLayout equi_four;
+    private RelativeLayout equi_five;
+    private RecordView recordView;
+    private RecordButton recordButton;
 
-    public int setAnimationSendingDuration;
+    private int setAnimationSendingDuration;
 
-    public SoundPool soundPool;
-    Boolean readyToCheckSize = false;
+    private SoundPool soundPool;
+    private Boolean readyToCheckSize = false;
     private int delSound1, cantDelSound2, sendSound3, sendingSound4, sendingSound5;
 
-    float messageTextOpacity = 1.0f;
-    float messageTextTwoOpacity = 1.0f;
-    float messageTextThreeOpacity = 1.0f;
+    private float messageTextOpacity = 1.0f;
+    private float messageTextTwoOpacity = 1.0f;
+    private float messageTextThreeOpacity = 1.0f;
 
 
     private EphemeralMessageViewModel ephemeralMessageViewModel;
 
     private SendMessageFragment sendMessageFragment;
-    public Boolean isMessageRunning = false;
-    Window window;
+    private Boolean isMessageRunning = false;
+    private Window window;
     private Boolean threadPending;
-    public int sendTextSize = 34;
-    public String currentUsername;
+    private int sendTextSize = 34;
+    private String currentUsername;
     private TextView top_swipe_text;
-    public String currentUserPhoto;
-    public TextView online_status;
-    public ImageView online_ring;
-    public String usernameChattingWith;
-    public String photo;
-    Boolean textListner_msg = false;
-    Boolean textListner_msg_two = false;
-    Boolean textListner_msg_three = false;
-    Button record_audio_btn;
+    private String currentUserPhoto;
+    private TextView online_status;
+    private ImageView online_ring;
+    private String usernameChattingWith;
+    private String photo;
+    private Boolean textListner_msg = false;
+    private Boolean textListner_msg_two = false;
+    private Boolean textListner_msg_three = false;
+    private Button record_audio_btn;
 
-    public TextView message_log_text, swipe_down,go_live_txt;
+    private TextView message_log_text, swipe_down, go_live_txt;
     private boolean notSending = true;
     private boolean textFieldAnimating = false;
     private boolean firstAnimComplete = false;
     private boolean checkConnectedSatus = false;
-    ObjectAnimator animatorY, alphaArrow, animateMsg, animateMsgTwo, animatorMsgThree, alphaMsg, alphaMsgTwo, alphaMsgThree, animatePic;
-    ObjectAnimator animateReceiveArrowY, receiveArrowAlpha, animateNextMsgHintBody, animateNextMsgHintBodyALpha;
-    AnimatorSet animatorSet;
+    private ObjectAnimator animatorY, alphaArrow, animateMsg, animateMsgTwo, animatorMsgThree, alphaMsg, alphaMsgTwo, alphaMsgThree, animatePic;
+    private ObjectAnimator animateReceiveArrowY, receiveArrowAlpha, animateNextMsgHintBody, animateNextMsgHintBodyALpha;
+    private AnimatorSet animatorSet;
     private boolean sendButtonPressed = false;
     private int arrowAnimDuration = 600;
     private DatabaseReference sendderUsersRef;
@@ -299,15 +302,15 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private DatabaseReference senderChatCreateRef;
     private DatabaseReference receiverChatCreateRef;
     private ChatMessage firstReceivedMessage = new ChatMessage();
-    NotificationManager notificationManager;
+    private NotificationManager notificationManager;
     private Button camera_background;
     private MediaRecorder recorder = null;
     private boolean audioRecording = false;
-    RelativeLayout bin;
+    private RelativeLayout bin;
     private ImageView disablerecord_button;
     private boolean isDisablerecord_button = false;
     private boolean confirmConnected = true;
-    TextView sender_reply_body_title;
+    private TextView sender_reply_body_title;
     private Button photo_btn, photo_btn_bg;
 
     public EphemeralMessagingFragment() {
@@ -630,19 +633,41 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         otherUserkeyReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
-                    User user = dataSnapshot.getValue(User.class);
-                    try {
-                        otherUserPublicKey = user.getPublicKey();
-                        otherUserPublicKeyID = user.getPublicKeyId();
 
+
+                TaskCompletionSource<User> userTaskCompletionSource = new TaskCompletionSource<>();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dataSnapshot.exists()) {
+                            User user = dataSnapshot.getValue(User.class);
+                            try {
+                                otherUserPublicKey = user.getPublicKey();
+                                otherUserPublicKeyID = user.getPublicKeyId();
+
+                            } catch (Exception e) {
+                                //
+                            }
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        //
+                }).start();
+
+
+                Task<User> userTask = userTaskCompletionSource.getTask();
+
+                userTask.addOnCompleteListener(new OnCompleteListener<User>() {
+                    @Override
+                    public void onComplete(@NonNull Task<User> task) {
+                        if (task.isSuccessful()) {
+                            //
+                        }
                     }
-                }
+                });
+
+
+
+
             }
 
             @Override
@@ -1490,7 +1515,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         try {
             if (!photo.equals("default")) {
-                Glide.with(getActivity()).load(photo/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*/.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
+               /*
+
+                Glide.with(getActivity()).load(photo*//*.replace("s96-c", "s384-c")*//*)*//*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         return false;
@@ -1503,11 +1530,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         if (imageReady) {
                             {
                                 profile_pic.animate().alpha(1.0f).setDuration(750);
-                                /*final Matrix matrix = profile_pic.getImageMatrix();
+                                *//*final Matrix matrix = profile_pic.getImageMatrix();
                                 final float imageWidth = resource.getIntrinsicWidth();
                                 final int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels/2;
                                 final float scaleRatio = screenWidth / imageWidth;
-                                matrix.postScale(scaleRatio, scaleRatio);*/
+                                matrix.postScale(scaleRatio, scaleRatio);*//*
                             }
 
                             imageLoaded = true;
@@ -1523,6 +1550,84 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         return false;
                     }
                 }).into(profile_pic);
+
+                */
+                TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Bitmap bitmap = Glide.with(getContext())
+                                    .asBitmap()
+                                    .load(photo.replace("s96-c", "s384-c"))
+                                    .submit(width, height)
+                                    .get();
+
+                            bitmapTaskCompletionSource.setResult(bitmap);
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }).start();
+
+                Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+
+                bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Bitmap> task) {
+                        if (task.isSuccessful()) {
+                            try {
+
+
+                                Glide.with(getActivity()).load(task.getResult()/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height))*/.listener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+
+                                        if (imageReady) {
+                                            {
+                                                profile_pic.animate().alpha(1.0f).setDuration(750);
+                                /*final Matrix matrix = profile_pic.getImageMatrix();
+                                final float imageWidth = resource.getIntrinsicWidth();
+                                final int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels/2;
+                                final float scaleRatio = screenWidth / imageWidth;
+                                matrix.postScale(scaleRatio, scaleRatio);*/
+                                            }
+
+                                            imageLoaded = true;
+
+
+                                            //   read_message_back.animate().alpha(0.0f);
+
+
+                                        }
+
+
+                                        return false;
+                                    }
+                                }).into(profile_pic);
+                            } catch (NullPointerException ne) {
+                                //
+                            }
+
+                        }
+
+                    }
+                });
+
+
+
+
             }
             else
             {
@@ -1553,22 +1658,29 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.exists()) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dataSnapshot.exists()) {
 
-                    User user = dataSnapshot.getValue(User.class);
+                            User user = dataSnapshot.getValue(User.class);
 
-                    currentUsername = user.getUsername();
-                    currentUserPhoto = user.getPhoto();
+                            currentUsername = user.getUsername();
+                            currentUserPhoto = user.getPhoto();
 
-                    CURRENT_USERNAME = currentUsername;
-                    CURRENT_USERPHOTO = currentUserPhoto;
+                            CURRENT_USERNAME = currentUsername;
+                            CURRENT_USERPHOTO = currentUserPhoto;
 
 
 
                     /* = user.getPublicKey();
                     otherUserPublicKeyID = user.getPublicKeyId();*/
 
-                }
+                        }
+                    }
+                }).start();
+
+
 
             }
 
@@ -1600,12 +1712,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 // messageList = chatMessageList;
 
 
-                before_count = messageList.size();
 
                 /**
                  * Uncomment the following line to only read received messages and not sent messages.
                  */
-                after_count = filterList(chatMessageList);
+                filterList(chatMessageList);
 
 
                 /*if(after_count>before_count) {
@@ -1618,172 +1729,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 else
                     after_count = messageList.size();*/
 
-                if(photoMessageList.size()>=1)
-                {
-                    photosNotification.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    photosNotification.setVisibility(View.INVISIBLE);
-                }
 
-
-                if (messageList.size() > 3) {
-                    /*swipeButton = view.findViewById(R.id.swipeBtn);
-                    swipeButton.setEnabled(true);
-                    swipeButton.setVisibility(View.VISIBLE);*/
-
-                   // switchBtn.setVisibility(View.VISIBLE);
-                }
-
-
-                if (messageList.size() < 1) {
-
-
-                    ephemeralMessageViewModel.setChatPending(false);
-
-                   /* swipeButton.setEnabled(false);
-
-                    swipeButton.setVisibility(View.GONE);*/
-
-                   switchBtn.setChecked(false);
-
-                    switchBtn.setVisibility(View.GONE);
-
-                    setChainBtn = false;
-
-                    message_running.setVisibility(View.INVISIBLE);
-                    message_running_two.setVisibility(View.INVISIBLE);
-
-                    // username.setVisibility(View.VISIBLE);
-
-
-                    //  swipeButton = null;
-
-
-                    /**
-                     *  Automatically queues the messages after button is explicitely triggered,
-                     *  after a message in received when this activity is opened,
-                     *  unless we add the following
-                     *  setChainBtn = false;
-                     **/
-
-
-                    chainBtn.setVisibility(View.GONE);
-                    chain_pulse.setVisibility(View.GONE);
-                    //
-                    //  ephemeralMessageViewModel.setChatSeen();
-                    message_counter_background.setVisibility(View.INVISIBLE);
-                    message_pulse.setVisibility(View.INVISIBLE);
-                    message_no_message_counter_background.setVisibility(View.INVISIBLE);
-                    message_counter.setText("");
-
-
-                    message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_drawable));
-                    message_counter.setVisibility(View.INVISIBLE);
-                    button_exterior.setVisibility(View.INVISIBLE);
-                    if (!isMessageRunning)
-                        message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
-
-
-                    // message_counter.setVisibility(View.GONE);
-                } else {
-
-                    //  ephemeralMessageViewModel.setChatPending(true);
-
-                    /*swipeButton = findViewById(R.id.swipeBtn);
-                    swipeButton.setEnabled(true);
-                    swipeButton.setVisibility(View.VISIBLE);*/
-                    message_counter_background.setVisibility(View.VISIBLE);
-                    message_no_message_counter_background.setVisibility(View.INVISIBLE);
-                    message_counter.setVisibility(View.VISIBLE);
-                    button_exterior.setVisibility(View.VISIBLE);
-                    message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_new_message_drawable));
-
-
-                    if (!isMessageRunning) {
-                        message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
-                        message_pulse.setVisibility(View.VISIBLE);
-                    }
-
-                    if (messageList.size() > 99) {
-                        message_counter.setText("99+");
-                        message_counter.setTextSize(26);
-                    } else {
-                        message_counter.setText(messageList.size() + "");
-                        message_counter.setTextSize(32);
-                    }
-                }
-
-
-                if (sendMessageList.size() > 0) {
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            int size = sendMessageList.size();
-/*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance()
-                                    .getReference("SentStatus")
-                                    .child(userIdChattingWith)
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(sendMessageList.get(size - 1).getMessageId());
-
-                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                    DeliveryStatus deliveryStatus = dataSnapshot.getValue(DeliveryStatus.class);
-
-                                    try {
-                                        if (deliveryStatus.getSentStatus().equals("sending")) {
-                                            sending_progress_bar.setVisibility(View.VISIBLE);
-                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorPending));
-                                        } else {
-                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorWhite));
-                                            sending_progress_bar.setVisibility(View.GONE);
-                                        }
-                                    }catch (Exception e)
-                                    {
-                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorWhite));
-                                        sending_progress_bar.setVisibility(View.GONE);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                }
-                            });*/
-                            if (sendMessageList.get(size - 1).getSentStatus().equals("sending")) {
-
-                                try{
-                                    archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPending));
-
-                                }catch (Exception e)
-                                {
-                                    //
-                                }
-                                //sending_progress_bar.setVisibility(View.VISIBLE);
-                                archive_btn.setVisibility(View.VISIBLE);
-                               } else {
-                                try{
-                                    archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorWhite));
-
-                                }catch (Exception e)
-                                {
-                                    //
-                                }
-                                sending_progress_bar.setVisibility(View.GONE);
-                                archive_btn.setVisibility(View.INVISIBLE);
-                            }
-
-                        }
-                    }, 0);
-
-
-                }
 
                 //    filterList(chatMessageList);
                 // threadPending = ephemeralMessageViewModel.isThreadRunning();
@@ -2480,7 +2426,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         return chatMessageCompound;
     }
 
-    public  String encryptRSAToString(String clearText, String publicKey) {
+    private String encryptRSAToString(String clearText, String publicKey) {
         String encryptedBase64 = "";
         try {
             KeyFactory keyFac = KeyFactory.getInstance("RSA");
@@ -2500,7 +2446,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         return encryptedBase64.replaceAll("(\\r|\\n)", "");
     }
-    public  String decryptRSAToString(String encryptedBase64, String privateKey) {
+
+    private String decryptRSAToString(String encryptedBase64, String privateKey) {
 
         String decryptedString = "";
         try {
@@ -3101,7 +3048,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
     }
 
-    public void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto) {
+    private void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto) {
 
         Long tsLong = System.currentTimeMillis() / 1000;
         final String ts = tsLong.toString();
@@ -3129,95 +3076,262 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     }
 
 
-    private int filterList(List<ChatMessage> chatMessageList) {
-
-/*        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });*/
-
-        List<ChatMessage> messageListReading = chatMessageList;
-        //if(!getIsMessageRunning())
-        messageList.clear();
-        photoMessageList.clear();
+    private void filterList(List<ChatMessage> chatMessageList) {
 
         try {
 
-            for (ChatMessage chatMessage : messageListReading) {
-                if (chatMessage.getSenderId().equals(userIdChattingWith)) {
-                    if (chatMessage.getPhotourl().equals("none")
-                            && chatMessage.getAudiourl().equals("none")
-                            && chatMessage.getVideourl().equals("none")) {
+            TaskCompletionSource<List<ChatMessage>> listTaskCompletionSource = new TaskCompletionSource<>();
+            new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<ChatMessage> messageListReading = chatMessageList;
+                //if(!getIsMessageRunning())
+                messageList.clear();
+                photoMessageList.clear();
 
-                        if(currentUserPublicKeyID.equals(chatMessage.getPublicKeyID()))
-                        messageList.add(chatMessage);
-                    }
-                    else
-                        photoMessageList.add(chatMessage);
-                }
+                try {
 
-                else if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    for (ChatMessage chatMessage : messageListReading) {
+                        if (chatMessage.getSenderId().equals(userIdChattingWith)) {
+                            if (chatMessage.getPhotourl().equals("none")
+                                    && chatMessage.getAudiourl().equals("none")
+                                    && chatMessage.getVideourl().equals("none")) {
 
-                    try {
+                                if (currentUserPublicKeyID.equals(chatMessage.getPublicKeyID()))
+                                    messageList.add(chatMessage);
+                            } else
+                                photoMessageList.add(chatMessage);
+                        } else if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
-                        if(chatMessage.getMessageId()!=null)
-                            sendMessageList.add(chatMessage);
+                            try {
 
-                        else
-                        {
-                            messageListReading.remove(chatMessage);
+                                if (chatMessage.getMessageId() != null)
+                                    sendMessageList.add(chatMessage);
+
+                                else {
+                                    messageListReading.remove(chatMessage);
+                                }
+                            } catch (Exception e) {
+                                messageListReading.remove(chatMessage);
+                            }
+
                         }
-                    }catch (Exception e)
-                    {
-                        messageListReading.remove(chatMessage);
-                    }
 
+
+                    }
+                    listTaskCompletionSource.setResult(photoMessageList);
+
+
+                } catch (Exception e) {
+                    //
+                    listTaskCompletionSource.setResult(photoMessageList);
                 }
 
 
             }
+            }).start();
+
+            Task<List<ChatMessage>> listTask = listTaskCompletionSource.getTask();
+            listTask.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
+                @Override
+                public void onComplete(@NonNull Task<List<ChatMessage>> task) {
+
+                    if (task.isSuccessful()) {
+                        if (photoMessageList.size() > 0) {
+                            photo_btn.setVisibility(View.VISIBLE);
+                            photo_btn_bg.setVisibility(View.VISIBLE);
+                            ChatMessage chatMessage = photoMessageList.get(0);
+
+                            if (!chatMessage.getPhotourl().equals("none")) {
 
 
+                                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_image_white_24dp));
 
-        } catch (Exception e) {
-            //
+                            } else if (!chatMessage.getAudiourl().equals("none")) {
+
+                                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_mic_black_24dp));
+
+                            } else if (!chatMessage.getVideourl().equals("none")) {
+                                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
+                            }
+                        } else {
+                            photo_btn.setVisibility(View.INVISIBLE);
+                            photo_btn_bg.setVisibility(View.INVISIBLE);
+                        }
+
+                        checkForHint();
+                        setMessageHighlight(messageHighlight);
+
+                        if (photoMessageList.size() >= 1) {
+                            photosNotification.setVisibility(View.VISIBLE);
+                        } else {
+                            photosNotification.setVisibility(View.INVISIBLE);
+                        }
+
+
+                        if (messageList.size() < 1) {
+
+
+                            ephemeralMessageViewModel.setChatPending(false);
+
+                   /* swipeButton.setEnabled(false);
+
+                    swipeButton.setVisibility(View.GONE);*/
+
+                            switchBtn.setChecked(false);
+
+                            switchBtn.setVisibility(View.GONE);
+
+                            setChainBtn = false;
+
+                            message_running.setVisibility(View.INVISIBLE);
+                            message_running_two.setVisibility(View.INVISIBLE);
+
+                            // username.setVisibility(View.VISIBLE);
+
+
+                            //  swipeButton = null;
+
+
+                            /**
+                             *  Automatically queues the messages after button is explicitely triggered,
+                             *  after a message in received when this activity is opened,
+                             *  unless we add the following
+                             *  setChainBtn = false;
+                             **/
+
+
+                            chainBtn.setVisibility(View.GONE);
+                            chain_pulse.setVisibility(View.GONE);
+                            //
+                            //  ephemeralMessageViewModel.setChatSeen();
+                            message_counter_background.setVisibility(View.INVISIBLE);
+                            message_pulse.setVisibility(View.INVISIBLE);
+                            message_no_message_counter_background.setVisibility(View.INVISIBLE);
+                            message_counter.setText("");
+
+
+                            message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_drawable));
+                            message_counter.setVisibility(View.INVISIBLE);
+                            button_exterior.setVisibility(View.INVISIBLE);
+                            if (!isMessageRunning)
+                                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+
+
+                            // message_counter.setVisibility(View.GONE);
+                        } else {
+
+                            //  ephemeralMessageViewModel.setChatPending(true);
+
+                    /*swipeButton = findViewById(R.id.swipeBtn);
+                    swipeButton.setEnabled(true);
+                    swipeButton.setVisibility(View.VISIBLE);*/
+                            message_counter_background.setVisibility(View.VISIBLE);
+                            message_no_message_counter_background.setVisibility(View.INVISIBLE);
+                            message_counter.setVisibility(View.VISIBLE);
+                            button_exterior.setVisibility(View.VISIBLE);
+                            message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_new_message_drawable));
+
+
+                            if (!isMessageRunning) {
+                                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+                                message_pulse.setVisibility(View.VISIBLE);
+                            }
+
+                            if (messageList.size() > 99) {
+                                message_counter.setText("99+");
+                                message_counter.setTextSize(26);
+                            } else {
+                                message_counter.setText(messageList.size() + "");
+                                message_counter.setTextSize(32);
+                            }
+                        }
+
+
+                        if (sendMessageList.size() > 0) {
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    int size = sendMessageList.size();
+/*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                                    .getReference("SentStatus")
+                                    .child(userIdChattingWith)
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(sendMessageList.get(size - 1).getMessageId());
+
+                            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                    DeliveryStatus deliveryStatus = dataSnapshot.getValue(DeliveryStatus.class);
+
+                                    try {
+                                        if (deliveryStatus.getSentStatus().equals("sending")) {
+                                            sending_progress_bar.setVisibility(View.VISIBLE);
+                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorPending));
+                                        } else {
+                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorWhite));
+                                            sending_progress_bar.setVisibility(View.GONE);
+                                        }
+                                    }catch (Exception e)
+                                    {
+                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.colorWhite));
+                                        sending_progress_bar.setVisibility(View.GONE);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });*/
+                                    if (sendMessageList.get(size - 1).getSentStatus().equals("sending")) {
+
+                                        try {
+                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPending));
+
+                                        } catch (Exception e) {
+                                            //
+                                        }
+                                        //sending_progress_bar.setVisibility(View.VISIBLE);
+                                        archive_btn.setVisibility(View.VISIBLE);
+                                    } else {
+                                        try {
+                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorWhite));
+
+                                        } catch (Exception e) {
+                                            //
+                                        }
+                                        sending_progress_bar.setVisibility(View.GONE);
+                                        archive_btn.setVisibility(View.INVISIBLE);
+                                    }
+
+                                }
+                            }, 0);
+
+
+                        }
+
+                    }
+
+                }
+            });
+
+        } catch (NullPointerException e) {
+
         }
-
-
-        if (photoMessageList.size() > 0) {
-            photo_btn.setVisibility(View.VISIBLE);
-            photo_btn_bg.setVisibility(View.VISIBLE);
-            ChatMessage chatMessage = photoMessageList.get(0);
-
-            if (!chatMessage.getPhotourl().equals("none")) {
-
-
-                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_image_white_24dp));
-
-            } else if (!chatMessage.getAudiourl().equals("none")) {
-
-                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_mic_black_24dp));
-
-            } else if (!chatMessage.getVideourl().equals("none")) {
-                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
-            }
-        } else {
-            photo_btn.setVisibility(View.INVISIBLE);
-            photo_btn_bg.setVisibility(View.INVISIBLE);
-        }
-
-        checkForHint();
-        setMessageHighlight(messageHighlight);
-        return messageList.size();
 
 
     }
 
-    public void checkForHint() {
+    private void checkForHint() {
         ifHintExists = false;
         try {
+
+
             for (ChatMessage sentMessage : sendMessageList) {
                 if (messageList.get(0).getReplyID().equals(sentMessage.getMessageId())) {
                     highlightMessageText = decryptRSAToString(sentMessage.getMessageText(),currentUserPrivateKey);
@@ -3235,6 +3349,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                }
 
             }
+
+
         }catch (Exception e)
         {
             //ifHintExists=false;
@@ -3751,8 +3867,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                             if (!lastMessageID.equals("none")) {
 
                                                 message_box.setHint("Reply to last message...");
+                                                try {
 
-                                                message_box.setHintTextColor(getActivity().getResources().getColor(R.color.textThemeColorSemiDark));
+                                                    message_box.setHintTextColor(getActivity().getResources().getColor(R.color.textThemeColorSemiDark));
+                                                } catch (NullPointerException e) {
+                                                    //
+                                                }
 
 
                                                 final Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.text_bounce_anim);
@@ -4109,7 +4229,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         }, equitime);
     }
 
-    public void setUpBlink() {
+    private void setUpBlink() {
         blinkerHandler = new Handler();
 
 
@@ -4168,7 +4288,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         return isMessageRunning;
     }
 
-    public void checkPresence() {
+    private void checkPresence() {
         final DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
         connectedRef.addValueEventListener(new ValueEventListener() {
             @Override

@@ -8,6 +8,7 @@ import android.content.Context;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 import static com.hieeway.hieeway.NavButtonTest.USER_ID;
 import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
 import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
@@ -25,6 +26,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -252,11 +254,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         viewHolder.progressBarOne.setVisibility(View.VISIBLE);
         viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
 
+        viewHolder.count_message_text.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
-
-        checkPendingMessages(chatStamp.getId(), viewHolder.relativeLayout,viewHolder.count_message_layout,viewHolder.count_message_text);
+        checkPendingMessages(chatStamp.getId(), viewHolder.relativeLayout, viewHolder.count_message_layout, viewHolder.count_message_text, viewHolder.user_photo);
         checkUserChangeAccountChange(chatStamp.getId(),chatStamp.getPhoto(),viewHolder.user_photo);
+
+        checkForMessageRequests(chatStamp.getId(), viewHolder.longMsgBtn);
 
 
         Log.v("ChatMessageAdapter", "onBindViewHolder called!!!!!!");
@@ -275,7 +279,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                  */
 
 
-                mContext.startActivity(new Intent(mContext, WebViewActivity.class));
+                // mContext.startActivity(new Intent(mContext, WebViewActivity.class));
 
 
 
@@ -300,7 +304,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                  * Final code below
                  */
 
-                /*Intent intent = new Intent(mContext, RevealReplyActivity.class);
+                Intent intent = new Intent(mContext, RevealReplyActivity.class);
 
 
                 intent.putExtra("userIdChattingWith", chatStamp.getId());
@@ -310,7 +314,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 intent.putExtra("usernameChattingWith", chatStamp.getUsername());
 
 
-                mContext.startActivity(intent);*/
+                mContext.startActivity(intent);
 
 
                 //mContext.startActivity(new Intent(mContext, SpotifyActivity.class));
@@ -327,24 +331,28 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
 
-                    viewHolder.user_photo.setAlpha(0.6f);
+                    // viewHolder.user_photo.setAlpha(0.4f);
 
                     viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                    viewHolder.count_message_layout.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
 
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
 
 
+                    //         viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
 
-                            viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
+                    viewHolder.count_message_layout.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
 
 
 
                 }
                 else
                 {
-                    viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+                    // viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+
+                    viewHolder.count_message_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
 
                     viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
                 }
@@ -373,9 +381,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                     }
                 });
                 builder.show();*/
-                viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
+                //viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
 
                 viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                viewHolder.count_message_layout.animate().setDuration(100).alpha(1.0f);
 
 
                 Vibrator vb = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
@@ -532,11 +541,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
             public void onClick(View v) {
 
 
-                viewHolder.user_photo.setAlpha(0.6f);
+                // viewHolder.user_photo.setAlpha(0.4f);
 
                 viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                viewHolder.count_message_layout.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
+
                 viewHolder.progressBarOne.setVisibility(View.VISIBLE);
-                viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
+                //  viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -701,7 +712,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         notifyItemRemoved(pos);
     }
 
-    private void checkPendingMessages(final String userChattingWith, final RelativeLayout relativeLayout, final RelativeLayout countMsgLayout, final TextView countMessageText)
+    private void checkPendingMessages(final String userChattingWith, final RelativeLayout relativeLayout, final RelativeLayout countMsgLayout, final TextView countMessageText, ImageView user_photo)
     {
 
         //countMessages.clear();
@@ -759,11 +770,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                                 relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back_new_message));
                                 countMessageText.setText("" + integerTask.getResult());
                                 countMsgLayout.setVisibility(View.VISIBLE);
+                                user_photo.setAlpha(0.4f);
                                 //  counterBackgroundLayout.setVisibility(View.VISIBLE);
 
                             } else {
                                 relativeLayout.setBackground(mContext.getDrawable(R.drawable.chatlist_item_back));
                                 countMsgLayout.setVisibility(View.INVISIBLE);
+                                user_photo.setAlpha(1.0f);
                                 // counterBackgroundLayout.setVisibility(View.INVISIBLE);
                             }
                         }
@@ -820,6 +833,65 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
         }
+
+    }
+
+    private void checkForMessageRequests(String userIdChattingWith, ImageButton longBtn) {
+
+        DatabaseReference requestMessageRef = FirebaseDatabase.getInstance().getReference("MessageRequests")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userIdChattingWith);
+
+        requestMessageRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                TaskCompletionSource<Integer> integerTaskCompletionSource = new TaskCompletionSource<>();
+
+                List<ChatMessage> chatMessageList = new ArrayList<>();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        chatMessageList.clear();
+                        notificationIDHashMap.put(userIdChattingWith + "numberrevealrequest", 0);
+                        if (dataSnapshot.exists()) {
+                            int requests = 0;
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                                chatMessageList.add(chatMessage);
+
+                                requests += 1;
+
+
+                            }
+
+                            integerTaskCompletionSource.setResult(requests);
+
+                        }
+
+                    }
+                }).start();
+
+                Task<Integer> integerTask = integerTaskCompletionSource.getTask();
+                integerTask.addOnCompleteListener(new OnCompleteListener<Integer>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Integer> task) {
+                        if (task.isSuccessful()) {
+                            if (task.getResult() > 0) {
+                                longBtn.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

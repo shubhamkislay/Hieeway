@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -242,71 +243,78 @@ public class EphemeralMessageViewModel extends ViewModel {
 
     public void deleteMessage(ChatMessage chatMessage,Boolean deleteForAll){
 
-        DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
-                .child(currentUser)
-                .child(userChattingWithId)
-                .child(chatMessage.getMessageId());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        if(!deleteForAll) {
+                DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
+                        .child(currentUser)
+                        .child(userChattingWithId)
+                        .child(chatMessage.getMessageId());
 
-            DatabaseReference SeenMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
-                    .child(userChattingWithId)
-                    .child(currentUser)
-                    .child(chatMessage.getMessageId());
+                if (!deleteForAll) {
 
-            HashMap<String,Object> updateSeen = new HashMap<>();
-            updateSeen.put("seen","seen");
-            updateSeen.put("sentStatus","sent");
+                    DatabaseReference SeenMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
+                            .child(userChattingWithId)
+                            .child(currentUser)
+                            .child(chatMessage.getMessageId());
 
-            SeenMessageSenderRef.updateChildren(updateSeen);
+                    HashMap<String, Object> updateSeen = new HashMap<>();
+                    updateSeen.put("seen", "seen");
+                    updateSeen.put("sentStatus", "sent");
 
-          //  deleteMessageSenderRef.updateChildren(updateSeen);
+                    SeenMessageSenderRef.updateChildren(updateSeen);
 
-
-        }
-
-        deleteMessageSenderRef.removeValue();
-
-
-       // setChatPending(false);
+                    //  deleteMessageSenderRef.updateChildren(updateSeen);
 
 
-        DatabaseReference seenChat = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(currentUser)
-                .child(userChattingWithId);
-
-
-        HashMap<String,Object> hashMap = new HashMap<>();
-
-
-        hashMap.put("seen", "seen");
-        seenChat.updateChildren(hashMap);
-
-
-
-        if(deleteForAll) {
-            final DatabaseReference deleteMessageReceiverRef = FirebaseDatabase.getInstance().getReference("Messages")
-                    .child(userChattingWithId)
-                    .child(currentUser)
-                    .child(chatMessage.getMessageId());
-
-            deleteMessageReceiverRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.exists())
-                    {
-
-                        deleteMessageReceiverRef.removeValue();
-                    }
                 }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                deleteMessageSenderRef.removeValue();
+
+
+                // setChatPending(false);
+
+
+                DatabaseReference seenChat = FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(currentUser)
+                        .child(userChattingWithId);
+
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+
+
+                hashMap.put("seen", "seen");
+                seenChat.updateChildren(hashMap);
+
+
+                if (deleteForAll) {
+                    final DatabaseReference deleteMessageReceiverRef = FirebaseDatabase.getInstance().getReference("Messages")
+                            .child(userChattingWithId)
+                            .child(currentUser)
+                            .child(chatMessage.getMessageId());
+
+                    deleteMessageReceiverRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+
+                                deleteMessageReceiverRef.removeValue();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
 
                 }
-            });
 
-        }
+            }
+        }).start();
+
+
 
 
 
@@ -318,7 +326,105 @@ public class EphemeralMessageViewModel extends ViewModel {
 
     public LiveData<List<ChatMessage>> getAllMessages(){ return messageLiveData;}
 
+    public void setChatPending(final Boolean chatPending) {
 
+
+        senderChatCreateRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dataSnapshot.exists()) {
+                            HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+                            timeStampHashReceiver.put("chatPending", chatPending);
+
+
+                            senderChatCreateRef.updateChildren(timeStampHashReceiver);
+                        }
+                    }
+                }).start();
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    public void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto) {
+
+        Long tsLong = System.currentTimeMillis() / 1000;
+        final String ts = tsLong.toString();
+
+        final HashMap<String, Object> timeStampHash = new HashMap<>();
+
+        final HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+
+
+        senderChatCreateRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                ChatStamp chatStamp = mutableData.getValue(ChatStamp.class);
+
+                if (chatStamp == null) {
+
+                    timeStampHash.put("timeStamp", ts);
+                    timeStampHash.put("id", userChattingWithId);
+                    timeStampHash.put("username", usernameUserChattingWith);
+                    timeStampHash.put("photo", userChattingWith_photo);
+                    timeStampHash.put("seen", "notseen");
+                    timeStampHash.put("chatPending", false);
+                    timeStampHash.put("gemCount", 2);
+
+                    timeStampHashReceiver.put("timeStamp", ts);
+                    timeStampHashReceiver.put("id", currentUser);
+                    timeStampHashReceiver.put("username", currentUserName);
+                    timeStampHashReceiver.put("photo", currentUserPhoto);
+                    timeStampHashReceiver.put("seen", "notseen");
+                    timeStampHashReceiver.put("chatPending", true);
+                    timeStampHashReceiver.put("gemCount", 2);
+                    senderChatCreateRef.updateChildren(timeStampHash);
+                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+                } else {
+                    timeStampHash.put("timeStamp", ts);
+                    timeStampHash.put("id", userChattingWithId);
+                    timeStampHash.put("username", usernameUserChattingWith);
+                    timeStampHash.put("photo", userChattingWith_photo);
+                    timeStampHash.put("seen", "notseen");
+                    timeStampHash.put("chatPending", false);
+
+                    timeStampHashReceiver.put("timeStamp", ts);
+                    timeStampHashReceiver.put("id", currentUser);
+                    timeStampHashReceiver.put("username", currentUserName);
+                    timeStampHashReceiver.put("photo", currentUserPhoto);
+                    timeStampHashReceiver.put("seen", "notseen");
+                    timeStampHashReceiver.put("chatPending", true);
+
+                    senderChatCreateRef.updateChildren(timeStampHash);
+                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+                }
+
+                return null;
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+            }
+        });
+
+
+    }
 
     public class MessageLiveData extends LiveData<List<ChatMessage>>
     {
@@ -356,125 +462,76 @@ public class EphemeralMessageViewModel extends ViewModel {
             this.chatMessageAdapter = chatMessageAdapter;
         }
 
-        private class MineValueEventListener implements ValueEventListener {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                messageList.clear();
-                if(dataSnapshot.exists()) {
-                    messageList.clear();
-
-                    for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
-
-                        ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
-                        messageList.add(chatMessage);
-                        try {
-
-                       /* if (chatMessage.getReceiverId().equals(currentUser)) {
-
-                            HashMap<String, Object> updateStatusHash = new HashMap<>();
-                            updateStatusHash.put("sentStatus", "sent");
-*/
-
-                            //     receiverUsersRef.child(chatMessage.getMessageId()).updateChildren(updateStatusHash);
+        public void sendMessage(final ChatMessage chatMessage) {
 
 
-                            //  }
-                        }catch(Exception e)
-                        {
-                            //Write the solution to handle the solution here
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final String messageKey = sendderUsersRef.push().getKey();
+
+                    chatMessage.setSenderId(currentUser);
+                    chatMessage.setReceiverId(userChattingWithId);
+                    chatMessage.setMessageId(messageKey);
+
+                    final HashMap<String, Object> sendMessageHash = new HashMap<>();
+                    sendMessageHash.put("senderId", chatMessage.getSenderId());
+                    sendMessageHash.put("receiverId", chatMessage.getReceiverId());
+                    sendMessageHash.put("messageId", chatMessage.getMessageId());
+                    sendMessageHash.put("messageText", chatMessage.getMessageText());
+                    sendMessageHash.put("sentStatus", chatMessage.getSentStatus());
+                    sendMessageHash.put("seen", chatMessage.getSeen());
+                    sendMessageHash.put("photourl", chatMessage.getPhotourl());
+                    sendMessageHash.put("textSize", chatMessage.getTextSize());
+                    sendMessageHash.put("replyID", chatMessage.getReplyID());
+                    sendMessageHash.put("gotReplyID", chatMessage.getReplyID());
+                    sendMessageHash.put("senderReplyMessage", chatMessage.getSenderReplyMessage());
+                    sendMessageHash.put("replyTag", chatMessage.getReplyTag());
+                    sendMessageHash.put("ifMessageTwo", chatMessage.getIfMessageTwo());
+                    sendMessageHash.put("messageTextTwo", chatMessage.getMessageTextTwo());
+                    sendMessageHash.put("ifMessageThree", chatMessage.getIfMessageThree());
+                    sendMessageHash.put("messageTextThree", chatMessage.getMessageTextThree());
+                    sendMessageHash.put("showReplyMsg", chatMessage.getShowReplyMsg());
+                    sendMessageHash.put("replyMsg", chatMessage.getReplyMsg());
+                    sendMessageHash.put("showGotReplyMsg", chatMessage.getShowGotReplyMsg());
+                    sendMessageHash.put("gotReplyMsg", chatMessage.getGotReplyMsg());
 
 
-                            chatMessage = null;
-                            messageList.remove(chatMessage);
+                    final DatabaseReference messageReportSender = FirebaseDatabase.getInstance().getReference("ReportMessages")
+                            .child(currentUser)
+                            .child(userChattingWithId);
 
-                         //   chatMessageAdapter.notifyDataSetChanged();
+                    DatabaseReference messageReportReceiver = FirebaseDatabase.getInstance().getReference("ReportMessages")
+                            .child(userChattingWithId)
+                            .child(currentUser);
+
+                    if (!chatMessage.getReplyID().equals("none")) {
+                        DatabaseReference messageReportUpdateReply = FirebaseDatabase.getInstance().getReference("Messages")
+                                .child(userChattingWithId)
+                                .child(currentUser);
+
+                        HashMap<String, Object> hashMap = new HashMap<>();
+
+                        hashMap.put("gotReplyID", messageKey);
+                        hashMap.put("seen", "seen");
+
+                        messageReportUpdateReply.child(chatMessage.getReplyID()).updateChildren(hashMap);
+                    }
+
+
+                    sendderUsersRef.child(messageKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            HashMap<String, Object> sentHash = new HashMap<>();
+                            sentHash.put("sentStatus", "sent");
+                            // sentHash.put("messageId",messageKey);
+
+
+                            sendderUsersRef.child(messageKey).updateChildren(sentHash);
 
                         }
-                    }
-                }
-                setValue(messageList);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-
-            }
-        }
-
-        public void sendMessage(final ChatMessage chatMessage)
-        {
-
-
-
-            final String messageKey = sendderUsersRef.push().getKey();
-
-            chatMessage.setSenderId(currentUser);
-            chatMessage.setReceiverId(userChattingWithId);
-            chatMessage.setMessageId(messageKey);
-
-            final HashMap<String,  Object> sendMessageHash = new HashMap<>();
-            sendMessageHash.put("senderId",chatMessage.getSenderId());
-            sendMessageHash.put("receiverId",chatMessage.getReceiverId());
-            sendMessageHash.put("messageId",chatMessage.getMessageId());
-            sendMessageHash.put("messageText",chatMessage.getMessageText());
-            sendMessageHash.put("sentStatus",chatMessage.getSentStatus());
-            sendMessageHash.put("seen", chatMessage.getSeen());
-            sendMessageHash.put("photourl",chatMessage.getPhotourl());
-            sendMessageHash.put("textSize", chatMessage.getTextSize());
-            sendMessageHash.put("replyID",chatMessage.getReplyID());
-            sendMessageHash.put("gotReplyID",chatMessage.getReplyID());
-            sendMessageHash.put("senderReplyMessage",chatMessage.getSenderReplyMessage());
-            sendMessageHash.put("replyTag",chatMessage.getReplyTag());
-            sendMessageHash.put("ifMessageTwo",chatMessage.getIfMessageTwo());
-            sendMessageHash.put("messageTextTwo",chatMessage.getMessageTextTwo());
-            sendMessageHash.put("ifMessageThree",chatMessage.getIfMessageThree());
-            sendMessageHash.put("messageTextThree",chatMessage.getMessageTextThree());
-            sendMessageHash.put("showReplyMsg",chatMessage.getShowReplyMsg());
-            sendMessageHash.put("replyMsg",chatMessage.getReplyMsg());
-            sendMessageHash.put("showGotReplyMsg",chatMessage.getShowGotReplyMsg());
-            sendMessageHash.put("gotReplyMsg",chatMessage.getGotReplyMsg());
-
-
-            final DatabaseReference messageReportSender = FirebaseDatabase.getInstance().getReference("ReportMessages")
-                    .child(currentUser)
-                    .child(userChattingWithId);
-
-            DatabaseReference messageReportReceiver = FirebaseDatabase.getInstance().getReference("ReportMessages")
-                    .child(userChattingWithId)
-                    .child(currentUser);
-
-            if(!chatMessage.getReplyID().equals("none"))
-            {
-                DatabaseReference messageReportUpdateReply = FirebaseDatabase.getInstance().getReference("Messages")
-                        .child(userChattingWithId)
-                        .child(currentUser);
-
-                HashMap<String,Object> hashMap = new HashMap<>();
-
-                hashMap.put("gotReplyID",messageKey);
-                hashMap.put("seen","seen");
-
-                messageReportUpdateReply.child(chatMessage.getReplyID()).updateChildren(hashMap);
-            }
-
-
-
-
-            sendderUsersRef.child(messageKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                HashMap<String,Object> sentHash = new HashMap<>();
-                sentHash.put("sentStatus","sent");
-               // sentHash.put("messageId",messageKey);
-
-
-                sendderUsersRef.child(messageKey).updateChildren(sentHash);
-
-            }
-        });
-            receiverUsersRef.child(messageKey).updateChildren(sendMessageHash);
+                    });
+                    receiverUsersRef.child(messageKey).updateChildren(sendMessageHash);
 
           /*  messageReportSender.child(messageKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -507,126 +564,83 @@ public class EphemeralMessageViewModel extends ViewModel {
             senstStatusRef.updateChildren(senthash);
             senstStatusRevRef.updateChildren(senthash);*/
 
+                }
+            }).start();
 
 
         }
 
-
-    }
-
-    public void createChatListItem(final String usernameUserChattingWith,final String userChattingWith_photo,final String currentUserName,final String currentUserPhoto)
-    {
-
-        Long tsLong = System.currentTimeMillis()/1000;
-        final String ts = tsLong.toString();
-
-        final HashMap<String, Object> timeStampHash = new HashMap<>();
-
-        final HashMap<String,Object> timeStampHashReceiver = new HashMap<>();
-
-
-
-
-        senderChatCreateRef.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-
-                ChatStamp chatStamp = mutableData.getValue(ChatStamp.class);
-
-                if(chatStamp==null)
-                {
-
-                    timeStampHash.put("timeStamp", ts);
-                    timeStampHash.put("id", userChattingWithId);
-                    timeStampHash.put("username", usernameUserChattingWith);
-                    timeStampHash.put("photo", userChattingWith_photo);
-                    timeStampHash.put("seen", "notseen");
-                    timeStampHash.put("chatPending", false);
-                    timeStampHash.put("gemCount",2);
-
-                    timeStampHashReceiver.put("timeStamp", ts);
-                    timeStampHashReceiver.put("id", currentUser);
-                    timeStampHashReceiver.put("username", currentUserName);
-                    timeStampHashReceiver.put("photo", currentUserPhoto);
-                    timeStampHashReceiver.put("seen", "notseen");
-                    timeStampHashReceiver.put("chatPending",true);
-                    timeStampHashReceiver.put("gemCount",2);
-                    senderChatCreateRef.updateChildren(timeStampHash);
-                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
-
-                }
-                else
-                {
-                    timeStampHash.put("timeStamp", ts);
-                    timeStampHash.put("id", userChattingWithId);
-                    timeStampHash.put("username", usernameUserChattingWith);
-                    timeStampHash.put("photo", userChattingWith_photo);
-                    timeStampHash.put("seen", "notseen");
-                    timeStampHash.put("chatPending", false);
-
-                    timeStampHashReceiver.put("timeStamp", ts);
-                    timeStampHashReceiver.put("id", currentUser);
-                    timeStampHashReceiver.put("username", currentUserName);
-                    timeStampHashReceiver.put("photo", currentUserPhoto);
-                    timeStampHashReceiver.put("seen", "notseen");
-                    timeStampHashReceiver.put("chatPending",true);
-
-                    senderChatCreateRef.updateChildren(timeStampHash);
-                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
-
-                }
-
-                return null;
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-            }
-        });
-
-
-
-
-
-
-
-
-
-
-
-    }
-
-
-
-    public void setChatPending(final Boolean chatPending)
-    {
-
-
-
-
-        senderChatCreateRef.addValueEventListener(new ValueEventListener() {
+        private class MineValueEventListener implements ValueEventListener {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
-                    HashMap<String,Object> timeStampHashReceiver = new HashMap<>();
-                    timeStampHashReceiver.put("chatPending",chatPending);
 
 
-                    senderChatCreateRef.updateChildren(timeStampHashReceiver);
-                }
+                TaskCompletionSource<List<ChatMessage>> listTaskCompletionSource = new TaskCompletionSource<>();
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        messageList.clear();
+                        if (dataSnapshot.exists()) {
+                            messageList.clear();
+
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                                messageList.add(chatMessage);
+                                try {
+
+                       /* if (chatMessage.getReceiverId().equals(currentUser)) {
+
+                            HashMap<String, Object> updateStatusHash = new HashMap<>();
+                            updateStatusHash.put("sentStatus", "sent");
+*/
+
+                                    //     receiverUsersRef.child(chatMessage.getMessageId()).updateChildren(updateStatusHash);
+
+
+                                    //  }
+                                } catch (Exception e) {
+                                    //Write the solution to handle the solution here
+
+
+                                    chatMessage = null;
+                                    messageList.remove(chatMessage);
+
+                                    //   chatMessageAdapter.notifyDataSetChanged();
+
+                                }
+                            }
+
+                            listTaskCompletionSource.setResult(messageList);
+                        }
+
+                    }
+                }).start();
+
+                Task<List<ChatMessage>> task = listTaskCompletionSource.getTask();
+
+
+                task.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<ChatMessage>> task) {
+                        if (task.isSuccessful()) {
+                            setValue(task.getResult());
+                        }
+
+                    }
+                });
+
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
+
             }
-        });
-
-
+        }
 
 
     }

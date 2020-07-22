@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -386,19 +387,37 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
-                    User user = dataSnapshot.getValue(User.class);
-                    try {
-                        otherUserPublicKey = user.getPublicKey();
-                        OTHER_USER_PUBLIC_KEY = otherUserPublicKey;
-                        otherUserPublicKeyID = user.getPublicKeyId();
+
+
+                TaskCompletionSource<User> userTaskCompletionSource = new TaskCompletionSource<>();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (dataSnapshot.exists()) {
+                            User user = dataSnapshot.getValue(User.class);
+                            try {
+                                otherUserPublicKey = user.getPublicKey();
+                                OTHER_USER_PUBLIC_KEY = otherUserPublicKey;
+                                otherUserPublicKeyID = user.getPublicKeyId();
+                            } catch (Exception e) {
+                                //
+                            }
+                        }
+
                     }
-                    catch (Exception e)
-                    {
-                        //
+                }).start();
+
+                Task<User> userTask = userTaskCompletionSource.getTask();
+                userTask.addOnCompleteListener(new OnCompleteListener<User>() {
+                    @Override
+                    public void onComplete(@NonNull Task<User> task) {
+
+                        if (task.isSuccessful()) {
+                            //
+                        }
+
                     }
-                }
+                });
             }
 
             @Override

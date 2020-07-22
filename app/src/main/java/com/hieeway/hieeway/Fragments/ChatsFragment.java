@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.text.Editable;
 import android.text.InputType;
@@ -390,6 +391,12 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         chats_recyclerview.setHasFixedSize(true);
         chats_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
+        RecyclerView.ItemAnimator animator = chats_recyclerview.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
+
+
         chats_recyclerview.setItemViewCacheSize(20);
         chats_recyclerview.setDrawingCacheEnabled(true);
         chats_recyclerview.setItemAnimator(new DefaultItemAnimator());
@@ -469,6 +476,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                     if (chatStampSize <= chatStampsList.size()) {
                         chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
+                        chatMessageAdapter.setHasStableIds(true);
                         chats_recyclerview.setAdapter(chatMessageAdapter);
                         chatMessageAdapter.notifyDataSetChanged();
                         new Handler().postDelayed(new Runnable() {

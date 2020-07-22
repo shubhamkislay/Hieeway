@@ -592,25 +592,29 @@ public class FriendListFagment extends Fragment {
 
     private void populateWithFriends() {
 
+        try {
 
-        search_result_txt.setVisibility(View.GONE);
-        friendRequestsCounter = 0;
-        userList.clear();
-        DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            search_result_txt.setVisibility(View.GONE);
+            friendRequestsCounter = 0;
+            userList.clear();
+            DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
-        friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                populateFriendsThread(dataSnapshot);
-            }
+            friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    populateFriendsThread(dataSnapshot);
+                }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        } catch (Exception e) {
+            //
+        }
 
       /*
         {
@@ -841,6 +845,11 @@ public class FriendListFagment extends Fragment {
         listTask.addOnCompleteListener(new OnCompleteListener<List<User>>() {
             @Override
             public void onComplete(@NonNull Task<List<User>> task) {
+                try {
+                    friendsAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+
+                }
 
                 if (task.isSuccessful()) {
                     if (!friendAvailable) {

@@ -27,6 +27,7 @@ import android.widget.ToggleButton;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -481,73 +482,81 @@ public class SendMessageFragment extends Fragment {
 
     private void filterList(List<ChatMessage> messageList) throws NullPointerException {
 
-
         sendMessagelist.clear();
-        readMessageList.clear();
-        sendingMessageList.clear();
+
+
         try {
 
-            for (ChatMessage chatMessage : messageList) {
 
-                if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            TaskCompletionSource<List<ChatMessage>> listTaskCompletionSource = new TaskCompletionSource<>();
 
-                    if(currentUserPublicKeyID.equals(chatMessage.getPublicKeyID()))
-                    {
-                        sendMessagelist.add(chatMessage);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        sendMessagelist.clear();
 
-                        if (chatMessage.getSentStatus().equals("sending"))
-                            sendingMessageList.add(chatMessage);
+                        readMessageList.clear();
+                        sendingMessageList.clear();
+                        for (ChatMessage chatMessage : messageList) {
 
+                            if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                                if (currentUserPublicKeyID.equals(chatMessage.getPublicKeyID())) {
+                                    sendMessagelist.add(chatMessage);
+
+                                    if (chatMessage.getSentStatus().equals("sending"))
+                                        sendingMessageList.add(chatMessage);
+
+
+                                }
+
+                            } else if (chatMessage.getSenderId().equals(userIdChattingWith)) {
+                                readMessageList.add(chatMessage);
+                            }
+
+                        }
+
+                        listTaskCompletionSource.setResult(sendMessagelist);
+                    } catch (Exception e) {
 
                     }
 
                 }
+            }).start();
 
-                else if(chatMessage.getSenderId().equals(userIdChattingWith))
-                {
-                    readMessageList.add(chatMessage);
+            Task<List<ChatMessage>> listTask = listTaskCompletionSource.getTask();
+
+            listTask.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
+                @Override
+                public void onComplete(@NonNull Task<List<ChatMessage>> task) {
+                    if (task.isSuccessful()) {
+                        sizeAfterDataChange = sendMessagelist.size();
+                        try {
+                            if (sizeBeforeDeleting <= sizeAfterDataChange) {
+                                refreshChat(
+                                        sendMessagelist);
+                                //Toast.makeText(getContext(),"Refresh Called",Toast.LENGTH_SHORT).show();
+
+                                sizeBeforeDeleting = sizeAfterDataChange;
+                            } else {
+                                // sizeBeforeDeleting = sizeAfterDataChange;
+                            }
+
+                        } catch (Exception e) {
+                            //refreshChat();
+
+                        }
+                    }
+
                 }
+            });
 
-            }
-           // addListToRecyclerView(sendMessagelist);
+            // addListToRecyclerView(sendMessagelist);
             //refreshChat();
-            sizeAfterDataChange = sendMessagelist.size();
-            try{
-            if(sizeBeforeDeleting <= sizeAfterDataChange )
-            {
-                refreshChat();
-                //Toast.makeText(getContext(),"Refresh Called",Toast.LENGTH_SHORT).show();
-
-                sizeBeforeDeleting = sizeAfterDataChange;
-            }
-
-            else
-            {
-               // sizeBeforeDeleting = sizeAfterDataChange;
-            }
-
-            }catch (Exception e)
-            {
-                //refreshChat();
-
-            }
-
-/*
-
-            if(!swiped) {
-
-                Toast.makeText(getContext(),"Swiped: "+swiped,Toast.LENGTH_SHORT).show();
-                refreshChat();
-            }
-            else {
-                //Toast.makeText(getContext(),"Swiped change: "+swiped,Toast.LENGTH_SHORT).show();
-                //swiped = false;
-            }
-*/
 
 
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 
             //
 
@@ -609,6 +618,9 @@ public class SendMessageFragment extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     messageList.clear();
+                    sendMessagelist.clear();
+
+                    messageList.clear();
                     if (dataSnapshot.exists()) {
                         messageList.clear();
 
@@ -620,19 +632,27 @@ public class SendMessageFragment extends Fragment {
                             messageList.add(chatMessage);
 
 
-
                         }
+
 
                         filterList(messageList);
 
                         try {
 
                             checkPresence();
-                        }catch (Exception e)
-                        {
+                        } catch (Exception e) {
 
                         }
+
+
                     }
+                    // listTaskCompletionSource.setResult(messageList);
+
+
+
+
+
+
 
                 }
 
@@ -666,10 +686,11 @@ public class SendMessageFragment extends Fragment {
 
     }
 
-    public void refreshChat()
+    public void refreshChat(List<ChatMessage> refreshlist)
     {
 
-        addListToRecyclerView(sendMessagelist);
+        sendMessagelist = refreshlist;
+        addListToRecyclerView(refreshlist);
         try {
            // bottomTextRelativeLayout.setBackgroundColor(getActivity().getResources().getColor(R.color.colorBlack));
         }catch (Exception ee)
@@ -695,30 +716,40 @@ public class SendMessageFragment extends Fragment {
                             public void run() {
                                 if (connected) {
                                     try {
-                                        for (ChatMessage chatMessage : sendingMessageList) {
-                                            if (chatMessage.getSentStatus().equals("sending")) {
-                                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
-                                                        .child("Messages")
-                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                        .child(userIdChattingWith)
-                                                        .child(chatMessage.getMessageId());
-                                                HashMap<String, Object> hashMap = new HashMap<>();
-                                                hashMap.put("messageId", chatMessage.getMessageId());
 
-                                                databaseReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
 
-                                                        HashMap<String, Object> hashMap1 = new HashMap<>();
-                                                        hashMap1.put("sentStatus", "sent");
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                for (ChatMessage chatMessage : sendingMessageList) {
+                                                    if (chatMessage.getSentStatus().equals("sending")) {
+                                                        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                                                                .child("Messages")
+                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                .child(userIdChattingWith)
+                                                                .child(chatMessage.getMessageId());
+                                                        HashMap<String, Object> hashMap = new HashMap<>();
+                                                        hashMap.put("messageId", chatMessage.getMessageId());
 
-                                                        databaseReference.updateChildren(hashMap1);
+                                                        databaseReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
 
+                                                                HashMap<String, Object> hashMap1 = new HashMap<>();
+                                                                hashMap1.put("sentStatus", "sent");
+
+                                                                databaseReference.updateChildren(hashMap1);
+
+                                                            }
+                                                        });
                                                     }
-                                                });
-                                            }
 
-                                        }
+                                                }
+                                            }
+                                        }).start();
+
+
+
 
                                     } catch (Exception e) {
 
