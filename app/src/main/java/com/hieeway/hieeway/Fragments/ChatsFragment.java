@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -74,6 +76,7 @@ import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.UserPicViewModel;
+import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -134,12 +137,81 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private Boolean searchedList = false;
     private ImageButton spotify_status, spotify_status_back;
     private View view;
+    private List<ChatStamp> beforeChatStampList = new ArrayList<>();
+    private boolean viewDestroyed = false;
+    private String latestTimeStamp = "default";
+    private String lastTimeStamp = "default";
+    private int i = 0;
+    private boolean notLoaded = false;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
 
+        chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
+        //chatMessageAdapter.setHasStableIds(true);
+        chats_recyclerview.setAdapter(chatMessageAdapter);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    chatsFragmentViewModel = ViewModelProviders.of(getActivity()).get(ChatsFragmentViewModel.class);
+                    chatsFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<List<ChatStamp>>() {
+                        @Override
+                        public void onChanged(@Nullable final List<ChatStamp> chatStamps) {
+
+
+                            // initialChatstampPopulateThread(chatStamps);
+                            Collections.sort(chatStamps, Collections.<ChatStamp>reverseOrder());
+
+
+                            chatMessageAdapter.updateList(chatStamps);
+
+                            chats_recyclerview.scrollToPosition(0);
+
+                            //chats_recyclerview.smoothScrollToPosition(0);
+
+                            if (chatStamps.size() <= 0) {
+                                noTextBack.setVisibility(View.VISIBLE);
+                            } else
+                                noTextBack.setVisibility(View.GONE);
+
+                            progress_menu_logo.setVisibility(View.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            progressTwo.setVisibility(View.GONE);
+
+                            if (!notLoaded) {
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+
+                                            animationArrowListener.playArrowAnimation();
+                                            notLoaded = true;
+
+
+                                        } catch (Exception e) {
+
+                                            Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }, 500);
+                            }
+
+
+                        }
+                    });
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "Handler Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }, 350);
     }
 
     @Override
@@ -410,26 +482,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
             }
         });
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
 
-                    chatsFragmentViewModel = ViewModelProviders.of(getActivity()).get(ChatsFragmentViewModel.class);
-                    chatsFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<List<ChatStamp>>() {
-                        @Override
-                        public void onChanged(@Nullable final List<ChatStamp> chatStamps) {
-
-                            initialChatstampPopulateThread(chatStamps);
-
-                        }
-                    });
-                } catch (Exception e) {
-                    Toast.makeText(getContext(), "Handler Error: " + e.toString(), Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        },350);
 
 
         return view;
@@ -478,7 +531,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
                         chatMessageAdapter.setHasStableIds(true);
                         chats_recyclerview.setAdapter(chatMessageAdapter);
-                        chatMessageAdapter.notifyDataSetChanged();
+                        //chatMessageAdapter.notifyDataSetChanged();
+                        beforeChatStampList = chatStamps;
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -496,6 +550,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                         //chatStampSize = chatStamps.size();
                     } else {
+
+
                         chatStampSize = chatStampsList.size();
                     }
 
@@ -932,13 +988,16 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        view = null;
+        // Toast.makeText(getActivity(),"Views destroyed",Toast.LENGTH_SHORT).show();
+        viewDestroyed = true;
+        chatsFragmentViewModel.getAllUser().removeObservers(getViewLifecycleOwner());
+        // view = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        view = null;
+        //view = null;
     }
 
 

@@ -36,6 +36,7 @@ import android.os.Vibrator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
@@ -83,6 +84,7 @@ import com.hieeway.hieeway.R;
 
 import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.SpotifyActivity;
+import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.VerticalPageActivity;
 import com.hieeway.hieeway.WebViewActivity;
 
@@ -546,7 +548,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
                 viewHolder.count_message_layout.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
 
-                viewHolder.progressBarOne.setVisibility(View.VISIBLE);
+                // viewHolder.progressBarOne.setVisibility(View.VISIBLE);
                 //  viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -569,6 +571,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                         //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
 
                         mContext.startActivity(intent);
+
+                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0);
+                        viewHolder.count_message_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0);
 
                     }
                 }, 50);
@@ -685,6 +690,21 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
     }
+
+    public void updateList(List<ChatStamp> newListChatStamp) {
+
+
+        ChatStampListDiffUtilCallback chatStampListDiffUtilCallback = new ChatStampListDiffUtilCallback(this.mChatStamps, newListChatStamp);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(chatStampListDiffUtilCallback);
+
+        mChatStamps.clear();
+        mChatStamps.addAll(newListChatStamp);
+
+        diffResult.dispatchUpdatesTo(this);
+
+
+    }
+
 
     @Override
     public void onDeleteForAll(int position, int mChatStampsListSize,RecyclerView.ViewHolder viewHolder) {

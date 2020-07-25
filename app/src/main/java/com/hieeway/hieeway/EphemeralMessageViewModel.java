@@ -243,6 +243,10 @@ public class EphemeralMessageViewModel extends ViewModel {
 
     public void deleteMessage(ChatMessage chatMessage,Boolean deleteForAll){
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
 
                 DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
                         .child(currentUser)
@@ -268,7 +272,6 @@ public class EphemeralMessageViewModel extends ViewModel {
                 }
 
                 deleteMessageSenderRef.removeValue();
-
 
                 // setChatPending(false);
 
@@ -309,9 +312,8 @@ public class EphemeralMessageViewModel extends ViewModel {
                 }
 
 
-
-
-
+            }
+        }).start();
 
 
     }
@@ -608,9 +610,10 @@ public class EphemeralMessageViewModel extends ViewModel {
                                 }
                             }
 
-                            listTaskCompletionSource.setResult(messageList);
+                            // listTaskCompletionSource.setResult(messageList);
                         }
 
+                        listTaskCompletionSource.setResult(messageList);
                     }
                 }).start();
 
@@ -620,9 +623,9 @@ public class EphemeralMessageViewModel extends ViewModel {
                 task.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
                     @Override
                     public void onComplete(@NonNull Task<List<ChatMessage>> task) {
-                        if (task.isSuccessful()) {
-                            setValue(task.getResult());
-                        }
+
+                        setValue(messageList);
+                        // }
 
                     }
                 });

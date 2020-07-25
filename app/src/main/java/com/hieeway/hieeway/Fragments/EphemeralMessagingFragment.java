@@ -3080,10 +3080,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         try {
 
-            TaskCompletionSource<List<ChatMessage>> listTaskCompletionSource = new TaskCompletionSource<>();
-            new Thread(new Runnable() {
-            @Override
-            public void run() {
+
                 List<ChatMessage> messageListReading = chatMessageList;
                 //if(!getIsMessageRunning())
                 messageList.clear();
@@ -3119,142 +3116,126 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
                     }
-                    listTaskCompletionSource.setResult(photoMessageList);
 
 
-                } catch (Exception e) {
-                    //
-                    listTaskCompletionSource.setResult(photoMessageList);
-                }
+                    if (photoMessageList.size() > 0) {
+                        photo_btn.setVisibility(View.VISIBLE);
+                        photo_btn_bg.setVisibility(View.VISIBLE);
+                        ChatMessage chatMessage = photoMessageList.get(0);
+
+                        if (!chatMessage.getPhotourl().equals("none")) {
 
 
-            }
-            }).start();
+                            photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_image_white_24dp));
 
-            Task<List<ChatMessage>> listTask = listTaskCompletionSource.getTask();
-            listTask.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
-                @Override
-                public void onComplete(@NonNull Task<List<ChatMessage>> task) {
+                        } else if (!chatMessage.getAudiourl().equals("none")) {
 
-                    if (task.isSuccessful()) {
-                        if (photoMessageList.size() > 0) {
-                            photo_btn.setVisibility(View.VISIBLE);
-                            photo_btn_bg.setVisibility(View.VISIBLE);
-                            ChatMessage chatMessage = photoMessageList.get(0);
+                            photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_mic_black_24dp));
 
-                            if (!chatMessage.getPhotourl().equals("none")) {
-
-
-                                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_image_white_24dp));
-
-                            } else if (!chatMessage.getAudiourl().equals("none")) {
-
-                                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_mic_black_24dp));
-
-                            } else if (!chatMessage.getVideourl().equals("none")) {
-                                photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
-                            }
-                        } else {
-                            photo_btn.setVisibility(View.INVISIBLE);
-                            photo_btn_bg.setVisibility(View.INVISIBLE);
+                        } else if (!chatMessage.getVideourl().equals("none")) {
+                            photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
                         }
+                    } else {
+                        photo_btn.setVisibility(View.INVISIBLE);
+                        photo_btn_bg.setVisibility(View.INVISIBLE);
+                    }
 
-                        checkForHint();
-                        setMessageHighlight(messageHighlight);
+                    checkForHint();
+                    setMessageHighlight(messageHighlight);
 
-                        if (photoMessageList.size() >= 1) {
-                            photosNotification.setVisibility(View.VISIBLE);
-                        } else {
-                            photosNotification.setVisibility(View.INVISIBLE);
-                        }
-
-
-                        if (messageList.size() < 1) {
+                    if (photoMessageList.size() >= 1) {
+                        photosNotification.setVisibility(View.VISIBLE);
+                    } else {
+                        photosNotification.setVisibility(View.INVISIBLE);
+                    }
 
 
-                            ephemeralMessageViewModel.setChatPending(false);
+                    if (messageList.size() < 1) {
+
+
+                        ephemeralMessageViewModel.setChatPending(false);
 
                    /* swipeButton.setEnabled(false);
 
                     swipeButton.setVisibility(View.GONE);*/
 
-                            switchBtn.setChecked(false);
+                        switchBtn.setChecked(false);
 
-                            switchBtn.setVisibility(View.GONE);
+                        switchBtn.setVisibility(View.GONE);
 
-                            setChainBtn = false;
+                        setChainBtn = false;
 
-                            message_running.setVisibility(View.INVISIBLE);
-                            message_running_two.setVisibility(View.INVISIBLE);
+                        message_running.setVisibility(View.INVISIBLE);
+                        message_running_two.setVisibility(View.INVISIBLE);
 
-                            // username.setVisibility(View.VISIBLE);
-
-
-                            //  swipeButton = null;
+                        // username.setVisibility(View.VISIBLE);
 
 
-                            /**
-                             *  Automatically queues the messages after button is explicitely triggered,
-                             *  after a message in received when this activity is opened,
-                             *  unless we add the following
-                             *  setChainBtn = false;
-                             **/
+                        //  swipeButton = null;
 
 
-                            chainBtn.setVisibility(View.GONE);
-                            chain_pulse.setVisibility(View.GONE);
-                            //
-                            //  ephemeralMessageViewModel.setChatSeen();
-                            message_counter_background.setVisibility(View.INVISIBLE);
-                            message_pulse.setVisibility(View.INVISIBLE);
-                            message_no_message_counter_background.setVisibility(View.INVISIBLE);
-                            message_counter.setText("");
+                        /**
+                         *  Automatically queues the messages after button is explicitely triggered,
+                         *  after a message in received when this activity is opened,
+                         *  unless we add the following
+                         *  setChainBtn = false;
+                         **/
 
 
-                            message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_drawable));
-                            message_counter.setVisibility(View.INVISIBLE);
-                            button_exterior.setVisibility(View.INVISIBLE);
-                            if (!isMessageRunning)
-                                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+                        chainBtn.setVisibility(View.GONE);
+                        chain_pulse.setVisibility(View.GONE);
+                        //
+                        //  ephemeralMessageViewModel.setChatSeen();
+                        message_counter_background.setVisibility(View.INVISIBLE);
+                        message_pulse.setVisibility(View.INVISIBLE);
+                        message_no_message_counter_background.setVisibility(View.INVISIBLE);
+                        message_counter.setText("");
 
 
-                            // message_counter.setVisibility(View.GONE);
-                        } else {
+                        message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_drawable));
+                        message_counter.setVisibility(View.INVISIBLE);
+                        button_exterior.setVisibility(View.INVISIBLE);
+                        if (!isMessageRunning)
+                            message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
 
-                            //  ephemeralMessageViewModel.setChatPending(true);
+
+                        // message_counter.setVisibility(View.GONE);
+                    } else {
+
+                        //  ephemeralMessageViewModel.setChatPending(true);
 
                     /*swipeButton = findViewById(R.id.swipeBtn);
                     swipeButton.setEnabled(true);
                     swipeButton.setVisibility(View.VISIBLE);*/
-                            message_counter_background.setVisibility(View.VISIBLE);
-                            message_no_message_counter_background.setVisibility(View.INVISIBLE);
-                            message_counter.setVisibility(View.VISIBLE);
-                            button_exterior.setVisibility(View.VISIBLE);
-                            message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_new_message_drawable));
+                        message_counter_background.setVisibility(View.VISIBLE);
+                        message_no_message_counter_background.setVisibility(View.INVISIBLE);
+                        message_counter.setVisibility(View.VISIBLE);
+                        button_exterior.setVisibility(View.VISIBLE);
+                        message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_new_message_drawable));
 
 
-                            if (!isMessageRunning) {
-                                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
-                                message_pulse.setVisibility(View.VISIBLE);
-                            }
-
-                            if (messageList.size() > 99) {
-                                message_counter.setText("99+");
-                                message_counter.setTextSize(26);
-                            } else {
-                                message_counter.setText(messageList.size() + "");
-                                message_counter.setTextSize(32);
-                            }
+                        if (!isMessageRunning) {
+                            message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+                            message_pulse.setVisibility(View.VISIBLE);
                         }
 
+                        if (messageList.size() > 99) {
+                            message_counter.setText("99+");
+                            message_counter.setTextSize(26);
+                        } else {
+                            message_counter.setText(messageList.size() + "");
+                            message_counter.setTextSize(32);
+                        }
+                    }
 
-                        if (sendMessageList.size() > 0) {
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
+                    if (sendMessageList.size() > 0) {
 
-                                    int size = sendMessageList.size();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                int size = sendMessageList.size();
 /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             DatabaseReference databaseReference = FirebaseDatabase.getInstance()
                                     .getReference("SentStatus")
@@ -3288,37 +3269,43 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                 }
                             });*/
-                                    if (sendMessageList.get(size - 1).getSentStatus().equals("sending")) {
+                                if (sendMessageList.get(size - 1).getSentStatus().equals("sending")) {
 
-                                        try {
-                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPending));
+                                    try {
+                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPending));
 
-                                        } catch (Exception e) {
-                                            //
-                                        }
-                                        //sending_progress_bar.setVisibility(View.VISIBLE);
-                                        archive_btn.setVisibility(View.VISIBLE);
-                                    } else {
-                                        try {
-                                            archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorWhite));
-
-                                        } catch (Exception e) {
-                                            //
-                                        }
-                                        sending_progress_bar.setVisibility(View.GONE);
-                                        archive_btn.setVisibility(View.INVISIBLE);
+                                    } catch (Exception e) {
+                                        //
                                     }
+                                    //sending_progress_bar.setVisibility(View.VISIBLE);
+                                    archive_btn.setVisibility(View.VISIBLE);
+                                } else {
+                                    try {
+                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorWhite));
 
+                                    } catch (Exception e) {
+                                        //
+                                    }
+                                    sending_progress_bar.setVisibility(View.GONE);
+                                    archive_btn.setVisibility(View.INVISIBLE);
                                 }
-                            }, 0);
 
+                            }
+                        }, 0);
 
-                        }
 
                     }
 
+
+                } catch (Exception e) {
+                    //
+                    // listTaskCompletionSource.setResult(photoMessageList);
                 }
-            });
+
+
+
+
+
 
         } catch (NullPointerException e) {
 
@@ -3692,8 +3679,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void run() {
 
 
-
-
                 if (!messageTwoPresent && !messageThreePresent) {
 
 
@@ -3875,40 +3860,44 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                 }
 
 
-                                                final Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.text_bounce_anim);
+                                                try {
+                                                    final Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.text_bounce_anim);
 
-                                                hyperspaceJump.setRepeatMode(Animation.INFINITE);
+                                                    hyperspaceJump.setRepeatMode(Animation.INFINITE);
 
-                                                message_box.setAnimation(hyperspaceJump);
+                                                    message_box.setAnimation(hyperspaceJump);
 
-                                                continue_message_box_blinking = true;
+                                                    continue_message_box_blinking = true;
 
-                                                vibratorRunnable = new Runnable() {
-                                                    @Override
-                                                    public void run() {
+                                                    vibratorRunnable = new Runnable() {
+                                                        @Override
+                                                        public void run() {
 
-                                                        try {
+                                                            try {
 
-                                                            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                                                                Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
 
 // Vibrate for 500 milliseconds
-                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                                                v.vibrate(VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE));
-                                                            } else {
-                                                                //deprecated in API 26
-                                                                v.vibrate(75);
+                                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                                    v.vibrate(VibrationEffect.createOneShot(75, VibrationEffect.DEFAULT_AMPLITUDE));
+                                                                } else {
+                                                                    //deprecated in API 26
+                                                                    v.vibrate(75);
+                                                                }
+                                                            } catch (Exception e) {
+                                                                //
+
                                                             }
-                                                        } catch (Exception e) {
-                                                            //
+                                                            blinkMessageBox();
+                                                            setIsMessageRunning(false);
 
                                                         }
-                                                        blinkMessageBox();
-                                                        setIsMessageRunning(false);
+                                                    };
 
-                                                    }
-                                                };
+                                                    vibratorHandler.postDelayed(vibratorRunnable, 500);
+                                                } catch (Exception e) {
 
-                                                vibratorHandler.postDelayed(vibratorRunnable,500);
+                                                }
 
 
                                             } else {
