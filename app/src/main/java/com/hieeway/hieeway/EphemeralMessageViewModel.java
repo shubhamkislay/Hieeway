@@ -243,9 +243,6 @@ public class EphemeralMessageViewModel extends ViewModel {
 
     public void deleteMessage(ChatMessage chatMessage,Boolean deleteForAll){
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
 
                 DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
                         .child(currentUser)
@@ -311,8 +308,6 @@ public class EphemeralMessageViewModel extends ViewModel {
 
                 }
 
-            }
-        }).start();
 
 
 
