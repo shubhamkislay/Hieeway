@@ -8,6 +8,10 @@
     tools:context=".MainActivity">
 
 
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
 
@@ -76,6 +80,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="12dp"
             android:gravity="center"
+            android:background="#000"
             android:text="Hieeway Inc.\n Designed and created by Shubham Kislay."
             android:textColor="#A8A8A8"
             android:textSize="10sp"
@@ -129,8 +134,5 @@
         android:textAllCaps="false"
         android:visibility="gone"/>
 
-    <FrameLayout
-        android:id="@+id/framelayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+
 </RelativeLayout>

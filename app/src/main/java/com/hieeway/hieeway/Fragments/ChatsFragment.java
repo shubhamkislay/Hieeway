@@ -77,6 +77,7 @@ import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.UserPicViewModel;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
+import com.hieeway.hieeway.WebViewActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,15 +144,20 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private String lastTimeStamp = "default";
     private int i = 0;
     private boolean notLoaded = false;
+    private List<ChatStamp> resettedList = new ArrayList<>();
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
 
-        chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
-        //chatMessageAdapter.setHasStableIds(true);
-        chats_recyclerview.setAdapter(chatMessageAdapter);
+        try {
+            chatMessageAdapter = new ChatMessageAdapter(Objects.requireNonNull(getContext()), chatStampsList, activity/*,ChatsFragment.this*/);
+            //chatMessageAdapter.setHasStableIds(true);
+            chats_recyclerview.setAdapter(chatMessageAdapter);
+        } catch (Exception e) {
+            //
+        }
 
 
         new Handler().postDelayed(new Runnable() {
@@ -159,17 +165,21 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
             public void run() {
                 try {
 
-                    chatsFragmentViewModel = ViewModelProviders.of(getActivity()).get(ChatsFragmentViewModel.class);
+                    chatsFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ChatsFragmentViewModel.class);
                     chatsFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<List<ChatStamp>>() {
                         @Override
                         public void onChanged(@Nullable final List<ChatStamp> chatStamps) {
 
 
                             // initialChatstampPopulateThread(chatStamps);
-                            Collections.sort(chatStamps, Collections.<ChatStamp>reverseOrder());
 
 
-                            chatMessageAdapter.updateList(chatStamps);
+                            resettedList = chatStamps;
+
+                            Collections.sort(resettedList, Collections.<ChatStamp>reverseOrder());
+
+
+                            chatMessageAdapter.updateList(resettedList);
 
                             chats_recyclerview.scrollToPosition(0);
 
@@ -207,7 +217,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         }
                     });
                 } catch (Exception e) {
-                    Toast.makeText(getContext(), "Handler Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Handler Error: " + e.toString(), Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -327,8 +337,12 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                     /**
                      * Uncomment
                      */
-                    if (before > 0)
-                        resetChatList();
+                    if (before > 0) {
+                        //resetChatList();
+                        chatMessageAdapter.updateList(resettedList);
+
+                        chats_recyclerview.scrollToPosition(0);
+                    }
                 }
 
 
@@ -401,6 +415,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                 //spotify_status_back.setVisibility(View.GONE);
                 startActivity(new Intent(getActivity(), MusicFeedActivity.class));
+                //startActivity(new Intent(getActivity(), WebViewActivity.class));
+
+
             }
         });
 
@@ -645,6 +662,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                     chats_recyclerview.setAdapter(chatMessageAdapter);
                     chatMessageAdapter.notifyDataSetChanged();
                 }
+
+
             }
         });
 

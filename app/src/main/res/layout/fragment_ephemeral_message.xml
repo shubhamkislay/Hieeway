@@ -233,7 +233,7 @@
 
         <Button
             android:id="@+id/photo_btn"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:layout_width="22dp"
             android:layout_centerVertical="true"
             android:layout_height="22dp"
@@ -701,6 +701,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="4dp"
 
+        android:alpha="0.75"
         android:layout_below="@id/top_bar"
         android:background="@drawable/layer_message_reply_drawable"
         android:visibility="gone">
@@ -713,7 +714,7 @@
             android:layout_height="wrap_content"
             android:textSize="12dp"
             android:layout_alignParentTop="true"
-            android:text="Next message context"
+            android:text="Replied to"
             android:gravity="center"/>
 
         <TextView

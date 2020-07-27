@@ -61,6 +61,13 @@ public class LiveMessageNotificationService extends Service {
 
 
             stop = true;
+            Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
+            startLiveActiveServiceIntent.putExtra("username", intent.getStringExtra("username"));
+            startLiveActiveServiceIntent.putExtra("userIDchattingwith", intent.getStringExtra("userIDchattingwith"));
+            startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+            startLiveActiveServiceIntent.putExtra("photo", intent.getStringExtra("photo"));
+
+            startService(startLiveActiveServiceIntent);
             stopSelf();
 
 
@@ -83,6 +90,9 @@ public class LiveMessageNotificationService extends Service {
             userid = intent.getStringExtra("userid");
             photo = intent.getStringExtra("photo");
             stopSelfIntent = new Intent(LiveMessageNotificationService.this, LiveMessageNotificationService.class);
+            stopSelfIntent.putExtra("username", username);
+            stopSelfIntent.putExtra("userIDchattingwith", userid);
+            stopSelfIntent.putExtra("photo", photo);
 
             stopSelfIntent.setAction(ACTION_STOP_SERVICE);
             pIntentlogin = PendingIntent.getService(LiveMessageNotificationService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -179,9 +189,21 @@ public class LiveMessageNotificationService extends Service {
             public void run() {
                 if (!stop && i != 25)
                     startRing();
-                else
+                else {
+
+                    Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
+                    startLiveActiveServiceIntent.putExtra("username", username);
+                    startLiveActiveServiceIntent.putExtra("userIDchattingwith", userid);
+                    startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+                    startLiveActiveServiceIntent.putExtra("photo", photo);
+
+                    startService(startLiveActiveServiceIntent);
                     stopSelf();
+
+                }
             }
         }, 400);
     }
+
+
 }

@@ -99,6 +99,9 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     public static String OTHER_USER_PUBLIC_KEY = "";
     public static String CURRENT_USERNAME = "";
     public static String CURRENT_USERPHOTO = "";
+    public static Boolean isWatching = false;
+    private String youtubeID = "default";
+    private String youtubeTitle = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -369,6 +372,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         openSendMessageFragment = true;
                         feededMessageID = intent.getStringExtra("messageID");
                     }
+                } else if (key.equals("youtubeID")) {
+                    youtubeID = intent.getStringExtra("youtubeID");
+                } else if (key.equals("youtubeTitle")) {
+                    youtubeTitle = intent.getStringExtra("youtubeTitle");
                 }
 
             }
@@ -513,7 +520,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             //Toast.makeText(VerticalPageActivity.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
             if (live.equals("live")) {
 
-                liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith);
+                liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle);
 
 
                 liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "live");
@@ -552,8 +559,9 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
 
                     //liveMessageFragment.initialiseLiveragment(VerticalPageActivity.this);
+                    isWatching = true;
 
-                    liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith);
+                    liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle);
 
 
                     liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "no");
@@ -568,6 +576,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 {
                     //if(observingSendFragment)
                         //sendMessageFragment.removeObserveLiveChatList();
+                    isWatching = false;
                     if (pageSelected == 2) {
 
                         liveMessageFragment.destoryLiveFragment();
@@ -599,6 +608,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                 else if(i==0)
                 {
+                    isWatching = false;
                    // sendMessageFragment.observeLiveChatList(userIdChattingWith);
 /*                    new Handler().post(new Runnable() {
                         @Override
@@ -695,6 +705,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
+        isWatching = false;
 
         userNameChattingWith = "";
 
@@ -711,6 +722,14 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             } catch (Exception e) {
                 //
             }
+
+            Intent startLiveActiveServiceIntent = new Intent(VerticalPageActivity.this, LiveMessageActiveService.class);
+            startLiveActiveServiceIntent.putExtra("username", userNameChattingWith);
+            startLiveActiveServiceIntent.putExtra("userIDchattingwith", userIDCHATTINGWITH);
+            startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+            startLiveActiveServiceIntent.putExtra("photo", USERPHOTO);
+
+            startService(startLiveActiveServiceIntent);
         }
         try {
             sendMessageFragment.removeListeners();
@@ -735,6 +754,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         super.onResume();
 
         if (pageSelected == 2) {
+            isWatching = true;
+
             HashMap<String, Object> hashMap = new HashMap<>();
             hashMap.put("present", true);
             FirebaseDatabase.getInstance().getReference("ChatList")

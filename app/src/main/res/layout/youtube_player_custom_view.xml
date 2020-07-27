@@ -17,14 +17,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:scrollbarThumbHorizontal="@color/colorBlack"
+        android:scrollbarThumbVertical="@color/colorBlack"
         android:elevation="20dp"
         app:color="@color/colorPrimaryDark"
         app:fontSize="16sp" />
 
     <RelativeLayout
         android:id="@+id/play_pause_btn"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="center"
         android:background="@drawable/ic_pause_circle_filled_black_24dp" />
 

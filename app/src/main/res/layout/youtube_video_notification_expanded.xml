@@ -45,7 +45,7 @@
             android:layout_marginLeft="8dp"
             android:layout_toRightOf="@id/app_title"
             android:gravity="center_vertical"
-            android:text=""
+            android:text="Live Messaging"
             android:textColor="#D1D1D1"
             android:textSize="12sp"
             android:visibility="visible" />
@@ -56,11 +56,11 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/username"
+        android:layout_below="@id/artist_name"
         android:layout_toLeftOf="@id/logo">
 
         <RelativeLayout
-            android:id="@+id/accept_live"
+            android:id="@+id/stop_beacon"
             android:layout_width="match_parent"
 
             android:layout_height="wrap_content"
@@ -71,24 +71,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true">
 
-                <ImageView
-                    android:id="@+id/stop_logo"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/nav_hieeway_send_btn"
-                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
-                    android:layout_toRightOf="@id/stop_logo"
-                    android:gravity="center_vertical"
-                    android:text="Join"
+                    android:gravity="center_vertical|left"
+                    android:text="Close"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
@@ -100,7 +92,7 @@
             android:layout_centerHorizontal="true" />
 
         <RelativeLayout
-            android:id="@+id/ignore_live"
+            android:id="@+id/open_spotify"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/divider">
@@ -112,24 +104,16 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true">
 
-                <ImageView
-                    android:id="@+id/spotify_logo"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_cancel_white_24dp"
-                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="8dp"
-                    android:layout_toRightOf="@id/spotify_logo"
-                    android:gravity="center_vertical"
-                    android:text="Mute"
+                    android:gravity="left|center_vertical"
+                    android:text="Join Live"
                     android:textColor="#fff"
-                    android:textSize="14sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
             </RelativeLayout>
         </RelativeLayout>
@@ -154,7 +138,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/artist_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/notification_message_collapsed"
@@ -165,12 +149,12 @@
         android:singleLine="true"
         android:text="Tap to see"
         android:textColor="#797979"
-        android:textSize="14sp" />
+        android:textSize="12sp" />
 
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="70dp"
+        android:layout_width="140dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
@@ -180,9 +164,9 @@
     <RelativeLayout
         android:id="@+id/background_fade"
         android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="-70dp"
+        android:layout_marginRight="0dp"
         android:background="@drawable/left_fade_background"
         android:rotation="-90"
         android:visibility="visible" />

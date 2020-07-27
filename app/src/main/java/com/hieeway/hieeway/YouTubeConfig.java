@@ -51,6 +51,7 @@ public class YouTubeConfig {
     public YouTubeConfig(final Context context) {
 
 
+        //youtube.videos().
         youtube = new YouTube.Builder(new NetHttpTransport(),
                 JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
             @Override
@@ -345,3 +346,7 @@ public class YouTubeConfig {
 
 
 }
+
+//fsdDJBs4L7A
+
+//"https://www.googleapis.com/youtube/v3/videos?id=fsdDJBs4L7A&part=contentDetails&key=AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc

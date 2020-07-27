@@ -75,33 +75,34 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
 
-
-        viewHolder.longMsgBtn.setVisibility(View.GONE);
-        final User user = mUsers.get(viewHolder.getAdapterPosition());
-        final int position = viewHolder.getAdapterPosition();
-
-        viewHolder.username.setText(user.getUsername());
+        try {
 
 
-        // viewHolder.username.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-medium.otf"));
+            viewHolder.longMsgBtn.setVisibility(View.GONE);
+            final User user = mUsers.get(viewHolder.getAdapterPosition());
+            final int position = viewHolder.getAdapterPosition();
+
+            viewHolder.username.setText(user.getUsername());
 
 
-
-        viewHolder.progressBarOne.setVisibility(View.VISIBLE);
-        viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
+            // viewHolder.username.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
 
-
-        viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+            viewHolder.progressBarOne.setVisibility(View.VISIBLE);
+            viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
 
 
-                //Unfriend and block options to be built here
+            viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
 
-                return false;
-            }
-        });
+
+                    //Unfriend and block options to be built here
+
+                    return false;
+                }
+            });
+
 
         /*viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -138,94 +139,91 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
         });*/
 
 
+            try {
+                if (user.getPhoto().equals("default")) {
+
+                    viewHolder.user_photo.setImageResource(R.drawable.no_profile);
+                    //viewHolder.progressBar.setVisibility(View.INVISIBLE);
+
+                    viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                    viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+
+                } else {
+
+                    //  Bitmap bitmap = getBitmapFromURL(chatStamp.getPhoto());
+
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.placeholder(R.color.darkButtonBackground);
+                    //requestOptions.centerCrop();
+                    // requestOptions.override(200, 400);
 
 
+                    // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
+                    try {
+                        Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto().replace("s96-c", "s384-c")).listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                return false;
+                            }
 
-        try {
-            if (user.getPhoto().equals("default")) {
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
-                viewHolder.user_photo.setImageResource(R.drawable.no_profile);
-                //viewHolder.progressBar.setVisibility(View.INVISIBLE);
+                                // viewHolder.progressBar.setVisibility(View.INVISIBLE);
 
-                viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
-                viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                                final Matrix matrix = viewHolder.user_photo.getImageMatrix();
+                                final float imageWidth = resource.getIntrinsicWidth();
+                                final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                                final float scaleRatio = screenWidth / imageWidth;
+                                matrix.postScale(scaleRatio, scaleRatio);
 
-            } else {
+                                viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                                viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                                return false;
+                            }
+                        }).transition(withCrossFade()).into(viewHolder.user_photo);
+                    }catch (Exception e) {
 
-                //  Bitmap bitmap = getBitmapFromURL(chatStamp.getPhoto());
-
-                RequestOptions requestOptions = new RequestOptions();
-                requestOptions.placeholder(R.color.darkButtonBackground);
-                //requestOptions.centerCrop();
-                // requestOptions.override(200, 400);
-
-
-
-
-                // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
-                try {
-                    Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(user.getPhoto().replace("s96-c", "s384-c")).listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                            // viewHolder.progressBar.setVisibility(View.INVISIBLE);
-
-                            final Matrix matrix = viewHolder.user_photo.getImageMatrix();
-                            final float imageWidth = resource.getIntrinsicWidth();
-                            final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
-                            final float scaleRatio = screenWidth / imageWidth;
-                            matrix.postScale(scaleRatio, scaleRatio);
-
-                            viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
-                            viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
-                            return false;
-                        }
-                    }).transition(withCrossFade()).into(viewHolder.user_photo);
-                }catch (Exception e)
-                {
-
-                    viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
+                        viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
+                    }
                 }
+            } catch (Exception e) {
+                Log.e("Null pointer exp", "Internet issue");
             }
-        } catch (Exception e) {
-            Log.e("Null pointer exp", "Internet issue");
-        }
 
-        viewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            viewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
 
               /*  viewHolder.progressBarOne.setVisibility(View.VISIBLE);
                 viewHolder.progressBarTwo.setVisibility(View.VISIBLE);*/
-                viewHolder.user_photo.setAlpha(0.5f);
-                viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                    viewHolder.user_photo.setAlpha(0.5f);
+                    viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent intent = new Intent(mContext, VerticalPageActivity.class);
-                        intent.putExtra("username", user.getUsername());
-                        intent.putExtra("userid", user.getUserid());
-                        intent.putExtra("photo", user.getPhoto());
-                        intent.putExtra("live", "no");
-                        mContext.startActivity(intent);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(mContext, VerticalPageActivity.class);
+                            intent.putExtra("username", user.getUsername());
+                            intent.putExtra("userid", user.getUserid());
+                            intent.putExtra("photo", user.getPhoto());
+                            intent.putExtra("live", "no");
+                            mContext.startActivity(intent);
                         /*viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                         viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);*/
-                        viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
-                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                            viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
+                            viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
 
 
-                    }
-                }, 50);
+                        }
+                    }, 50);
 
-            }
-        });
+                }
+            });
+        } catch (NullPointerException e) {
+            //
+        }
 
     }
 

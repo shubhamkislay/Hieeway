@@ -67,8 +67,15 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -78,6 +85,8 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomUiController;
+import com.hieeway.hieeway.LiveMessageActiveService;
+import com.hieeway.hieeway.LiveMessageNotificationService;
 import com.hieeway.hieeway.Model.YoutubeSync;
 import com.hieeway.hieeway.SyncService;
 import com.hieeway.hieeway.VerticalPageActivity;
@@ -109,6 +118,11 @@ import com.hieeway.hieeway.YouTubeConfig;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.spec.KeySpec;
@@ -196,6 +210,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     RelativeLayout current_user_blinker, other_user_blinker;
     private String videoID = "kJQP7kiw5Fk";
     private Boolean userPresent = false;
+    private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
     private boolean playerInitialised;
     //RelativeLayout bottom_sheet_webview_dialog_layout;
     WebView bottom_sheet_webview_dialog_layout;
@@ -245,6 +260,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private boolean audioEnabled = false;
     private Activity parentActivity;
     private boolean loadWhenInitialised = false;
+    private YouTube youtube;
+    private String youtubeTitle;
+    private String notifyoutubeID = "started";
 
 
     public LiveMessageFragment() {
@@ -442,6 +460,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         compiledPattern = Pattern.compile(pattern,
                 Pattern.CASE_INSENSITIVE);
 
+        youtube = new YouTube.Builder(new NetHttpTransport(),
+                JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest hr) throws IOException {
+            }
+        }).setApplicationName(getContext().getString(R.string.app_name)).build();
+
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -500,6 +525,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     youtube_web_view.loadUrl(youtubeUrl);
 
 
+
                     //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
                     //         "text/html", "utf-8", "");
 
@@ -508,50 +534,113 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                     // Toast.makeText(getActivity(), "Video ID: " + videoID, Toast.LENGTH_SHORT);
 
+                    //  String snippet = retrieveVideoJSON(videoID,"snippet",API_KEY);
+
+                    try {
+
+                        videoQuery = youtube.videos().list("snippet");
+                        videoQuery.setKey(API_KEY);
+                        //query.setRequestHeaders( )
+                        videoQuery.setMaxResults((long) 1);
+
+
+                        videoQuery.setFields("items(snippet/title)");
+                    } catch (IOException e) {
+                        Log.d("YC", "Could not initialize: " + e);
+                    }
+
                     youtubeID = videoID;
-
-                    HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-                    youtubeVideoHash.put("youtubeID", videoID);
-                    youtubeVideoHash.put("videoSec", 0.0);
-
-                    FirebaseDatabase.getInstance().getReference("Video")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .child(userIDCHATTINGWITH)
-                            .updateChildren(youtubeVideoHash);
+                    videoQuery.setId(videoID);
 
 
-                    FirebaseDatabase.getInstance().getReference("Video")
-                            .child(userIDCHATTINGWITH)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .updateChildren(youtubeVideoHash);
+                    TaskCompletionSource<Video> videoTaskCompletionSource = new TaskCompletionSource<>();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            VideoListResponse videoListResponse = null;
+                            try {
+                                videoListResponse = videoQuery.execute();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            List<Video> videoResults = videoListResponse.getItems();
+                            Video video = videoResults.get(0);
+
+                            videoTaskCompletionSource.setResult(video);
+
+                        }
+                    }).start();
+
+                    Task<Video> videoTask = videoTaskCompletionSource.getTask();
 
 
-                    Rect outRect = new Rect();
+                    videoTask.addOnCompleteListener(new OnCompleteListener<Video>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Video> task) {
 
-                    //Native UI youtube search using data api
-                    //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+
+                            youtubeTitle = task.getResult().getSnippet().getTitle();
+
+                            HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                            youtubeVideoHash.put("youtubeID", youtubeID);
+                            youtubeVideoHash.put("videoSec", 0.0);
+                            youtubeVideoHash.put("videoTitle", youtubeTitle);
+
+                            FirebaseDatabase.getInstance().getReference("Video")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(userIDCHATTINGWITH)
+                                    .updateChildren(youtubeVideoHash);
+
+                            FirebaseDatabase.getInstance().getReference("Video")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(userIDCHATTINGWITH)
+                                    .onDisconnect()
+                                    .removeValue();
+
+
+                            FirebaseDatabase.getInstance().getReference("Video")
+                                    .child(userIDCHATTINGWITH)
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .updateChildren(youtubeVideoHash);
+
+
+                            Rect outRect = new Rect();
+
+                            //Native UI youtube search using data api
+                            //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
 
                     /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
 
-                    youtube_web_view.setVisibility(View.GONE);
+                            youtube_web_view.setVisibility(View.GONE);
 
 
-                    search_video_edittext.clearFocus();
-                    messageBox.requestFocus();
-                    messageBox.setCursorVisible(true);
+                            search_video_edittext.clearFocus();
+                            messageBox.requestFocus();
+                            messageBox.setCursorVisible(true);
 
-                    bottomSheetVisible = false;
+                            bottomSheetVisible = false;
 
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            youtubeBottomFragmentStateListener.setDrag(false);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    youtubeBottomFragmentStateListener.setDrag(false);
+                                }
+                            }, 750);
+
                         }
-                    }, 750);
+                    });
+
+
+
+
+
+
+
 
                 }
                 youtubeUrl = url;
@@ -942,6 +1031,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                     HashMap<String, Object> youtubeVideoHash = new HashMap<>();
                                     youtubeVideoHash.put("videoSec", youtubeVideoSec);
                                     youtubeVideoHash.put("youtubeID", youtubeID);
+                                    youtubeVideoHash.put("videoTitle", youtubeTitle);
+
 
 
                                     FirebaseDatabase.getInstance().getReference("Video")
@@ -990,7 +1081,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 } else {
                     //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     //youtube_web_view.setVisibility(View.GONE);
-                    Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                    Animation animation = AnimationUtils.loadAnimation(parentActivity, R.anim.youtube_webview_close);
                     youtube_web_view.setAnimation(animation);
 
                     new Handler().postDelayed(new Runnable() {
@@ -1080,6 +1171,35 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     }
                     // }
                     initialiseActivity = true;
+                } else {
+                    /*if(youtubeTitle!=null)
+                    {
+
+                        try {
+                            try {
+
+                                customUiController.setYoutube_player_seekbarVisibility(false);
+                            } catch (Exception e) {
+
+                                // Toast.makeText(getActivity(), "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                            youtubeID = notifyoutubeID;
+                            mYouTubePlayer.loadVideo(notifyoutubeID, youtubeSynSec);
+                            mYouTubePlayer.play();
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.INVISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+                        }
+                        catch (Exception e)
+                        {
+                            loadWhenInitialised = true;
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.INVISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+
+                        }
+                    }*/
+
                 }
 
 
@@ -1244,6 +1364,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         video_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                Toast.makeText(parentActivity, "Seekbar progress: " + progress, Toast.LENGTH_SHORT).show();
+
                 if (progress == 1) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED)
@@ -1904,68 +2027,20 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             seekRef.onDisconnect().removeValue();
             seekRef.addValueEventListener(seekValueEventListener);
 
+            Intent startLiveActiveServiceIntent = new Intent(parentActivity, LiveMessageActiveService.class);
+            startLiveActiveServiceIntent.putExtra("username", usernameChattingWith);
+            startLiveActiveServiceIntent.putExtra("userIDchattingwith", userChattingWithId);
+            startLiveActiveServiceIntent.putExtra("youtubeID", notifyoutubeID);
+            if (youtubeTitle != null) {
+                startLiveActiveServiceIntent.putExtra("youtubeTitle", youtubeTitle);
+                videoID = notifyoutubeID;
+
+            }
+
+            startLiveActiveServiceIntent.putExtra("photo", photo);
 
 
-       /*     seekRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-
-                    *//*FirebaseDatabase.getInstance().getReference("Video")
-                            .child(userIDCHATTINGWITH)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .runTransaction(new Transaction.Handler() {
-                        @NonNull
-                        @Override
-                        public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-                            try {
-                                YoutubeSync youtubeSync = mutableData.getValue(YoutubeSync.class);
-                                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-                                youtubeVideoHash.put("videoSec", 0);
-                                youtubeVideoHash.put("youtubeID", youtubeSync.getYoutubeID());
-
-
-                                FirebaseDatabase.getInstance().getReference("Video")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(userIDCHATTINGWITH)
-                                        .updateChildren(youtubeVideoHash);
-
-                            } catch (Exception e) {
-
-                            }
-
-                            return null;
-                        }
-
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-
-                         //   youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    seekRef.addValueEventListener(seekValueEventListener);
-                                }
-                            }, 2000);
-
-                        }
-                    });*//*
-
-                    seekRef.addValueEventListener(seekValueEventListener);
-
-                }
-            });
-*/
-            /*new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    seekRef.addValueEventListener(seekValueEventListener);
-
-                }
-            }, 1000);*/
-
-
-            // seekRef.addValueEventListener(seekValueEventListener);
+            parentActivity.startService(startLiveActiveServiceIntent);
 
         } catch (NullPointerException e) {
             // liveMessageEventListener.changeFragment();
@@ -2174,6 +2249,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     }
 
+    String retrieveVideoJSON(String videoID, String part, String APIkey) {
+        String postURL = "https://www.googleapis.com/youtube/v3/videos?id=" + videoID + "&part=" + part + "&key=" + APIkey;
+        String output = "";
+        try {
+            URL url = new URL(postURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            BufferedReader br1 = new BufferedReader(new InputStreamReader(
+                    (conn.getInputStream())));
+            String line1;
+            while ((line1 = br1.readLine()) != null) {
+                output = output + line1;
+            }
+            conn.disconnect();
+            br1.close();
+
+        } catch (IOException e) {
+            System.out.println("\ne = " + e.getMessage() + "\n");
+        }
+        return output;
+
+    }
+
     private void checkDurationResult() {
         if (videoDurationReady) {
             /*searchResults.clear();
@@ -2378,13 +2475,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }
     }
 
-    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith) throws NullPointerException
+    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith, String youtubeID, String youtubeTitle) throws NullPointerException
     {
         this.liveMessageEventListener = liveMessageEventListener;
         this.parentActivity = parentActivity;
         this.photo = photo;
+        this.notifyoutubeID = youtubeID;
         this.usernameChattingWith = usernameChattingWith;
         this.userChattingWithId = userIdChattingWith;
+        this.youtubeTitle = youtubeTitle;
 
 
     }
@@ -2834,16 +2933,30 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         timeStampHashReceiver.put("chatPending", true);
 
 
+        // if(notifyoutubeID!=null&&!notifyoutubeID.equals("default")&&!notifyoutubeID.equals("started"))
+        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
         FirebaseDatabase.getInstance().getReference("Video")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userIDCHATTINGWITH)
-                .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+                .onDisconnect()
+                .removeValue();
 
-            }
-        });
+        /*else
+        {
+            FirebaseDatabase.getInstance().getReference("Video")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userIDCHATTINGWITH)
+                    .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+                }
+            });
+        }*/
+
+
 
 
 
