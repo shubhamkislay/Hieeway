@@ -1797,19 +1797,22 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         calling_text.setText("Asking " + usernameChattingWith + " to join");
 
+        askRunnable = new Runnable() {
+            @Override
+            public void run() {
+                calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
+                ask_progress.setVisibility(View.GONE);
+                calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+                canAskuser = true;
+            }
+        };
+
         try {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
-                    ask_progress.setVisibility(View.GONE);
-                    calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
-                    canAskuser = true;
-                }
-            }, 25000);
+            askHandler.postDelayed(askRunnable, 25000);
         } catch (Exception e) {
             //
         }
+
 
     }
 
