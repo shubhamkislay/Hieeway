@@ -244,7 +244,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private Activity parentActivity;
     private boolean loadWhenInitialised = false;
     private YouTube youtube;
-    private String youtubeTitle;
+    private String youtubeTitle = " ";
     private String notifyoutubeID = "started";
     private RelativeLayout calling_text_layout;
     private TextView calling_text;
@@ -565,10 +565,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 e.printStackTrace();
                             }
 
-                            List<Video> videoResults = videoListResponse.getItems();
-                            Video video = videoResults.get(0);
+                            try {
+                                List<Video> videoResults = videoListResponse.getItems();
+                                Video video = videoResults.get(0);
 
-                            videoTaskCompletionSource.setResult(video);
+                                videoTaskCompletionSource.setResult(video);
+                            } catch (Exception e) {
+                                videoTaskCompletionSource.setException(e);
+                            }
 
                         }
                     }).start();
@@ -581,7 +585,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         public void onComplete(@NonNull Task<Video> task) {
 
 
-                            youtubeTitle = task.getResult().getSnippet().getTitle();
+                            try {
+                                youtubeTitle = task.getResult().getSnippet().getTitle();
+                                if (youtubeTitle == null) {
+                                    youtubeTitle = " ";
+                                }
+                            } catch (Exception e) {
+                                youtubeTitle = " ";
+                            }
 
                             HashMap<String, Object> youtubeVideoHash = new HashMap<>();
                             youtubeVideoHash.put("youtubeID", youtubeID);
@@ -1808,7 +1819,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         };
 
         try {
-            askHandler.postDelayed(askRunnable, 25000);
+            askHandler.postDelayed(askRunnable, 15000);
         } catch (Exception e) {
             //
         }
@@ -3040,7 +3051,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             };
 
             askHandler = new Handler();
-            askHandler.postDelayed(askRunnable, 25000);
+            askHandler.postDelayed(askRunnable, 15000);
 
         } catch (Exception e) {
             //
