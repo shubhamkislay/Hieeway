@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import static br.com.instachat.emojilibrary.model.Emoji.TAG;
 import static com.hieeway.hieeway.MyApplication.CHANNEL_1_ID;
 import static com.hieeway.hieeway.MyApplication.CHANNEL_3_ID;
+import static com.hieeway.hieeway.VerticalPageActivity.isWatching;
 
 public class LiveMessageNotificationService extends Service {
 
@@ -41,6 +42,7 @@ public class LiveMessageNotificationService extends Service {
     private int notificationId;
     private int i = 0;
     private boolean stop = false;
+    private boolean serviceStarted = false;
 
     @Nullable
     @Override
@@ -63,11 +65,13 @@ public class LiveMessageNotificationService extends Service {
             stop = true;
             Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
             startLiveActiveServiceIntent.putExtra("username", intent.getStringExtra("username"));
-            startLiveActiveServiceIntent.putExtra("userIDchattingwith", intent.getStringExtra("userIDchattingwith"));
+            startLiveActiveServiceIntent.putExtra("userid", intent.getStringExtra("userid"));
             startLiveActiveServiceIntent.putExtra("youtubeID", "default");
             startLiveActiveServiceIntent.putExtra("photo", intent.getStringExtra("photo"));
 
             startService(startLiveActiveServiceIntent);
+
+            serviceStarted = true;
             stopSelf();
 
 
@@ -91,7 +95,7 @@ public class LiveMessageNotificationService extends Service {
             photo = intent.getStringExtra("photo");
             stopSelfIntent = new Intent(LiveMessageNotificationService.this, LiveMessageNotificationService.class);
             stopSelfIntent.putExtra("username", username);
-            stopSelfIntent.putExtra("userIDchattingwith", userid);
+            stopSelfIntent.putExtra("userid", userid);
             stopSelfIntent.putExtra("photo", photo);
 
             stopSelfIntent.setAction(ACTION_STOP_SERVICE);
@@ -168,9 +172,12 @@ public class LiveMessageNotificationService extends Service {
                 .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)*/
                 .build();
 
-        startForeground(notificationId, notification);
+        if (isWatching == null || !isWatching) {
+            startForeground(notificationId, notification);
+            startRing();
+        }
 
-        startRing();
+
 
     }
 
@@ -191,13 +198,15 @@ public class LiveMessageNotificationService extends Service {
                     startRing();
                 else {
 
-                    Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
-                    startLiveActiveServiceIntent.putExtra("username", username);
-                    startLiveActiveServiceIntent.putExtra("userIDchattingwith", userid);
-                    startLiveActiveServiceIntent.putExtra("youtubeID", "default");
-                    startLiveActiveServiceIntent.putExtra("photo", photo);
+                    if (!serviceStarted) {
+                        Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
+                        startLiveActiveServiceIntent.putExtra("username", username);
+                        startLiveActiveServiceIntent.putExtra("userid", userid);
+                        startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+                        startLiveActiveServiceIntent.putExtra("photo", photo);
 
-                    startService(startLiveActiveServiceIntent);
+                        startService(startLiveActiveServiceIntent);
+                    }
                     stopSelf();
 
                 }

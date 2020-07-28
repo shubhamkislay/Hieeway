@@ -1063,7 +1063,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     } catch (Exception e) {
                         //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                         // youtube_web_view.setVisibility(View.GONE);
-                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                        Animation animation = AnimationUtils.loadAnimation(parentActivity, R.anim.youtube_webview_close);
                         youtube_web_view.setAnimation(animation);
 
                         new Handler().postDelayed(new Runnable() {
@@ -2029,7 +2029,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             Intent startLiveActiveServiceIntent = new Intent(parentActivity, LiveMessageActiveService.class);
             startLiveActiveServiceIntent.putExtra("username", usernameChattingWith);
-            startLiveActiveServiceIntent.putExtra("userIDchattingwith", userChattingWithId);
+            startLiveActiveServiceIntent.putExtra("userid", userChattingWithId);
             startLiveActiveServiceIntent.putExtra("youtubeID", notifyoutubeID);
             if (youtubeTitle != null) {
                 startLiveActiveServiceIntent.putExtra("youtubeTitle", youtubeTitle);
@@ -2900,45 +2900,60 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         //.child("youtubeUrl");
 
-        DatabaseReference senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userIDCHATTINGWITH);
 
-        DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(userIDCHATTINGWITH)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        if (notifyoutubeID == null || notifyoutubeID.equals("started") || notifyoutubeID.equals("default")) {
+            DatabaseReference senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(userChattingWithId);
 
-        Long tsLong = System.currentTimeMillis() / 1000;
-        final String ts = tsLong.toString();
+            DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(userChattingWithId)
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-
-        final HashMap<String, Object> timeStampHash = new HashMap<>();
-        timeStampHash.put("timeStamp", ts);
-        timeStampHash.put("id", userChattingWithId);
-        timeStampHash.put("username", usernameChattingWith);
-        timeStampHash.put("photo", photo);
-        timeStampHash.put("seen", "notseen");
-        timeStampHash.put("chatPending", false);
-
-        senderChatCreateRef.updateChildren(timeStampHash);
-
-        HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
-
-        timeStampHashReceiver.put("timeStamp", ts);
-        timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        timeStampHashReceiver.put("username", CURRENT_USERNAME);
-        timeStampHashReceiver.put("photo", CURRENT_USERPHOTO);
-        timeStampHashReceiver.put("seen", "notseen");
-        timeStampHashReceiver.put("present", true);
-        timeStampHashReceiver.put("chatPending", true);
+            Long tsLong = System.currentTimeMillis() / 1000;
+            final String ts = tsLong.toString();
 
 
-        // if(notifyoutubeID!=null&&!notifyoutubeID.equals("default")&&!notifyoutubeID.equals("started"))
-        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+            final HashMap<String, Object> timeStampHash = new HashMap<>();
+            timeStampHash.put("timeStamp", ts);
+            timeStampHash.put("id", userChattingWithId);
+            timeStampHash.put("username", usernameChattingWith);
+            timeStampHash.put("photo", photo);
+            timeStampHash.put("seen", "notseen");
+            timeStampHash.put("chatPending", false);
+
+            senderChatCreateRef.updateChildren(timeStampHash);
+
+            HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+
+            timeStampHashReceiver.put("timeStamp", ts);
+            timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            timeStampHashReceiver.put("username", usernameChattingWith);
+            timeStampHashReceiver.put("photo", photo);
+            timeStampHashReceiver.put("seen", "notseen");
+            timeStampHashReceiver.put("present", true);
+            timeStampHashReceiver.put("chatPending", true);
+
+            Toast.makeText(parentActivity, "notifyoutubeID " + notifyoutubeID, Toast.LENGTH_SHORT).show();
+
+
+            // if(notifyoutubeID!=null&&!notifyoutubeID.equals("default")&&!notifyoutubeID.equals("started"))
+            receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+        } else {
+            DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(userChattingWithId)
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+            timeStampHashReceiver.put("present", true);
+
+            receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+        }
 
         FirebaseDatabase.getInstance().getReference("Video")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userIDCHATTINGWITH)
+                .child(userChattingWithId)
                 .onDisconnect()
                 .removeValue();
 

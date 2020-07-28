@@ -102,6 +102,9 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     public static Boolean isWatching = false;
     private String youtubeID = "default";
     private String youtubeTitle = null;
+    private boolean backPressed = false;
+    private String usernameChattingWith;
+    private String photo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,11 +122,14 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         feelingCustomEmoji = findViewById(R.id.feelingCustomEmoji);
 
 
-        final String usernameChattingWith = intent.getStringExtra("username");
+        usernameChattingWith = intent.getStringExtra("username");
+
+        userNameChattingWith = usernameChattingWith;
+
         userIdChattingWith = intent.getStringExtra("userid");
         userIDCHATTINGWITH = userIdChattingWith;
-        userNameChattingWith = usernameChattingWith;
-        final String photo = intent.getStringExtra("photo");
+
+        photo = intent.getStringExtra("photo");
         USERPHOTO = photo;
         live = intent.getStringExtra("live");
 
@@ -688,16 +694,57 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     @Override
     public void onBackPressed() {
+
+
         if (!bottomPageUp) {
+            backPressed = true;
+            if (pageSelected == 2) {
+
+                FirebaseDatabase.getInstance().getReference("Video")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userIDCHATTINGWITH)
+                        .removeValue();
+            }
             super.onBackPressed();
+
             finish();
+
+
         } else {
             try {
                 liveMessageFragment.closeBottomSheet();
+                isWatching = true;
             } catch (Exception e) {
 
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (pageSelected == 2) {
+
+            if (!backPressed) {
+                Intent startLiveActiveServiceIntent = new Intent(VerticalPageActivity.this, LiveMessageActiveService.class);
+                startLiveActiveServiceIntent.putExtra("username", usernameChattingWith);
+                startLiveActiveServiceIntent.putExtra("userid", userIdChattingWith);
+                startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+                startLiveActiveServiceIntent.putExtra("photo", photo);
+                startService(startLiveActiveServiceIntent);
+                finish();
+            }
+
+
+        }
+
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // isWatching = true;
     }
 
     @Override
@@ -723,13 +770,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 //
             }
 
-            Intent startLiveActiveServiceIntent = new Intent(VerticalPageActivity.this, LiveMessageActiveService.class);
-            startLiveActiveServiceIntent.putExtra("username", userNameChattingWith);
-            startLiveActiveServiceIntent.putExtra("userIDchattingwith", userIDCHATTINGWITH);
-            startLiveActiveServiceIntent.putExtra("youtubeID", "default");
-            startLiveActiveServiceIntent.putExtra("photo", USERPHOTO);
 
-            startService(startLiveActiveServiceIntent);
         }
         try {
             sendMessageFragment.removeListeners();
@@ -753,6 +794,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     protected void onResume() {
         super.onResume();
 
+        backPressed = false;
         if (pageSelected == 2) {
             isWatching = true;
 

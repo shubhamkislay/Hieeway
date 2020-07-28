@@ -86,12 +86,23 @@ public class LiveMessageActiveService extends Service {
 
             videoRef.removeEventListener(videoIdListener);
 
+            String userid = intent.getStringExtra("userid");
+
+            try {
+                FirebaseDatabase.getInstance().getReference("Video")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userid)
+                        .removeValue();
+            } catch (Exception e) {
+                //
+            }
+
             stopSelf();
 
         } else {
 
 
-            userIDchattingwith = intent.getStringExtra("userIDchattingwith");
+            userIDchattingwith = intent.getStringExtra("userid");
             username = intent.getStringExtra("username");
             lastYoutubeId = intent.getStringExtra("youtubeID");
             photo = intent.getStringExtra("photo");
@@ -122,6 +133,7 @@ public class LiveMessageActiveService extends Service {
 
 
             sIntent = new Intent(LiveMessageActiveService.this, LiveMessageActiveService.class);
+            sIntent.putExtra("userid", userIDchattingwith);
             sIntent.setAction(ACTION_STOP_SERVICE);
 
 
@@ -134,6 +146,7 @@ public class LiveMessageActiveService extends Service {
                     .setAutoCancel(true)
                     .setContentTitle(notifMessage)
                     .setContentText("Starting chatting and watch videos together")
+                    //.addAction(R.drawable.ic_cancel_white_24dp, "Close", stopInent)
                     .setPriority(NotificationCompat.PRIORITY_MIN)
                     .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                     .build();
@@ -219,13 +232,12 @@ public class LiveMessageActiveService extends Service {
                                     collapsedView.setTextViewText(R.id.notification_message_collapsed, "You are live with " + username);
                                     collapsedView.setTextViewText(R.id.artist_name, videoItem.getVideoTitle());
                                     collapsedView.setImageViewBitmap(R.id.logo, task.getResult());
-                                    collapsedView.setOnClickPendingIntent(R.id.logo, openIntent);
 
 
                                     expandedView.setTextViewText(R.id.notification_message_collapsed, "You are live with " + username);
                                     expandedView.setTextViewText(R.id.artist_name, videoItem.getVideoTitle());
                                     expandedView.setImageViewBitmap(R.id.logo, task.getResult());
-                                    expandedView.setOnClickPendingIntent(R.id.logo, stopInent);
+                                    expandedView.setOnClickPendingIntent(R.id.logo, openIntent);
 
                                     expandedView.setOnClickPendingIntent(R.id.open_spotify, openIntent);
                                     expandedView.setOnClickPendingIntent(R.id.stop_beacon, stopInent);
@@ -234,15 +246,15 @@ public class LiveMessageActiveService extends Service {
 
                                     notification = new NotificationCompat.Builder(LiveMessageActiveService.this, channelID)
                                             .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                                            .setAutoCancel(true)
-                                            /*.setCustomContentView(collapsedView)
-                                            .setCustomBigContentView(expandedView)*/
-                                            .setContentTitle("You are live with " + username)
+                                            //.setAutoCancel(true)
+                                            .setCustomContentView(collapsedView)
+                                            .setCustomBigContentView(expandedView)
+                                            /*.setContentTitle("You are live with " + username)
                                             .setContentText(videoItem.getVideoTitle())
                                             .setContentInfo(videoItem.getVideoTitle())
                                             .setLargeIcon(task.getResult())
                                             .addAction(R.drawable.ic_cancel_white_24dp, "Close", stopInent)
-                                            .addAction(R.drawable.youtube_btn, "Join Live", openIntent)
+                                            .addAction(R.drawable.youtube_btn, "Join Live", openIntent)*/
                                             .setPriority(priority)
                                             .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                                             //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
@@ -274,6 +286,7 @@ public class LiveMessageActiveService extends Service {
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userIDchattingwith);
         videoRef.addValueEventListener(videoIdListener);
+        videoRef.onDisconnect().removeValue();
     }
 
     private void checkForStatus() {
@@ -285,7 +298,7 @@ public class LiveMessageActiveService extends Service {
                 else
                     checkForStatus();
             }
-        }, 1000);
+        }, 300);
     }
 
 
