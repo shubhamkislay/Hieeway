@@ -1011,7 +1011,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             if (previousPresence) {
                                 Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
                                 calling_text.setText("Ask " + usernameChattingWith + " to join");
-                                calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+                                calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.ask_drawable_back));
 
                                 canAskuser = true;
 
@@ -1813,7 +1813,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             public void run() {
                 calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
                 ask_progress.setVisibility(View.GONE);
-                calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+                calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.ask_drawable_back));
                 canAskuser = true;
             }
         };
@@ -2997,10 +2997,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             timeStampHashReceiver.put("present", true);
             timeStampHashReceiver.put("chatPending", true);
 
-            Toast.makeText(parentActivity, "notifyoutubeID " + notifyoutubeID, Toast.LENGTH_SHORT).show();
 
-
-            // if(notifyoutubeID!=null&&!notifyoutubeID.equals("default")&&!notifyoutubeID.equals("started"))
             receiverChatCreateRef.updateChildren(timeStampHashReceiver);
         } else {
             DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
@@ -3035,7 +3032,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }*/
 
 
-        calling_text_layout.setVisibility(View.VISIBLE);
+        try {
+            calling_text_layout.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            //
+        }
 
         initialiseLiveragment();
         createLiveMessageDbInstance();
@@ -3045,7 +3046,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 @Override
                 public void run() {
                     calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
-                    calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+                    ask_progress.setVisibility(View.GONE);
+                    calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.ask_drawable_back));
                     canAskuser = true;
                 }
             };
