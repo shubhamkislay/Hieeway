@@ -794,6 +794,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     protected void onResume() {
         super.onResume();
 
+        userNameChattingWith = usernameChattingWith;
         backPressed = false;
         if (pageSelected == 2) {
             isWatching = true;

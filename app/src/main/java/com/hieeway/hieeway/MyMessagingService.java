@@ -1053,8 +1053,14 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setContentIntent(pendingIntent);
 
 
-            if (!remoteMessage.getData().get("username").equals(userNameChattingWith))
-                notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+            if (!remoteMessage.getData().get("username").equals(userNameChattingWith)) {
+                //notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+                Intent service = new Intent(this, LiveMessageNotificationService.class);
+                service.putExtra("username", remoteMessage.getData().get("username"));
+                service.putExtra("userid", remoteMessage.getData().get("userId"));
+                service.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                startService(service);
+            }
         }
 
 

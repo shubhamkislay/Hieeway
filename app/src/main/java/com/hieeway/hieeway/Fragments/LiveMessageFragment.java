@@ -12,8 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -25,8 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
-import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewFeature;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -45,7 +41,6 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -81,14 +76,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomUiController;
 import com.hieeway.hieeway.LiveMessageActiveService;
-import com.hieeway.hieeway.LiveMessageNotificationService;
 import com.hieeway.hieeway.Model.YoutubeSync;
-import com.hieeway.hieeway.SyncService;
 import com.hieeway.hieeway.VerticalPageActivity;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -98,7 +89,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBar;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
@@ -109,14 +99,10 @@ import com.hieeway.hieeway.LiveMessagingViewModel;
 import com.hieeway.hieeway.LiveMessagingViewModelFactory;
 import com.hieeway.hieeway.LiveVideoViewModel;
 import com.hieeway.hieeway.LiveVideoViewModelFactory;
-import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.LiveMessage;
 import com.hieeway.hieeway.Model.VideoItem;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.YouTubeConfig;
-
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -142,10 +128,7 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
-import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
-import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.OTHER_USER_PUBLIC_KEY;
-import static com.hieeway.hieeway.VerticalPageActivity.USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.USER_PRIVATE_KEY;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
@@ -263,6 +246,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private YouTube youtube;
     private String youtubeTitle;
     private String notifyoutubeID = "started";
+    private RelativeLayout calling_text_layout;
+    private TextView calling_text;
+    private ProgressBar ask_progress;
+    private boolean canAskuser = false;
+    private Handler askHandler;
+    private Runnable askRunnable;
 
 
     public LiveMessageFragment() {
@@ -393,6 +382,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         live_video_control_btn_lay = view.findViewById(R.id.live_video_control_btn_lay);
         connecting_text = view.findViewById(R.id.connecting_text);
         connecting_text_lay = view.findViewById(R.id.connecting_text_lay);
+        calling_text_layout = view.findViewById(R.id.calling_text_layout);
+        calling_text = view.findViewById(R.id.calling_text);
+        ask_progress = view.findViewById(R.id.ask_progress);
 
         youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
@@ -434,6 +426,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         video_seekbar = view.findViewById(R.id.video_seekbar);
 
         enable_audio = view.findViewById(R.id.enable_audio);
+
+
+        calling_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (canAskuser)
+                    askUserToJoin();
+            }
+        });
 
 
         ////bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
@@ -663,6 +664,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         stopLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         sync_video_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         connecting_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        calling_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         getLifecycle().addObserver(youtube_player_view);
@@ -995,22 +997,31 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         userPresent = dataSnapshot.getValue(Boolean.class);
                         if (!userPresent) {
-                            if (previousPresence)
+                            if (previousPresence) {
                                 Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
+                                calling_text.setText("Ask " + usernameChattingWith + " to join");
+                                calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+
+                                canAskuser = true;
+
+                                ask_progress.setVisibility(View.GONE);
+                            }
                             // seekRef.removeValue();
-                            live_video_control_layout.setVisibility(View.GONE);
+                            live_video_control_btn_lay.setVisibility(View.GONE);
+                            calling_text_layout.setVisibility(View.VISIBLE);
+                            // calling_text.setText("Call user to join");
                             //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
                             //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                             // youtube_web_view.setVisibility(View.GONE);
-                            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
-                            youtube_web_view.setAnimation(animation);
+                            /*Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
+                            youtube_web_view.setAnimation(animation);*/
 
-                            new Handler().postDelayed(new Runnable() {
+                            /*new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     youtube_web_view.setVisibility(View.GONE);
                                 }
-                            }, 350);
+                            }, 350);*/
                             //youtube_button.setEnabled(false);
                             if (initialiseActivity) {
                                /* mYouTubePlayer.pause();
@@ -1024,6 +1035,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         } else {
                             Toast.makeText(getActivity(), userNameChattingWith + " joined the live chat! Now you can search and watch videos together", Toast.LENGTH_LONG).show();
 
+                            askHandler.removeCallbacks(askRunnable);
                             // youtubeVideoSec
 
                             try {
@@ -1056,7 +1068,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             }
 
 
-                            live_video_control_layout.setVisibility(View.VISIBLE);
+                            live_video_control_btn_lay.setVisibility(View.VISIBLE);
+                            calling_text_layout.setVisibility(View.GONE);
                             youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
                             //youtube_button.setEnabled(true);
                         }
@@ -1072,7 +1085,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 youtube_web_view.setVisibility(View.GONE);
                             }
                         }, 350);
-                        live_video_control_layout.setVisibility(View.GONE);
+                        live_video_control_btn_lay.setVisibility(View.GONE);
+                        calling_text_layout.setVisibility(View.VISIBLE);
                         //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
                         // youtube_button.setEnabled(false);
                     }
@@ -1090,7 +1104,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             youtube_web_view.setVisibility(View.GONE);
                         }
                     }, 350);
-                    live_video_control_layout.setVisibility(View.GONE);
+                    live_video_control_btn_lay.setVisibility(View.GONE);
+                    calling_text_layout.setVisibility(View.VISIBLE);
                     //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkGrey)));
                     // youtube_button.setEnabled(false);
                 }
@@ -1255,16 +1270,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     updatePresenceRef.onDisconnect()
                             .updateChildren(disconnectHash);
 
-                    if (userPresent)
-                        live_video_control_layout.setVisibility(View.VISIBLE);
+                    if (userPresent) {
+                        live_video_control_btn_lay.setVisibility(View.VISIBLE);
+                    }
 
 
                 } else {
                     // Log.d(TAG, "not connected");
                     // Log.d(TAG, "not connected");
 
-                    if (userPresent)
-                        live_video_control_layout.setVisibility(View.GONE);
+                    if (userPresent) {
+                        live_video_control_btn_lay.setVisibility(View.GONE);
+                        calling_text_layout.setVisibility(View.GONE);
+                    }
 
 
                     onDisconnectFromDB();
@@ -1714,6 +1732,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 if (!blinkReceiver) {
                                     blinkReceiver = true;
                                     blinkReceiverLayout();
+
+
                                 }
                                 /*startLiveVideoTextView.setText("JOIN");
                                 stopLiveVideo.setVisibility(View.VISIBLE);*/
@@ -1768,9 +1788,35 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         return view;
     }
 
+    private void askUserToJoin() {
+        createLiveMessageDbInstance();
+
+        canAskuser = false;
+        calling_text.setBackgroundResource(0);
+        ask_progress.setVisibility(View.VISIBLE);
+
+        calling_text.setText("Asking " + usernameChattingWith + " to join");
+
+        try {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
+                    ask_progress.setVisibility(View.GONE);
+                    calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+                    canAskuser = true;
+                }
+            }, 25000);
+        } catch (Exception e) {
+            //
+        }
+
+    }
+
     private void onDisconnectFromDB() {
 
-        live_video_control_layout.setVisibility(View.GONE);
+        live_video_control_btn_lay.setVisibility(View.GONE);
+        calling_text_layout.setVisibility(View.GONE);
 
         leaveChannel();
         resetLiveVideoViews();
@@ -1949,6 +1995,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         blinkReceiver = false;
         live_video_control_btn_lay.setVisibility(View.GONE);
         connecting_text_lay.setVisibility(View.VISIBLE);
+        calling_text_layout.setVisibility(View.GONE);
         connecting_text.setText("Initiating live expressions...");
 
 
@@ -2615,6 +2662,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         live_video_control_btn_lay.setVisibility(View.VISIBLE);
                         connecting_text_lay.setVisibility(View.GONE);
+                        calling_text_layout.setVisibility(View.GONE);
 
                         // Toast.makeText(getActivity(), "connected", Toast.LENGTH_SHORT).show();
                         joiningLive = false;
@@ -2683,6 +2731,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         video_seekbar.setProgress(0);*/
 
                         connecting_text_lay.setVisibility(View.VISIBLE);
+
                         live_video_control_btn_lay.setVisibility(View.generateViewId());
                         connecting_text.setText("live expression disconnected");
                         new Handler().postDelayed(new Runnable() {
@@ -2972,12 +3021,27 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }*/
 
 
-
-
-
+        calling_text_layout.setVisibility(View.VISIBLE);
 
         initialiseLiveragment();
         createLiveMessageDbInstance();
+
+        try {
+            askRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
+                    calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.send_message_back_drawable));
+                    canAskuser = true;
+                }
+            };
+
+            askHandler = new Handler();
+            askHandler.postDelayed(askRunnable, 25000);
+
+        } catch (Exception e) {
+            //
+        }
 
 
     }

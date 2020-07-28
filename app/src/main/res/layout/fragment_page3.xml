@@ -327,7 +327,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:animateLayoutChanges="true"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:weightSum="2">
 
                 <RelativeLayout
@@ -335,7 +335,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                     <SeekBar
                         android:id="@+id/video_seekbar"
@@ -385,6 +385,46 @@
                         android:layout_toRightOf="@id/connecting_text"
                         app:SpinKit_Color="@color/colorPrimaryDark"
                         app:SpinKit_Style="Wave" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/calling_text_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:visibility="gone">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true">
+
+                        <TextView
+                            android:id="@+id/calling_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_margin="5dp"
+                            android:layout_weight="2"
+                            android:gravity="center"
+                            android:paddingLeft="12dp"
+                            android:paddingTop="5dp"
+                            android:paddingRight="12dp"
+                            android:paddingBottom="5dp"
+                            android:text="Asking user to join"
+                            android:textColor="#fff"
+                            android:visibility="visible" />
+
+                        <com.github.ybq.android.spinkit.SpinKitView
+                            android:id="@+id/ask_progress"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@id/calling_text"
+                            app:SpinKit_Color="@color/colorPrimaryDark"
+                            app:SpinKit_Style="Wave" />
+                    </RelativeLayout>
+
                 </RelativeLayout>
 
 
