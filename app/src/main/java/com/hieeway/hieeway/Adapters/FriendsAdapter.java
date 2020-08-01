@@ -66,7 +66,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
         RelativeLayout chatItem = view.findViewById(R.id.chatbox_tem);
 
-        chatItem.getLayoutParams().height = (int) dispSize * 6 / 10;
+        chatItem.getLayoutParams().height = (int) dispSize * 65 / 100;
 
         return new FriendsAdapter.ViewHolder(view);
     }

@@ -1372,7 +1372,7 @@ public class Camera2BasicFragment extends Fragment
             intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
 
             startActivity(intent);
-            getActivity().finish();
+            // getActivity().finish();
 
         }
     }
@@ -1406,7 +1406,7 @@ public class Camera2BasicFragment extends Fragment
             intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
 
             startActivity(intent);
-            getActivity().finish();
+            // getActivity().finish();
         }
 
 

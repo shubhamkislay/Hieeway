@@ -1211,8 +1211,11 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(PhotoEditToolsActivity.this,CameraActivity.class));
-        finish();
+        /*startActivity(new Intent(PhotoEditToolsActivity.this,CameraActivity.class));
+
+        finish();*/
+
+        super.onBackPressed();
     }
 }
 

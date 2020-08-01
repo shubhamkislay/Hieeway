@@ -699,11 +699,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         if(cropError!=null)
         {
-            Toast.makeText(this, ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
         }
         else
         {
-            Toast.makeText(this, "Unexpected Error", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Unexpected Error", Toast.LENGTH_SHORT).show();
         }
 
 

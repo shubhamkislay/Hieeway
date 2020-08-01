@@ -761,7 +761,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     Glide.with(NavButtonTest.this).load(task.getResult()).into(profileBtnUnpressed);
                     profileFragment.setBitmap(task.getResult());
                 } else {
-                    Toast.makeText(NavButtonTest.this, "Image not uploaded", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(NavButtonTest.this, "Image not uploaded", Toast.LENGTH_SHORT).show();
                     profileBtnPressed.setImageResource(R.drawable.no_profile);
                     profileBtnUnpressed.setImageResource(R.drawable.no_profile);
                 }
@@ -1156,11 +1156,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         if(cropError!=null)
         {
-            Toast.makeText(this, ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, ""+cropError.getMessage(), Toast.LENGTH_SHORT).show();
         }
         else
         {
-            Toast.makeText(this, "Unexpected Error", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Unexpected Error", Toast.LENGTH_SHORT).show();
         }
 
 

@@ -215,7 +215,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
         RelativeLayout chatItem = view.findViewById(R.id.chatbox_tem);
 
-        chatItem.getLayoutParams().height = (int) dispSize * 6 / 10;
+        chatItem.getLayoutParams().height = (int) dispSize * 65 / 100;
 
 
 

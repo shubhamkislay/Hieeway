@@ -1584,38 +1584,49 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             try {
 
 
-                                Glide.with(getActivity()).load(task.getResult()/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height))*/.listener(new RequestListener<Drawable>() {
+                                new Handler().postDelayed(new Runnable() {
                                     @Override
-                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                        return false;
-                                    }
+                                    public void run() {
 
-                                    @Override
-                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                        Glide.with(getActivity()).load(task.getResult()/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height))*/.listener(new RequestListener<Drawable>() {
+                                            @Override
+                                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                                return false;
+                                            }
+
+                                            @Override
+                                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
 
-                                        if (imageReady) {
-                                            {
-                                                profile_pic.animate().alpha(1.0f).setDuration(750);
+                                                if (imageReady) {
+                                                    {
+                                                        profile_pic.animate().alpha(1.0f).setDuration(750);
                                 /*final Matrix matrix = profile_pic.getImageMatrix();
                                 final float imageWidth = resource.getIntrinsicWidth();
                                 final int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels/2;
                                 final float scaleRatio = screenWidth / imageWidth;
                                 matrix.postScale(scaleRatio, scaleRatio);*/
+                                                    }
+
+                                                    imageLoaded = true;
+
+
+                                                    //   read_message_back.animate().alpha(0.0f);
+
+
+                                                }
+
+
+                                                return false;
                                             }
+                                        }).into(profile_pic);
 
-                                            imageLoaded = true;
-
-
-                                            //   read_message_back.animate().alpha(0.0f);
-
-
-                                        }
-
-
-                                        return false;
                                     }
-                                }).into(profile_pic);
+                                }, 0);
+
+
+
+
                             } catch (NullPointerException ne) {
                                 //
                             }

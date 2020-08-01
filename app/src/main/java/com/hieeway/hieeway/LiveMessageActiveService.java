@@ -146,7 +146,7 @@ public class LiveMessageActiveService extends Service {
                     .setAutoCancel(true)
                     .setContentTitle(notifMessage)
                     .setContentText("Starting chatting and watch videos together")
-                    //.addAction(R.drawable.ic_cancel_white_24dp, "Close", stopInent)
+                    .addAction(R.drawable.ic_cancel_white_24dp, "Leave", stopInent)
                     .setPriority(NotificationCompat.PRIORITY_MIN)
                     .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                     .build();

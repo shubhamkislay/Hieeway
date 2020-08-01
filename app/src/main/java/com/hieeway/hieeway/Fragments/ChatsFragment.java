@@ -107,6 +107,18 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
     private Boolean searchBtnActive = true;
     public static final String SHARED_PREFS = "sharedPrefs";
+
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String DEVICE_TOKEN = "devicetoken";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
     private List<Music> userList;
     private int sentListSize;
 
@@ -128,7 +140,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private List<String> usersIdList = new ArrayList<>();
     private ChatMessageAdapter chatMessageAdapter;
     private List<ChatStamp> chatStampsList;
-
+    private Boolean visibility = false;
+    private Boolean spotifyconnect = false;
+    private Boolean musicbeacon = false;
 
     private int chatStampSize =0;
     private List<ChatStamp> chatStampsListtwo;
@@ -207,7 +221,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                                         } catch (Exception e) {
 
-                                            Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                            //  Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }, 500);
@@ -228,6 +242,11 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        visibility = sharedPreferences.getBoolean(VISIBILITY, false);
+        musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
+        spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
 
         view = inflater.inflate(R.layout.fragment_chat_collapse_layout, container, false);
 
@@ -414,7 +433,12 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
             public void onClick(View v) {
 
                 //spotify_status_back.setVisibility(View.GONE);
-                startActivity(new Intent(getActivity(), MusicFeedActivity.class));
+
+                if (musicbeacon)
+                    startActivity(new Intent(getActivity(), MusicFeedActivity.class));
+
+                else
+                    Toast.makeText(getActivity(), "Turn on music beacon from the settings", Toast.LENGTH_SHORT).show();
                 //startActivity(new Intent(getActivity(), WebViewActivity.class));
 
 
@@ -559,7 +583,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                                 } catch (Exception e) {
 
-                                    Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }, 500);

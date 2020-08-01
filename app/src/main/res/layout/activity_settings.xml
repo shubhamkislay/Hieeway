@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context=".RequestTrackerActivity">
+
+    <RelativeLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp">
+
+        <TextView
+            android:id="@+id/settings_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Settings"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:textSize="26dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_bar"
+        android:layout_marginTop="16dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="none">
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"
+                            android:background="@drawable/ask_drawable_back">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <ImageButton
+                                    android:id="@+id/spotify_status"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="16dp"
+                                    android:background="@android:color/transparent"
+                                    android:padding="8dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/headphone" />
+
+                                <TextView
+                                    android:id="@+id/music_beacon_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/spotify_status"
+                                    android:layout_margin="8dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:gravity="center"
+                                    android:text="Turn off auto\nmusic beacon"
+                                    android:textColor="#fff"
+                                    android:textSize="14dp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <ImageButton
+                                    android:id="@+id/spotify_login"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="16dp"
+                                    android:background="@android:color/transparent"
+                                    android:padding="8dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/spotify_icon_rgb_green" />
+
+                                <TextView
+                                    android:id="@+id/spotify_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/spotify_login"
+                                    android:layout_margin="8dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:gravity="center"
+                                    android:text="Disconnect\nfrom Spotify"
+                                    android:textColor="#fff"
+                                    android:textSize="14dp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_margin="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <Button
+                                    android:id="@+id/visibility_status"
+                                    android:layout_width="64dp"
+                                    android:layout_height="64dp"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="16dp"
+                                    android:background="@drawable/privacylock"
+                                    android:backgroundTint="@color/colorWhite"
+                                    android:padding="8dp"
+                                    android:scaleType="centerInside" />
+
+                                <TextView
+                                    android:id="@+id/visibility_status_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/visibility_status"
+                                    android:layout_marginLeft="8dp"
+                                    android:layout_marginTop="12dp"
+                                    android:layout_marginRight="8dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:gravity="center"
+                                    android:text="Be visible\nonly to people who have your phone number"
+                                    android:textColor="#fff"
+                                    android:textSize="14dp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_margin="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <ImageButton
+                                    android:id="@+id/phone_number"
+                                    android:layout_width="90dp"
+                                    android:layout_height="90dp"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="16dp"
+                                    android:background="@android:color/transparent"
+                                    android:padding="2dp"
+                                    android:scaleType="centerInside"
+                                    android:src="@drawable/common_full_open_on_phone" />
+
+                                <TextView
+                                    android:id="@+id/change_phone_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/phone_number"
+                                    android:layout_margin="8dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:gravity="center"
+                                    android:text="Change your\nphone number"
+                                    android:textColor="#fff"
+                                    android:textSize="14dp"
+                                    android:textStyle="bold" />
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <Button
+                                    android:id="@+id/write_to_us"
+                                    android:layout_width="54dp"
+                                    android:layout_height="54dp"
+
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="24dp"
+                                    android:background="@drawable/suggest"
+                                    android:backgroundTint="#fff"
+                                    android:padding="8dp"
+                                    android:scaleType="centerInside" />
+
+                                <TextView
+                                    android:id="@+id/suggestion_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/write_to_us"
+                                    android:layout_marginLeft="8dp"
+                                    android:layout_marginTop="12dp"
+                                    android:layout_marginRight="8dp"
+                                    android:fontFamily="sans-serif-black"
+                                    android:gravity="center"
+                                    android:text="Let's build\ntogether"
+
+                                    android:textColor="#fff"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true">
+
+                                <Button
+                                    android:id="@+id/logout_btn"
+                                    android:layout_width="54dp"
+                                    android:layout_height="54dp"
+
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="24dp"
+                                    android:background="@drawable/ic_power_settings_new_black_24dp"
+                                    android:backgroundTint="#fff"
+                                    android:padding="8dp"
+                                    android:scaleType="centerInside" />
+
+                                <TextView
+                                    android:id="@+id/logout_title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/logout_btn"
+                                    android:layout_marginLeft="8dp"
+                                    android:layout_marginTop="12dp"
+                                    android:layout_marginRight="8dp"
+                                    android:fontFamily="sans-serif-black"
+
+                                    android:gravity="center"
+                                    android:text="Log Out"
+                                    android:textColor="#fff"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_margin="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back"
+                            android:backgroundTint="#ff0000">
+
+
+                            <TextView
+                                android:id="@+id/delete_account_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="16dp"
+                                android:text="Delete my account "
+                                android:textColor="#fff"
+                                android:textStyle="bold" />
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_margin="2dp"
+                        android:layout_weight="1"
+                        android:padding="8dp">
+
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:background="@drawable/ask_drawable_back">
+
+
+                            <TextView
+                                android:id="@+id/policy_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="16dp"
+                                android:text="Terms and Privacy Policy"
+                                android:textColor="#fff"
+                                android:textStyle="bold" />
+
+
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/master_head"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginTop="50dp"
+                    android:background="#000"
+                    android:gravity="center"
+                    android:paddingBottom="12dp"
+                    android:text="Hieeway Inc.\n Designed and created in India."
+                    android:textColor="#A8A8A8"
+                    android:textSize="10sp" />
+
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

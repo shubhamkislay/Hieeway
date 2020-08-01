@@ -76,6 +76,7 @@ import com.hieeway.hieeway.MusicBeamService;
 import com.hieeway.hieeway.ProfilePhotoActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SendMediaService;
+import com.hieeway.hieeway.SettingsActivity;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.ViewProfileActivity;
@@ -176,6 +177,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private TextView music_loading_txt;
     private RelativeLayout connect_spotify_layout;
     private TextView connect_spotify_text;
+    private Button edit_settings_option_btn;
 
 
 
@@ -213,6 +215,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     @Override
     public void onResume() {
         super.onResume();
+/*
 
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
@@ -256,6 +259,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+*/
 
         /*Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
         getActivity().startService(intent1);*/
@@ -308,6 +312,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
         edit_bio = view.findViewById(R.id.edit_bio);
+        edit_settings_option_btn = view.findViewById(R.id.edit_settings_option_btn);
 
         bottom_dialog_title = view.findViewById(R.id.title);
         prof_txt = view.findViewById(R.id.profile_txt);
@@ -363,6 +368,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         center_dp.getLayoutParams().height = (int) displayHeight / 4;
         center_dp.getLayoutParams().width = (int) displayHeight / 8;
 
+
         connect_spotify_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         music_loading_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -385,6 +391,14 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         });
         song_name.setSelected(true);
         artist_name.setSelected(true);
+
+
+        edit_settings_option_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().startActivity(new Intent(getActivity(), SettingsActivity.class));
+            }
+        });
 
 
         // spotify_cover.getLayoutParams().height = (int) displayWidth;

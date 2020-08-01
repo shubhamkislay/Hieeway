@@ -64,6 +64,10 @@ public class RegisterEmailEntryFragment extends Fragment {
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String DEVICE_TOKEN = "devicetoken";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
+
     private static final int RC_SIGN_IN = 1;
     FirebaseAuth firebaseAuth;
     String device_token;
@@ -425,6 +429,10 @@ public class RegisterEmailEntryFragment extends Fragment {
         editor.putString(EMAIL, email);
         editor.putString(PHOTO_URL, photourl);
         editor.putString(DEVICE_TOKEN, device_token);
+        editor.putBoolean(MUSIC_BEACON, false);
+        editor.putBoolean(SPOTIFY_CONNECT, false);
+        editor.putBoolean(VISIBILITY, false);
+
 
         editor.apply();
 

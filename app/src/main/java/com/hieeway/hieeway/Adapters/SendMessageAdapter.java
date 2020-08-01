@@ -827,6 +827,8 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     }
+
+
     private void getMessageRevealed(final TextView gotReplyTag, final TextView replyTag, final String replyId, final String gotReplyId, final ChatMessage chatMessage,final int viewType) {
 
 

@@ -525,6 +525,33 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     youtube_web_view.stopLoading();
                     youtube_web_view.loadUrl(youtubeUrl);
 
+                    Rect outRect = new Rect();
+
+                    //Native UI youtube search using data api
+                    //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+
+
+                    /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
+
+                    youtube_web_view.setVisibility(View.GONE);
+
+
+                    search_video_edittext.clearFocus();
+                    messageBox.requestFocus();
+                    messageBox.setCursorVisible(true);
+
+                    bottomSheetVisible = false;
+
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            youtubeBottomFragmentStateListener.setDrag(false);
+                        }
+                    }, 750);
+
 
 
                     //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
@@ -617,32 +644,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                     .updateChildren(youtubeVideoHash);
 
 
-                            Rect outRect = new Rect();
 
-                            //Native UI youtube search using data api
-                            //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
-
-
-                    /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
-
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
-
-                            youtube_web_view.setVisibility(View.GONE);
-
-
-                            search_video_edittext.clearFocus();
-                            messageBox.requestFocus();
-                            messageBox.setCursorVisible(true);
-
-                            bottomSheetVisible = false;
-
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    youtubeBottomFragmentStateListener.setDrag(false);
-                                }
-                            }, 750);
 
                         }
                     });
@@ -2872,7 +2874,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     @Override
     public void onPause() {
         super.onPause();
+
+
         try {
+            askHandler.removeCallbacks(askRunnable);
             singleSeekRef.removeEventListener(singleYoutubeListener);
         } catch (Exception e) {
 
@@ -3045,10 +3050,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             askRunnable = new Runnable() {
                 @Override
                 public void run() {
-                    calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
-                    ask_progress.setVisibility(View.GONE);
-                    calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.ask_drawable_back));
-                    canAskuser = true;
+                    try {
+
+                        calling_text.setText("No reply! Ask " + usernameChattingWith + " to join");
+                        ask_progress.setVisibility(View.GONE);
+                        calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.ask_drawable_back));
+                        canAskuser = true;
+                    } catch (Exception e) {
+                        //
+                    }
                 }
             };
 
@@ -3080,4 +3090,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }
 
     }
+
+
 }

@@ -61,6 +61,9 @@ public class LoginActivity extends AppCompatActivity {
     public static final String PUBLIC_KEY = "publicKey";
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -383,6 +386,9 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString(PUBLIC_KEY,publicKey);
         editor.putString(USER_ID,FirebaseAuth.getInstance().getCurrentUser().getUid());
         editor.putString(PUBLIC_KEY_ID,publicKeyId);
+        editor.putBoolean(MUSIC_BEACON, false);
+        editor.putBoolean(SPOTIFY_CONNECT, false);
+        editor.putBoolean(VISIBILITY, false);
 
         editor.apply();
 
