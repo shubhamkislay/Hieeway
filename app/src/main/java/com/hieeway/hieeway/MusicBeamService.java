@@ -4,8 +4,10 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
@@ -54,11 +56,16 @@ public class MusicBeamService extends Service {
     private static String ACTION_STOP_SERVICE = "stop";
     private static String OPEN_SPOTIFY = "spotify";
     final String appPackageName = "com.spotify.music";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String SHARED_PREFS = "sharedPrefs";
     Intent stopSelfIntent, openSpotifyIntent;
     private SpotifyAppRemote mSpotifyAppRemote;
     private PendingIntent pIntentlogin, openSpotify;
     private MediaSessionCompat mediaSessionCompat;
     private int notificationId;
+    SharedPreferences sharedPreferences;
+
 
 
     @Nullable
@@ -148,6 +155,10 @@ public class MusicBeamService extends Service {
 
                             listedToSpotifySong();
 
+                            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+                            checkSettings();
+
 
                         }
 
@@ -163,6 +174,24 @@ public class MusicBeamService extends Service {
         }
 
         return START_NOT_STICKY;
+    }
+
+    private void checkSettings() {
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!(sharedPreferences.getBoolean(MUSIC_BEACON, false) &&
+                        sharedPreferences.getBoolean(SPOTIFY_CONNECT, false)))
+                    stopSelf();
+
+                else
+                    checkSettings();
+
+            }
+        }, 1000);
+
     }
 
     private void listedToSpotifySong() {

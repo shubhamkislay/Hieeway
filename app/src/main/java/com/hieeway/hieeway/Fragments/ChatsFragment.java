@@ -74,6 +74,7 @@ import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.SettingsActivity;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.UserPicViewModel;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
@@ -434,11 +435,18 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                 //spotify_status_back.setVisibility(View.GONE);
 
-                if (musicbeacon)
+
+                if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
                     startActivity(new Intent(getActivity(), MusicFeedActivity.class));
 
-                else
-                    Toast.makeText(getActivity(), "Turn on music beacon from the settings", Toast.LENGTH_SHORT).show();
+                else {
+                    if (sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
+                        Toast.makeText(getActivity(), "Turn on music beacon", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getActivity(), "Turn on Spotify Connection and Music Beacon", Toast.LENGTH_LONG).show();
+
+                    startActivity(new Intent(getActivity(), SettingsActivity.class));
+                }
                 //startActivity(new Intent(getActivity(), WebViewActivity.class));
 
 

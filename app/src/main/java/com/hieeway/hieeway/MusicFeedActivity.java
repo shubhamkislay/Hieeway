@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -36,6 +38,9 @@ import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +53,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     public static final String CHECKED_TIMESTAMP = "checked_timestamp";
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
+    final String referrer = "adjust_campaign=com.hieeway.hieeway&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
     final String appPackageName = "com.spotify.music";
     RecyclerView music_recyclerview;
     List<Music> userList;
@@ -108,7 +114,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                             }
                         }, 500);
 
-                        // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(MusicFeedActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
                         // Now you can start interacting with App Remote
 
@@ -119,8 +125,54 @@ public class MusicFeedActivity extends AppCompatActivity {
                     public void onFailure(Throwable throwable) {
                         Log.e("MainActivity", throwable.getMessage(), throwable);
 
-                        Toast.makeText(MusicFeedActivity.this, "Cannot connect to Spotify app", Toast.LENGTH_SHORT).show();
-                        finish();
+                        PackageManager pm = null;
+                        try {
+                            pm = getPackageManager();
+
+                            boolean isSpotifyInstalled;
+
+
+                            try {
+                                pm.getPackageInfo("com.spotify.music", 0);
+                                isSpotifyInstalled = true;
+                                Toast.makeText(MusicFeedActivity.this, "Log in to Spotify", Toast.LENGTH_SHORT).show();
+                                AuthenticationRequest.Builder builder =
+                                        new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+                                builder.setScopes(new String[]{"streaming"});
+                                AuthenticationRequest request = builder.build();
+
+                                AuthenticationClient.openLoginActivity(MusicFeedActivity.this, REQUEST_CODE, request);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                isSpotifyInstalled = false;
+
+                                finish();
+                                Toast.makeText(MusicFeedActivity.this, "Install spotify app to continue", Toast.LENGTH_LONG).show();
+
+                                try {
+                                    Uri uri = Uri.parse("market://details")
+                                            .buildUpon()
+                                            .appendQueryParameter("id", appPackageName)
+                                            .appendQueryParameter("referrer", referrer)
+                                            .build();
+                                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                                } catch (android.content.ActivityNotFoundException ignored) {
+                                    Uri uri = Uri.parse("https://play.google.com/store/apps/details")
+                                            .buildUpon()
+                                            .appendQueryParameter("id", appPackageName)
+                                            .appendQueryParameter("referrer", referrer)
+                                            .build();
+                                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
+
+
+                                }
+
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(MusicFeedActivity.this, "Cannot connect with Spotify App", Toast.LENGTH_SHORT).show();
+                        }
+
+                        
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });

@@ -2,6 +2,7 @@ package com.hieeway.hieeway;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -9,6 +10,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -122,6 +126,10 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.putBoolean(MUSIC_BEACON, isChecked);
                     editor.putBoolean(SPOTIFY_CONNECT, isChecked);
                     editor.apply();
+
+                    FirebaseDatabase.getInstance().getReference("Music")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .removeValue();
                 }
 
             }
@@ -138,6 +146,8 @@ public class SettingsActivity extends AppCompatActivity {
                         music_beacon_switch.setChecked(false);
                         Toast.makeText(SettingsActivity.this, "Turn on spotify connection", Toast.LENGTH_SHORT).show();
                     } else {
+                        Intent intent1 = new Intent(SettingsActivity.this, MusicBeamService.class);
+                        startService(intent1);
                         editor.putBoolean(MUSIC_BEACON, isChecked);
                         editor.apply();
                     }

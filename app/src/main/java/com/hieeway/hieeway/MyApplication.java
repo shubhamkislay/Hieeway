@@ -4,6 +4,8 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -26,6 +28,10 @@ public class MyApplication extends Application {
     public static final String CHANNEL_1_ID = "messages";
     public static final String CHANNEL_2_ID = "feelings";
     public static final String CHANNEL_3_ID = "contacts";
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
     public static Boolean CONTACT_SERVICE_RUNNUNG = false;
     public static HashMap<String, Object> notificationIDHashMap = new HashMap<>();
     public static Palette.Swatch darkMutedSwatch;
@@ -42,6 +48,14 @@ public class MyApplication extends Application {
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             databaseReference.keepSynced(true);
+
+            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+
+            if (sharedPreferences.getBoolean(MUSIC_BEACON, false)
+                    && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
+                startService(new Intent(MyApplication.this, MusicBeamService.class));
+
            // checkPresence();
         }
 

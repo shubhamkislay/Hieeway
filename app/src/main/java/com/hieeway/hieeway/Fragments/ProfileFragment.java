@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -52,6 +53,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,8 +64,12 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.hieeway.hieeway.FeelingDialog;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.EditBioFragmentListener;
@@ -71,6 +77,7 @@ import com.hieeway.hieeway.Interface.EditProfileOptionListener;
 import com.hieeway.hieeway.Interface.FeelingListener;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
 import com.hieeway.hieeway.MainActivity;
+import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicBeamService;
 import com.hieeway.hieeway.ProfilePhotoActivity;
@@ -86,16 +93,19 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Subscription;
 import com.spotify.protocol.types.Artist;
+import com.spotify.protocol.types.ImageUri;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.hieeway.hieeway.NavButtonTest.USER_ID;
 import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
 import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -143,6 +153,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
 
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
+
     ImageView track_cover;
     ImageView spotify_cover;
 
@@ -178,6 +193,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private RelativeLayout connect_spotify_layout;
     private TextView connect_spotify_text;
     private Button edit_settings_option_btn;
+    private Boolean visibility = false;
+    private Boolean spotifyconnect = false;
+    private Boolean musicbeacon = false;
+    private SharedPreferences.Editor editor;
+    private SharedPreferences sharedPreferences;
 
 
 
@@ -215,51 +235,92 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     @Override
     public void onResume() {
         super.onResume();
-/*
 
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .setPreferredThumbnailImageSize(1500)
-                        .setPreferredImageSize(1500)
-                        .showAuthView(true)
-                        .build();
+        sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
-        SpotifyAppRemote.CONNECTOR.connect(getActivity(), connectionParams,
-                new Connector.ConnectionListener() {
+        visibility = sharedPreferences.getBoolean(VISIBILITY, false);
+        musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
+        spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
 
-                    @Override
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-                        connect_spotify.setVisibility(View.GONE);
-                        connect_spotify_layout.setVisibility(View.GONE);
-                        spotify_icon.setVisibility(View.VISIBLE);
-                        music_layout.setVisibility(View.VISIBLE);
-                        music_loading_layout.setVisibility(View.GONE);
-                        // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+        if (sharedPreferences.getBoolean(SPOTIFY_CONNECT, false)) {
 
-                        // Now you can start interacting with App Remote
-                        spotifyConnected = true;
-                        listedToSpotifySong();
-                    }
+            ConnectionParams connectionParams =
+                    new ConnectionParams.Builder(CLIENT_ID)
+                            .setRedirectUri(REDIRECT_URI)
+                            .setPreferredThumbnailImageSize(1500)
+                            .setPreferredImageSize(1500)
+                            .showAuthView(true)
+                            .build();
 
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Log.e("MainActivity", throwable.getMessage(), throwable);
-                        connect_spotify.setVisibility(View.VISIBLE);
-                        connect_spotify_layout.setVisibility(View.VISIBLE);
-                        spotify_icon.setVisibility(View.GONE);
-                        music_loading_layout.setVisibility(View.GONE);
+            try {
+                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+            } catch (Exception e) {
+                //
+            }
 
-                        music_layout.setVisibility(View.VISIBLE);
-                        //song_name.setText("Connect to spotify");
+            SpotifyAppRemote.CONNECTOR.connect(getActivity(), connectionParams,
+                    new Connector.ConnectionListener() {
 
-                        spotifyConnected = false;
-                        // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        // Something went wrong when attempting to connect! Handle errors here
-                    }
-                });
-*/
+                        @Override
+                        public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                            mSpotifyAppRemote = spotifyAppRemote;
+                            connect_spotify.setVisibility(View.GONE);
+                            connect_spotify_layout.setVisibility(View.GONE);
+                            spotify_icon.setVisibility(View.VISIBLE);
+                            music_layout.setVisibility(View.VISIBLE);
+                            music_loading_layout.setVisibility(View.GONE);
+                            // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                            // Now you can start interacting with App Remote
+                            spotifyConnected = true;
+                            listedToSpotifySong();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            Log.e("MainActivity", throwable.getMessage(), throwable);
+                            connect_spotify.setVisibility(View.VISIBLE);
+                            connect_spotify_layout.setVisibility(View.VISIBLE);
+                            spotify_icon.setVisibility(View.GONE);
+                            music_loading_layout.setVisibility(View.GONE);
+
+                            song_name.setVisibility(View.GONE);
+                            artist_name.setVisibility(View.GONE);
+                            spotify_cover.setVisibility(View.GONE);
+
+                            music_layout.setVisibility(View.VISIBLE);
+                            //song_name.setText("Connect to spotify");
+
+                            spotifyConnected = false;
+                            // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                            // Something went wrong when attempting to connect! Handle errors here
+                        }
+                    });
+
+        } else {
+            try {
+                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+            } catch (Exception e) {
+                //
+            }
+
+            connect_spotify.setVisibility(View.VISIBLE);
+            connect_spotify_layout.setVisibility(View.VISIBLE);
+            spotify_icon.setVisibility(View.GONE);
+            music_loading_layout.setVisibility(View.GONE);
+
+            song_name.setVisibility(View.GONE);
+            artist_name.setVisibility(View.GONE);
+            spotify_cover.setVisibility(View.GONE);
+
+
+            music_layout.setVisibility(View.VISIBLE);
+
+            //song_name.setText("Connect to spotify");
+
+            spotifyConnected = false;
+        }
 
         /*Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
         getActivity().startService(intent1);*/
@@ -406,6 +467,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         connect_spotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                editor.putBoolean(SPOTIFY_CONNECT, true);
+                editor.apply();
 
                 PackageManager pm = null;
                 try {
@@ -968,6 +1032,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                                 spotify_icon.setVisibility(View.INVISIBLE);
                                                 spotify_cover.setVisibility(View.VISIBLE);
                                                 spotify_cover.setImageBitmap(bitmap);
+
+
+                                                updateMusicStatus(track.name, track.artist.name, track.imageUri);
                                             }
                                         });
 
@@ -986,6 +1053,99 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 });
 
 
+    }
+
+    private void updateMusicStatus(String track_name, String postArtist, ImageUri track_imageUri) {
+
+        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        FirebaseDatabase.getInstance().getReference("Music")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                        String musicKey = FirebaseDatabase.getInstance().getReference("Music")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
+
+                        Music music = mutableData.getValue(Music.class);
+
+                        try {
+                            if (music.getSpotifyId() == null || !music.getSpotifyId().equals(songId)) {
+                                HashMap<String, Object> songHash = new HashMap<>();
+                                songHash.put("spotifyId", songId);
+                                songHash.put("spotifySong", track_name);
+                                songHash.put("spotifyArtist", postArtist);
+                                songHash.put("spotifyCover", track_imageUri);
+                                songHash.put("username", USER_NAME);
+                                songHash.put("userId", USER_ID);
+                                songHash.put("userPhoto", USER_PHOTO);
+                                songHash.put("musicKey", musicKey);
+                                songHash.put("timestamp", timestamp.toString());
+
+                                //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                                FirebaseDatabase.getInstance().getReference("Music")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .removeValue()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                FirebaseDatabase.getInstance().getReference("Likes")
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .removeValue();
+
+                                                FirebaseDatabase.getInstance()
+                                                        .getReference("Music")
+                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                        .updateChildren(songHash);
+
+                                            }
+                                        });
+
+                            }
+
+
+                        } catch (NullPointerException e) {
+
+                            HashMap<String, Object> songHash = new HashMap<>();
+                            songHash.put("spotifyId", songId);
+                            songHash.put("spotifySong", track_name);
+                            songHash.put("spotifyArtist", postArtist);
+                            songHash.put("spotifyCover", track_imageUri);
+                            songHash.put("username", USER_NAME);
+                            songHash.put("userId", USER_ID);
+                            songHash.put("userPhoto", USER_PHOTO);
+                            songHash.put("musicKey", musicKey);
+                            songHash.put("timestamp", timestamp.toString());
+
+                            //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+                            FirebaseDatabase.getInstance().getReference("Music")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .removeValue()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            FirebaseDatabase.getInstance()
+                                                    .getReference("Music")
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .updateChildren(songHash);
+
+                                        }
+                                    });
+
+                        }
+
+                        return null;
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                    }
+                });
     }
 
     private void startBlinking() {
@@ -1443,5 +1603,13 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
     }
 
-
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+        } catch (Exception e) {
+            //
+        }
+    }
 }
