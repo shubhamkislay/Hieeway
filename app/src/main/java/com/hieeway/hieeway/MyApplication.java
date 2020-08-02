@@ -52,9 +52,13 @@ public class MyApplication extends Application {
             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
 
-            if (sharedPreferences.getBoolean(MUSIC_BEACON, false)
-                    && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
-                startService(new Intent(MyApplication.this, MusicBeamService.class));
+            try {
+                if (sharedPreferences.getBoolean(MUSIC_BEACON, false)
+                        && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
+                    startService(new Intent(MyApplication.this, MusicBeamService.class));
+            } catch (Exception e) {
+                //
+            }
 
            // checkPresence();
         }

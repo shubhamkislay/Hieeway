@@ -222,8 +222,14 @@ public class PeopleFragment extends Fragment {
                     {
 
                         User user = dataSnapshot1.getValue(User.class);
-                        if(!user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                            userlist.add(user);
+                        if (!user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            try {
+                                if (!user.getCloud())
+                                    userlist.add(user);
+                            } catch (Exception e) {
+                                userlist.add(user);
+                            }
+                        }
 
                     }
 

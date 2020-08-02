@@ -31,6 +31,7 @@ import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -252,6 +253,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private boolean canAskuser = false;
     private Handler askHandler;
     private Runnable askRunnable;
+    private Display display;
+    private Point size;
+    private int diplayWight;
+    private int displayHeight;
+    private RelativeLayout other_user_video_wrapper, user_video_wrapper;
 
 
     public LiveMessageFragment() {
@@ -405,6 +411,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         firstPersonVideo = view.findViewById(R.id.first_person_video);
         userChattingPersonVideo = view.findViewById(R.id.second_person_video);
         frameRemoteContainer = (FrameLayout) view.findViewById(R.id.remote_video_view_container);
+        user_video_wrapper = view.findViewById(R.id.user_video_wrapper);
+        other_user_video_wrapper = view.findViewById(R.id.other_user_video_wrapper);
 
         frameLocalContainer = (FrameLayout) view.findViewById(R.id.local_video_view_container);
 
@@ -469,11 +477,125 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }).setApplicationName(getContext().getString(R.string.app_name)).build();
 
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
+        display = getActivity().getWindowManager().getDefaultDisplay();
+        size = new Point();
         display.getSize(size);
-        float diplayWight = size.x;
-        float displayHeight = size.y;
+        diplayWight = size.x;
+        displayHeight = size.y;
+
+        int height = displayHeight * 30 / 100;
+        int wrapperHeight = displayHeight * 25 / 100;
+
+        /*frameLocalContainer.getLayoutParams().height =  height;
+        frameRemoteContainer.getLayoutParams().height = height;
+        other_user_video_wrapper.getLayoutParams().height = height;
+        user_video_wrapper.getLayoutParams().height = height;
+        firstPersonVideo.getLayoutParams().height = height;
+        userChattingPersonVideo.getLayoutParams().height = height;*/
+
+        frameLocalContainer.getLayoutParams().height = height;
+        frameRemoteContainer.getLayoutParams().height = height;
+        other_user_video_wrapper.getLayoutParams().height = height;
+        user_video_wrapper.getLayoutParams().height = height;
+
+
+        frameLocalContainer.getLayoutParams().width = height / 2;
+        frameRemoteContainer.getLayoutParams().width = height / 2;
+
+
+        other_user_video_wrapper.getLayoutParams().width = height * 180 / 320;
+        user_video_wrapper.getLayoutParams().width = height * 180 / 320;
+
+        firstPersonVideo.getLayoutParams().width = height / 2;
+        userChattingPersonVideo.getLayoutParams().width = height / 2;
+
+
+        receiverTextView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            public void onLayoutChange(View v,
+                                       int left, int top, int right, int bottom,
+                                       int leftWas, int topWas, int rightWas, int bottomWas) {
+
+
+                int widthWas = rightWas - leftWas; // Right exclusive, left inclusive
+                if (v.getWidth() != widthWas) {
+                    // Width has changed
+                }
+                //int height = bottomWas - topWas; // Bottom exclusive, top inclusive
+                /*if( v.getHeight() != heightWas )
+                {*/
+                // Height has changed
+
+
+                if (receiverTextView.getHeight() < displayHeight * 30 / 100) {
+
+                    ViewGroup.LayoutParams params = other_user_video_wrapper.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    params.width = receiverTextView.getHeight() * 180 / 320;
+                    params.height = receiverTextView.getHeight();
+                    other_user_video_wrapper.setLayoutParams(params);
+
+                    ViewGroup.LayoutParams param = user_video_wrapper.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    param.width = receiverTextView.getHeight() * 180 / 320;
+                    param.height = receiverTextView.getHeight();
+                    user_video_wrapper.setLayoutParams(params);
+
+                    ViewGroup.LayoutParams paramL = frameLocalContainer.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramL.width = receiverTextView.getHeight() / 2;
+                    paramL.height = receiverTextView.getHeight();
+                    frameLocalContainer.setLayoutParams(params);
+
+                    ViewGroup.LayoutParams paramR = frameRemoteContainer.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramR.width = receiverTextView.getHeight() / 2;
+                    paramR.height = receiverTextView.getHeight();
+                    frameRemoteContainer.setLayoutParams(params);
+
+
+                } else {
+                    ViewGroup.LayoutParams params = other_user_video_wrapper.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    params.width = height * 180 / 320;
+                    params.height = height;
+                    other_user_video_wrapper.setLayoutParams(params);
+
+                    ViewGroup.LayoutParams param = user_video_wrapper.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    param.width = height * 180 / 320;
+                    param.height = height;
+                    user_video_wrapper.setLayoutParams(params);
+
+
+                    ViewGroup.LayoutParams paramL = frameLocalContainer.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramL.width = height / 2;
+                    paramL.height = height;
+                    frameLocalContainer.setLayoutParams(params);
+
+                    ViewGroup.LayoutParams paramR = frameRemoteContainer.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramR.width = height / 2;
+                    paramR.height = height;
+                    frameRemoteContainer.setLayoutParams(params);
+
+
+                }
+
+                    /*other_user_video_wrapper.getLayoutParams().width = receiverTextView.getHeight()*180/320;
+                    user_video_wrapper.getLayoutParams().width = height*180/320;*/
+
+                // }
+            }
+        });
+
+
+
+
+
+
+
+
 
         /*if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             WebSettingsCompat.setForceDark(youtube_web_view.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
@@ -2687,6 +2809,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             public void run() {
                                 firstPersonVideo.setVisibility(View.VISIBLE);
                                 userChattingPersonVideo.setVisibility(View.VISIBLE);
+                                current_user_blinker.setVisibility(View.GONE);
+                                other_user_blinker.setVisibility(View.GONE);
+
                                 startLiveVideo.setVisibility(View.GONE);
                                 stopLiveVideo.setVisibility(View.VISIBLE);
                                 connectingUserVideo.setVisibility(View.VISIBLE);
@@ -2785,9 +2910,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         connectingUserVideo.setVisibility(View.GONE);
         connectedUserVideo.setVisibility(View.GONE);
         startLiveVideo.setVisibility(View.GONE);
+        current_user_blinker.setVisibility(View.VISIBLE);
+        other_user_blinker.setVisibility(View.VISIBLE);
 
         firstPersonVideo.setVisibility(View.GONE);
         userChattingPersonVideo.setVisibility(View.GONE);
+        current_user_blinker.setVisibility(View.VISIBLE);
+        other_user_blinker.setVisibility(View.VISIBLE);
         startLiveVideo.setVisibility(View.VISIBLE);
 
         video_seekbar.setMax(1);
@@ -2825,7 +2954,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         // mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P_3, false);
 
         mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
-                VideoEncoderConfiguration.VD_240x180,
+                VideoEncoderConfiguration.VD_320x180,
                 VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
                 VideoEncoderConfiguration.STANDARD_BITRATE,
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
@@ -2835,7 +2964,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private void setupLocalVideo() {
 
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getContext());
+
+        /*int height = displayHeight*28/100;
+        int wrapperHeight = displayHeight*25/100;
+        surfaceView.getLayoutParams().height = wrapperHeight;
+        surfaceView.getLayoutParams().width =  height/2;*/
+
         surfaceView.setZOrderMediaOverlay(true);
+
         frameLocalContainer.addView(surfaceView);
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, 0));
 
@@ -2862,6 +2998,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
         remotesurfaceView = RtcEngine.CreateRendererView(getContext());
+
+        /*int height = displayHeight*28/100;
+        int wrapperHeight = displayHeight*25/100;
+        remotesurfaceView.getLayoutParams().height = wrapperHeight;
+        remotesurfaceView.getLayoutParams().width =  height/2;*/
+
 
         frameRemoteContainer.addView(remotesurfaceView);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(remotesurfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));

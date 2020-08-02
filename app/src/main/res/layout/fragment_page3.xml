@@ -144,28 +144,32 @@
                 <RelativeLayout
                     android:visibility="gone"
                     android:layout_alignParentTop="true"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
                     android:id="@+id/second_person_video"
-
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true">
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top|center_horizontal"
+                    android:gravity="top|center_horizontal">
 
 
                     <FrameLayout
                         android:id="@+id/remote_video_view_container"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-
-                        android:layout_centerInParent="true"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="1dp"
+                        android:foregroundGravity="top"
                         android:backgroundTint="#000000"
                         android:background="@drawable/ic_insert_emoticon_white_24dp" />
 
                     <RelativeLayout
+                        android:id="@+id/other_user_video_wrapper"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/live_chat_image_wrapper"/>
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/live_chat_rec_wrapper"
+                        android:visibility="visible" />
 
                     <com.github.ybq.android.spinkit.SpinKitView
                         style="@style/SpinKitView.Small.FadingCircle"
@@ -212,6 +216,7 @@
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/second_person_video"
                     android:paddingStart="8dp"
+                    android:paddingTop="24dp"
                     android:layout_marginEnd="16dp"
                     android:autoSizeMinTextSize="1dp"
                     android:autoSizeStepGranularity="1sp"
@@ -448,6 +453,7 @@
                     android:layout_width="match_parent"
 
 
+                    android:paddingBottom="24dp"
                     android:layout_marginEnd="8dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -479,29 +485,31 @@
 
                 <RelativeLayout
 
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
                     android:visibility="gone"
-                    android:layout_gravity="bottom"
+                    android:gravity="center_vertical|center_horizontal"
                     android:id="@+id/first_person_video"
 
                     >
 
                     <FrameLayout
                         android:id="@+id/local_video_view_container"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
                         android:visibility="visible"
-                        android:layout_centerInParent="true"
+                        android:layout_centerHorizontal="true"
                         android:backgroundTint="#000000"
                         android:background="@drawable/ic_insert_emoticon_white_24dp" />
 
                     <RelativeLayout
+                        android:id="@+id/user_video_wrapper"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/live_chat_image_wrapper"/>
+                        android:layout_centerHorizontal="true"
+                        android:background="@drawable/live_chat_rec_wrapper"
+                        android:rotation="180"
+                        android:visibility="visible" />
 
 
                 </RelativeLayout>

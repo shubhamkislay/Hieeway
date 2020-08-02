@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 public class SettingsActivity extends AppCompatActivity {
 
     public static final String SHARED_PREFS = "sharedPrefs";
@@ -101,9 +103,17 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 visibility = isChecked;
-
                 editor.putBoolean(VISIBILITY, isChecked);
                 editor.apply();
+
+
+                HashMap<String, Object> vHash = new HashMap<>();
+                vHash.put("cloud", isChecked);
+
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .updateChildren(vHash);
+
 
             }
         });

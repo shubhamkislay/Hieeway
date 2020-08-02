@@ -138,6 +138,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     String email,  name,  photourl, username;
     MutedVideoView video_view;
     private MediaPlayer mediaPlayer;
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -936,6 +939,13 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerMap.put("feelingIcon", "default");
         registerMap.put(PUBLIC_KEY,public_key);
         registerMap.put("publicKeyId",publickeyid);
+        registerMap.put("cloud", false);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putBoolean(VISIBILITY, false);
+        editor.apply();
 
         reference.setValue(registerMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -1001,6 +1011,20 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     databaseReference.updateChildren(hashMap);
 
 
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    try {
+
+                        editor.putBoolean(VISIBILITY, user.getCloud());
+                        editor.apply();
+
+                    } catch (Exception e) {
+                        editor.putBoolean(VISIBILITY, false);
+                        editor.apply();
+                    }
+
+
                     if (user.getPhonenumber().equals("default")) {
                         animateArrow();
                         getSupportFragmentManager().beginTransaction()
@@ -1027,8 +1051,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                     .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
 
 
-
-                    }
+                }
             }
 
             @Override
