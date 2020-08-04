@@ -526,7 +526,15 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             //Toast.makeText(VerticalPageActivity.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
             if (live.equals("live")) {
 
-                liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle);
+                liveMessageFragment
+                        .setLiveMessageEventListener(
+                                VerticalPageActivity.this,
+                                VerticalPageActivity.this,
+                                photo,
+                                usernameChattingWith,
+                                userIdChattingWith,
+                                youtubeID,
+                                youtubeTitle);
 
 
                 liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "live");

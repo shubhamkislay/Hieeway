@@ -11,6 +11,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -51,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+
 public class PhoneAuthenticationActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final int RC_HINT = 3;
@@ -65,6 +67,8 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
     Boolean checkingPhoneNumber = true;
     Boolean checkingPhoneNumberFromPhone = true;
     String phonenumber = "default";
+    public static final String SHARED_PREFS = "sharedPrefs";
+    private static final String PHONE = "phone";
     Boolean verifyOTP = false;
     GoogleApiClient mCredentialsApiClient;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
@@ -206,6 +210,12 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
         Toast.makeText(PhoneAuthenticationActivity.this, "Phone number verifed :)", Toast.LENGTH_SHORT);
 
         Intent data = new Intent();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor = sharedPreferences.edit();
+        editor.putString(PHONE, phonenumber);
+        editor.apply();
 
 //---set the data to pass back---
         data.setData(Uri.parse(phonenumber));

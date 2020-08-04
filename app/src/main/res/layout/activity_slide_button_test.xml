@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context="com.hieeway.hieeway.SlideButtonTestActivity">
+
+    <com.ncorti.slidetoact.SlideToActView
+        android:id="@+id/slideToActView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="8dp"
+        android:elevation="6dp"
+        app:animation_duration="250"
+        app:area_margin="4dp"
+        app:border_radius="16dp"
+        app:complete_icon="@android:color/transparent"
+        app:inner_color="#fff"
+        app:outer_color="@color/darkButtonBackground"
+        app:rotate_icon="true"
+        app:slider_height="80dp"
+        app:slider_icon="@drawable/ic_keyboard_arrow_right_black_24dp"
+        app:slider_icon_color="@color/colorPrimaryDark"
+        app:slider_locked="false"
+        app:text="Live Expression"
+        app:text_size="12sp"
+        app:text_style="bold" />
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/complete_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerInParent="true"
+        android:elevation="10dp"
+        android:visibility="gone"
+        app:SpinKit_Color="@color/colorPrimaryDark"
+        app:SpinKit_Style="Wave" />
+
+</RelativeLayout>

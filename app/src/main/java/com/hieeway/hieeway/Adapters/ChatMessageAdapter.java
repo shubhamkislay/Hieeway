@@ -260,7 +260,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
 
         checkPendingMessages(chatStamp.getId(), viewHolder.relativeLayout, viewHolder.count_message_layout, viewHolder.count_message_text, viewHolder.user_photo);
-        checkUserChangeAccountChange(chatStamp.getId(),chatStamp.getPhoto(),viewHolder.user_photo);
+
+        /**
+         * Uncomment the below code to listen to changes in the user profile photos
+         */
+        //checkUserChangeAccountChange(chatStamp.getId(),chatStamp.getPhoto(),viewHolder.user_photo);
 
         checkForMessageRequests(chatStamp.getId(), viewHolder.longMsgBtn);
 

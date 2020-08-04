@@ -87,6 +87,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.ncorti.slidetoact.SlideToActView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -192,6 +193,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     YouTubePlayerView youtube_player_view;
     Button search_video_btn;
     RelativeLayout current_user_blinker, other_user_blinker;
+    SlideToActView slideToActView;
+    RelativeLayout complete_icon;
+    Boolean videoLive = false;
     private String videoID = "kJQP7kiw5Fk";
     private Boolean userPresent = false;
     private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
@@ -258,6 +262,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private int diplayWight;
     private int displayHeight;
     private RelativeLayout other_user_video_wrapper, user_video_wrapper;
+    private RelativeLayout live_other_highlight, live_user_highlight;
 
 
     public LiveMessageFragment() {
@@ -369,7 +374,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.fragment_page3, container, false);
+        View view = inflater.inflate(R.layout.live_fragment_layout, container, false);
         /**
          * The below code is used to block screenshots
          */
@@ -391,6 +396,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         calling_text_layout = view.findViewById(R.id.calling_text_layout);
         calling_text = view.findViewById(R.id.calling_text);
         ask_progress = view.findViewById(R.id.ask_progress);
+        live_other_highlight = view.findViewById(R.id.live_other_highlight);
+        live_user_highlight = view.findViewById(R.id.live_user_highlight);
+
+        slideToActView = view.findViewById(R.id.slideToActView);
+
+        complete_icon = view.findViewById(R.id.complete_icon);
 
         youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
@@ -498,6 +509,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         other_user_video_wrapper.getLayoutParams().height = height;
         user_video_wrapper.getLayoutParams().height = height;
 
+        live_other_highlight.getLayoutParams().height = height;
+        live_user_highlight.getLayoutParams().height = height;
+
 
         frameLocalContainer.getLayoutParams().width = height / 2;
         frameRemoteContainer.getLayoutParams().width = height / 2;
@@ -505,6 +519,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         other_user_video_wrapper.getLayoutParams().width = height * 180 / 320;
         user_video_wrapper.getLayoutParams().width = height * 180 / 320;
+
+        live_other_highlight.getLayoutParams().width = height * 180 / 320;
+        live_user_highlight.getLayoutParams().width = height * 180 / 320;
 
         firstPersonVideo.getLayoutParams().width = height / 2;
         userChattingPersonVideo.getLayoutParams().width = height / 2;
@@ -538,19 +555,32 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 //              Changes the height and width to the specified *pixels*
                     param.width = receiverTextView.getHeight() * 180 / 320;
                     param.height = receiverTextView.getHeight();
-                    user_video_wrapper.setLayoutParams(params);
+                    user_video_wrapper.setLayoutParams(param);
 
                     ViewGroup.LayoutParams paramL = frameLocalContainer.getLayoutParams();
 //              Changes the height and width to the specified *pixels*
                     paramL.width = receiverTextView.getHeight() / 2;
                     paramL.height = receiverTextView.getHeight();
-                    frameLocalContainer.setLayoutParams(params);
+                    frameLocalContainer.setLayoutParams(paramL);
 
                     ViewGroup.LayoutParams paramR = frameRemoteContainer.getLayoutParams();
 //              Changes the height and width to the specified *pixels*
                     paramR.width = receiverTextView.getHeight() / 2;
                     paramR.height = receiverTextView.getHeight();
-                    frameRemoteContainer.setLayoutParams(params);
+                    frameRemoteContainer.setLayoutParams(paramR);
+
+
+                    ViewGroup.LayoutParams paramA = live_other_highlight.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramA.width = receiverTextView.getHeight() * 180 / 320;
+                    paramA.height = receiverTextView.getHeight();
+                    live_other_highlight.setLayoutParams(paramA);
+
+                    ViewGroup.LayoutParams paramB = live_user_highlight.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramB.width = receiverTextView.getHeight() * 180 / 320;
+                    paramB.height = receiverTextView.getHeight();
+                    live_user_highlight.setLayoutParams(paramB);
 
 
                 } else {
@@ -564,20 +594,32 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 //              Changes the height and width to the specified *pixels*
                     param.width = height * 180 / 320;
                     param.height = height;
-                    user_video_wrapper.setLayoutParams(params);
+                    user_video_wrapper.setLayoutParams(param);
 
 
                     ViewGroup.LayoutParams paramL = frameLocalContainer.getLayoutParams();
 //              Changes the height and width to the specified *pixels*
                     paramL.width = height / 2;
                     paramL.height = height;
-                    frameLocalContainer.setLayoutParams(params);
+                    frameLocalContainer.setLayoutParams(paramL);
 
                     ViewGroup.LayoutParams paramR = frameRemoteContainer.getLayoutParams();
 //              Changes the height and width to the specified *pixels*
                     paramR.width = height / 2;
                     paramR.height = height;
-                    frameRemoteContainer.setLayoutParams(params);
+                    frameRemoteContainer.setLayoutParams(paramR);
+
+                    ViewGroup.LayoutParams paramA = live_other_highlight.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramA.width = height * 180 / 320;
+                    paramA.height = height;
+                    live_other_highlight.setLayoutParams(paramA);
+
+                    ViewGroup.LayoutParams paramB = live_user_highlight.getLayoutParams();
+//              Changes the height and width to the specified *pixels*
+                    paramB.width = height * 180 / 320;
+                    paramB.height = height;
+                    live_user_highlight.setLayoutParams(paramB);
 
 
                 }
@@ -631,7 +673,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
 
-        });*/
+        });
+        */
 
 
         final WebViewClient webViewClient = new WebViewClient() {
@@ -1549,6 +1592,61 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         });
 
 
+        slideToActView.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
+            @Override
+            public void onSlideComplete(SlideToActView slideView) {
+
+                complete_icon.setVisibility(View.VISIBLE);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+                        if (!videoLive) {
+
+
+                            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                                    != PackageManager.PERMISSION_GRANTED)
+                                requestAllPermissions();
+
+
+                            else {
+
+
+                                initialiseLiveVideo();
+
+                            }
+
+
+
+
+                            /*complete_icon.setVisibility(View.GONE);
+                            slideToActView.setText("Stop Live Expression");
+
+                            slideToActView.resetSlider();
+                            slideToActView.setReversed(true);
+                            videoLive = true;*/
+
+
+                        } else {
+
+                            stopSignalling();
+                            /*slideToActView.setText("Start Live Expression");
+                            slideToActView.resetSlider();
+                            slideToActView.setReversed(false);
+
+                            videoLive = false;*/
+                        }
+
+                    }
+                }, 3000);
+
+
+            }
+        });
+
+
 
 
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
@@ -2071,10 +2169,16 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public void currentUserTypingAnimation() {
         if (showCurrentUserTypingAnimation) {
             current_user_blinker.animate().alpha(0.0f).setDuration(300);
+            if (current_user_blinker.getVisibility() == View.GONE)
+                live_user_highlight.animate().alpha(1.0f).setDuration(300);
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     current_user_blinker.animate().alpha(1.0f).setDuration(300);
+                    if (current_user_blinker.getVisibility() == View.GONE)
+                        live_user_highlight.animate().alpha(0.0f).setDuration(300);
+
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -2087,16 +2191,23 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }, 300);
         } else {
             current_user_blinker.animate().alpha(1.0f).setDuration(500);
+            if (current_user_blinker.getVisibility() == View.GONE)
+                live_user_highlight.animate().alpha(0.0f).setDuration(500);
+
         }
     }
 
     public void otherUserTypingAnimation() {
         if (showOtherUserTypingAnimation) {
             other_user_blinker.animate().alpha(0.0f).setDuration(150);
+            if (other_user_blinker.getVisibility() == View.GONE)
+                live_other_highlight.animate().alpha(1.0f).setDuration(150);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     other_user_blinker.animate().alpha(1.0f).setDuration(150);
+                    if (other_user_blinker.getVisibility() == View.GONE)
+                        live_other_highlight.animate().alpha(0.0f).setDuration(150);
                     try {
 
                         Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -2124,6 +2235,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }, 150);
         } else {
             other_user_blinker.animate().alpha(1.0f).setDuration(150);
+            if (other_user_blinker.getVisibility() == View.GONE)
+                live_other_highlight.animate().alpha(0.0f).setDuration(150);
         }
     }
 
@@ -2131,10 +2244,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         joiningLive = true;
         video_seekbar.setEnabled(false);
         blinkReceiver = false;
-        live_video_control_btn_lay.setVisibility(View.GONE);
-        connecting_text_lay.setVisibility(View.VISIBLE);
+
+
+        //live_video_control_btn_lay.setVisibility(View.GONE);
+        // connecting_text_lay.setVisibility(View.VISIBLE);
         calling_text_layout.setVisibility(View.GONE);
-        connecting_text.setText("Initiating live expressions...");
+        //connecting_text.setText("Initiating live expressions...");
 
 
 
@@ -2803,10 +2918,20 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         calling_text_layout.setVisibility(View.GONE);
 
                         // Toast.makeText(getActivity(), "connected", Toast.LENGTH_SHORT).show();
-                        joiningLive = false;
+                        //joiningLive = false;
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+
+
+                                complete_icon.setVisibility(View.GONE);
+                                slideToActView.setText("Stop Live Expression");
+
+                                slideToActView.resetSlider();
+                                slideToActView.setReversed(true);
+                                videoLive = true;
+
+
                                 firstPersonVideo.setVisibility(View.VISIBLE);
                                 userChattingPersonVideo.setVisibility(View.VISIBLE);
                                 current_user_blinker.setVisibility(View.GONE);
@@ -2834,8 +2959,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                connectingUserVideo.setVisibility(View.INVISIBLE);
+                                current_user_blinker.setVisibility(View.GONE);
+                                other_user_blinker.setVisibility(View.GONE);
+
+                                startLiveVideo.setVisibility(View.GONE);
+                                stopLiveVideo.setVisibility(View.VISIBLE);
+                                connectingUserVideo.setVisibility(View.VISIBLE);
                                 //enable_audio.setVisibility(View.VISIBLE);
+                                Toast.makeText(getActivity(), userNameChattingWith + " Joined", Toast.LENGTH_SHORT).show();
 
 
 
@@ -2853,6 +2984,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     public void run() {
                         resetLiveVideoViews();
 
+                        joiningLive = false;
                         enable_audio.setVisibility(View.GONE);
                         blinkReceiver = false;
                     }
@@ -2870,6 +3002,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         /*video_seekbar.setMax(1);
                         video_seekbar.setProgress(0);*/
+                        joiningLive = false;
 
                         connecting_text_lay.setVisibility(View.VISIBLE);
 
@@ -2878,8 +3011,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                live_video_control_btn_lay.setVisibility(View.VISIBLE);
+                                if (userPresent)
+                                    live_video_control_btn_lay.setVisibility(View.VISIBLE);
+
+                                else
+                                    live_video_control_btn_lay.setVisibility(View.GONE);
+
+
                                 connecting_text_lay.setVisibility(View.GONE);
+
                             }
                         }, 500);
 
@@ -2890,6 +3030,16 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         video_seekbar.post(new Runnable() {
                             @Override
                             public void run() {
+
+
+                                complete_icon.setVisibility(View.GONE);
+                                slideToActView.setText("Start Live Expression");
+
+                                slideToActView.resetSlider();
+                                slideToActView.setReversed(false);
+                                videoLive = false;
+
+
                                 video_seekbar.setProgress(0);
                             }
                         });
@@ -2898,6 +3048,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 // Toast.makeText(getActivity(),"User left",Toast.LENGTH_SHORT).show();
 
             }
+
 
         };
     }
@@ -2918,6 +3069,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         current_user_blinker.setVisibility(View.VISIBLE);
         other_user_blinker.setVisibility(View.VISIBLE);
         startLiveVideo.setVisibility(View.VISIBLE);
+
+        complete_icon.setVisibility(View.GONE);
+        slideToActView.setText("Start Live Expression");
+
+        slideToActView.resetSlider();
+        slideToActView.setReversed(false);
+        videoLive = false;
+
 
         video_seekbar.setMax(1);
         video_seekbar.setProgress(0);

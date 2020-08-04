@@ -1,0 +1,8 @@
+<animated-rotate xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:drawable="@drawable/heart"
+        android:duration="300" />
+
+</animated-rotate>

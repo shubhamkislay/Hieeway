@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
+    public static final String PHONE = "phone";
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String DEVICE_TOKEN = "devicetoken";
@@ -1024,6 +1025,18 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         editor.apply();
                     }
 
+                    try {
+
+                        if (!user.getPhoto().equals("default")) {
+                            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            editor = sharedPreferences.edit();
+                            editor.putString(PHOTO_URL, user.getPhoto());
+                            editor.apply();
+                        }
+                    } catch (Exception e) {
+                        //
+                    }
+
 
                     if (user.getPhonenumber().equals("default")) {
                         animateArrow();
@@ -1031,6 +1044,23 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                 .replace(R.id.framelayout, registerPhoneNumberFragment).commit();
                     } else {
+
+
+                        try {
+
+                            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            editor = sharedPreferences.edit();
+                            editor.putString(PHONE, user.getPhonenumber());
+                            editor.apply();
+                        } catch (Exception e) {
+                            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            editor = sharedPreferences.edit();
+                            editor.putString(PHONE, "default");
+                            editor.apply();
+                        }
+
+
+
 
                         startActivity(new Intent(MainActivity.this, NavButtonTest.class));
                         finish();
