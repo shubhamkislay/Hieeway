@@ -56,6 +56,8 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
 
     Button register_account, login_account;
     EditText username, email, password;
+    public static final String PHONE = "phone";
+    private static final String USERNAME = "username";
 
 
     @Override
@@ -110,6 +112,7 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
                                         registerHash.put("feeling", "happy");
                                         registerHash.put("bio", "great life");
                                         registerHash.put("photo", "default");
+                                        registerHash.put("phonenumber", "default");
                                         registerHash.put("feelingIcon", "default");
                                         registerHash.put("synced", false);
 
@@ -137,34 +140,39 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
         login_account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
+                if (password.getText().toString().length() > 5 && email.getText().toString().length() > 4
+                        && username.getText().toString().length() > 3) {
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString())
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
 
-                                    FirebaseInstanceId.getInstance().getInstanceId()
-                                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                                    if (task.isSuccessful()) {
+                                        FirebaseInstanceId.getInstance().getInstanceId()
+                                                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                        if (task.isSuccessful()) {
 
-                                                        generateKeys(task, email.getText().toString(), username.getText().toString(), "default");
+                                                            generateKeys(task, email.getText().toString(), username.getText().toString(), "default");
 
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
 
+                                    }
                                 }
-                            }
-                        });
+                            });
+                } else {
+                    Toast.makeText(RegisterAuthenticateActivity.this, "Put data properly", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
 
     }
 
-    private void generateKeys(Task<InstanceIdResult> task, String email, String name, String photourl) {
+    private void generateKeys(Task<InstanceIdResult> task, String email, String username, String photourl) {
         KeyPair kp = getKeyPair();
         PublicKey publicKey = kp.getPublic();
         byte[] publicKeyBytes = publicKey.getEncoded();
@@ -180,12 +188,12 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
         String privateKeyText = privateKeyBytesBase64;
 
 
-        saveKeys(publicKeyText, privateKeyText, task, email, name, photourl);
+        saveKeys(publicKeyText, privateKeyText, task, email, username, photourl);
 
     }
 
 
-    private void saveKeys(final String publicKey, final String privateKey, final Task<InstanceIdResult> task, final String email, final String name, final String photourl) {
+    private void saveKeys(final String publicKey, final String privateKey, final Task<InstanceIdResult> task, final String email, final String username, final String photourl) {
 
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
@@ -201,7 +209,8 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
         editor.putString(PUBLIC_KEY, publicKey);
         editor.putString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
         editor.putString(PUBLIC_KEY_ID, publicKeyId);
-        editor.putString(NAME, name);
+        editor.putString(USERNAME, username);
+        editor.putString(NAME, username);
         editor.putString(EMAIL, email);
         editor.putString(PHOTO_URL, photourl);
         editor.putString(DEVICE_TOKEN, device_token);
@@ -244,9 +253,24 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
 
                     HashMap<String, Object> hashMap = new HashMap<>();
 
-                    hashMap.put("token", device_token);
-                    hashMap.put(PUBLIC_KEY, public_key);
-                    hashMap.put("publicKeyId", publickeyid);
+                    try {
+                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(PHOTO_URL, user.getPhoto());
+
+                        try {
+                            editor.putString(PHONE, user.getPhonenumber());
+                        } catch (Exception e) {
+                            editor.putString(PHONE, "default");
+                        }
+                        editor.apply();
+
+                        hashMap.put("token", device_token);
+                        hashMap.put(PUBLIC_KEY, public_key);
+                        hashMap.put("publicKeyId", publickeyid);
+                    } catch (Exception e) {
+                        //
+                    }
 
                     databaseReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

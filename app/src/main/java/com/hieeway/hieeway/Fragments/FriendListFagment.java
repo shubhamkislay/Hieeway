@@ -4,6 +4,7 @@ package com.hieeway.hieeway.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -65,6 +66,8 @@ import com.hieeway.hieeway.SharedViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -96,6 +99,8 @@ public class FriendListFagment extends Fragment {
     private Button contactsbntn;
     private String phonenumber = "default";
     private SharedViewModel sharedViewModel;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    private static final String PHONE = "phone";
 
 
     public FriendListFagment() {
@@ -164,7 +169,10 @@ public class FriendListFagment extends Fragment {
 
         search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
-        sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        phonenumber = sharedPreferences.getString(PHONE, "default");
+        /*sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
 
 
         sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
@@ -173,7 +181,7 @@ public class FriendListFagment extends Fragment {
 
                 phonenumber = user.getPhonenumber();
             }
-        });
+        });*/
         //search_chat_btn_back = view.findViewById(R.id.search_chat_btn_back);
 
         //close_search = view.findViewById(R.id.close_search);

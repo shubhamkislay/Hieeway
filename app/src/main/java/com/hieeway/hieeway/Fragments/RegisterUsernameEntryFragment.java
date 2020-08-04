@@ -279,8 +279,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         return view;
     }
 
-    public void setImageSelectionCropListener(ImageSelectionCropListener imageSelectionCropListener)
-    {
+    public void setImageSelectionCropListener(ImageSelectionCropListener imageSelectionCropListener) {
         this.imageSelectionCropListener = imageSelectionCropListener;
     }
 
@@ -439,8 +438,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         return true;
     }
 
-    public String filterUsername(String usernameFilter)
-    {
+    public String filterUsername(String usernameFilter) {
         /*if(username.contains("_"))
         {
             String filteredusername;

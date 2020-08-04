@@ -437,7 +437,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 //spotify_status_back.setVisibility(View.GONE);
 
 
-                /*if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
+                if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
                     startActivity(new Intent(getActivity(), MusicFeedActivity.class));
 
                 else {
@@ -447,8 +447,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         Toast.makeText(getActivity(), "Turn on Spotify Connection and Music Beacon", Toast.LENGTH_LONG).show();
 
                     startActivity(new Intent(getActivity(), SettingsActivity.class));
-                }*/
-                startActivity(new Intent(getActivity(), SlideButtonTestActivity.class));
+                }
+                // startActivity(new Intent(getActivity(), SlideButtonTestActivity.class));
 
 
             }

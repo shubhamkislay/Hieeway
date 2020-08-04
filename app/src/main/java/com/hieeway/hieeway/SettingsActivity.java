@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String MUSIC_BEACON = "musicbeacon";
     public static final String SPOTIFY_CONNECT = "spotifyconnect";
     public static final String VISIBILITY = "visibility";
+    private static final String PHONE = "phone";
     private TextView settings_title;
     private TextView music_beacon_title;
     private TextView spotify_title;
@@ -46,6 +49,24 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch music_beacon_switch;
     private Switch spotify_switch;
     private Switch visible_switch;
+    private String phonenumber;
+    private RelativeLayout phone_btn;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        if (!sharedPreferences.getString(PHONE, "default").equals("default")) {
+
+            change_phone_title.setText("" + sharedPreferences.getString(PHONE, "default") + "\nChange your phone number");
+            visible_switch.setAlpha(1.0f);
+            if (visibility)
+                visible_switch.setChecked(true);
+        } else {
+            visible_switch.setChecked(false);
+            visible_switch.setAlpha(0.15f);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
         music_beacon_switch = findViewById(R.id.music_beacon_switch);
         spotify_switch = findViewById(R.id.spotify_switch);
         visible_switch = findViewById(R.id.visible_switch);
+        phone_btn = findViewById(R.id.phone_btn);
 
 
         settings_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -84,9 +106,8 @@ public class SettingsActivity extends AppCompatActivity {
         visibility = sharedPreferences.getBoolean(VISIBILITY, false);
         musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
         spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
+        phonenumber = sharedPreferences.getString(PHONE, "default");
 
-        if (visibility)
-            visible_switch.setChecked(true);
 
         if (musicbeacon)
             music_beacon_switch.setChecked(true);
@@ -98,21 +119,35 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
 
+        phone_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(SettingsActivity.this, PhoneAuthenticationActivity.class));
+            }
+        });
+
+
+
         visible_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                visibility = isChecked;
-                editor.putBoolean(VISIBILITY, isChecked);
-                editor.apply();
+                if (!phonenumber.equals("default")) {
+                    visibility = isChecked;
+                    editor.putBoolean(VISIBILITY, isChecked);
+                    editor.apply();
 
 
-                HashMap<String, Object> vHash = new HashMap<>();
-                vHash.put("cloud", isChecked);
+                    HashMap<String, Object> vHash = new HashMap<>();
+                    vHash.put("cloud", isChecked);
 
-                FirebaseDatabase.getInstance().getReference("Users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .updateChildren(vHash);
+                    FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .updateChildren(vHash);
+                } else {
+                    visible_switch.setChecked(false);
+                    Toast.makeText(SettingsActivity.this, "Add your phone number to activate the feature", Toast.LENGTH_SHORT).show();
+                }
 
 
             }

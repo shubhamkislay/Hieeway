@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Point;
@@ -130,6 +131,7 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.hieeway.hieeway.VerticalPageActivity.OTHER_USER_PUBLIC_KEY;
 import static com.hieeway.hieeway.VerticalPageActivity.USER_PRIVATE_KEY;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
@@ -263,6 +265,17 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private int displayHeight;
     private RelativeLayout other_user_video_wrapper, user_video_wrapper;
     private RelativeLayout live_other_highlight, live_user_highlight;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+
+    public static final String PHONE = "phone";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String USERNAME = "username";
 
 
     public LiveMessageFragment() {
@@ -3283,6 +3296,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             final String ts = tsLong.toString();
 
 
+            SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+            String userid, username, userphoto;
+            userid = sharedPreferences.getString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
+            username = sharedPreferences.getString(USERNAME, "");
+            userphoto = sharedPreferences.getString(PHOTO_URL, "default");
+
+
+
             final HashMap<String, Object> timeStampHash = new HashMap<>();
             timeStampHash.put("timeStamp", ts);
             timeStampHash.put("id", userChattingWithId);
@@ -3296,9 +3318,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
 
             timeStampHashReceiver.put("timeStamp", ts);
-            timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-            timeStampHashReceiver.put("username", usernameChattingWith);
-            timeStampHashReceiver.put("photo", photo);
+            timeStampHashReceiver.put("id", userid);
+            timeStampHashReceiver.put("username", username);
+            timeStampHashReceiver.put("photo", userphoto);
             timeStampHashReceiver.put("seen", "notseen");
             timeStampHashReceiver.put("present", true);
             timeStampHashReceiver.put("chatPending", true);

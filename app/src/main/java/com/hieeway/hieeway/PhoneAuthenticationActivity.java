@@ -102,7 +102,7 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
             @Override
             public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
 
-                updatePhoneNumber();
+                //updatePhoneNumber();
             }
 
             @Override
@@ -115,6 +115,12 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
                 //  super.onCodeSent(s, forceResendingToken);
                 verificationID = firebaseVerificationID;
                 forceResendingToken = firebaseForceResendingToken;
+
+                /*Toast.makeText(PhoneAuthenticationActivity.this, "VerificationID "+verificationID,
+                        Toast.LENGTH_SHORT).show();*/
+
+
+
             }
         };
 
@@ -213,7 +219,6 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor = sharedPreferences.edit();
         editor.putString(PHONE, phonenumber);
         editor.apply();
 
@@ -225,7 +230,8 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
     }
 
     private void checkOTP() {
-        enter_details.getText().toString();
+
+
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationID, enter_details.getText().toString());
 
 

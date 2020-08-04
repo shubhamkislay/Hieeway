@@ -97,9 +97,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
+
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
     public static final String NAME = "name";
+    public static final String USERNAME = "username";
     public static final String DEVICE_TOKEN = "devicetoken";
     public final static String HAPPY = "happy";
     private static final int RC_SIGN_IN = 1;
@@ -945,6 +947,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        editor.putString(USERNAME, username);
         editor.putBoolean(VISIBILITY, false);
         editor.apply();
 
@@ -1036,6 +1039,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     } catch (Exception e) {
                         //
                     }
+
+                    sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                    editor = sharedPreferences.edit();
+
+                    editor.putString(USERNAME, user.getUsername());
+                    editor.apply();
 
 
                     if (user.getPhonenumber().equals("default")) {
