@@ -49,16 +49,7 @@ public class MyApplication extends Application {
 
             databaseReference.keepSynced(true);
 
-            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-
-            try {
-                if (sharedPreferences.getBoolean(MUSIC_BEACON, false)
-                        && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
-                    startService(new Intent(MyApplication.this, MusicBeamService.class));
-            } catch (Exception e) {
-                //
-            }
 
            // checkPresence();
         }
@@ -177,7 +168,6 @@ public class MyApplication extends Application {
             return c.incrementAndGet();
         }
     }
-
 
 
 }

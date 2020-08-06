@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -128,6 +129,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private RelativeLayout nav_parent_layout, app_logo;
     private Bitmap bitmap;
     private String phonenumber = "default";
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    public static final String VISIBILITY = "visibility";
     private int fragmentId = 1;
     private MutedVideoView view, videoViewalt;
     private boolean videoPlayBack = true;
@@ -1666,6 +1671,16 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         }catch (Exception e)
         {
 
+        }
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+
+        try {
+            if (sharedPreferences.getBoolean(MUSIC_BEACON, false)
+                    && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
+                startService(new Intent(NavButtonTest.this, MusicBeamService.class));
+        } catch (Exception e) {
+            //
         }
 
 

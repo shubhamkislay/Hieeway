@@ -1977,7 +1977,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             if (!joiningLive) {
                                 if (!blinkReceiver) {
                                     blinkReceiver = true;
-                                    blinkReceiverLayout();
+                                    //blinkReceiverLayout();
 
 
                                 }

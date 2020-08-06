@@ -58,11 +58,12 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         if (!sharedPreferences.getString(PHONE, "default").equals("default")) {
 
-            change_phone_title.setText("" + sharedPreferences.getString(PHONE, "default") + "\nChange your phone number");
+            change_phone_title.setText("" + sharedPreferences.getString(PHONE, "default"));
             visible_switch.setAlpha(1.0f);
             if (visibility)
                 visible_switch.setChecked(true);
         } else {
+            change_phone_title.setText("phone number");
             visible_switch.setChecked(false);
             visible_switch.setAlpha(0.15f);
         }
