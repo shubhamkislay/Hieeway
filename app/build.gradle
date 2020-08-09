@@ -117,6 +117,8 @@ dependencies {
     //implementation 'com.google.apis:google-api-services-youtube:v3-rev181-1.22.0'
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
     implementation 'io.agora.rtc:full-sdk:2.9.0'
+    //implementation 'io.agora.rtc:full-sdk:3.0.1.1'
+    //the above agora version reduces the voice quality and the disrupts the on going music play. So the verison to be used is 2.9.0
     implementation 'com.github.hani-momanii:SuperNova-Emoji:1.1'
     implementation 'br.com.instachat:emoji-library:1.0.8'
     implementation 'com.google.android.material:material:1.0.0'

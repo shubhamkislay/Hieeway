@@ -38,8 +38,7 @@
             android:foregroundGravity="bottom"
             android:scaleType="matrix"
             android:transitionName="imageTransitionnot"
-            android:layout_centerHorizontal="true"
-            tools:src="@drawable/profile_pic" />
+            android:layout_centerHorizontal="true" />
 
         <RelativeLayout
             android:alpha="0.7"

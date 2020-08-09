@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
@@ -60,6 +61,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     public EphemeralMessagingFragment ephemeralMessagingFragment;
 
     public Boolean observingSendFragment = false;
+    public static final String VIDEO_CHECK_TAG = "Video Check";
 
     private List<ChatMessage> messageList, sendMessagelist;
     private Bundle bundle;
@@ -593,6 +595,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                     isWatching = false;
                     if (pageSelected == 2) {
 
+                        Log.v(VIDEO_CHECK_TAG, " on page changed calling destoryLiveFragment");
                         liveMessageFragment.destoryLiveFragment();
 
                         FirebaseDatabase.getInstance().getReference("Video")
@@ -601,6 +604,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                                 .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
+
+
                                 HashMap<String, Object> hashMap = new HashMap<>();
                                 hashMap.put("present", false);
                                 FirebaseDatabase.getInstance().getReference("ChatList")
@@ -758,6 +763,9 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     @Override
     protected void onPause() {
 
+        //Log.v(VIDEO_CHECK_TAG,"onPause Parent"+ " called");
+        super.onPause();
+
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
         isWatching = false;
@@ -766,16 +774,21 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         if (pageSelected == 2) {
 
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("present", false);
-            FirebaseDatabase.getInstance().getReference("ChatList")
-                    .child(userIDCHATTINGWITH)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .updateChildren(hashMap);
+
             try {
-                //liveMessageFragment.destoryLiveFragment();
+
+                Log.v(VIDEO_CHECK_TAG, "onPause calling destoryLiveFragment");
+                liveMessageFragment.destoryLiveFragment();
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("present", false);
+                FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(userIDCHATTINGWITH)
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .updateChildren(hashMap);
             } catch (Exception e) {
-                //
+                Toast.makeText(VerticalPageActivity.this, "Exception " + e.toString(), Toast.LENGTH_SHORT).show();
+                Log.v(VIDEO_CHECK_TAG, "onPause Parent Error" + e.toString());
             }
 
 
@@ -792,7 +805,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         } catch (Exception e) {
 
         }
-        super.onPause();
 
 
     }

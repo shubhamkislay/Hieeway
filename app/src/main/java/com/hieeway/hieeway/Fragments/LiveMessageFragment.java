@@ -126,6 +126,7 @@ import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 
+import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
@@ -134,6 +135,7 @@ import io.agora.rtc.video.VideoEncoderConfiguration;
 import static android.content.Context.MODE_PRIVATE;
 import static com.hieeway.hieeway.VerticalPageActivity.OTHER_USER_PUBLIC_KEY;
 import static com.hieeway.hieeway.VerticalPageActivity.USER_PRIVATE_KEY;
+import static com.hieeway.hieeway.VerticalPageActivity.VIDEO_CHECK_TAG;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
 
@@ -145,6 +147,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     // public String userIdChattingWith;
     public String usernameChattingWith;
     private IRtcEngineEventHandler mRtcEventHandler;
+
+
+
     private DatabaseReference databaseReferenceUserChattingWith;
     private DatabaseReference databaseReferenceUser;
     private  String userChattingWithId;
@@ -169,6 +174,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public Boolean truncateString = false;
     public Boolean stopObservingLiveMessaging = false;
     public Button emoji;
+
     private RtcEngine mRtcEngine = null;
     public ProgressBar connectingUserVideo, connectedUserVideo ;
     public Handler handler;
@@ -276,6 +282,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String USERNAME = "username";
+    private SurfaceView localSurfaceView;
+    private boolean joined = false;
 
 
     public LiveMessageFragment() {
@@ -1219,12 +1227,31 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 youtube_layout.setVisibility(View.GONE);*/
                             }
 
+                            Log.v(VIDEO_CHECK_TAG, "presentEventListener calling leaveChannel");
                             leaveChannel();
                             resetLiveVideoViews();
 
 
                         } else {
-                            Toast.makeText(getActivity(), userNameChattingWith + " joined the live chat! Now you can search and watch videos together", Toast.LENGTH_LONG).show();
+                            // Toast.makeText(getActivity(), userNameChattingWith + " joined the live chat! Now you can search and watch videos together", Toast.LENGTH_LONG).show();
+
+                            LayoutInflater inflater = getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.custom_toast,
+                                    (ViewGroup) parentActivity.findViewById(R.id.toast_parent));
+
+
+                            TextView toast_message = layout.findViewById(R.id.toast_message);
+                            toast_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+                            toast_message.setText(userNameChattingWith + " is the live with you! Now you can search and watch videos together");
+
+
+                            Toast toast = new Toast(parentActivity);
+                            toast.setGravity(Gravity.TOP, 0, 150);
+                            toast.setDuration(Toast.LENGTH_SHORT);
+                            toast.setView(layout);
+                            toast.show();
 
                             askHandler.removeCallbacks(askRunnable);
                             // youtubeVideoSec
@@ -1653,7 +1680,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         }
 
                     }
-                }, 3000);
+                }, 0);
 
 
             }
@@ -1896,7 +1923,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
-        setupIRtcEngineEventHandler();
+        // setupIRtcEngineEventHandler();
 
         LiveVideoViewModelFactory liveVideoViewModelFactory = new LiveVideoViewModelFactory(userIDCHATTINGWITH);
         liveVideoViewModel = ViewModelProviders.of(this, liveVideoViewModelFactory).get(LiveVideoViewModel.class);
@@ -1935,6 +1962,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 try {
                     if (checkMessage.getMessageKey().equals("")) {
 
+                        Log.v(VIDEO_CHECK_TAG, "LiveVideoViewModel calling leaveChannel");
                         leaveChannel();
                         resetLiveVideoViews();
                         /*if (flagActivityClosure)
@@ -2067,8 +2095,65 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         live_video_control_btn_lay.setVisibility(View.GONE);
         calling_text_layout.setVisibility(View.GONE);
 
+
+        Log.v(VIDEO_CHECK_TAG, "onDisconnectFromDB calling leaveChannel");
         leaveChannel();
         resetLiveVideoViews();
+    }
+
+
+    private void onJoinSuccess(Boolean automatic) {
+
+
+        if (automatic) {
+            // joined = true;
+
+            Toast.makeText(getActivity(), "Channel Joined", Toast.LENGTH_SHORT).show();
+
+            video_seekbar.setEnabled(true);
+
+            live_video_control_btn_lay.setVisibility(View.VISIBLE);
+            connecting_text_lay.setVisibility(View.GONE);
+            calling_text_layout.setVisibility(View.GONE);
+
+            // Toast.makeText(getActivity(), "connected", Toast.LENGTH_SHORT).show();
+            //joiningLive = false;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+
+                    complete_icon.setVisibility(View.GONE);
+                    slideToActView.setText("Stop Live Expression");
+
+                    slideToActView.resetSlider();
+                    slideToActView.setReversed(true);
+                    videoLive = true;
+
+
+                    firstPersonVideo.setVisibility(View.VISIBLE);
+                    userChattingPersonVideo.setVisibility(View.VISIBLE);
+                    current_user_blinker.setVisibility(View.GONE);
+                    other_user_blinker.setVisibility(View.GONE);
+
+                    startLiveVideo.setVisibility(View.GONE);
+                    stopLiveVideo.setVisibility(View.VISIBLE);
+                    // connectingUserVideo.setVisibility(View.VISIBLE);
+
+
+                }
+            }, 1000);
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // if(!joined)
+
+                    onJoinSuccess(true);
+                }
+            }, 3000);
+        }
+
     }
 
 
@@ -2271,14 +2356,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         startLiveVideoTextView.setText("Connecting...");
         stopLiveVideo.setVisibility(View.GONE);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 setupSignalling(userIDCHATTINGWITH);
                 flagActivityClosure = true;
-                liveMessagingViewModel.iConnect();
+                // liveMessagingViewModel.iConnect();
             }
-        }, 300);
+        }, 0);
 
     }
 
@@ -2712,8 +2798,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public void destoryLiveFragment() throws NullPointerException {
         try {
 
+            Log.v(VIDEO_CHECK_TAG, "destoryLiveFragment" + " called");
+
             if (startedLivingMessaging) {
                 // Toast.makeText(activity, "Fragment Destroyed", Toast.LENGTH_SHORT).show();
+
 
 
                 top_bar.setVisibility(View.VISIBLE);
@@ -2739,10 +2828,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 receiverTextView.setText("");
                 senderTextView.setText("");
 
+                RtcEngine.destroy();
+
 
             }
         } catch (Exception e) {
             //
+            Log.v(VIDEO_CHECK_TAG, "destoryLiveFragment Err" + e.toString());
         }
     }
 
@@ -2904,18 +2996,27 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     }
 
     private void setupIRtcEngineEventHandler() {
+
+
         mRtcEventHandler = new IRtcEngineEventHandler() {
             @Override
             public void onFirstRemoteVideoDecoded(final int uid, int width, int height, int elapsed) {
                 Log.i("uid video", uid + "");
+
+            }
+
+            @Override
+            public void onRemoteVideoStateChanged(int uid, int i1, int i2, int i3) {
+                super.onRemoteVideoStateChanged(uid, i1, i2, i3);
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setupRemoteVideo(uid);
+                        Toast.makeText(getActivity(), "onRemoteVideoStateChanged", Toast.LENGTH_SHORT).show();
+                        if (mRtcEngine != null)
+                            setupRemoteVideo(uid);
                     }
                 });
             }
-
 
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
@@ -2924,12 +3025,17 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
+                        Log.v(VIDEO_CHECK_TAG, "onJoinChannelSuccess event");
+                        Toast.makeText(getActivity(), "Channel Joined", Toast.LENGTH_SHORT).show();
+
                         video_seekbar.setEnabled(true);
 
                         live_video_control_btn_lay.setVisibility(View.VISIBLE);
                         connecting_text_lay.setVisibility(View.GONE);
                         calling_text_layout.setVisibility(View.GONE);
 
+                        connectingUserVideo.setVisibility(View.VISIBLE);
                         // Toast.makeText(getActivity(), "connected", Toast.LENGTH_SHORT).show();
                         //joiningLive = false;
                         new Handler().postDelayed(new Runnable() {
@@ -2952,7 +3058,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                                 startLiveVideo.setVisibility(View.GONE);
                                 stopLiveVideo.setVisibility(View.VISIBLE);
-                                connectingUserVideo.setVisibility(View.VISIBLE);
 
 
                             }
@@ -2977,7 +3082,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                                 startLiveVideo.setVisibility(View.GONE);
                                 stopLiveVideo.setVisibility(View.VISIBLE);
-                                connectingUserVideo.setVisibility(View.VISIBLE);
+                                //connectingUserVideo.setVisibility(View.GONE);
                                 //enable_audio.setVisibility(View.VISIBLE);
                                 Toast.makeText(getActivity(), userNameChattingWith + " Joined", Toast.LENGTH_SHORT).show();
 
@@ -2995,6 +3100,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.v(VIDEO_CHECK_TAG, "onLeaveChannel Event");
                         resetLiveVideoViews();
 
                         joiningLive = false;
@@ -3062,8 +3168,18 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             }
 
-
+            @Override
+            public void onStreamPublished(String url, int error) {
+                super.onStreamPublished(url, error);
+                Toast.makeText(getActivity(), "onFirstRemoteVideoDecoded", Toast.LENGTH_SHORT).show();
+            }
         };
+
+        Log.v(VIDEO_CHECK_TAG, "setupIRtcEngineEventHandler");
+
+
+        //joinChannel();
+
     }
 
     private void resetLiveVideoViews() {
@@ -3103,17 +3219,20 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     }
 
     private void initializeAgoraEngine() {
+
+        liveMessagingViewModel.iConnect();
+
+        setupIRtcEngineEventHandler();
         try {
-
             mRtcEngine = RtcEngine.create(getContext(), getString(R.string.agora_app_id), mRtcEventHandler);
-            joinChannel();
             setupVideoProfile();
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
+
+            Toast.makeText(parentActivity, "Error initializeAgoraEngine(): " + e.toString(), Toast.LENGTH_LONG).show();
+            resetLiveVideoViews();
         }
+
     }
 
     private void setupVideoProfile() {
@@ -3127,7 +3246,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
                 VideoEncoderConfiguration.VD_320x180,
-                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
+                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
                 VideoEncoderConfiguration.STANDARD_BITRATE,
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
         setupLocalVideo();
@@ -3135,19 +3254,21 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     private void setupLocalVideo() {
 
-        SurfaceView surfaceView = RtcEngine.CreateRendererView(getContext());
+        localSurfaceView = RtcEngine.CreateRendererView(getContext());
 
         /*int height = displayHeight*28/100;
         int wrapperHeight = displayHeight*25/100;
         surfaceView.getLayoutParams().height = wrapperHeight;
         surfaceView.getLayoutParams().width =  height/2;*/
 
-        surfaceView.setZOrderMediaOverlay(true);
+        localSurfaceView.setZOrderMediaOverlay(true);
 
-        frameLocalContainer.addView(surfaceView);
-        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, 0));
+        frameLocalContainer.addView(localSurfaceView);
+        mRtcEngine.setupLocalVideo(new VideoCanvas(localSurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, 0));
 
         //mRtcEngine.
+
+        joinChannel();
 
 
     }
@@ -3155,6 +3276,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private void joinChannel() {
         mRtcEngine.joinChannel(null, key, "Extra Optional Data", new Random().nextInt(10000000) + 1);
         wasInCall = true;// if you do not specify the uid, Agora will assign one.
+
+        onJoinSuccess(false);
+
+        // mRtcEngine.set
     }
 
 
@@ -3178,32 +3303,53 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
         frameRemoteContainer.addView(remotesurfaceView);
-        mRtcEngine.setupRemoteVideo(new VideoCanvas(remotesurfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, uid));
+        mRtcEngine.setupRemoteVideo(new VideoCanvas(remotesurfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         remotesurfaceView.setTag(uid);
+
+        connectingUserVideo.setVisibility(View.GONE);
+
 
 
 
     }
 
+    private void removeRemoteVideo() {
+
+
+        if (remotesurfaceView != null) {
+            frameRemoteContainer.removeView(remotesurfaceView);
+        }
+
+        remotesurfaceView = null;
+    }
+
+    private void removeLocalVideo() {
+
+        if (localSurfaceView != null) {
+            frameLocalContainer.removeView(localSurfaceView);
+        }
+
+        localSurfaceView = null;
+    }
+
     @Override
     public void onPause() {
         super.onPause();
+        //Log.v(VIDEO_CHECK_TAG,"onPause"+ " called");
 
+        // leaveChannel();
+        // destoryLiveFragment();
 
         try {
             askHandler.removeCallbacks(askRunnable);
             singleSeekRef.removeEventListener(singleYoutubeListener);
         } catch (Exception e) {
 
+            // Log.v(VIDEO_CHECK_TAG,"Error in onPause"+ e.toString());
         }
 
         liveChatInitialised = false;
-        /**
-         * Don't put this code here!
-         * getActivity().finish();
-         */
 
-        //getActivity().finish();
     }
 
 
@@ -3218,19 +3364,24 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 liveChatInitialised = false;
 
-                mRtcEventHandler = null;
+                removeRemoteVideo();
+                removeLocalVideo();
+
+                // mRtcEventHandler = null;
 
                 setupIRtcEngineEventHandler();
 
 
             }
 
+            Log.v(VIDEO_CHECK_TAG, "leaveChannel" + " called");
+
 
             //  RtcEngine.destroy();
         }catch (NullPointerException e)
         {
-            Toast.makeText(getActivity(), "Error leaveChannelMethod " + e.toString(), Toast.LENGTH_LONG).show();
-            Log.v("leaveChannel", e.toString());
+            // Toast.makeText(getActivity(), "Error leaveChannel() " + e.toString(), Toast.LENGTH_LONG).show();
+            Log.v(VIDEO_CHECK_TAG, "Error in leaveChannel" + e.toString());
         }
     }
 
@@ -3250,13 +3401,22 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        // Log.v(VIDEO_CHECK_TAG,"onDestroy"+ " called");
+
         youtube_player_view.removeYouTubePlayerListener(abstractYouTubePlayerListener);
         getLifecycle().removeObserver(youtube_player_view);
+
+        //  Log.v(VIDEO_CHECK_TAG,"onDestroy calling leaveChannel");
+
+        //  leaveChannel();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        //setupIRtcEngineEventHandler();
         // Toast.makeText(getActivity(),"onResumeCalled",Toast.LENGTH_SHORT).show();
 
 
@@ -3408,8 +3568,11 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         super.onDestroyView();
         try {
             // destoryLiveFragment();
+            //leaveChannel();
+            // Log.v(VIDEO_CHECK_TAG,"onDestroyView"+ " called");
         } catch (Exception e) {
 
+            //  Log.v(VIDEO_CHECK_TAG, "onDestroyView Err"+ e.toString());
         }
 
     }

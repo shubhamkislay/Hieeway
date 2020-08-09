@@ -33,7 +33,8 @@
         android:roundIcon="@mipmap/ic_hieeway_logo_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SlideButtonTestActivity"></activity>
+        <activity android:name=".VideoCallTestActivity"></activity>
+        <activity android:name=".SlideButtonTestActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".WebViewActivity" />
         <activity android:name=".MusicPalActivity" />

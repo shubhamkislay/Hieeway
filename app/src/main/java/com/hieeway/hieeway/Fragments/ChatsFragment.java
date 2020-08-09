@@ -79,6 +79,7 @@ import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.SlideButtonTestActivity;
 import com.hieeway.hieeway.UserPicViewModel;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
+import com.hieeway.hieeway.VideoCallTestActivity;
 import com.hieeway.hieeway.WebViewActivity;
 
 import java.util.ArrayList;
@@ -448,7 +449,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                     startActivity(new Intent(getActivity(), SettingsActivity.class));
                 }
-                // startActivity(new Intent(getActivity(), SlideButtonTestActivity.class));
+                //startActivity(new Intent(getActivity(), VideoCallTestActivity.class));
 
 
             }

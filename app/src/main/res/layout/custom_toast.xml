@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toast_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+
+    <TextView
+        android:id="@+id/toast_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/send_message_back_drawable"
+        android:backgroundTint="@color/darkThemeOval"
+        android:gravity="center_horizontal|center_vertical"
+        android:padding="12dp"
+        android:textColor="#fff"
+        android:textSize="12dp"
+        tools:text="This is the toast message" />
+
+</RelativeLayout>

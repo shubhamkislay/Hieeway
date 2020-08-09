@@ -157,7 +157,11 @@
                         android:layout_height="match_parent"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_margin="1dp"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="1dp"
+                        android:layout_marginRight="1dp"
+                        android:layout_marginBottom="4dp"
+                        android:paddingBottom="2dp"
                         android:background="@drawable/ic_insert_emoticon_white_24dp"
                         android:backgroundTint="#000000"
                         android:foregroundGravity="top" />
@@ -166,6 +170,7 @@
                         android:id="@+id/other_user_video_wrapper"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginBottom="-2dp"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/live_chat_rec_wrapper"
@@ -406,8 +411,8 @@
 
                     <RelativeLayout
                         android:id="@+id/complete_icon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:elevation="10dp"
                         android:visibility="gone">
