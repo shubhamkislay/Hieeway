@@ -2,6 +2,7 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
@@ -43,6 +44,20 @@
                 android:textSize="20dp"
                 android:transitionName="nameTransitionCancel"
                 tools:text="username" />
+
+            <Button
+                android:id="@+id/online_ring"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="-8dp"
+                android:layout_toRightOf="@id/username"
+                android:alpha="1.0"
+                android:background="@drawable/eyes_open"
+                android:backgroundTint="@color/colorWhite"
+                android:visibility="invisible" />
 
 
             <Button

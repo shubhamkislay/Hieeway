@@ -136,7 +136,12 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
                     titleIndicatorLayout.setVisibility(View.VISIBLE);
                     authenticationPageTitle.setText("Validating OTP");
                     number_indicator_box.setVisibility(View.GONE);
-                    checkOTP();
+                    try {
+                        checkOTP();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        finish();
+                    }
 
 
                 } else {
@@ -229,7 +234,7 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
 
     }
 
-    private void checkOTP() {
+    private void checkOTP() throws Exception {
 
 
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationID, enter_details.getText().toString());
@@ -242,8 +247,17 @@ public class PhoneAuthenticationActivity extends AppCompatActivity implements Go
                         if (task.isSuccessful()) {
                             updatePhoneNumber();
                         } else {
-                            Toast.makeText(PhoneAuthenticationActivity.this, "Verification failed.",
-                                    Toast.LENGTH_SHORT).show();
+
+                            if (task.getException().toString().contains("User has already been linked"))
+                                Toast.makeText(PhoneAuthenticationActivity.this, "The phone number is already linked to an account",
+                                        Toast.LENGTH_LONG).show();
+                            else
+                                Toast.makeText(PhoneAuthenticationActivity.this, "Verification failed " + task.getException(),
+                                        Toast.LENGTH_LONG).show();
+
+                            finish();
+
+
                         }
 
                     }

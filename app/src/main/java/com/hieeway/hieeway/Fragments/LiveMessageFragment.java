@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Fragments;
 
 import android.Manifest;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -66,6 +67,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -175,6 +177,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public Boolean stopObservingLiveMessaging = false;
     public Button emoji;
 
+    private CoordinatorLayout parent_layout;
     private RtcEngine mRtcEngine = null;
     public ProgressBar connectingUserVideo, connectedUserVideo ;
     public Handler handler;
@@ -284,6 +287,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public static final String USERNAME = "username";
     private SurfaceView localSurfaceView;
     private boolean joined = false;
+    private Button online_ring;
 
 
     public LiveMessageFragment() {
@@ -419,10 +423,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         ask_progress = view.findViewById(R.id.ask_progress);
         live_other_highlight = view.findViewById(R.id.live_other_highlight);
         live_user_highlight = view.findViewById(R.id.live_user_highlight);
+        online_ring = view.findViewById(R.id.online_ring);
 
         slideToActView = view.findViewById(R.id.slideToActView);
 
         complete_icon = view.findViewById(R.id.complete_icon);
+        parent_layout = view.findViewById(R.id.parent_layout);
 
         youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
@@ -1197,7 +1203,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         userPresent = dataSnapshot.getValue(Boolean.class);
                         if (!userPresent) {
                             if (previousPresence) {
-                                Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
+
+
+                                online_ring.setVisibility(View.INVISIBLE);
+
+                                Snackbar snackbar = Snackbar
+                                        .make(parent_layout, userNameChattingWith + " left the live chat", Snackbar.LENGTH_LONG);
+                                View snackBarView = snackbar.getView();
+                                snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
+                                snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                snackbar.show();
+
+
                                 calling_text.setText("Ask " + usernameChattingWith + " to join");
                                 calling_text.setBackground(parentActivity.getResources().getDrawable(R.drawable.ask_drawable_back));
 
@@ -1240,7 +1258,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                     (ViewGroup) parentActivity.findViewById(R.id.toast_parent));
 
 
-                            TextView toast_message = layout.findViewById(R.id.toast_message);
+                            /*TextView toast_message = layout.findViewById(R.id.toast_message);
                             toast_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
@@ -1251,7 +1269,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             toast.setGravity(Gravity.BOTTOM, 0, 150);
                             toast.setDuration(Toast.LENGTH_SHORT);
                             toast.setView(layout);
-                            toast.show();
+                            toast.show();*/
+
+                            online_ring.setVisibility(View.VISIBLE);
+
+                            animateEyeBlinking();
+
+                            Snackbar snackbar = Snackbar
+                                    .make(parent_layout, userNameChattingWith + " is the live with you! Now you can search and watch videos together", Snackbar.LENGTH_LONG);
+                            View snackBarView = snackbar.getView();
+                            snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
+                            snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+
+                            snackbar.show();
 
                             askHandler.removeCallbacks(askRunnable);
                             // youtubeVideoSec
@@ -1471,7 +1501,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     HashMap<String, Object> disconnectHash = new HashMap<>();
 
                     disconnectHash.put("present", false);
-                    disconnectHash.put("photo", photo);
+                    //  disconnectHash.put("photo", photo);
 
 
                     DatabaseReference updatePresenceRef = FirebaseDatabase.getInstance().getReference("ChatList")
@@ -2060,6 +2090,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
         return view;
+    }
+
+    private void animateEyeBlinking() {
+
+        if (online_ring.getVisibility() == View.VISIBLE) {
+            online_ring.setBackground(parentActivity.getResources().getDrawable(R.drawable.eyes_open));
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    online_ring.setBackground(parentActivity.getResources().getDrawable(R.drawable.eyes_closed));
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            online_ring.setBackground(parentActivity.getResources().getDrawable(R.drawable.eyes_open));
+                            if (online_ring.getVisibility() == View.VISIBLE)
+                                animateEyeBlinking();
+                        }
+                    }, 333);
+                }
+            }, 5000);
+        }
     }
 
     private void askUserToJoin() {
