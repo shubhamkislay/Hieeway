@@ -132,7 +132,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         userIDCHATTINGWITH = userIdChattingWith;
 
         photo = intent.getStringExtra("photo");
-        USERPHOTO = photo;
+        //USERPHOTO = photo;
         live = intent.getStringExtra("live");
 
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);

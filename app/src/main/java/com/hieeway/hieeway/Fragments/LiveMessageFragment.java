@@ -1248,7 +1248,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
                             Toast toast = new Toast(parentActivity);
-                            toast.setGravity(Gravity.TOP, 0, 150);
+                            toast.setGravity(Gravity.BOTTOM, 0, 150);
                             toast.setDuration(Toast.LENGTH_SHORT);
                             toast.setView(layout);
                             toast.show();
@@ -1564,7 +1564,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         youtube_player_view.setVisibility(View.VISIBLE);
                         sync_video_layout.setVisibility(View.INVISIBLE);
                     } else {
-                        Toast.makeText(getContext(), "customUiController is null", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getContext(), "customUiController is null", Toast.LENGTH_SHORT).show();
                     }
                     videoStarted = true;
                 }
@@ -1601,7 +1601,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                Toast.makeText(parentActivity, "Seekbar progress: " + progress, Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(parentActivity, "Seekbar progress: " + progress, Toast.LENGTH_SHORT).show();
 
                 if (progress == 1) {
                     if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
@@ -2108,7 +2108,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         if (automatic) {
             // joined = true;
 
-            Toast.makeText(getActivity(), "Channel Joined", Toast.LENGTH_SHORT).show();
+            //   Toast.makeText(getActivity(), "Channel Joined", Toast.LENGTH_SHORT).show();
 
             video_seekbar.setEnabled(true);
 
@@ -2907,7 +2907,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             initialiseLiveVideo();
                         else
                         {
-                            Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -3011,7 +3011,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), "onRemoteVideoStateChanged", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getActivity(), "onRemoteVideoStateChanged", Toast.LENGTH_SHORT).show();
                         if (mRtcEngine != null)
                             setupRemoteVideo(uid);
                     }
@@ -3027,7 +3027,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     public void run() {
 
                         Log.v(VIDEO_CHECK_TAG, "onJoinChannelSuccess event");
-                        Toast.makeText(getActivity(), "Channel Joined", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getActivity(), "Channel Joined", Toast.LENGTH_SHORT).show();
 
                         video_seekbar.setEnabled(true);
 
@@ -3084,7 +3084,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 stopLiveVideo.setVisibility(View.VISIBLE);
                                 //connectingUserVideo.setVisibility(View.GONE);
                                 //enable_audio.setVisibility(View.VISIBLE);
-                                Toast.makeText(getActivity(), userNameChattingWith + " Joined", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getActivity(), userNameChattingWith + " Joined", Toast.LENGTH_SHORT).show();
 
 
 
@@ -3171,7 +3171,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onStreamPublished(String url, int error) {
                 super.onStreamPublished(url, error);
-                Toast.makeText(getActivity(), "onFirstRemoteVideoDecoded", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "onFirstRemoteVideoDecoded", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -3229,7 +3229,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         } catch (Exception e) {
             e.printStackTrace();
 
-            Toast.makeText(parentActivity, "Error initializeAgoraEngine(): " + e.toString(), Toast.LENGTH_LONG).show();
+            // Toast.makeText(parentActivity, "Error initializeAgoraEngine(): " + e.toString(), Toast.LENGTH_LONG).show();
             resetLiveVideoViews();
         }
 
@@ -3427,7 +3427,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         }
         catch (Exception e)
         {
-            Toast.makeText(getActivity(),"Error was in live chat",Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getActivity(),"Error was in live chat",Toast.LENGTH_SHORT).show();
         }
     }
 
