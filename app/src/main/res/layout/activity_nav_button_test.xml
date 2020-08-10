@@ -254,18 +254,18 @@
                     android:id="@+id/profile_button_pressed"
                     android:layout_width="@dimen/nav_button_prof_active_size"
                     android:layout_height="@dimen/nav_button_prof_active_size"
-                    android:layout_gravity="center_vertical"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:src="@drawable/profile_pic"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/no_profile"
                     android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/text_profile"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginLeft="16dp"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center_vertical"
+
                     android:paddingRight="4dp"
                     android:text="Profile"
                     android:textColor="#fff"
@@ -275,13 +275,13 @@
                     android:visibility="gone" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
+
                     android:id="@+id/profile_button_unpressed"
                     android:layout_width="@dimen/nav_button_prof_inactive_size"
                     android:layout_height="@dimen/nav_button_prof_inactive_size"
                     android:alpha="0.85"
-                    android:layout_gravity="center_vertical"
-                    android:backgroundTint="#fff"
-                    android:src="@drawable/profile_pic"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/no_profile"
                     android:visibility="visible" />
 
             </LinearLayout>

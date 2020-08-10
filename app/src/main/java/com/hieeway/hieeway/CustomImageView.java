@@ -26,12 +26,16 @@ public class CustomImageView extends androidx.appcompat.widget.AppCompatImageVie
     @Override
     protected void onDraw(Canvas canvas) {
         float radius = 24.0f;
+        //float radius = 44.0f;
         Path clipPath = new Path();
         RectF rect = new RectF(0,0, this.getWidth(), this.getHeight());
 
       //  RectF rect = new RectF(0, 0, 0, 0);
 
         clipPath.addRoundRect(rect, radius, radius, Path.Direction.CW);
+
+
+        // clipPath.addArc(0,0,this.getWidth(),this.getHeight(),0,360);
 
 
 

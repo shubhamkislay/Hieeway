@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -70,6 +71,8 @@ public class MusicFeedActivity extends AppCompatActivity {
     private boolean secondCheck = false;
     private boolean listPopulated = false;
     ImageView music_pal;
+    private RelativeLayout music_pal_lay;
+    private Button music_pal_back;
 
     @Override
     protected void onResume() {
@@ -193,6 +196,10 @@ public class MusicFeedActivity extends AppCompatActivity {
 
         connecting_spotify_txt = findViewById(R.id.connecting_spotify_txt);
 
+        music_pal_lay = findViewById(R.id.music_pal_lay);
+
+        music_pal_back = findViewById(R.id.music_pal_back);
+
 
 
 
@@ -228,6 +235,19 @@ public class MusicFeedActivity extends AppCompatActivity {
 
 
         music_pal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MusicFeedActivity.this, MusicPalActivity.class));
+            }
+        });
+        music_pal_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MusicFeedActivity.this, MusicPalActivity.class));
+            }
+        });
+
+        music_pal_lay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MusicFeedActivity.this, MusicPalActivity.class));

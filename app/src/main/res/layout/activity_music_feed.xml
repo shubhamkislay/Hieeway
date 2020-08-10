@@ -47,13 +47,25 @@
         android:padding="4dp"
         android:visibility="visible">
 
+        <Button
+            android:id="@+id/music_pal_back"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:alpha="0.25"
+            android:background="@drawable/circle"
+            android:backgroundTint="#fff" />
+
         <ImageButton
 
+            android:layout_width="50dp"
             android:id="@+id/music_pal"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:background="@mipmap/ic_circle_musicfy"
-            android:alpha="0.5"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:alpha="1.0"
+            android:background="@mipmap/ic_musicpair"
+            android:backgroundTint="#fff"
+            android:elevation="10dp"
             android:textColor="#000" />
     </RelativeLayout>
 

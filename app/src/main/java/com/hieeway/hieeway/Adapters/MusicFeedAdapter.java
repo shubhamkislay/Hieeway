@@ -45,6 +45,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.Model.Like;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicAdapterItem;
@@ -148,6 +149,31 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     }
 
     @Override
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
+        // super.onViewAttachedToWindow(holder);
+        Music music = userList.get(holder.getAdapterPosition());
+
+        /**
+         * Below code plays the songs as soon as it is visible on the screen
+         */
+
+        /*try {
+            spotifyAppRemote.getPlayerApi().play(music.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
+                @Override
+                public void onResult(Empty empty) {
+                    Toast.makeText(mContext, "Playing \"" + music.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } catch (Exception e) {
+            Toast.makeText(mContext, "Cannot play this song", Toast.LENGTH_SHORT).show();
+
+        }*/
+
+
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull MusicFeedAdapter.ViewHolder holder, int position) {
         Music music = userList.get(position);
 
@@ -177,7 +203,8 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                 final float imageWidth = resource.getIntrinsicWidth();
                 final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
                 final float scaleRatio = screenWidth / imageWidth;
-                matrix.postScale(scaleRatio, scaleRatio);
+                //matrix.postScale(scaleRatio, scaleRatio);
+                matrix.postScale(1, 1);
                 holder.profile_pic.setImageMatrix(matrix);
 
                 return false;
@@ -633,7 +660,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        CircleImageView profile_pic;
+        CustomCircularView profile_pic;
         TextView username;
         ImageView song_art;
         TextView song_name, artist_name;

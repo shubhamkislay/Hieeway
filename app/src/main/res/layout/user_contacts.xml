@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.hieeway.hieeway.CustomCircularView
                 android:id="@+id/user_photo"
                 android:layout_width="45dp"
                 android:layout_height="45dp"

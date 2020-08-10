@@ -519,7 +519,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                             final float imageWidth = resource.getIntrinsicWidth();
                             final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
                             final float scaleRatio = screenWidth / imageWidth;
-                            matrix.postScale(scaleRatio, scaleRatio);
+                            // matrix.postScale(scaleRatio, scaleRatio);
+                            matrix.postScale(1, 1);
                             viewHolder.user_photo.setImageMatrix(matrix);
                             viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                             viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);

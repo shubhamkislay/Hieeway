@@ -7,8 +7,8 @@
     <dimen name="seek_bar_thickness">12dp</dimen>
     <dimen name="seek_bar_thumb_size">20dp</dimen>
     <dimen name="nav_button_active_size">24dp</dimen>
-    <dimen name="nav_button_prof_active_size">42dp</dimen>
-    <dimen name="nav_button_prof_inactive_size">42dp</dimen>
+    <dimen name="nav_button_prof_active_size">44dp</dimen>
+    <dimen name="nav_button_prof_inactive_size">44dp</dimen>
     <dimen name="nav_button_inactive_size">24dp</dimen>
     <dimen name="timestampsize">10sp</dimen>
 </resources>

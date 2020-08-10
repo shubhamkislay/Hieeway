@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
@@ -32,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
@@ -109,6 +111,9 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             viewHolder.progressBar.setVisibility(View.INVISIBLE);
                             viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                            final Matrix matrix = viewHolder.user_photo.getImageMatrix();
+                            matrix.postScale(1, 1);
+                            viewHolder.user_photo.setImageMatrix(matrix);
                             return false;
                         }
                     }).into(viewHolder.user_photo);
@@ -462,7 +467,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
 
         public TextView username;
-        public CircleImageView user_photo;
+        public CustomCircularView user_photo;
        public ProgressBar progressBar,progressBarTwo;
        public Button friendsBtn, addFriendBtn, requestBtn, acceptBtn, denyBtn;
        public Boolean friend = false;
