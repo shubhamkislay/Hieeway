@@ -439,7 +439,7 @@
             android:background="#000"
             android:gravity="center"
             android:paddingBottom="12dp"
-            android:text="Hieeway Inc.\n Designed and created by Shubham Kislay."
+            android:text="Hieeway\n Designed and created by Shubham Kislay."
             android:textColor="#A8A8A8"
             android:textSize="10sp" />
 

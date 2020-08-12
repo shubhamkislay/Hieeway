@@ -51,6 +51,8 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch visible_switch;
     private String phonenumber;
     private RelativeLayout phone_btn;
+    private RelativeLayout logout_lay;
+
 
     @Override
     protected void onResume() {
@@ -88,6 +90,7 @@ public class SettingsActivity extends AppCompatActivity {
         spotify_switch = findViewById(R.id.spotify_switch);
         visible_switch = findViewById(R.id.visible_switch);
         phone_btn = findViewById(R.id.phone_btn);
+        logout_lay = findViewById(R.id.logout_lay);
 
 
         settings_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -127,6 +130,18 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+
+        logout_lay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                //finish();
+            }
+        });
 
 
         visible_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

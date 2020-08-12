@@ -326,8 +326,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         /**
          * The below code is used to block screenshots
          */
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+        /*getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);*/
+
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();

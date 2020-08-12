@@ -392,6 +392,7 @@
                     android:orientation="vertical">
 
                     <RelativeLayout
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
@@ -443,6 +444,7 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:id="@+id/logout_lay"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
@@ -606,7 +608,7 @@
                     android:layout_height="70dp"
                     android:background="#000"
                     android:gravity="center"
-                    android:text="Hieeway Inc.\n Designed and created in India."
+                    android:text="Hieeway\n Designed and created in India."
                     android:textColor="#A8A8A8"
                     android:textSize="10sp" />
 
