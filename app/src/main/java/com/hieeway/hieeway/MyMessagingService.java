@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
@@ -22,6 +23,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -48,6 +51,21 @@ public class MyMessagingService extends FirebaseMessagingService {
     int notificationTitleColor = Color.RED;
     boolean setColorized = false;
     RemoteViews collapsedView;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+
+    private SharedPreferences sharedPreferences;
+    //String storedpublicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, "default");
+
+
+
+
+
+
+
 
 
     Context context;
@@ -63,31 +81,42 @@ public class MyMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // super.onMessageReceived(remoteMessage);
 
+        sharedPreferences = getApplicationContext().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        String storedpublicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, "default");
 
         //  if(SettingsFragment.getReceiceNotification()){ //if user wants to receive notification
 
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             if (remoteMessage.getData().get("type").equals("message")
-                    && remoteMessage.getData().get("live").equals("no"))
+                    && remoteMessage.getData().get("live").equals("no")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+
                 sendMessageNotification(remoteMessage);
             else if (remoteMessage.getData().get("type").equals("message")
-                    && remoteMessage.getData().get("live").equals("yes"))
+                    && remoteMessage.getData().get("live").equals("yes")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendLiveNotification(remoteMessage);
             else if (remoteMessage.getData().get("type").equals("music")
-                    && remoteMessage.getData().get("live").equals("yes"))
+                    && remoteMessage.getData().get("live").equals("yes")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendMusicNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("request"))
+            else if (remoteMessage.getData().get("type").equals("request")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendFriendRequestNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("requestaccepted"))
+            else if (remoteMessage.getData().get("type").equals("requestaccepted")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendFriendRequestAcceptedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("revealrequest"))
+            else if (remoteMessage.getData().get("type").equals("revealrequest")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendMessageRevealRequestedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("revealrequestaccepted"))
+            else if (remoteMessage.getData().get("type").equals("revealrequestaccepted")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendMessageRevealRequestAcceptedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("like"))
+            else if (remoteMessage.getData().get("type").equals("like")
+                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
                 sendMusicLikedNotification(remoteMessage);
-            else //if(remoteMessage.getData().get("type").equals("feeling"))
+            else if (remoteMessage.getData().get("type").equals("feeling"))
                 sendFeelingNotification(remoteMessage);
 
             if (/* Check if data needs to be processed by long running job */ true) {
