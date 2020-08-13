@@ -136,6 +136,13 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 FirebaseAuth.getInstance().signOut();
+
+                SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.clear();
+                editor.apply();
+                // finish();
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
