@@ -1,5 +1,7 @@
 package com.hieeway.hieeway;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -14,7 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.hieeway.hieeway.Model.Pal;
+import com.hieeway.hieeway.Model.User;
 
 import java.util.HashMap;
 
@@ -50,6 +58,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Switch spotify_switch;
     private Switch visible_switch;
     private String phonenumber;
+    private String storePublicKeyId;
     private RelativeLayout phone_btn;
     private RelativeLayout logout_lay;
 
@@ -135,18 +144,56 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                FirebaseAuth.getInstance().signOut();
 
-                SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.clear();
-                editor.apply();
-                // finish();
+                storePublicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, "default");
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .runTransaction(new Transaction.Handler() {
+                            @NonNull
+                            @Override
+                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+
+                                User user = mutableData.getValue(User.class);
+
+
+                                if (user.getPublicKeyId().equals(storePublicKeyId)) {
+                                    user.setPublicKeyId("default");
+                                    user.setToken("default");
+                                    user.setPublicKey("default");
+                                    mutableData.setValue(user);
+                                    return Transaction.success(mutableData);
+                                }
+
+
+                                return null;
+                            }
+
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
+
+                                FirebaseAuth.getInstance().signOut();
+
+                                SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.clear();
+                                editor.apply();
+                                // finish();
+
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+
+                            }
+                        });
+
+
+
+
                 //finish();
+
+
             }
         });
 

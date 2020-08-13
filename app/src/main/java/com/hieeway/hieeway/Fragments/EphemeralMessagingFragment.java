@@ -54,6 +54,7 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -144,6 +145,7 @@ import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
+import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -648,8 +650,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 otherUserPublicKey = user.getPublicKey();
                                 otherUserPublicKeyID = user.getPublicKeyId();
 
+
+                                userTaskCompletionSource.setResult(user);
+
+
+
                             } catch (Exception e) {
                                 //
+                                userTaskCompletionSource.setException(new Exception());
                             }
                         }
                     }
@@ -663,6 +671,39 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     public void onComplete(@NonNull Task<User> task) {
                         if (task.isSuccessful()) {
                             //
+                            if (otherUserPublicKeyID.equals("default")) {
+
+                                /*Snackbar snackbar = Snackbar
+                                        .make(app_context_layout,   task.getResult().getUsername()+" has logged out.", Snackbar.LENGTH_SHORT);
+                                View snackBarView = snackbar.getView();
+                                snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.red_active));
+                                snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                                snackbar.show();*/
+
+                                LayoutInflater inflater = getLayoutInflater();
+                                View layout = inflater.inflate(R.layout.custom_toast,
+                                        (ViewGroup) getActivity().findViewById(R.id.toast_parent));
+
+                                Toast toast = new Toast(getActivity());
+
+
+                                TextView toast_message = layout.findViewById(R.id.toast_message);
+                                toast_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+                                toast_message.setText(task.getResult().getUsername() + " has logged out.");
+                                toast_message.setBackgroundTintList(getActivity().getResources().getColorStateList(R.color.darkGrey));
+
+                                toast.setGravity(Gravity.CENTER, 0, 0);
+                                toast.setDuration(Toast.LENGTH_SHORT);
+                                toast.setView(layout);
+                                toast.show();
+
+                                getActivity().finish();
+
+                            }
+                        } else {
+
                         }
                     }
                 });
