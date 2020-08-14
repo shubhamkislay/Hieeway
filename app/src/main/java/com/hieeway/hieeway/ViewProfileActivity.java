@@ -645,6 +645,9 @@ public class ViewProfileActivity extends AppCompatActivity {
         feeling_txt.setVisibility(View.INVISIBLE);
         emoji_holder_layout.setVisibility(View.INVISIBLE);
         start_chat.setVisibility(View.GONE);
+        spotify_icon.setVisibility(View.GONE);
+        music_layout.setVisibility(View.GONE);
+
 
         FirebaseMessaging.getInstance().unsubscribeFromTopic(usernameText).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
