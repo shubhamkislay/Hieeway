@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -54,6 +55,10 @@ public class ViewProfileActivity extends AppCompatActivity {
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
+    public static final String PHOTO_URL = "photourl";
+    public static final String SHARED_PREFS = "sharedPrefs";
+
+    public static final String USERNAME = "username";
     ImageView profile_pic_background, center_dp;
     TextView username, name, feeling_icon, feeling_txt, bio_txt, emoji_icon;
     String feelingEmoji;
@@ -91,6 +96,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private TextView music_loading_txt;
     private RelativeLayout connect_spotify_layout;
     private TextView connect_spotify_text;
+    private String currentUserPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +159,8 @@ public class ViewProfileActivity extends AppCompatActivity {
         photourl = intent.getStringExtra("photourl");
         userId = intent.getStringExtra("userId");
         currentUsername = intent.getStringExtra("currentUsername");
+
+        currentUserPhoto = intent.getStringExtra("currentUserPhoto");
 
         usernameText = intent.getStringExtra("username");
 
@@ -611,6 +619,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         hashMap.put("friendId", userId);
         hashMap.put("status", "requested");
         hashMap.put("username", usernameText);
+        hashMap.put("photo", photourl);
 
         requestSentReference.updateChildren(hashMap);
 
@@ -625,6 +634,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         receiveHashMap.put("friendId", FirebaseAuth.getInstance().getCurrentUser().getUid());
         receiveHashMap.put("status", "got");
         receiveHashMap.put("username", currentUsername);
+        receiveHashMap.put("photo", currentUserPhoto);
 
         requestReceiveReference.updateChildren(receiveHashMap);
 
@@ -668,6 +678,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         hashMap.put("friendId", userId);
         hashMap.put("status", "friends");
         hashMap.put("username", usernameText);
+        hashMap.put("photo", photourl);
 
         requestSentReference.updateChildren(hashMap);
 
@@ -691,6 +702,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         receiveHashMap.put("friendId", FirebaseAuth.getInstance().getCurrentUser().getUid());
         receiveHashMap.put("status", "friends");
         receiveHashMap.put("username", currentUsername);
+        receiveHashMap.put("photo", currentUserPhoto);
 
         requestReceiveReference.updateChildren(receiveHashMap);
 

@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 
@@ -45,6 +46,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolder> {
@@ -54,13 +56,22 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
     private List<User> mUsers;
     FirebaseAuth firebaseAuth;
     String currentUsername;
+    public static final String PHOTO_URL = "photourl";
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String USERNAME = "username";
+    String userphoto, username;
     public PeopleAdapter(Context mContext, List<User> mUsers,Activity activity) {
 
 
         this.activity = activity;
         this.mUsers = mUsers;
         this.mContext = mContext;
-        this.currentUsername = returnCurrentUsername();
+        //this.currentUsername = returnCurrentUsername();
+
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        userphoto = sharedPreferences.getString(PHOTO_URL, "default");
+        username = sharedPreferences.getString(USERNAME, "");
+        this.currentUsername = username;
     }
 
     @NonNull
@@ -77,7 +88,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
 
 
-        final User user = mUsers.get(i);
+        final User user = mUsers.get(viewHolder.getAdapterPosition());
 
         viewHolder.username.setText(user.getUsername());
         firebaseAuth = FirebaseAuth.getInstance();
@@ -192,6 +203,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                     intent.putExtra("bio_txt", user.getBio());
                     intent.putExtra("userId", user.getUserid());
                     intent.putExtra("currentUsername", currentUsername);
+                    intent.putExtra("currentUserPhoto", userphoto);
                     if (viewHolder.acceptBtn.getVisibility() == View.VISIBLE)
                         intent.putExtra("friendStatus", "got");
                     else if (viewHolder.requestBtn.getVisibility() == View.VISIBLE)
@@ -226,6 +238,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 hashMap.put("friendId", user.getUserid());
                 hashMap.put("status", "requested");
                 hashMap.put("username", user.getUsername());
+                hashMap.put("photo", user.getPhoto());
 
                 requestSentReference.updateChildren(hashMap);
 
@@ -240,6 +253,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 receiveHashMap.put("friendId", FirebaseAuth.getInstance().getCurrentUser().getUid());
                 receiveHashMap.put("status", "got");
                 receiveHashMap.put("username", currentUsername);
+                receiveHashMap.put("photo", userphoto);
 
                 requestReceiveReference.updateChildren(receiveHashMap);
 
@@ -265,6 +279,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 hashMap.put("friendId", user.getUserid());
                 hashMap.put("status", "friends");
                 hashMap.put("username", user.getUsername());
+                hashMap.put("photo", user.getPhoto());
 
                 requestSentReference.updateChildren(hashMap);
 
@@ -288,6 +303,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 receiveHashMap.put("friendId", FirebaseAuth.getInstance().getCurrentUser().getUid());
                 receiveHashMap.put("status", "friends");
                 receiveHashMap.put("username", currentUsername);
+                receiveHashMap.put("photo", userphoto);
 
                 requestReceiveReference.updateChildren(receiveHashMap);
 
@@ -494,31 +510,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
     }
 
-    public String returnCurrentUsername()
-    {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
-                    User user = dataSnapshot.getValue(User.class);
-
-                    currentUsername = user.getUsername();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        return currentUsername;
-    }
 
 
 }

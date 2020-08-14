@@ -6,12 +6,14 @@ public class Friend {
     private String friendId;
     private String username;
     private String status;
+    private String photo;
 
 
-    public Friend(String friendId, String status, String username) {
+    public Friend(String friendId, String status, String username, String photo) {
         this.friendId = friendId;
         this.status = status;
         this.username = username;
+        this.photo = photo;
     }
 
     public Friend() {
@@ -39,5 +41,13 @@ public class Friend {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

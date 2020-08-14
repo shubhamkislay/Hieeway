@@ -78,7 +78,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ContactsAdapter.ViewHolder viewHolder, int i) {
 
-        final User user = mUsers.get(i);
+        final User user = mUsers.get(viewHolder.getAdapterPosition());
 
         viewHolder.phonebook_name.setText((String) phoneBookNameHashMap.get(user.getUserid()));
         viewHolder.username.setText(user.getUsername());

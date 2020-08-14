@@ -77,7 +77,7 @@ public class FriendListFagment extends Fragment {
     //private PeopleAdapter peopleAdapter;
 
     private FriendsAdapter friendsAdapter;
-    private List<User> userList;
+    private List<Friend> userList;
     private ImageView progress_menu_logo, progress_menu_logo_two;
     private TextView appTitle;
     private Button requests_btn, search_chat_btn;
@@ -523,7 +523,14 @@ public class FriendListFagment extends Fragment {
                         try {
                             if (friend.getStatus().equals("friends")) {
 
-                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                userList.add(friend);
+                                try {
+                                    friendsAdapter.notifyDataSetChanged();
+                                } catch (Exception e) {
+                                    //
+                                }
+
+                               /* final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                                         .child(friend.getFriendId());
 
                                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -547,7 +554,7 @@ public class FriendListFagment extends Fragment {
 
                                     }
                                 });
-
+*/
 
                                 // friendsAdapter.notifyDataSetChanged();
                             }
@@ -764,7 +771,7 @@ public class FriendListFagment extends Fragment {
     }
 
     private void populateFriendsThread(DataSnapshot dataSnapshot) {
-        TaskCompletionSource<List<User>> listTaskCompletionSource = new TaskCompletionSource<>();
+        TaskCompletionSource<List<Friend>> listTaskCompletionSource = new TaskCompletionSource<>();
 
         new Thread(new Runnable() {
             @Override
@@ -777,7 +784,15 @@ public class FriendListFagment extends Fragment {
                         try {
                             if (friend.getStatus().equals("friends")) {
 
-                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                try {
+                                    if (!userList.contains(friend))
+                                        userList.add(friend);
+                                } catch (Exception e) {
+                                    //
+                                }
+                                friendAvailable = true;
+
+                                /*final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                                         .child(friend.getFriendId());
 
                                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -797,8 +812,8 @@ public class FriendListFagment extends Fragment {
 
                                             }
                                         }).start();
-                                            /*User user = dataSnapshot.getValue(User.class);
-                                            userList.add(user);*/
+                                            *//*User user = dataSnapshot.getValue(User.class);
+                                            userList.add(user);*//*
 
                                         try {
                                             friendsAdapter.notifyDataSetChanged();
@@ -816,7 +831,7 @@ public class FriendListFagment extends Fragment {
                                 });
 
 
-                                friendAvailable = true;
+                                friendAvailable = true;*/
 
                             } else if (friend.getStatus().equals("got")) {
 
@@ -848,11 +863,11 @@ public class FriendListFagment extends Fragment {
             }
         }).start();
 
-        Task<List<User>> listTask = listTaskCompletionSource.getTask();
+        Task<List<Friend>> listTask = listTaskCompletionSource.getTask();
 
-        listTask.addOnCompleteListener(new OnCompleteListener<List<User>>() {
+        listTask.addOnCompleteListener(new OnCompleteListener<List<Friend>>() {
             @Override
-            public void onComplete(@NonNull Task<List<User>> task) {
+            public void onComplete(@NonNull Task<List<Friend>> task) {
                 try {
                     friendsAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
