@@ -54,17 +54,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.ChatMessageAdapter;
 import com.hieeway.hieeway.Adapters.FriendsAdapter;
+import com.hieeway.hieeway.ChatsFragmentViewModel;
 import com.hieeway.hieeway.ContactsActivity;
+import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
+import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.FriendListValues;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.RequestTrackerActivity;
 import com.hieeway.hieeway.SharedViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -90,7 +97,7 @@ public class FriendListFagment extends Fragment {
     private ValueEventListener valueEventListener;
     private Query query;
     private Button requests_btn_friends_back;
-
+    private FriendListFragmentViewModel friendListFragmentViewModel;
     private Boolean searchBtnActive = true;
     private int friendRequestsCounter = 0;
     private boolean enableRefreshButton = false;
@@ -101,6 +108,7 @@ public class FriendListFagment extends Fragment {
     private SharedViewModel sharedViewModel;
     public static final String SHARED_PREFS = "sharedPrefs";
     private static final String PHONE = "phone";
+    private List<Friend> resettedList;
 
 
     public FriendListFagment() {
@@ -109,16 +117,114 @@ public class FriendListFagment extends Fragment {
 
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        try {
+            friendsAdapter = new FriendsAdapter(getContext(), userList, getActivity());
+            //chatMessageAdapter.setHasStableIds(true);
+            friend_list_recyclerview.setAdapter(friendsAdapter);
+        } catch (Exception e) {
+            //
+        }
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    friendListFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(FriendListFragmentViewModel.class);
+                    friendListFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<FriendListValues>() {
+                        @Override
+                        public void onChanged(@Nullable final FriendListValues friendListValues) {
+
+
+                            // initialChatstampPopulateThread(chatStamps);
+
+
+                            resettedList = friendListValues.getFriendList();
+
+                            //Collections.sort(resettedList, Collections.<ChatStamp>reverseOrder());
+
+
+                            //friend_list_recyclerview.scrollToPosition(0);
+
+                            //chats_recyclerview.smoothScrollToPosition(0);
+
+                            if (friendListValues.getFriendList().size() > 0)
+                                friendAvailable = true;
+                            else
+                                friendAvailable = false;
+
+                            if (friendListValues.getFriendRequestsCounter() > 0) {
+                                friendRequests = true;
+                                friendRequestsCounter = friendListValues.getFriendRequestsCounter();
+                            } else
+                                friendRequests = false;
+
+                            if (!friendAvailable) {
+                                if (friendRequests) {
+                                    search_result_txt.setVisibility(View.VISIBLE);
+                                    requests_btn_friends_back.setVisibility(View.VISIBLE);
+                                    if (friendRequestsCounter > 1)
+                                        search_result_txt.setText("You have got " + friendRequestsCounter + " friend requests");
+                                    else
+                                        search_result_txt.setText("You have got a friend request");
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    progress_menu_logo.setVisibility(View.INVISIBLE);
+                                    progressBarTwo.setVisibility(View.INVISIBLE);
+                                    progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                                } else {
+                                    search_result_txt.setVisibility(View.VISIBLE);
+                                    search_result_txt.setText("No friends");
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    progress_menu_logo.setVisibility(View.INVISIBLE);
+                                    progressBarTwo.setVisibility(View.INVISIBLE);
+                                    progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                                }
+                            } else {
+
+                                progressBar.setVisibility(View.INVISIBLE);
+                                progress_menu_logo.setVisibility(View.INVISIBLE);
+                                progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                                progressBarTwo.setVisibility(View.INVISIBLE);
+                                if (friendRequests) {
+                                    requests_btn_friends_back.setVisibility(View.VISIBLE);
+                                    // friendRequestsCounter
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    progress_menu_logo.setVisibility(View.INVISIBLE);
+                                    progressBarTwo.setVisibility(View.INVISIBLE);
+                                    progress_menu_logo_two.setVisibility(View.INVISIBLE);
+                                }
+                            }
+
+
+                            friendsAdapter.updateList(resettedList);
+
+                        }
+                    });
+
+
+                } catch (Exception e) {
+                    //Toast.makeText(getContext(), "Handler Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }, 350);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-       // View view = inflater.inflate(R.layout.fragment_friend_list_fagment, container, false);
+        // View view = inflater.inflate(R.layout.fragment_friend_list_fagment, container, false);
         View view = inflater.inflate(R.layout.fragment_friend_collapsing_layout, container, false);
 
-    //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-     //   getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        //   getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         final Activity activity = getActivity();
 
@@ -151,7 +257,7 @@ public class FriendListFagment extends Fragment {
         window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_status_color));
 
 
-       // search_btn_layout = view.findViewById(R.id.search_bar_layout_friends);
+        // search_btn_layout = view.findViewById(R.id.search_bar_layout_friends);
 
 
         search_bar = view.findViewById(R.id.search_bar_friends);
@@ -262,9 +368,7 @@ public class FriendListFagment extends Fragment {
                     // search_btn_layout.setVisibility(View.GONE);
                     getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
-                }
-                else
-                {
+                } else {
                     searchBtnActive = true;
 
                     appTitle.setVisibility(View.VISIBLE);
@@ -333,7 +437,7 @@ public class FriendListFagment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (s.length() > 0)
-                searchFriends(s.toString().toLowerCase());
+                    searchFriends(s.toString().toLowerCase());
 
                 else {
                     /*userList.clear();
@@ -341,7 +445,9 @@ public class FriendListFagment extends Fragment {
                     search_result_txt.setVisibility(View.VISIBLE);
                     search_result_txt.setText("Add friends from search tab");*/
 
-                    populateWithFriends();
+                    //populateWithFriends();
+                    if (before > 0)
+                        friendsAdapter.updateList(resettedList);
                 }
 
 
@@ -355,10 +461,6 @@ public class FriendListFagment extends Fragment {
         });
 
 
-
-
-
-
         progressBar = view.findViewById(R.id.progress);
         progressBarTwo = view.findViewById(R.id.progressTwo);
 
@@ -366,8 +468,7 @@ public class FriendListFagment extends Fragment {
             appTitle.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
             requests_btn.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
             search_result_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        }catch (Exception e)
-        {
+        }catch (Exception e) {
             //
         }
 
@@ -420,11 +521,8 @@ public class FriendListFagment extends Fragment {
         friend_list_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
 
-
-       // peopleAdapter = new FriendsAdapter(getContext(), userList,activity);
-       // friend_list_recyclerview.setAdapter(peopleAdapter);
-
-
+        // peopleAdapter = new FriendsAdapter(getContext(), userList,activity);
+        // friend_list_recyclerview.setAdapter(peopleAdapter);
 
 
         //animateMenuImage(progress_menu_logo, progress_menu_logo_two);
@@ -455,7 +553,11 @@ public class FriendListFagment extends Fragment {
             }
         });*/
 
-        new Handler().postDelayed(new Runnable() {
+/**
+ * Original logic to populate friendsList, which is now replaced by the viewModel as shown in the onActivityCreatedMedthod
+ */
+
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 populateWithFriends();
@@ -463,7 +565,7 @@ public class FriendListFagment extends Fragment {
                 friend_list_recyclerview.setAdapter(friendsAdapter);
 
             }
-        }, 400);
+        }, 400);*/
 
         return view;
     }
@@ -929,7 +1031,7 @@ public class FriendListFagment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        populateWithFriends();
+        //populateWithFriends();
     }
 
     private void showSoftKeyboard(View view) {
@@ -986,7 +1088,7 @@ public class FriendListFagment extends Fragment {
             friendAvailable = false;
             requests_btn_friends_back.setVisibility(View.GONE);
             search_result_txt.setVisibility(View.GONE);
-            populateWithFriends();
+            //populateWithFriends();
             enableRefreshButton = false;
         }
 

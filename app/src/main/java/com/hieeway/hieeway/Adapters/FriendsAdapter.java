@@ -13,6 +13,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
@@ -42,9 +43,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
+import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.hieeway.hieeway.VerticalPageActivity;
 
 import java.util.HashMap;
@@ -270,6 +274,20 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
         this.mUsers = mUsers;
         notifyDataSetChanged();
 
+
+
+    }
+
+    public void updateList(List<Friend> newListChatStamp) {
+
+
+        FriendListDiffUtilCallback chatStampListDiffUtilCallback = new FriendListDiffUtilCallback(this.mUsers, newListChatStamp);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(chatStampListDiffUtilCallback);
+
+        mUsers.clear();
+        mUsers.addAll(newListChatStamp);
+
+        diffResult.dispatchUpdatesTo(this);
 
 
     }
