@@ -119,9 +119,7 @@
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginTop="2dp"
-
             android:id="@+id/message_log_text"
             android:background="@drawable/message_box_drawable"
             android:backgroundTint="#1A1A1A"
@@ -1260,11 +1258,10 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
-            android:layout_marginBottom="-450dp"
+            android:layout_marginBottom="-448dp"
             android:alpha="0.0"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:src="@drawable/hiewaylogomessagebackfresh"
-            />
+            android:src="@drawable/hiewaylogomessagebackfresh" />
 
         <TextView
             android:id="@+id/send_arrow_two"

@@ -7,6 +7,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -156,15 +157,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private static final int MSG_TYPING_BOX_ID = 1;
     private static final int MSG_TYPING_BOX_TWO_ID = 2;
     private static final int MSG_TYPING_BOX_THREE_ID = 3;
-    private TextView username, button_exterior, message_counter_background, message_no_message_counter_background;
+    private TextView username, button_exterior, message_counter_background;
     private Button message_counter;
     private String userFeeling;
     private TextView message_text_dummy, message_text, message_text_two, message_text_three;
     private TextView message_text_sender_dummy, message_text_sender, message_text_two_sender, message_text_three_sender;
     private BlurImageView profile_pic;
-    private TypeWriter message_text_typewriter;
     private int msg_send_size =0, msg_send_two_size=0, msg_send_three_size=0;
-    private ProgressBar message_pulse, chain_pulse, sending_progress_bar, message_log_pulse, message_running, message_running_two;
+    private ProgressBar message_pulse, chain_pulse, message_log_pulse, message_running, message_running_two;
     private float opacity = 0.0f;
     private Boolean blinking = false, message_box_blinking = false;
     private String highlightMessageText = "";
@@ -173,9 +173,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private RelativeLayout message_box_behind;
     private boolean continue_message_box_blinking = true;
     private Boolean messageHighlight = true, sendButtonEnabled = false;
-    private Button sendButton, message_bar, reply_btn, cancel_reply_btn;
-    private RelativeLayout bottom_bar, message_counter_layout, message_space, reply_tag, app_context_layout, sender_reply_body, sender_reply_tag;
-    private RelativeLayout read_message_reply_layout;
+    private Button sendButton, message_bar;
+    private RelativeLayout sender_reply_body;
+    private ConstraintLayout app_context_layout;
     private View rootView;
     private Float alphaValueProfilePic = 1.0f;
     private Boolean enableXtransformation = true;
@@ -184,9 +184,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private Boolean ifHintExists = false;
     private String liveMessage, liveMessageTwo, liveMessageThree;
     private Boolean messageTwoPresent = false, messageThreePresent = false;
-    private Button emoji, camera;
-    private Button read_message_reply;
-    private TextView send_arrow_two, archive_btn;
+    private Button camera;
+    private TextView archive_btn;
     private ImageView send_arrow, receiver_arrow;
     private TextView your_sent_msg, back_button;
     private String messageStr = "", messageStrTwo = "", messageStrThree = "";
@@ -198,10 +197,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private int blinkInterval;
     private Boolean isSenderReplying = false;
     private ImageView view;
-    private int before_count, after_count;
     private StorageTask uploadTask;
     private StorageReference storageReference;
-    private ToggleButton toggleButton;
     private Boolean imageReady = true;
     private Boolean imageLoaded = false;
     private String lastMessageID = "none";
@@ -239,14 +236,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private Handler replyHandler, vibratorHandler;
     private Runnable replyRunnable, vibratorRunnable;
 
-    private Switch switchBtn;
     private Boolean softKeyVisible = true;
     private String messageKeySender, messageKeyReceiver;
 
     private int typingID = 1;
 
     private Button chainBtn;
-    private SwipeButton swipeButton;
     private Boolean swipeState = false;
     private Point size;
     private float displayHeight;
@@ -280,15 +275,13 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private String currentUsername;
     private TextView top_swipe_text;
     private String currentUserPhoto;
-    private TextView online_status;
+
     private ImageView online_ring;
     private String usernameChattingWith;
     private String photo;
     private Boolean textListner_msg = false;
     private Boolean textListner_msg_two = false;
     private Boolean textListner_msg_three = false;
-    private Button record_audio_btn;
-
     private TextView message_log_text, swipe_down, go_live_txt;
     private boolean notSending = true;
     private boolean textFieldAnimating = false;
@@ -323,7 +316,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_ephemeral_message, container, false);
+        final View view = inflater.inflate(R.layout.fragment_ephemeral_layout_perf, container, false);
 
         /**
          * The below code is used to block screenshots
@@ -339,7 +332,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         display.getSize(size);
         displayHeight = size.y;
 
-        record_audio_btn = view.findViewById(R.id.record_audio_btn);
 
         bin = view.findViewById(R.id.bin);
         disablerecord_button = (ImageView) view.findViewById(R.id.disablerecord_button);
@@ -354,10 +346,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
        final VerticalPageActivity verticalPageActivity = (VerticalPageActivity) getActivity();
 
-       switchBtn = view.findViewById(R.id.switch_btn);
 //
 
-        toggleButton = view.findViewById(R.id.toggle_msg_highlight);
 
         camera_background = view.findViewById(R.id.camera_background);
 
@@ -374,7 +364,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         online_ring = view.findViewById(R.id.online_ring);
 
-        online_status = view.findViewById(R.id.online_status);
 
         top_swipe_text = view.findViewById(R.id.swipe_up);
 
@@ -583,19 +572,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         message_box.clearFocus();
 
 
-        emoji = view.findViewById(R.id.emoji);
-
-        toggleButton.setChecked(true);
-
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                messageHighlight = isChecked;
-                setMessageHighlight(messageHighlight);
-            }
-        });
-
         message_running = view.findViewById(R.id.message_running);
 
         message_running_two = view.findViewById(R.id.message_running_two);
@@ -617,17 +593,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         currentUserPublicKeyID = getArguments().getString("currentUserPublicKeyID");
 
 
-        record_audio_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AudioRecorderActivity.class);
-                intent.putExtra("userIdChattingWith", userIdChattingWith);
-                intent.putExtra("audiourl", "default");
-                //intent.putExtra("sender", chatMessage.getSenderId());
-
-                startActivity(intent);
-            }
-        });
 
 
 
@@ -1037,8 +1002,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         your_sent_msg = view.findViewById(R.id.your_sent_msg);
 
-        read_message_reply = view.findViewById(R.id.read_message_reply);
-
 
         chainBtn = view.findViewById(R.id.chain_message_btn);
 
@@ -1245,7 +1208,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             }
         });
 
-        message_text_typewriter = view.findViewById(R.id.message_text_type_writer);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getActivity().getWindow();
@@ -1275,16 +1237,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             }
         });
 
-        sender_reply_tag = view.findViewById(R.id.sender_reply_tag);
 
 
-        bottom_bar = view.findViewById(R.id.bottom_bar);
-
-        message_space = view.findViewById(R.id.message_space);
-
-        reply_tag = view.findViewById(R.id.reply_tag);
-
-        message_counter_layout = view.findViewById(R.id.message_counter_layout);
 
         message_bar = view.findViewById(R.id.message_bar);
 
@@ -1295,10 +1249,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         message_counter_background = view.findViewById(R.id.message_counter_background);
 
-        message_no_message_counter_background = view.findViewById(R.id.message_no_message_counter_background);
-
-
-        read_message_reply_layout = view.findViewById(R.id.read_message_reply_layout);
 
         profile_pic = view.findViewById(R.id.profile_pic);
 
@@ -1313,7 +1263,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         message_pulse = view.findViewById(R.id.message_pulse);
         message_log_pulse = view.findViewById(R.id.message_log_pulse);
 
-        sending_progress_bar = view.findViewById(R.id.send_pending);
 
         chain_pulse = view.findViewById(R.id.chain_pulse);
 
@@ -1321,15 +1270,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         back_button = view.findViewById(R.id.back_button);
 
-        reply_btn = view.findViewById(R.id.reply_message_btn);
 
-        cancel_reply_btn = view.findViewById(R.id.cancel_message_reply_btn);
 
         send_arrow = view.findViewById(R.id.send_arrow);
 
         receiver_arrow = view.findViewById(R.id.receive_arrow);
 
-        send_arrow_two = view.findViewById(R.id.send_arrow_two);
 
         back_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1341,9 +1287,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
             }
         });
-
-        swipeButton = view.findViewById(R.id.swipeBtn);
-
 
         try {
             UsernameObjectAnimator.addListener(new Animator.AnimatorListener() {
@@ -1400,28 +1343,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         });
 */
 
-        switchBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    //   swipeState = active;
-                    setChainBtn = true;
-                    if (!isMessageRunning)
-                        readNextMessage();
-/*                    try {
-                        swipeButton.setBackground(getActivity().getDrawable(R.drawable.message_swipe_bg));
-                    }catch (Exception e)
-                    {
-                        Toast.makeText(getContext(),"Swipe Button Null pointer",Toast.LENGTH_SHORT).show();
-                    }*/
-                    Toast.makeText(getContext(), "Message chained", Toast.LENGTH_SHORT).show();
-                } else {
-                    setChainBtn = false;
-                    Toast.makeText(getContext(), "Message de-chained!", Toast.LENGTH_SHORT).show();
-                }
 
-            }
-        });
 
 
         photo_btn = view.findViewById(R.id.photo_btn);
@@ -1527,11 +1449,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         photoMessageList = new ArrayList<>();
 
 
-        before_count = messageList.size();
-
-
         //send_arrow.setTranslationY(0);
-        send_arrow_two.setTranslationY(0);
 
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -1817,12 +1735,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 // try{
 
                                 online_ring.animate().alpha(1.0f).setDuration(500);
-                                //online_status.animate().alpha(1.0f).setDuration(500);
+
                             }
                             else
                             {
                                 online_ring.animate().alpha(0.0f).setDuration(500);
-                                //online_status.animate().alpha(0.0f).setDuration(500);
+
                             }
 
                         }catch (Exception e)
@@ -2381,9 +2299,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         else
             messageStrThree = message_box.getText().toString();
         typingID = MSG_TYPING_BOX_ID;
-
-        reply_tag.setVisibility(View.GONE);
-        reply_btn.setVisibility(View.GONE);
 
         String receiverCopyMessage = encryptRSAToString(messageStr,otherUserPublicKey);
 
@@ -3251,9 +3166,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     swipeButton.setVisibility(View.GONE);*/
 
-                        switchBtn.setChecked(false);
 
-                        switchBtn.setVisibility(View.GONE);
 
                         setChainBtn = false;
 
@@ -3280,7 +3193,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         //  ephemeralMessageViewModel.setChatSeen();
                         message_counter_background.setVisibility(View.INVISIBLE);
                         message_pulse.setVisibility(View.INVISIBLE);
-                        message_no_message_counter_background.setVisibility(View.INVISIBLE);
+
                         message_counter.setText("");
 
                         try {
@@ -3310,7 +3223,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     swipeButton.setEnabled(true);
                     swipeButton.setVisibility(View.VISIBLE);*/
                         message_counter_background.setVisibility(View.VISIBLE);
-                        message_no_message_counter_background.setVisibility(View.INVISIBLE);
                         message_counter.setVisibility(View.VISIBLE);
                         button_exterior.setVisibility(View.VISIBLE);
                         try {
@@ -3363,7 +3275,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                         //
                                     }
 
-                                    sending_progress_bar.setVisibility(View.GONE);
+
                                     archive_btn.setVisibility(View.INVISIBLE);
 
 
@@ -4392,8 +4304,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 if (connected) {
 
                     online_ring.setVisibility(View.VISIBLE);
-                    //online_status.setVisibility(View.VISIBLE);
-                   // Log.d(TAG, "connected");
+
+                    // Log.d(TAG, "connected");
                    // Toast.makeText(getActivity(),"You are connected!",Toast.LENGTH_SHORT).show();
 
                    // updateUserPresence(false);
@@ -4432,7 +4344,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                    // Toast.makeText(getActivity(),"You are disconnected!",Toast.LENGTH_SHORT).show();
 
                     online_ring.setVisibility(View.INVISIBLE);
-                    online_status.setVisibility(View.INVISIBLE);
+
                     confirmConnected = false;
                    // updateUserPresence(false);
 

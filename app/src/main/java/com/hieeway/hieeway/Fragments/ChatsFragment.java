@@ -451,6 +451,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 }
                 //startActivity(new Intent(getActivity(), VideoCallTestActivity.class));
 
+                //throw new RuntimeException("Test Crash");
 
             }
         });

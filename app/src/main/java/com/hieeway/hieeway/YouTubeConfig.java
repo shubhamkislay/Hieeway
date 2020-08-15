@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import io.opencensus.internal.StringUtil;
 
 public class YouTubeConfig {
 
