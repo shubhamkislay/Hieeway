@@ -1300,8 +1300,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                             animationDrawable = (AnimationDrawable) bottom_bar_back.getBackground();
 
-                            animationDrawable.setEnterFadeDuration(150);
-                            animationDrawable.setExitFadeDuration(300);
+                            animationDrawable.setEnterFadeDuration(1000);
+                            animationDrawable.setExitFadeDuration(1000);
                             animationDrawable.start();
 
                             //animationDrawable.stop();
