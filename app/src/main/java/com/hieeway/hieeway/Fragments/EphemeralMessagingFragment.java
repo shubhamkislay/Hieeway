@@ -644,27 +644,36 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.red_active));
                                 snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                 snackbar.show();*/
+                                try {
 
-                                LayoutInflater inflater = getLayoutInflater();
-                                View layout = inflater.inflate(R.layout.custom_toast,
-                                        (ViewGroup) getActivity().findViewById(R.id.toast_parent));
+                                    LayoutInflater inflater = getLayoutInflater();
+                                    View layout = inflater.inflate(R.layout.custom_toast,
+                                            (ViewGroup) getActivity().findViewById(R.id.toast_parent));
 
-                                Toast toast = new Toast(getActivity());
-
-
-                                TextView toast_message = layout.findViewById(R.id.toast_message);
-                                toast_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                                    Toast toast = new Toast(getActivity());
 
 
-                                toast_message.setText(task.getResult().getUsername() + " has logged out.");
-                                toast_message.setBackgroundTintList(getActivity().getResources().getColorStateList(R.color.darkGrey));
+                                    TextView toast_message = layout.findViewById(R.id.toast_message);
+                                    toast_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-                                toast.setGravity(Gravity.CENTER, 0, 0);
-                                toast.setDuration(Toast.LENGTH_SHORT);
-                                toast.setView(layout);
-                                toast.show();
 
-                                getActivity().finish();
+                                    toast_message.setText(task.getResult().getUsername() + " has logged out.");
+                                    toast_message.setBackgroundTintList(getActivity().getResources().getColorStateList(R.color.darkGrey));
+
+                                    toast.setGravity(Gravity.CENTER, 0, 0);
+                                    toast.setDuration(Toast.LENGTH_SHORT);
+                                    toast.setView(layout);
+                                    toast.show();
+
+                                    getActivity().finish();
+                                } catch (Exception e) {
+                                    try {
+                                        getActivity().finish();
+                                    } catch (Exception ee) {
+                                        //
+                                    }
+                                    //
+                                }
 
                             }
                         } else {

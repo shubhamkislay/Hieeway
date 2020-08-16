@@ -71,7 +71,7 @@ public class SendMessageFragment extends Fragment {
     public DatabaseReference databaseReference;
     public DatabaseReference databaseReferenceReceiveMessage;
     public ValueEventListener valueEventListener, receiverMsgListener;
-    public RelativeLayout bottomTextRelativeLayout;
+    public TextView bottomTextRelativeLayout;
     public int gemCount = 0;
     private Button recharge_gems;
     private int sizeBeforeDeleting;
@@ -91,10 +91,10 @@ public class SendMessageFragment extends Fragment {
         // Inflate the layout for this fragment
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
-        View view = inflater.inflate(R.layout.fragment_send_message, container, false);
+        View view = inflater.inflate(R.layout.fragment_send_message_perf, container, false);
         recyclerView = view.findViewById(R.id.sent_messages_recycler_view);
 
-        bottomTextRelativeLayout = view.findViewById(R.id.bottom_panel);
+        bottomTextRelativeLayout = view.findViewById(R.id.bottom_msg);
 
 
         userIdChattingWith = getArguments().getString("userIdChattingWith");
@@ -162,7 +162,7 @@ public class SendMessageFragment extends Fragment {
             public void onClick(View v) {
                 //refreshChat();
                 searchChats(userIdChattingWith);
-                Toast.makeText(getContext(),"Swipe right on messages to unsend",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(),"Swipe right on messages to unsend",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -188,7 +188,7 @@ public class SendMessageFragment extends Fragment {
                     sizeBeforeDeleting = sendMessagelist.size();
 
                     swiped = true;
-                    Toast.makeText(getActivity(), "Your swiped status: " + swiped, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "Your swiped status: " + swiped, Toast.LENGTH_SHORT).show();
                     sendMessagelist.remove(message);
 
                     deleteMessage(message, true);
@@ -199,7 +199,7 @@ public class SendMessageFragment extends Fragment {
 
 
                     sendMessageAdapter.notifyItemRemoved(positionItem);
-                    Toast.makeText(getActivity(), "Message Deleted for all!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(), "Message Deleted for all!", Toast.LENGTH_SHORT).show();
                     soundPool.play(delsound2, 1, 1, 0, 0, 1);
                     //    }
 /*                else
@@ -570,6 +570,7 @@ public class SendMessageFragment extends Fragment {
 
         sendMessageAdapter = new SendMessageAdapter(getActivity(), getContext(), sendMessagelist, userIdChattingWith, readMessageList, gemCount, currentUserPrivateKey, currentUserPublicKeyID, messageID);
         recyclerView.setAdapter(sendMessageAdapter);
+        recyclerView.scrollToPosition(sendMessagelist.size() - 1);
         if (!messageID.equals("default") && !blinked) {
             recyclerView.scrollToPosition(sendMessageAdapter.getItemPosition(messageID));
             blinked = true;
@@ -617,6 +618,14 @@ public class SendMessageFragment extends Fragment {
             valueEventListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    /*TaskCompletionSource<List<ChatMessage>> listTaskCompletionSource = new TaskCompletionSource<>();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {*/
+
+
                     messageList.clear();
                     sendMessagelist.clear();
 
@@ -645,13 +654,24 @@ public class SendMessageFragment extends Fragment {
                         }
 
 
+
                     }
                     // listTaskCompletionSource.setResult(messageList);
 
 
 
+                    /*    }
+                    }).start();*/
 
+                    /*Task<List<ChatMessage>> listTask = listTaskCompletionSource.getTask();
 
+                    listTask.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
+                        @Override
+                        public void onComplete(@NonNull Task<List<ChatMessage>> task) {*/
+
+                     /*   }
+                    });
+*/
 
 
                 }
@@ -661,8 +681,6 @@ public class SendMessageFragment extends Fragment {
 
                 }
             };
-
-
 
 
             databaseReference.addValueEventListener(valueEventListener);

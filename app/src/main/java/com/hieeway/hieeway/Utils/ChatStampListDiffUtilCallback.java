@@ -36,8 +36,8 @@ public class ChatStampListDiffUtilCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp())
-                && mNewList.get(newItemPosition).getChatPending().equals(mOldList.get(oldItemPosition).getChatPending())
+        return //mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp())&&
+                mNewList.get(newItemPosition).getChatPending().equals(mOldList.get(oldItemPosition).getChatPending())
                 && mNewList.get(newItemPosition).getPhoto().equals(mOldList.get(oldItemPosition).getPhoto());
     }
 }

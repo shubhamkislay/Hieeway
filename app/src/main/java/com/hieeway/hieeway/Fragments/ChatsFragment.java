@@ -188,47 +188,55 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         public void onChanged(@Nullable final List<ChatStamp> chatStamps) {
 
 
-                            // initialChatstampPopulateThread(chatStamps);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
 
 
-                            resettedList = chatStamps;
-
-                            Collections.sort(resettedList, Collections.<ChatStamp>reverseOrder());
+                                    // initialChatstampPopulateThread(chatStamps);
 
 
-                            chatMessageAdapter.updateList(resettedList);
+                                    resettedList = chatStamps;
 
-                            chats_recyclerview.scrollToPosition(0);
-
-                            //chats_recyclerview.smoothScrollToPosition(0);
-
-                            if (chatStamps.size() <= 0) {
-                                noTextBack.setVisibility(View.VISIBLE);
-                            } else
-                                noTextBack.setVisibility(View.GONE);
-
-                            progress_menu_logo.setVisibility(View.GONE);
-                            progressBar.setVisibility(View.GONE);
-                            progressTwo.setVisibility(View.GONE);
-
-                            if (!notLoaded) {
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-
-                                            animationArrowListener.playArrowAnimation();
-                                            notLoaded = true;
+                                    Collections.sort(resettedList, Collections.<ChatStamp>reverseOrder());
 
 
-                                        } catch (Exception e) {
+                                    chatMessageAdapter.updateList(resettedList);
 
-                                            //  Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
-                                        }
+                                    chats_recyclerview.scrollToPosition(0);
+
+                                    //chats_recyclerview.smoothScrollToPosition(0);
+
+                                    if (chatStamps.size() <= 0) {
+                                        noTextBack.setVisibility(View.VISIBLE);
+                                    } else
+                                        noTextBack.setVisibility(View.GONE);
+
+                                    progress_menu_logo.setVisibility(View.GONE);
+                                    progressBar.setVisibility(View.GONE);
+                                    progressTwo.setVisibility(View.GONE);
+
+                                    if (!notLoaded) {
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+
+                                                    animationArrowListener.playArrowAnimation();
+                                                    notLoaded = true;
+
+
+                                                } catch (Exception e) {
+
+                                                    //  Toast.makeText(getContext(), "Thread Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        }, 500);
                                     }
-                                }, 500);
-                            }
+
+                                }
+                            }, 0);
 
 
                         }

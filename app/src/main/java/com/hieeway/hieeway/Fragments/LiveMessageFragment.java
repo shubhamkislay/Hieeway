@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Fragments;
 
 import android.Manifest;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -17,6 +18,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -163,6 +165,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private Boolean start = true;
     private Boolean flagActivityClosure = false;
     private LiveVideoViewModel liveVideoViewModel;
+    public TextView message_live_with;
     BottomSheetBehavior bottomSheetBehavior;
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout video_search_progress;
@@ -175,9 +178,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public LiveMessagingViewModel liveMessagingViewModel;
     public Boolean truncateString = false;
     public Boolean stopObservingLiveMessaging = false;
-    public Button emoji;
-
-    private CoordinatorLayout parent_layout;
+    //RelativeLayout top_bar;
+    YouTubePlayerSeekBar youtube_player_seekbar;
     private RtcEngine mRtcEngine = null;
     public ProgressBar connectingUserVideo, connectedUserVideo ;
     public Handler handler;
@@ -194,8 +196,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     int textChangeCounter = 0;
     int aftertextChangeCounter = 0;
     Boolean resultReady = false;
-    RelativeLayout top_bar;
-    YouTubePlayerSeekBar youtube_player_seekbar;
+    private RelativeLayout bottom_bar_back;
     Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener;
@@ -280,7 +281,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
-
+    private ConstraintLayout parent_layout;
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
     public static final String NAME = "name";
@@ -288,6 +289,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private SurfaceView localSurfaceView;
     private boolean joined = false;
     private Button online_ring;
+    private AnimationDrawable animationDrawable;
 
 
     public LiveMessageFragment() {
@@ -399,7 +401,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        View view = inflater.inflate(R.layout.live_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.live_fragment_layout_pref, container, false);
         /**
          * The below code is used to block screenshots
          */
@@ -426,11 +428,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         live_other_highlight = view.findViewById(R.id.live_other_highlight);
         live_user_highlight = view.findViewById(R.id.live_user_highlight);
         online_ring = view.findViewById(R.id.online_ring);
+        message_live_with = view.findViewById(R.id.message_live_with);
 
         slideToActView = view.findViewById(R.id.slideToActView);
 
         complete_icon = view.findViewById(R.id.complete_icon);
         parent_layout = view.findViewById(R.id.parent_layout);
+        bottom_bar_back = view.findViewById(R.id.bottom_bar_back);
 
         youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
@@ -446,7 +450,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         senderTextView = view.findViewById(R.id.sender_message);
         backBtn = view.findViewById(R.id.back_button);
         video_listView = view.findViewById(R.id.video_listView);
-        top_bar = view.findViewById(R.id.top_bar);
+        //top_bar = view.findViewById(R.id.top_bar);
         youtube_button = view.findViewById(R.id.youtube_btn);
         firstPersonVideo = view.findViewById(R.id.first_person_video);
         userChattingPersonVideo = view.findViewById(R.id.second_person_video);
@@ -866,7 +870,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         //youtube_web_view.
 
 
+        messageBox.setHint(userNameChattingWith + " is not live");
         username.setText(userNameChattingWith);
+
         startLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         stopLiveVideoTextView.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         sync_video_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -1208,10 +1214,24 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 //  Toast.makeText(getActivity(), userNameChattingWith + " left the live chat", Toast.LENGTH_SHORT).show();
 
 
+                                try {
+                                    animationDrawable.stop();
+                                } catch (Exception e) {
+                                    //
+                                }
+
                                 online_ring.setVisibility(View.INVISIBLE);
+                                message_live_with.setText(userNameChattingWith + " has left");
+                                message_live_with.setVisibility(View.VISIBLE);
+
+                                bottom_bar_back.setVisibility(View.INVISIBLE);
+
+                                // messageBox.setEnabled(false);
+
+                                messageBox.setHint(userNameChattingWith + " is not live");
 
                                 Snackbar snackbar = Snackbar
-                                        .make(parent_layout, userNameChattingWith + " left the live chat", Snackbar.LENGTH_LONG);
+                                        .make(parent_layout, userNameChattingWith + " left the live chat", Snackbar.LENGTH_SHORT);
                                 View snackBarView = snackbar.getView();
                                 snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
                                 snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -1274,11 +1294,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             toast.show();*/
 
                             online_ring.setVisibility(View.VISIBLE);
+                            bottom_bar_back.setVisibility(View.VISIBLE);
+
+                            messageBox.setHint("Chat here...");
+
+                            animationDrawable = (AnimationDrawable) bottom_bar_back.getBackground();
+
+                            animationDrawable.setEnterFadeDuration(150);
+                            animationDrawable.setExitFadeDuration(300);
+                            animationDrawable.start();
+
+                            //animationDrawable.stop();
 
                             animateEyeBlinking();
 
+
+                            message_live_with.setText("You're Live with " + userNameChattingWith);
+                            message_live_with.setVisibility(View.VISIBLE);
+
+                            //messageBox.setEnabled(true);
+
                             Snackbar snackbar = Snackbar
-                                    .make(parent_layout, userNameChattingWith + " is the live with you! Now you can search and watch videos together", Snackbar.LENGTH_LONG);
+                                    .make(parent_layout, userNameChattingWith + " is the live with you! Now you can search and watch videos together", Snackbar.LENGTH_SHORT);
                             View snackBarView = snackbar.getView();
                             snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
                             snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
@@ -1587,7 +1624,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 mYouTubePlayer = youTubePlayer;
 
                 if (state == PlayerConstants.PlayerState.PLAYING) {
-                    top_bar.setVisibility(View.GONE);
+                    //top_bar.setVisibility(View.GONE);
 
 
                     if (customUiController != null) {
@@ -1606,7 +1643,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(userChattingWithId).removeValue();
 
-                    top_bar.setVisibility(View.VISIBLE);
+                    //top_bar.setVisibility(View.VISIBLE);
                     youtube_layout.setVisibility(View.GONE);
                     youtube_player_view.setVisibility(View.GONE);
                     videoStarted = false;
@@ -1834,7 +1871,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         LiveMessagingViewModelFactory liveMessagingViewModelFactory = new LiveMessagingViewModelFactory(userIDCHATTINGWITH);
         liveMessagingViewModel = ViewModelProviders.of(this, liveMessagingViewModelFactory).get(LiveMessagingViewModel.class);
-        liveMessagingViewModel.getLiveMessage().observe(this, new Observer<String>() {
+        liveMessagingViewModel.getLiveMessage().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable final String s) {
 
@@ -1959,7 +1996,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         LiveVideoViewModelFactory liveVideoViewModelFactory = new LiveVideoViewModelFactory(userIDCHATTINGWITH);
         liveVideoViewModel = ViewModelProviders.of(this, liveVideoViewModelFactory).get(LiveVideoViewModel.class);
-        liveVideoViewModel.getLiveVideoData().observe(this, new Observer<LiveMessage>() {
+        liveVideoViewModel.getLiveVideoData().observe(getViewLifecycleOwner(), new Observer<LiveMessage>() {
             @Override
             public void onChanged(@Nullable LiveMessage liveMessage) {
 
@@ -2858,8 +2895,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 // Toast.makeText(activity, "Fragment Destroyed", Toast.LENGTH_SHORT).show();
 
 
-
-                top_bar.setVisibility(View.VISIBLE);
+                //top_bar.setVisibility(View.VISIBLE);
                 youtube_layout.setVisibility(View.GONE);
                 youtube_player_view.setVisibility(View.GONE);
 
@@ -2871,6 +2907,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 presenceRef.removeEventListener(presentEventListener);
                 // urlRef.removeEventListener(valueEventListener);
                 seekRef.removeEventListener(seekValueEventListener);
+                message_live_with.setVisibility(View.INVISIBLE);
                 startedLivingMessaging = false;
                 initialiseActivity = false;
                 initialiseSeekEvent = false;

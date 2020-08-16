@@ -60,17 +60,6 @@
                 android:visibility="invisible" />
 
 
-            <Button
-                android:id="@+id/archive_notification"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="false"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="18dp"
-                android:background="@drawable/archive_notification_dot"
-                android:visibility="gone" />
-
         </RelativeLayout>
 
 
@@ -729,13 +718,6 @@
 
             </RelativeLayout>
 
-
-            <br.com.instachat.emojilibrary.model.layout.EmojiKeyboardLayout
-                android:id="@+id/emoji_keyboard_layout"
-                android:layout_width="match_parent"
-                android:layout_height="263dip"
-                android:layout_alignParentBottom="true"
-                android:visibility="gone" />
 
         </LinearLayout>
     </RelativeLayout>

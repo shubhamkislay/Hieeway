@@ -31,23 +31,12 @@
         android:layout_alignParentBottom="true"
         android:layout_height="40dp">
 
-        <TextView
-            android:gravity="center"
 
-            android:text="Swipe"
-            android:visibility="gone"
-            android:textAllCaps="false"
-            android:layout_toLeftOf="@id/right_arrow"
-            android:textSize="10sp"
-            android:textColor="#fff"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
         <TextView
             android:gravity="center"
 
             android:id="@+id/bottom_msg"
-            android:text="Unsend"
+            android:text="Swipe Right to Delete"
             android:textAllCaps="true"
             android:layout_centerHorizontal="true"
             android:textSize="10sp"
@@ -57,16 +46,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/right_arrow"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_toRightOf="@id/bottom_msg"
-            android:layout_centerVertical="true"
-            android:backgroundTint="#fff"
-
-            android:rotation="180"
-            android:background="@drawable/ic_keyboard_arrow_left_white_24dp"/>
 
 
     </RelativeLayout>

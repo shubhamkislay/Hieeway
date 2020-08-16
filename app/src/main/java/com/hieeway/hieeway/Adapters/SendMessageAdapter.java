@@ -325,9 +325,9 @@ public class SendMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm  dd MMM YYYY");
 
 
-                    //sendMessageViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+                    sendMessageViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
 
-                    sendMessageViewHolder.timestamp.setText("" + ago);
+                    //sendMessageViewHolder.timestamp.setText("" + ago);
 
                 } catch (Exception e) { //this generic but you can control another types of exception
                     // look the origin of excption

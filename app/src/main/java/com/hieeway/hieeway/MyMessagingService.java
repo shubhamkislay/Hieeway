@@ -82,84 +82,89 @@ public class MyMessagingService extends FirebaseMessagingService {
         // super.onMessageReceived(remoteMessage);
 
         sharedPreferences = getApplicationContext().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        String storedpublicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, "default");
+        String storedpublicKeyId = "default";
+        storedpublicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, "default");
 
         //  if(SettingsFragment.getReceiceNotification()){ //if user wants to receive notification
 
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            if (remoteMessage.getData().get("type").equals("message")
-                    && remoteMessage.getData().get("live").equals("no")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+        try {
+            if (remoteMessage.getData().size() > 0) {
+                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+                if (remoteMessage.getData().get("type").equals("message")
+                        && remoteMessage.getData().get("live").equals("no")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
 
-                sendMessageNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("message")
-                    && remoteMessage.getData().get("live").equals("yes")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendLiveNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("music")
-                    && remoteMessage.getData().get("live").equals("yes")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendMusicNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("request")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendFriendRequestNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("requestaccepted")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendFriendRequestAcceptedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("revealrequest")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendMessageRevealRequestedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("revealrequestaccepted")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendMessageRevealRequestAcceptedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("like")
-                    && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
-                sendMusicLikedNotification(remoteMessage);
-            else if (remoteMessage.getData().get("type").equals("feeling"))
-                sendFeelingNotification(remoteMessage);
+                    sendMessageNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("message")
+                        && remoteMessage.getData().get("live").equals("yes")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendLiveNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("music")
+                        && remoteMessage.getData().get("live").equals("yes")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendMusicNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("request")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendFriendRequestNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("requestaccepted")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendFriendRequestAcceptedNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("revealrequest")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendMessageRevealRequestedNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("revealrequestaccepted")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendMessageRevealRequestAcceptedNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("like")
+                        && remoteMessage.getData().get("publicKeyId").equals(storedpublicKeyId))
+                    sendMusicLikedNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("feeling"))
+                    sendFeelingNotification(remoteMessage);
 
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                // scheduleJob();requestaccepted revealrequest
+                if (/* Check if data needs to be processed by long running job */ true) {
+                    // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
+                    // scheduleJob();requestaccepted revealrequest
+                } else {
+                    // Handle message within 10 seconds
+                    // handleNow();
+                }
+
             } else {
-                // Handle message within 10 seconds
-                // handleNow();
-            }
 
-        } else {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-            Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + this.getPackageName() + "/" + R.raw.chin_up);
+                Uri sound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + this.getPackageName() + "/" + R.raw.chin_up);
 
             /*RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.push_notification_layout);
 
             remoteViews.setImageViewResource(R.id.push_notif_icon,R.mipmap.ic_bird_black);*/
 
-            // Intent intent = new Intent(this, .class);
-            // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                // Intent intent = new Intent(this, .class);
+                // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                // PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_1_ID);
-            // notificationBuilder.setContent(remoteViews);
-            notificationBuilder.setContentTitle(remoteMessage.getNotification().getTitle());
-            notificationBuilder.setContentText(remoteMessage.getNotification().getBody());
+                NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_1_ID);
+                // notificationBuilder.setContent(remoteViews);
+                notificationBuilder.setContentTitle(remoteMessage.getNotification().getTitle());
+                notificationBuilder.setContentText(remoteMessage.getNotification().getBody());
 
-            notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
-            notificationBuilder.setAutoCancel(true);
-            notificationBuilder.setColor(Color.parseColor("#29A8CF"));
-            // notificationBuilder.setSmallIcon(R.drawable.hieeway_logo_splash);
-            notificationBuilder.setSmallIcon(R.mipmap.ic_hieeway_logo);
-            //notificationBuilder.setContentIntent(pendingIntent);
+                notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+                notificationBuilder.setAutoCancel(true);
+                notificationBuilder.setColor(Color.parseColor("#29A8CF"));
+                // notificationBuilder.setSmallIcon(R.drawable.hieeway_logo_splash);
+                notificationBuilder.setSmallIcon(R.mipmap.ic_hieeway_logo);
+                //notificationBuilder.setContentIntent(pendingIntent);
 
 
          /*   remoteViews.setTextViewText(R.id.push_title, "Radyo Türkkuşu");
             remoteViews.setTextViewText(R.id.push_context, remoteMessage.getNotification().getBody());*/
-            //notificationBuilder.setLights (ContextCompat.getColor(MainActivity.context, R.color.pushColor), 5000, 5000);
-            notificationManager.notify(1, notificationBuilder.build());
-            //    }
+                //notificationBuilder.setLights (ContextCompat.getColor(MainActivity.context, R.color.pushColor), 5000, 5000);
+                notificationManager.notify(1, notificationBuilder.build());
+                //    }
+            }
+        } catch (Exception e) {
+
         }
 
     }
