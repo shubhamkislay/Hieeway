@@ -19,6 +19,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,7 @@ import androidx.core.content.ContextCompat;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
@@ -90,8 +92,11 @@ import com.hieeway.hieeway.VerticalPageActivity;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.ncorti.slidetoact.SlideToActView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -196,7 +201,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     int textChangeCounter = 0;
     int aftertextChangeCounter = 0;
     Boolean resultReady = false;
-    private RelativeLayout bottom_bar_back;
+    private RelativeLayout bottom_bar_back, bottom_bar_back_top;
     Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener;
@@ -289,7 +294,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private SurfaceView localSurfaceView;
     private boolean joined = false;
     private Button online_ring;
-    private AnimationDrawable animationDrawable;
+    private AnimationDrawable animationDrawable, animationDrawableTop;
+    private RelativeLayout live_exp_back;
 
 
     public LiveMessageFragment() {
@@ -436,6 +442,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         parent_layout = view.findViewById(R.id.parent_layout);
         bottom_bar_back = view.findViewById(R.id.bottom_bar_back);
 
+        bottom_bar_back_top = view.findViewById(R.id.bottom_bar_back_top);
+
         youtube_player_seekbar = view.findViewById(R.id.youtube_player_seekbar);
         bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
         // bottom_sheet_webview_dialog_layout = view.findViewById(R.id.bottom_sheet_webview_dialog_layout);
@@ -459,6 +467,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         other_user_video_wrapper = view.findViewById(R.id.other_user_video_wrapper);
 
         frameLocalContainer = (FrameLayout) view.findViewById(R.id.local_video_view_container);
+
+
+        live_exp_back = view.findViewById(R.id.live_exp_back);
 
 
         startLiveVideo = view.findViewById(R.id.startLiveVideo);
@@ -1225,6 +1236,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 message_live_with.setVisibility(View.VISIBLE);
 
                                 bottom_bar_back.setVisibility(View.INVISIBLE);
+                                bottom_bar_back_top.setVisibility(View.INVISIBLE);
 
                                 // messageBox.setEnabled(false);
 
@@ -1295,14 +1307,21 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                             online_ring.setVisibility(View.VISIBLE);
                             bottom_bar_back.setVisibility(View.VISIBLE);
+                            bottom_bar_back_top.setVisibility(View.INVISIBLE);
 
                             messageBox.setHint("Chat here...");
 
+
                             animationDrawable = (AnimationDrawable) bottom_bar_back.getBackground();
+                            animationDrawableTop = (AnimationDrawable) bottom_bar_back_top.getBackground();
 
                             animationDrawable.setEnterFadeDuration(1000);
                             animationDrawable.setExitFadeDuration(1000);
                             animationDrawable.start();
+
+                            animationDrawableTop.setEnterFadeDuration(1000);
+                            animationDrawableTop.setExitFadeDuration(1000);
+                            animationDrawableTop.start();
 
                             //animationDrawable.stop();
 
@@ -1712,6 +1731,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     public void run() {
 
 
+                        live_exp_back.setVisibility(View.INVISIBLE);
                         if (!videoLive) {
 
 
@@ -1739,6 +1759,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
                         } else {
+
 
                             stopSignalling();
                             /*slideToActView.setText("Start Live Expression");
@@ -2074,7 +2095,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             if (!joiningLive) {
                                 if (!blinkReceiver) {
                                     blinkReceiver = true;
-                                    //blinkReceiverLayout();
+                                    blinkReceiverLayout();
+
 
 
                                 }
@@ -2321,11 +2343,19 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private void blinkReceiverLayout() {
         try {
             if (blinkReceiver) {
-                live_video_control_layout.setBackground(getResources().getDrawable(R.color.darkGrey));
+
+                // live_video_control_layout.setBackground(getResources().getDrawable(R.color.darkGrey));
+                live_exp_back.setVisibility(View.VISIBLE);
+                live_exp_back.animate().alpha(0.0f).setDuration(500);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        live_video_control_layout.setBackground(getResources().getDrawable(R.color.colorBlack));
+                        //live_video_control_layout.setBackground(getResources().getDrawable(R.color.colorBlack));
+                        live_exp_back.animate().alpha(1.0f).setDuration(500);
+
+
+
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -2336,7 +2366,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     }
                 }, 500);
             } else {
-                live_video_control_layout.setBackground(getResources().getDrawable(R.color.colorBlack));
+                //live_video_control_layout.setBackground(getResources().getDrawable(R.color.colorBlack));
+
+                live_exp_back.animate().alpha(1.0f).setDuration(500);
+                live_exp_back.setVisibility(View.INVISIBLE);
             }
         } catch (Exception e) {
 
@@ -2872,17 +2905,24 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
     public void showLiveMessageDialog(Activity activity, String live) {
 
-        try {
 
-            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, this, live);
-            // LiveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            liveMessageRequestDialog.setCancelable(false);
-            liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED)
+            requestAllPermissionsBeforeStart(activity, live);
+        else {
 
-            liveMessageRequestDialog.show();
-        } catch (NullPointerException e) {
-            liveMessageEventListener.changeFragment();
+            try {
 
+                LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, this, live);
+                // LiveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                liveMessageRequestDialog.setCancelable(false);
+                liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+                liveMessageRequestDialog.show();
+            } catch (NullPointerException e) {
+                liveMessageEventListener.changeFragment();
+
+            }
         }
     }
 
@@ -3009,6 +3049,56 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         token.continuePermissionRequest();
 
                         // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+                }).check();
+    }
+
+
+    private void requestAllPermissionsBeforeStart(final Activity activity, String live) {
+
+
+        Dexter.withActivity(activity)
+                .withPermission(/*Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,*/
+                        Manifest.permission.CAMERA)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        try {
+
+                            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, LiveMessageFragment.this, live);
+                            // LiveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            liveMessageRequestDialog.setCancelable(false);
+                            liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+                            liveMessageRequestDialog.show();
+                        } catch (NullPointerException e) {
+                            liveMessageEventListener.changeFragment();
+                        }
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+
+                        if (response.isPermanentlyDenied()) {
+                            Toast.makeText(activity, "Allow camera permission, from the permissions menu to continue", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
+                            intent.setData(uri);
+                            activity.startActivity(intent);
+                        } else
+                            liveMessageEventListener.changeFragment();
+
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                        token.continuePermissionRequest();
                     }
                 }).check();
     }
