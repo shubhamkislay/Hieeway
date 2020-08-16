@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/faded_circle_one"
+        android:duration="1000" />
+    <item
+        android:drawable="@drawable/faded_circle_two"
+        android:duration="1000" />
+    <item
+        android:drawable="@drawable/faded_circle_three"
+        android:duration="1000" />
+
+</animation-list>
