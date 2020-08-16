@@ -5,6 +5,11 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+
 public class CameraActivity extends AppCompatActivity {
 
     public static String userChattingWithId;
@@ -23,6 +28,7 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         Intent intent  = getIntent();
+        userStatusOnDiconnect();
 
         userChattingWithId = intent.getStringExtra("userChattingWithId");
         usernameChattingWith = intent.getStringExtra("username");
@@ -41,6 +47,18 @@ public class CameraActivity extends AppCompatActivity {
                     .replace(R.id.container, Camera2BasicFragment.newInstance())
                     .commit();
         }
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 
 }

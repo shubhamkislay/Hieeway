@@ -150,6 +150,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         publicKeyId = sharedPreferences.getString(PUBLIC_KEY_ID, null);
 
         USER_PRIVATE_KEY = privateKeyText;
+        userStatusOnDiconnect();
 
 
         if (intent.getExtras() != null) {
@@ -687,6 +688,18 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
 
 
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 
 

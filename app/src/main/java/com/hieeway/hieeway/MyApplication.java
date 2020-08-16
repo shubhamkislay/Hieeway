@@ -49,6 +49,8 @@ public class MyApplication extends Application {
 
             databaseReference.keepSynced(true);
 
+            userStatusOnDiconnect();
+
 
 
            // checkPresence();
@@ -111,6 +113,18 @@ public class MyApplication extends Application {
             manager.createNotificationChannel(channel3);
 
         }
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 
     public void checkPresence()

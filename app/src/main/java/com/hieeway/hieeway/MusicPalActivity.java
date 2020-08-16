@@ -41,6 +41,7 @@ import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MusicPalActivity extends AppCompatActivity {
@@ -65,6 +66,7 @@ public class MusicPalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_music_pal);
 
+        userStatusOnDiconnect();
         username = findViewById(R.id.username);
         friend_list_recyclerview = findViewById(R.id.friend_list_recyclerview);
         userlist = new ArrayList<>();
@@ -183,6 +185,18 @@ public class MusicPalActivity extends AppCompatActivity {
             }
         }, 400);
 
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 
     private void searchFriends(final String username) {

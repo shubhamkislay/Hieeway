@@ -181,6 +181,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
+        userStatusOnDiconnect();
+
         /**
          *When you set the background as a gradiant animation list drawable, then you can uncomment the following code
          * to get animation
@@ -281,6 +284,18 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         },2000);*/
 
 
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 
     public void appLogoAnimation(Boolean reverse) {

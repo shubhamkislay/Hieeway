@@ -45,6 +45,7 @@ import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MusicFeedActivity extends AppCompatActivity {
@@ -78,7 +79,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-
+        userStatusOnDiconnect();
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
@@ -180,6 +181,18 @@ public class MusicFeedActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 
     @Override

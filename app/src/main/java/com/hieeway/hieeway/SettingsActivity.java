@@ -66,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        userStatusOnDiconnect();
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         if (!sharedPreferences.getString(PHONE, "default").equals("default")) {
 
@@ -84,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_list);
+
 
         settings_title = findViewById(R.id.settings_title);
         music_beacon_title = findViewById(R.id.music_beacon_title);
@@ -275,5 +277,17 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void userStatusOnDiconnect() {
+
+        HashMap<String, Object> setOfflineHash = new HashMap<>();
+
+        setOfflineHash.put("online", false);
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .onDisconnect()
+                .updateChildren(setOfflineHash);
     }
 }
