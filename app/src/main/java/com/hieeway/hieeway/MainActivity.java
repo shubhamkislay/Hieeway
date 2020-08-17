@@ -26,6 +26,7 @@ import androidx.media.MediaSessionManager;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String USERNAME = "username";
+    public static final String FEATURES_SHOWN = "features";
     public static final String DEVICE_TOKEN = "devicetoken";
     public final static String HAPPY = "happy";
     private static final int RC_SIGN_IN = 1;
@@ -255,6 +257,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     display.getSize(size);
                     displayHeight = size.y;
 
+                    SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    editor.putBoolean(FEATURES_SHOWN, true);
+                    editor.apply();
+
 
                     viewflip_controls.setVisibility(View.GONE);
                     view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
@@ -266,6 +274,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             view_flipper.setVisibility(View.GONE);
                             if (fragment_number == 0)
                                 get_started.setVisibility(View.VISIBLE);
+
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
                         }
                     }, 1000);
@@ -679,32 +689,42 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                             //  get_started.setText("Continue with profile setup");
                             // animateArrow();
-                            /*if (fragment_number == 0)
-                                get_started.setVisibility(View.VISIBLE);*/
+
+
                             startSplash();
                             mediaPlayer.pause();
 
 
-                            Display display = getWindowManager().getDefaultDisplay();
-                            Point size = new Point();
-                            display.getSize(size);
-                            displayHeight = size.y;
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            Boolean featuresShown = sharedPreferences.getBoolean(FEATURES_SHOWN, false);
+                            if (!featuresShown) {
+                                Display display = getWindowManager().getDefaultDisplay();
+                                Point size = new Point();
+                                display.getSize(size);
+                                displayHeight = size.y;
+
+                                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                                view_flipper.setVisibility(View.VISIBLE);
+
+                                view_flipper.setTranslationY(displayHeight);
 
 
-                            view_flipper.setVisibility(View.VISIBLE);
+                                view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
 
-                            view_flipper.setTranslationY(displayHeight);
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
 
+                                        viewflip_controls.setVisibility(View.VISIBLE);
+                                    }
+                                }, 1500);
+                            } else {
 
-                            view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
+                                if (fragment_number == 0)
+                                    get_started.setVisibility(View.VISIBLE);
+                            }
 
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    viewflip_controls.setVisibility(View.VISIBLE);
-                                }
-                            }, 1500);
 
 
 
