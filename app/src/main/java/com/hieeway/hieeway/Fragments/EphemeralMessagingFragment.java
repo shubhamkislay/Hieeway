@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -307,6 +308,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private boolean confirmConnected = true;
     private TextView sender_reply_body_title;
     private Button photo_btn, photo_btn_bg;
+    private Activity parentActivity;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -3235,14 +3237,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         message_counter.setVisibility(View.VISIBLE);
                         button_exterior.setVisibility(View.VISIBLE);
                         try {
-                            message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_new_message_drawable));
+                            message_counter.setBackground(parentActivity.getDrawable(R.drawable.message_counter_new_message_drawable));
                         } catch (Exception e) {
                             //
                         }
 
 
                         if (!isMessageRunning) {
-                            message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+                            message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_reply_drawable));
                             message_pulse.setVisibility(View.VISIBLE);
                         }
 
@@ -3266,7 +3268,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 if (sendMessageList.get(size - 1).getSentStatus().equals("sending")) {
 
                                     try {
-                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorPending));
+                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(parentActivity, R.color.colorPending));
 
                                     } catch (Exception e) {
 
@@ -3277,7 +3279,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     archive_btn.setVisibility(View.VISIBLE);
                                 } else {
                                     try {
-                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.colorWhite));
+                                        archive_btn.setBackgroundTintList(ContextCompat.getColorStateList(parentActivity, R.color.colorWhite));
 
                                     } catch (Exception e) {
 
@@ -3315,6 +3317,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         }
 
 
+    }
+
+    public void setParentActivity(Activity activity) {
+        this.parentActivity = activity;
     }
 
     private void checkForHint() {

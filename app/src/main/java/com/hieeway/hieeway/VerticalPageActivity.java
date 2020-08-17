@@ -464,6 +464,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         // set Fragmentclass Arguments
         ephemeralMessagingFragment = new EphemeralMessagingFragment();
+        ephemeralMessagingFragment.setParentActivity(this);
         ephemeralMessagingFragment.setArguments(bundle);
 
 

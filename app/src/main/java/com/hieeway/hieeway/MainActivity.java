@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
@@ -24,6 +25,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.media.MediaSessionManager;
 
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -121,6 +125,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private MediaSessionManager mManager;
     private MediaSession mSession;
     private MediaController mController;
+    RelativeLayout highlights_layout;
+    private Button why_hieeway_btn;
 
 
     GoogleApiClient mCredentialsApiClient;
@@ -161,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private LinearLayout viewflip_controls;
     private ImageButton next_btn, prev_btn;
     private int currentItem = 1;
+    private TypeWriter greet_text;
+    private TextView why_message;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -174,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
         frameLayout = findViewById(R.id.framelayout);
+        why_message = findViewById(R.id.why_message);
 
         registerAuthenticateActivity = new RegisterAuthenticateActivity();
         registerEmailEntryFragment = new RegisterEmailEntryFragment();
@@ -181,12 +190,15 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         registerPhoneNumberFragment = new RegisterPhoneNumberFragment();
 
+        highlights_layout = findViewById(R.id.highlights_layout);
+
         fragmentList = new ArrayList<>();
 
         //fragmentList.add(registerAuthenticateActivity);
         fragmentList.add(registerEmailEntryFragment);
         fragmentList.add(registerUsernameEntryFragment);
         fragmentList.add(registerPhoneNumberFragment);
+
 
         full_size_texting = findViewById(R.id.full_size_texting);
         encrypted = findViewById(R.id.encrypted);
@@ -198,8 +210,83 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         viewflip_controls = findViewById(R.id.viewflip_controls);
         next_btn = findViewById(R.id.next_btn);
         prev_btn = findViewById(R.id.prev_btn);
+        greet_text = findViewById(R.id.highlights);
+        why_message = findViewById(R.id.why_message);
+        why_hieeway_btn = findViewById(R.id.why_hieeway_btn);
 
         view_flipper = findViewById(R.id.view_flipper);
+
+        greet_text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        why_message.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        why_hieeway_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        Boolean featuresShown = sharedPreferences.getBoolean(FEATURES_SHOWN, false);
+        if (featuresShown)
+            why_hieeway_btn.setVisibility(View.VISIBLE);
+
+        why_hieeway_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                get_started.setVisibility(View.GONE);
+                why_hieeway_btn.setVisibility(View.GONE);
+
+
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                displayHeight = size.y;
+
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                highlights_layout.setAlpha(0.0f);
+                highlights_layout.setVisibility(View.VISIBLE);
+
+                //highlights_layout.setTranslationY(displayHeight);
+
+
+                //highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
+                highlights_layout.animate().alpha(1.0f).setDuration(1000);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+
+                        greet_text.animateText("Why Hieeway?");
+                        greet_text.setCharacterDelay(75);
+                        greet_text.setTextSize(32);
+                        greet_text.animate();
+
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+
+                                view_flipper.animate().alpha(1.0f).setDuration(500);
+
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        viewflip_controls.setVisibility(View.VISIBLE);
+
+                                    }
+                                }, 500);
+
+                            }
+                        }, 2000);
+                    }
+                }, 1500);
+
+            }
+        });
+
+
 /*
 
        view_flipper.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -226,12 +313,57 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
        });
 */
 
+
+        String whyMessage = "We believe that carefully curated online persona," +
+                " mindless scrolling and \"humble bragging\" on social media not only compromises our authenticity," +
+                " intellect, and humility but also makes us unapproachable, misrepresented and leads us to long-term of" +
+                " unhappiness, dissatisfaction, and loneliness or having meaningless \"superficial friendships.\"" +
+                "\n\nHieeway encourages authenticity and approachability, and facilitates the possibility of deep meaningful connections" +
+                " leading to a better quality life.";
+
+
+        SpannableString spannableString = new SpannableString(whyMessage);
+
+        ForegroundColorSpan foregroundColorSpanRedOne = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanRedTwo = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanRedThree = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanRedFour = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanRedFive = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanRedSix = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanRedSeven = new ForegroundColorSpan(Color.WHITE);
+        ForegroundColorSpan foregroundColorSpanBlueFour = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark));
+        ForegroundColorSpan foregroundColorSpanBlueOne = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark));
+        ForegroundColorSpan foregroundColorSpanBlueTwo = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark));
+        ForegroundColorSpan foregroundColorSpanBlueThree = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark));
+
+
+        spannableString.setSpan(foregroundColorSpanRedOne, whyMessage.indexOf("carefully"), whyMessage.indexOf("persona") + "persona".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanRedTwo, whyMessage.indexOf("mindless"), whyMessage.indexOf("scrolling") + "scrolling".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanRedThree, whyMessage.indexOf("humble"), whyMessage.indexOf("bragging") + "bragging".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanRedFour, whyMessage.indexOf("on"), whyMessage.indexOf("media") + "media".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanRedFive, whyMessage.indexOf("unhappiness"), whyMessage.indexOf("unhappiness") + "unhappiness".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanRedSix, whyMessage.indexOf("dissatisfaction"), whyMessage.indexOf("dissatisfaction") + "dissatisfaction".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanRedSeven, whyMessage.indexOf("loneliness"), whyMessage.indexOf("friendships") + "friendships".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        spannableString.setSpan(foregroundColorSpanBlueOne, whyMessage.lastIndexOf("authenticity"), whyMessage.lastIndexOf("authenticity") + "authenticity".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanBlueTwo, whyMessage.indexOf("approachability"), whyMessage.indexOf("approachability") + "approachability".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        spannableString.setSpan(foregroundColorSpanBlueThree, whyMessage.indexOf("deep"), whyMessage.indexOf("connections") + "connections".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableString.setSpan(foregroundColorSpanBlueFour, whyMessage.indexOf("better"), whyMessage.indexOf("life") + "life".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        why_message.setText(spannableString);
+
+
+
+
         next_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-                if (currentItem != 7) {
+                if (currentItem != 8) {
                     Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_bottom_to_top);
                     Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_bottom_to_top);
                     view_flipper.setInAnimation(enterAnimation);
@@ -241,8 +373,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
                     view_flipper.showNext();
-                    if (currentItem == 7) {
+                    if (currentItem == 8) {
                         //next_btn.setVisibility(View.GONE);
+
+                        why_message.animate().alpha(1.0f).setDuration(2000);
+
                         next_btn.setRotation(0.0f);
                         next_btn.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_black_24dp));
                     }
@@ -264,14 +399,16 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     editor.apply();
 
 
+
                     viewflip_controls.setVisibility(View.GONE);
-                    view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
+                    highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
+                    why_hieeway_btn.setVisibility(View.VISIBLE);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
-                            view_flipper.setVisibility(View.GONE);
+                            highlights_layout.setVisibility(View.GONE);
                             if (fragment_number == 0)
                                 get_started.setVisibility(View.VISIBLE);
 
@@ -299,7 +436,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 currentItem -= 1;
                 if (currentItem == 1)
                     prev_btn.setVisibility(View.GONE);
-                if (currentItem != 7) {
+                if (currentItem != 8) {
+                    why_message.animate().alpha(0.0f).setDuration(1000);
                     next_btn.setRotation(180.0f);
                     next_btn.setImageDrawable(getResources().getDrawable(R.drawable.ic_swipe_arrow_up_black_24dp));
                 }
@@ -333,6 +471,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void onClick(View v) {
                 get_started.setVisibility(View.GONE);
                 view_flipper.setVisibility(View.GONE);
+                why_hieeway_btn.setVisibility(View.GONE);
                 switch (fragment_number)
                 {
                     case 0: fragment_number =1;
@@ -705,18 +844,45 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-                                view_flipper.setVisibility(View.VISIBLE);
+                                highlights_layout.setAlpha(0.0f);
+                                highlights_layout.setVisibility(View.VISIBLE);
 
-                                view_flipper.setTranslationY(displayHeight);
+                                //highlights_layout.setTranslationY(displayHeight);
 
 
-                                view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
+                                //highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
+                                highlights_layout.animate().alpha(1.0f).setDuration(1000);
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
 
-                                        viewflip_controls.setVisibility(View.VISIBLE);
+
+                                        greet_text.animateText("Why Hieeway?");
+                                        greet_text.setCharacterDelay(75);
+                                        greet_text.setTextSize(32);
+                                        greet_text.animate();
+
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+
+                                                view_flipper.animate().alpha(1.0f).setDuration(500);
+
+
+                                                new Handler().postDelayed(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+
+                                                        viewflip_controls.setVisibility(View.VISIBLE);
+
+                                                    }
+                                                }, 500);
+
+                                            }
+                                        }, 2000);
                                     }
                                 }, 1500);
                             } else {

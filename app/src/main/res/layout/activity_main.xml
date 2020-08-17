@@ -83,65 +83,130 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp" />
 
+        <Button
 
-        <ViewFlipper
-            android:id="@+id/view_flipper"
+            android:id="@+id/why_hieeway_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/message_box_drawable"
+            android:backgroundTint="#1A1A1A"
+            android:fontFamily="sans-serif-black"
+            android:gravity="center"
+            android:paddingLeft="12dp"
+            android:paddingTop="8dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="8dp"
+            android:text="Why Hieeway?"
+            android:textAllCaps="false"
+            android:textColor="@color/textThemeColor"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+
+        <RelativeLayout
+            android:id="@+id/highlights_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:autoStart="false"
             android:background="#000"
-            android:flipInterval="3000"
-            android:inAnimation="@anim/enter_bottom_to_top"
-            android:outAnimation="@anim/exit_bottom_to_top"
             android:visibility="gone">
 
 
-            <ImageView
-                android:id="@+id/full_size_texting"
+            <ViewFlipper
+                android:id="@+id/view_flipper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/full_size_texting" />
+                android:layout_marginLeft="55dp"
+                android:layout_marginTop="-8dp"
+                android:layout_marginRight="55dp"
+                android:layout_marginBottom="50dp"
+                android:alpha="0.0"
+                android:autoStart="false"
+                android:background="#000"
+                android:flipInterval="3000"
+                android:inAnimation="@anim/enter_bottom_to_top"
+                android:outAnimation="@anim/exit_bottom_to_top"
+                android:visibility="visible">
 
-            <ImageView
-                android:id="@+id/live_messaging"
+
+                <ImageView
+                    android:id="@+id/full_size_texting"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/full_size_texting" />
+
+                <ImageView
+                    android:id="@+id/live_messaging"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/live_messaging" />
+
+                <ImageView
+                    android:id="@+id/live_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/live_video" />
+
+                <ImageView
+                    android:id="@+id/discover_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/discover_music" />
+
+                <ImageView
+                    android:id="@+id/feelings"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/feelings" />
+
+                <ImageView
+                    android:id="@+id/delete_chats"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/delete_chats" />
+
+                <ImageView
+                    android:id="@+id/encrypted"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/encrypted" />
+
+                <TextView
+                    android:id="@+id/why_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0.0"
+                    android:gravity="center"
+                    android:src="@drawable/encrypted"
+                    android:textColor="#fff"
+                    android:textSize="16sp" />
+
+
+            </ViewFlipper>
+
+            <com.hieeway.hieeway.TypeWriter
+                android:id="@+id/highlights"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/live_messaging" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="32sp" />
 
-            <ImageView
-                android:id="@+id/live_video"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/live_video" />
-
-            <ImageView
-                android:id="@+id/discover_music"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/discover_music" />
-
-            <ImageView
-                android:id="@+id/feelings"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/feelings" />
-
-            <ImageView
-                android:id="@+id/delete_chats"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/delete_chats" />
-
-            <ImageView
-                android:id="@+id/encrypted"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/encrypted" />
+                android:layout_height="150dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bottom_fade_dark_background" />
 
 
-        </ViewFlipper>
-
-
+        </RelativeLayout>
 
 
     </RelativeLayout>
@@ -204,8 +269,8 @@
 
         <ImageButton
             android:id="@+id/prev_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle"
             android:backgroundTint="#8B8B8B"
@@ -214,8 +279,8 @@
 
         <ImageButton
             android:id="@+id/next_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_margin="4dp"
             android:background="@drawable/circle"
             android:backgroundTint="#fff"

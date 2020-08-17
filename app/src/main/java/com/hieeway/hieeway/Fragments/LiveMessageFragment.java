@@ -1307,7 +1307,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                             online_ring.setVisibility(View.VISIBLE);
                             bottom_bar_back.setVisibility(View.VISIBLE);
-                            bottom_bar_back_top.setVisibility(View.INVISIBLE);
+                            bottom_bar_back_top.setVisibility(View.VISIBLE);
 
                             messageBox.setHint("Chat here...");
 
