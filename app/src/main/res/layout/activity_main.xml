@@ -61,12 +61,7 @@
             android:text="Hieeway"
             android:textColor="#fff"/>
 
-        <com.hieeway.hieeway.Utils.MutedVideoView
-            android:id="@+id/video_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp" />
+
 
 
         <TextView
@@ -80,6 +75,71 @@
             android:textColor="#A8A8A8"
             android:textSize="10sp"
             android:visibility="gone"/>
+
+        <com.hieeway.hieeway.Utils.MutedVideoView
+            android:id="@+id/video_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp" />
+
+
+        <ViewFlipper
+            android:id="@+id/view_flipper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:autoStart="false"
+            android:background="#000"
+            android:flipInterval="3000"
+            android:inAnimation="@anim/enter_bottom_to_top"
+            android:outAnimation="@anim/exit_bottom_to_top"
+            android:visibility="gone">
+
+
+            <ImageView
+                android:id="@+id/full_size_texting"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/full_size_texting" />
+
+            <ImageView
+                android:id="@+id/live_messaging"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/live_messaging" />
+
+            <ImageView
+                android:id="@+id/live_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/live_video" />
+
+            <ImageView
+                android:id="@+id/discover_music"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/discover_music" />
+
+            <ImageView
+                android:id="@+id/feelings"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/feelings" />
+
+            <ImageView
+                android:id="@+id/delete_chats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/delete_chats" />
+
+            <ImageView
+                android:id="@+id/encrypted"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/encrypted" />
+
+
+        </ViewFlipper>
 
 
 
@@ -109,7 +169,7 @@
         android:layout_marginBottom="16dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:background="@drawable/message_send_sent_background"
+        android:background="@drawable/message_box_drawable"
         android:text="Let's get started"
         android:textAllCaps="false"
         android:visibility="gone"/>
@@ -123,11 +183,46 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_marginBottom="18dp"
-        android:background="@drawable/message_send_sent_background"
+        android:background="@drawable/message_box_drawable"
         android:backgroundTint="#181818"
         android:text="Let's get started"
         android:textAllCaps="false"
         android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/viewflip_controls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp"
+        android:animateLayoutChanges="true"
+        android:background="@drawable/message_box_drawable"
+        android:backgroundTint="#181818"
+        android:padding="0dp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/prev_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#8B8B8B"
+            android:src="@drawable/ic_swipe_arrow_up_black_24dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/next_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#fff"
+            android:rotation="180"
+            android:src="@drawable/ic_swipe_arrow_up_black_24dp" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/framelayout"

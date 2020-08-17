@@ -1,5 +1,6 @@
 package com.hieeway.hieeway;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -31,11 +32,14 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.credentials.Credential;
@@ -144,6 +148,17 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String MUSIC_BEACON = "musicbeacon";
     public static final String SPOTIFY_CONNECT = "spotifyconnect";
     public static final String VISIBILITY = "visibility";
+    private ViewFlipper view_flipper;
+    private ImageView full_size_texting;
+    private ImageView live_messaging;
+    private ImageView live_video;
+    private ImageView discover_music;
+    private ImageView feelings;
+    private ImageView delete_chats;
+    private ImageView encrypted;
+    private LinearLayout viewflip_controls;
+    private ImageButton next_btn, prev_btn;
+    private int currentItem = 1;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -171,6 +186,116 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         fragmentList.add(registerUsernameEntryFragment);
         fragmentList.add(registerPhoneNumberFragment);
 
+        full_size_texting = findViewById(R.id.full_size_texting);
+        encrypted = findViewById(R.id.encrypted);
+        live_messaging = findViewById(R.id.live_messaging);
+        live_video = findViewById(R.id.live_video);
+        discover_music = findViewById(R.id.discover_music);
+        feelings = findViewById(R.id.feelings);
+        delete_chats = findViewById(R.id.delete_chats);
+        viewflip_controls = findViewById(R.id.viewflip_controls);
+        next_btn = findViewById(R.id.next_btn);
+        prev_btn = findViewById(R.id.prev_btn);
+
+        view_flipper = findViewById(R.id.view_flipper);
+/*
+
+       view_flipper.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+           @Override
+           public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+               if(view_flipper.getCurrentView() == full_size_texting)
+               {
+                   prev_btn.setVisibility(View.GONE);
+                   next_btn.setVisibility(View.VISIBLE);
+               }
+               else if(view_flipper.getCurrentView() == encrypted)
+               {
+                   prev_btn.setVisibility(View.VISIBLE);
+                   next_btn.setVisibility(View.GONE);
+               }
+               else
+               {
+                   prev_btn.setVisibility(View.VISIBLE);
+                   next_btn.setVisibility(View.VISIBLE);
+               }
+
+           }
+       });
+*/
+
+        next_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                if (currentItem != 7) {
+                    Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_bottom_to_top);
+                    Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_bottom_to_top);
+                    view_flipper.setInAnimation(enterAnimation);
+                    view_flipper.setOutAnimation(exitAnimation);
+
+                    currentItem += 1;
+
+
+                    view_flipper.showNext();
+                    if (currentItem == 7) {
+                        //next_btn.setVisibility(View.GONE);
+                        next_btn.setRotation(0.0f);
+                        next_btn.setImageDrawable(getResources().getDrawable(R.drawable.ic_check_black_24dp));
+                    }
+
+                    if (currentItem != 1)
+                        prev_btn.setVisibility(View.VISIBLE);
+                } else {
+
+
+                    Display display = getWindowManager().getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    displayHeight = size.y;
+
+
+                    viewflip_controls.setVisibility(View.GONE);
+                    view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            view_flipper.setVisibility(View.GONE);
+                            if (fragment_number == 0)
+                                get_started.setVisibility(View.VISIBLE);
+
+                        }
+                    }, 1000);
+
+                }
+
+
+            }
+        });
+        prev_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_top_to_bottom);
+                Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_top_to_bottom);
+                view_flipper.setInAnimation(enterAnimation);
+                view_flipper.setOutAnimation(exitAnimation);
+
+                view_flipper.showPrevious();
+
+                currentItem -= 1;
+                if (currentItem == 1)
+                    prev_btn.setVisibility(View.GONE);
+                if (currentItem != 7) {
+                    next_btn.setRotation(180.0f);
+                    next_btn.setImageDrawable(getResources().getDrawable(R.drawable.ic_swipe_arrow_up_black_24dp));
+                }
+            }
+        });
+
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -197,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             @Override
             public void onClick(View v) {
                 get_started.setVisibility(View.GONE);
+                view_flipper.setVisibility(View.GONE);
                 switch (fragment_number)
                 {
                     case 0: fragment_number =1;
@@ -553,10 +679,42 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                             //  get_started.setText("Continue with profile setup");
                             // animateArrow();
-                            if (fragment_number == 0)
-                                get_started.setVisibility(View.VISIBLE);
+                            /*if (fragment_number == 0)
+                                get_started.setVisibility(View.VISIBLE);*/
                             startSplash();
                             mediaPlayer.pause();
+
+
+                            Display display = getWindowManager().getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            displayHeight = size.y;
+
+
+                            view_flipper.setVisibility(View.VISIBLE);
+
+                            view_flipper.setTranslationY(displayHeight);
+
+
+                            view_flipper.animate().translationYBy(-displayHeight).setDuration(1000);
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    viewflip_controls.setVisibility(View.VISIBLE);
+                                }
+                            }, 1500);
+
+
+
+
+
+
+
+
+
+
                             //stopPosition = view.getCurrentPosition();
                         }
                     }, 1800);
