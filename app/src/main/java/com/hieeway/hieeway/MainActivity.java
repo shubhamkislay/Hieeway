@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private TypeWriter greet_text;
     private TextView why_message;
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -449,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         @Override
                         public void run() {
 
+
                             highlights_layout.setVisibility(View.GONE);
                             if (fragment_number == 0)
                                 get_started.setVisibility(View.VISIBLE);
@@ -569,18 +571,21 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
-                                animateArrow();
+                                /**
+                                 * Activate arrow animation when you click get started
+                                 */
+                                //animateArrow();
                                 // get_started.setVisibility(View.GONE);
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
                                         getSupportFragmentManager().beginTransaction()
-                                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                                //.setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                                                 .replace(R.id.framelayout, registerEmailEntryFragment).commit();
 
                                         registerEmailEntryFragment.setGoogleButtonListener(MainActivity.this);
                                     }
-                                }, arrowAnimDuration);
+                                }, 0);
 
                             }
                         });
@@ -605,7 +610,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             @Override
                             public void onCompletion(MediaPlayer mp) {
                                 animateArrow();
-                                //  get_started.setVisibility(View.GONE);
+                                get_started.setVisibility(View.GONE);
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -1790,4 +1795,10 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     }
 */
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        highlights_layout.setVisibility(View.INVISIBLE);
+    }
 }
