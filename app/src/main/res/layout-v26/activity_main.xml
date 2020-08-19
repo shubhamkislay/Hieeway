@@ -8,21 +8,18 @@
     tools:context=".MainActivity">
 
 
-
-
-
     <RelativeLayout
         android:id="@+id/splash_layout"
-        android:visibility="visible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:visibility="visible">
 
         <ImageView
             android:id="@+id/background_screen"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"/>
+            android:background="@android:color/black" />
 
         <ImageView
             android:id="@+id/splash_logo"
@@ -31,7 +28,7 @@
             android:layout_centerInParent="true"
             android:scaleType="fitCenter"
             android:src="@drawable/splash_logo"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/splash_logo_gradient"
@@ -43,25 +40,23 @@
             android:layout_marginTop="-400dp"
             android:layout_marginRight="-200dp"
             android:src="@drawable/splash_logo_gradient"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
 
         <com.hieeway.hieeway.TypeWriter
             android:id="@+id/logo_txt"
-            android:layout_marginLeft="8dp"
-            android:visibility="gone"
-            android:layout_marginRight="8dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:autoSizeMaxTextSize="1000sp"
             android:autoSizeTextType="uniform"
             android:gravity="center"
             android:maxLines="1"
             android:padding="48dp"
             android:text="Hieeway"
-            android:textColor="#fff"/>
-
-
+            android:textColor="#fff"
+            android:visibility="gone" />
 
 
         <TextView
@@ -74,7 +69,7 @@
             android:text="Hieeway Inc.\n Designed and created by Shubham Kislay."
             android:textColor="#A8A8A8"
             android:textSize="10sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <com.hieeway.hieeway.Utils.MutedVideoView
             android:id="@+id/video_view"
@@ -118,11 +113,13 @@
 
 
             <ViewFlipper
-                android:layout_above="@+id/viewflip_controls"
                 android:id="@+id/view_flipper"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_above="@+id/viewflip_controls"
                 android:layout_below="@id/highlights"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
                 android:alpha="0.0"
                 android:autoStart="false"
                 android:background="#000"
@@ -135,51 +132,52 @@
                 <ImageView
                     android:id="@+id/full_size_texting"
                     android:layout_width="match_parent"
-                    android:alpha="1.0"
                     android:layout_height="match_parent"
+                    android:alpha="1.0"
                     android:src="@drawable/full_size_texting" />
 
                 <ImageView
                     android:id="@+id/live_messaging"
-                    android:alpha="0.0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0.0"
                     android:src="@drawable/live_messaging" />
 
                 <ImageView
                     android:id="@+id/live_video"
-                    android:alpha="0.0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0.0"
                     android:src="@drawable/live_video" />
 
                 <ImageView
                     android:id="@+id/discover_music"
-                    android:alpha="0.0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0.0"
                     android:src="@drawable/discover_music" />
 
                 <ImageView
                     android:id="@+id/feelings"
-                    android:alpha="0.0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0.0"
                     android:src="@drawable/feelings" />
 
                 <ImageView
                     android:id="@+id/delete_chats"
-                    android:alpha="0.0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0.0"
                     android:src="@drawable/delete_chats" />
 
                 <ImageView
                     android:id="@+id/encrypted"
-                    android:alpha="0.0"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:alpha="0.0"
                     android:src="@drawable/encrypted" />
+                y
 
 
                 <TextView
@@ -187,10 +185,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:alpha="0.0"
+                    android:autoSizeMaxTextSize="16sp"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeTextType="uniform"
+                    android:breakStrategy="balanced"
                     android:gravity="center"
-                    android:textColor="#fff"
                     android:src="@drawable/encrypted"
-                    android:textSize="13sp" />
+                    android:textColor="#fff" />
 
 
             </ViewFlipper>
@@ -208,6 +209,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
+                android:layout_above="@id/viewflip_controls"
                 android:layout_alignParentBottom="true"
                 android:background="@drawable/bottom_fade_dark_background" />
 
@@ -263,8 +265,8 @@
         android:layout_marginBottom="-420dp"
         android:alpha="0.0"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:src="@drawable/hiewaylogomessagebackfresh"
-        />
+        android:src="@drawable/hiewaylogomessagebackfresh" />
+
     <Button
 
         android:id="@+id/get_started_back"
@@ -273,12 +275,12 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
+        android:background="@drawable/message_box_drawable"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:background="@drawable/message_box_drawable"
         android:text="Let's get started"
         android:textAllCaps="false"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/get_started"
@@ -286,15 +288,14 @@
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
         android:layout_marginBottom="18dp"
         android:background="@drawable/message_box_drawable"
         android:backgroundTint="#181818"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:text="Let's get started"
         android:textAllCaps="false"
-        android:visibility="gone"/>
-
+        android:visibility="gone" />
 
 
     <FrameLayout

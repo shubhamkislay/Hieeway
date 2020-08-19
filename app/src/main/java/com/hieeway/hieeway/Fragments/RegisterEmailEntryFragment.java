@@ -138,17 +138,17 @@ public class RegisterEmailEntryFragment extends Fragment {
 
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                 {
-                    google_signin.animate().scaleX(0.76f).scaleY(0.76f).setDuration(0);
+                    google_signin.animate().scaleX(0.96f).scaleY(0.96f).setDuration(0);
 
                 }
                 else if(event.getAction() == MotionEvent.ACTION_UP)
                 {
-                    google_signin.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    google_signin.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
 
                 }
                 else
                 {
-                    google_signin.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    google_signin.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
 
                 }
                 return false;

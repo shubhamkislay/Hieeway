@@ -221,11 +221,6 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         why_hieeway_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        Boolean featuresShown = sharedPreferences.getBoolean(FEATURES_SHOWN, false);
-        if (featuresShown)
-            why_hieeway_btn.setVisibility(View.VISIBLE);
-
         why_hieeway_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -244,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 highlights_layout.setAlpha(0.0f);
                 highlights_layout.setVisibility(View.VISIBLE);
 
-                //highlights_layout.setTranslationY(displayHeight);
+                highlights_layout.setTranslationY(0);
 
 
                 //highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
@@ -321,6 +316,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 "\n\nHieeway encourages authenticity and approachability, and facilitates the possibility of deep meaningful connections" +
                 " leading to a better quality life.";
 
+        String whyMessageNew = "Hieeway is created to bring back the magic of texting, that we all used to love.  We believe that best way to build meaningful and deep connections is by directly sharing our thoughts, stories and emotions with the people we care about. \n" +
+                "\n" +
+                "Hieeway creates a space where people can truly be themselves, widen their circle of trust and, get to know a person deeply." +
+                "\n" +
+                "Being real and authentic is the ultimate freedom, and the foundation for true friendships.";
+
 
         SpannableString spannableString = new SpannableString(whyMessage);
 
@@ -353,14 +354,55 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         spannableString.setSpan(foregroundColorSpanBlueFour, whyMessage.indexOf("better"), whyMessage.indexOf("life") + "life".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
-        why_message.setText(spannableString);
+        why_message.setText(whyMessageNew);
 
 
+        int timeDuration = 2500;
 
 
         next_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                switch (currentItem) {
+                    case 1:
+                        full_size_texting.animate().alpha(0.0f).setDuration(timeDuration);
+                        live_messaging.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+                    case 2:
+                        live_messaging.animate().alpha(0.0f).setDuration(timeDuration);
+                        live_video.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+                    case 3:
+                        live_video.animate().alpha(0.0f).setDuration(timeDuration);
+                        discover_music.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+                    case 4:
+                        discover_music.animate().alpha(0.0f).setDuration(timeDuration);
+                        feelings.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+                    case 5:
+                        feelings.animate().alpha(0.0f).setDuration(timeDuration);
+                        delete_chats.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+                    case 6:
+                        delete_chats.animate().alpha(0.0f).setDuration(timeDuration);
+                        encrypted.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+                    case 7:
+                        encrypted.animate().alpha(0.0f).setDuration(timeDuration);
+                        //live_messaging.animate().alpha(1.0f).setDuration(timeDuration);
+                        break;
+
+
+                }
 
 
                 if (currentItem != 8) {
@@ -399,10 +441,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     editor.apply();
 
 
-
-                    viewflip_controls.setVisibility(View.GONE);
+                    viewflip_controls.setVisibility(View.INVISIBLE);
                     highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
-                    why_hieeway_btn.setVisibility(View.VISIBLE);
+
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -412,6 +453,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             if (fragment_number == 0)
                                 get_started.setVisibility(View.VISIBLE);
 
+                            why_hieeway_btn.setVisibility(View.VISIBLE);
+
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
                         }
@@ -419,12 +462,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                 }
 
-
             }
         });
         prev_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
 
                 Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_top_to_bottom);
                 Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_top_to_bottom);
@@ -440,6 +483,45 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     why_message.animate().alpha(0.0f).setDuration(1000);
                     next_btn.setRotation(180.0f);
                     next_btn.setImageDrawable(getResources().getDrawable(R.drawable.ic_swipe_arrow_up_black_24dp));
+                }
+
+                switch (currentItem) {
+                    case 1:
+                        full_size_texting.animate().alpha(1.0f).setDuration(timeDuration);
+                        live_messaging.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+                    case 2:
+                        live_messaging.animate().alpha(1.0f).setDuration(timeDuration);
+                        live_video.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+                    case 3:
+                        live_video.animate().alpha(1.0f).setDuration(timeDuration);
+                        discover_music.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+                    case 4:
+                        discover_music.animate().alpha(1.0f).setDuration(timeDuration);
+                        feelings.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+                    case 5:
+                        feelings.animate().alpha(1.0f).setDuration(timeDuration);
+                        delete_chats.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+                    case 6:
+                        delete_chats.animate().alpha(1.0f).setDuration(timeDuration);
+                        encrypted.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+                    case 7:
+                        encrypted.animate().alpha(1.0f).setDuration(timeDuration);
+                        //live_messaging.animate().alpha(0.0f).setDuration(timeDuration);
+                        break;
+
+
                 }
             }
         });
@@ -889,6 +971,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                                 if (fragment_number == 0)
                                     get_started.setVisibility(View.VISIBLE);
+                                why_hieeway_btn.setVisibility(View.VISIBLE);
+
                             }
 
 
