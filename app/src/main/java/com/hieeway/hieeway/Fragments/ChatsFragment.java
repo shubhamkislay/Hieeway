@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -162,6 +163,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private int i = 0;
     private boolean notLoaded = false;
     private List<ChatStamp> resettedList = new ArrayList<>();
+    private AnimationDrawable animationDrawableTop;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -264,6 +266,12 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         spotify_status_back = view.findViewById(R.id.spotify_status_back);
+
+        animationDrawableTop = (AnimationDrawable) spotify_status_back.getBackground();
+
+        animationDrawableTop.setEnterFadeDuration(1000);
+        animationDrawableTop.setExitFadeDuration(1000);
+        animationDrawableTop.start();
 
 
         email = view.findViewById(R.id.email);
