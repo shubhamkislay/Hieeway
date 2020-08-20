@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -61,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String storePublicKeyId;
     private RelativeLayout phone_btn;
     private RelativeLayout logout_lay;
+    private RelativeLayout privacy_Policy;
 
 
     @Override
@@ -102,6 +104,7 @@ public class SettingsActivity extends AppCompatActivity {
         visible_switch = findViewById(R.id.visible_switch);
         phone_btn = findViewById(R.id.phone_btn);
         logout_lay = findViewById(R.id.logout_lay);
+        privacy_Policy = findViewById(R.id.privacy_Policy);
 
 
         settings_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -199,6 +202,17 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        privacy_Policy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "https://hieeway.blogspot.com/";
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
+
 
         visible_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -234,6 +248,8 @@ public class SettingsActivity extends AppCompatActivity {
                 if (isChecked) {
 
                     music_beacon_switch.setAlpha(1.0f);
+                    music_beacon_switch.setChecked(true);
+                    editor.putBoolean(MUSIC_BEACON, isChecked);
                     editor.putBoolean(SPOTIFY_CONNECT, isChecked);
                     editor.apply();
                 } else {

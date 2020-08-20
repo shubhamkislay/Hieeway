@@ -468,8 +468,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             @Override
             public void onClick(View v) {
 
+
+                editor.putBoolean(MUSIC_BEACON, true);
                 editor.putBoolean(SPOTIFY_CONNECT, true);
                 editor.apply();
+
 
                 PackageManager pm = null;
                 try {
@@ -481,7 +484,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                     try {
                         pm.getPackageInfo("com.spotify.music", 0);
                         isSpotifyInstalled = true;
-                        Toast.makeText(getActivity(), "Log in to Spotify", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(getActivity(), "Log in to Spotify", Toast.LENGTH_SHORT).show();
                         AuthenticationRequest.Builder builder =
                                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 

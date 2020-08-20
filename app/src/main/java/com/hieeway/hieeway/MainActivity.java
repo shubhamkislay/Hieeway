@@ -27,6 +27,9 @@ import androidx.media.MediaSessionManager;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.Display;
 import android.view.View;
@@ -34,6 +37,8 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.MimeTypeMap;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private MediaSession mSession;
     private MediaController mController;
     RelativeLayout highlights_layout;
-    private Button why_hieeway_btn;
+    private ImageButton why_hieeway_btn;
 
 
     GoogleApiClient mCredentialsApiClient;
@@ -168,7 +173,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private ImageButton next_btn, prev_btn;
     private int currentItem = 1;
     private TypeWriter greet_text;
-    private TextView why_message;
+    private TextView why_message, terms_policy_txt;
+    private boolean changeActivity = false;
+    private RelativeLayout policy_layout;
+    private Button cancel_btn;
+    private WebView webView;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -184,12 +193,15 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         frameLayout = findViewById(R.id.framelayout);
         why_message = findViewById(R.id.why_message);
+        terms_policy_txt = findViewById(R.id.terms_policy_txt);
 
         registerAuthenticateActivity = new RegisterAuthenticateActivity();
         registerEmailEntryFragment = new RegisterEmailEntryFragment();
         registerUsernameEntryFragment = new RegisterUsernameEntryFragment();
 
         registerPhoneNumberFragment = new RegisterPhoneNumberFragment();
+        policy_layout = findViewById(R.id.policy_layout);
+        cancel_btn = findViewById(R.id.cancel_btn);
 
         highlights_layout = findViewById(R.id.highlights_layout);
 
@@ -199,6 +211,26 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         fragmentList.add(registerEmailEntryFragment);
         fragmentList.add(registerUsernameEntryFragment);
         fragmentList.add(registerPhoneNumberFragment);
+
+
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                policy_layout.setVisibility(View.GONE);
+            }
+        });
+
+        webView = findViewById(R.id.policy_webview);
+
+        webView.setWebViewClient(new WebViewClient());
+
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        //  webView.loadUrl("https://hieeway.flycricket.io/privacy.html");
+
+
+
+
 
 
         full_size_texting = findViewById(R.id.full_size_texting);
@@ -219,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         greet_text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         why_message.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        why_hieeway_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //why_hieeway_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         why_hieeway_btn.setOnClickListener(new View.OnClickListener() {
@@ -227,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void onClick(View v) {
 
                 get_started.setVisibility(View.GONE);
+                terms_policy_txt.setVisibility(View.GONE);
                 why_hieeway_btn.setVisibility(View.GONE);
 
 
@@ -317,14 +350,22 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 "\n\nHieeway encourages authenticity and approachability, and facilitates the possibility of deep meaningful connections" +
                 " leading to a better quality life.";
 
-        String whyMessageNew = "Hieeway is created to bring back the magic of texting, that we all used to love.  We believe that best way to build meaningful and deep connections is by directly sharing our thoughts, stories and emotions with the people we care about. \n" +
+        String whyMessageNew = "Hieeway is created to bring back the magic of texting, that we all used to love.  We believe that the best way to build meaningful and deep connections is by sharing our thoughts, stories and emotions directly with the people we care about.\n" +
                 "\n" +
-                "Hieeway creates a space where people can truly be themselves, widen their circle of trust and, get to know a person deeply." +
+                "Hieeway creates a space where we can truly be ourselves, widen our circle of trust and, get to know any person deeply." +
                 "\n" +
-                "Being real and authentic is the ultimate freedom, and the foundation for true friendships.";
+                "Being real and authentic brings the ultimate freedom, and the foundation for true friendships." +
+                "\n" +
+                "Come and celebrate the real you with Hieeway";
 
+
+        String policyText = "By continuing, you agree to our\n Terms of Use and Privacy Policy";
 
         SpannableString spannableString = new SpannableString(whyMessage);
+        SpannableString policyString = new SpannableString(policyText);
+
+
+
 
         ForegroundColorSpan foregroundColorSpanRedOne = new ForegroundColorSpan(Color.WHITE);
         ForegroundColorSpan foregroundColorSpanRedTwo = new ForegroundColorSpan(Color.WHITE);
@@ -338,6 +379,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         ForegroundColorSpan foregroundColorSpanBlueTwo = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark));
         ForegroundColorSpan foregroundColorSpanBlueThree = new ForegroundColorSpan(getResources().getColor(R.color.colorPrimaryDark));
 
+/*
 
         spannableString.setSpan(foregroundColorSpanRedOne, whyMessage.indexOf("carefully"), whyMessage.indexOf("persona") + "persona".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(foregroundColorSpanRedTwo, whyMessage.indexOf("mindless"), whyMessage.indexOf("scrolling") + "scrolling".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -354,6 +396,72 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         spannableString.setSpan(foregroundColorSpanBlueThree, whyMessage.indexOf("deep"), whyMessage.indexOf("connections") + "connections".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableString.setSpan(foregroundColorSpanBlueFour, whyMessage.indexOf("better"), whyMessage.indexOf("life") + "life".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+*/
+
+
+        ClickableSpan policyclickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                //startActivity(new Intent(MyActivity.this, NextActivity.class));
+                // webView.loadUrl("file:///android_asset/privay_policy.html");
+
+
+               /* webView.loadUrl("https://hieeway.blogspot.com/2020/08/privacy-policy-hieeway-built-hieeway.html");
+                policy_layout.setVisibility(View.VISIBLE);*/
+
+
+                String url = "https://hieeway.blogspot.com/2020/08/privacy-policy-hieeway-built-hieeway.html";
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        ClickableSpan termsOfServiceclickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                //startActivity(new Intent(MyActivity.this, NextActivity.class));
+                //webView.loadUrl("file:///android_asset/terms_of_service.html");
+
+                // webView.loadUrl("https://hieeway.blogspot.com/2020/08/terms-of-service.html");
+
+                String url = "https://hieeway.blogspot.com/2020/08/terms-of-service.html";
+
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+                //policy_layout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+
+        //termsOfServiceclickableSpan.
+
+        policyString.setSpan(termsOfServiceclickableSpan, policyText.indexOf("Terms"), policyText.indexOf("Use") + "Use".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        policyString.setSpan(policyclickableSpan, policyText.indexOf("Privacy"), policyText.indexOf("Policy") + "Policy".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        policyString.setSpan(foregroundColorSpanBlueThree, policyText.indexOf("Terms"), policyText.indexOf("Use") + "Use".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        policyString.setSpan(foregroundColorSpanBlueFour, policyText.indexOf("Privacy"), policyText.indexOf("Policy") + "Policy".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        terms_policy_txt.setMovementMethod(LinkMovementMethod.getInstance());
+        terms_policy_txt.setHighlightColor(Color.TRANSPARENT);
+
+        terms_policy_txt.setText(policyString);
+
+
+
 
         why_message.setText(whyMessageNew);
 
@@ -368,37 +476,37 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                 switch (currentItem) {
                     case 1:
-                        full_size_texting.animate().alpha(0.0f).setDuration(timeDuration);
+                        full_size_texting.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         live_messaging.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
                     case 2:
-                        live_messaging.animate().alpha(0.0f).setDuration(timeDuration);
+                        live_messaging.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         live_video.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
                     case 3:
-                        live_video.animate().alpha(0.0f).setDuration(timeDuration);
+                        live_video.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         discover_music.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
                     case 4:
-                        discover_music.animate().alpha(0.0f).setDuration(timeDuration);
+                        discover_music.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         feelings.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
                     case 5:
-                        feelings.animate().alpha(0.0f).setDuration(timeDuration);
+                        feelings.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         delete_chats.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
                     case 6:
-                        delete_chats.animate().alpha(0.0f).setDuration(timeDuration);
+                        delete_chats.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         encrypted.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
                     case 7:
-                        encrypted.animate().alpha(0.0f).setDuration(timeDuration);
+                        encrypted.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         //live_messaging.animate().alpha(1.0f).setDuration(timeDuration);
                         break;
 
@@ -452,8 +560,10 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
                             highlights_layout.setVisibility(View.GONE);
-                            if (fragment_number == 0)
+                            if (fragment_number == 0) {
                                 get_started.setVisibility(View.VISIBLE);
+                                terms_policy_txt.setVisibility(View.VISIBLE);
+                            }
 
                             why_hieeway_btn.setVisibility(View.VISIBLE);
 
@@ -490,32 +600,32 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 switch (currentItem) {
                     case 1:
                         full_size_texting.animate().alpha(1.0f).setDuration(timeDuration);
-                        live_messaging.animate().alpha(0.0f).setDuration(timeDuration);
+                        live_messaging.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         break;
 
                     case 2:
                         live_messaging.animate().alpha(1.0f).setDuration(timeDuration);
-                        live_video.animate().alpha(0.0f).setDuration(timeDuration);
+                        live_video.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         break;
 
                     case 3:
                         live_video.animate().alpha(1.0f).setDuration(timeDuration);
-                        discover_music.animate().alpha(0.0f).setDuration(timeDuration);
+                        discover_music.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         break;
 
                     case 4:
                         discover_music.animate().alpha(1.0f).setDuration(timeDuration);
-                        feelings.animate().alpha(0.0f).setDuration(timeDuration);
+                        feelings.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         break;
 
                     case 5:
                         feelings.animate().alpha(1.0f).setDuration(timeDuration);
-                        delete_chats.animate().alpha(0.0f).setDuration(timeDuration);
+                        delete_chats.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         break;
 
                     case 6:
                         delete_chats.animate().alpha(1.0f).setDuration(timeDuration);
-                        encrypted.animate().alpha(0.0f).setDuration(timeDuration);
+                        encrypted.animate().alpha(0.0f).setDuration(timeDuration - 2000);
                         break;
 
                     case 7:
@@ -554,6 +664,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             @Override
             public void onClick(View v) {
                 get_started.setVisibility(View.GONE);
+                terms_policy_txt.setVisibility(View.GONE);
                 view_flipper.setVisibility(View.GONE);
                 why_hieeway_btn.setVisibility(View.GONE);
                 switch (fragment_number)
@@ -568,6 +679,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                         }
                         get_started.setVisibility(View.GONE);
+                        terms_policy_txt.setVisibility(View.GONE);
                         video_view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
@@ -611,6 +723,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             public void onCompletion(MediaPlayer mp) {
                                 animateArrow();
                                 get_started.setVisibility(View.GONE);
+                                terms_policy_txt.setVisibility(View.GONE);
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -784,6 +897,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if(dataSnapshot.exists())
                     {
+                        changeActivity = true;
                         startActivity(new Intent(MainActivity.this,NavButtonTest.class));
                         finish();
                     }
@@ -974,8 +1088,10 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                                 }, 1500);
                             } else {
 
-                                if (fragment_number == 0)
+                                if (fragment_number == 0) {
                                     get_started.setVisibility(View.VISIBLE);
+                                    terms_policy_txt.setVisibility(View.VISIBLE);
+                                }
                                 why_hieeway_btn.setVisibility(View.VISIBLE);
 
                             }
@@ -1795,10 +1911,35 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     }
 */
 
+    public String getEmojiByUnicode(int unicode) {
+        return new String(Character.toChars(unicode));
+    }
+
 
     @Override
     protected void onPause() {
         super.onPause();
-        highlights_layout.setVisibility(View.INVISIBLE);
+
+        if (!changeActivity)
+            if (fragment_number == 0) {
+                highlights_layout.setVisibility(View.INVISIBLE);
+                get_started.setVisibility(View.VISIBLE);
+                terms_policy_txt.setVisibility(View.VISIBLE);
+                why_hieeway_btn.setVisibility(View.VISIBLE);
+            }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (policy_layout.getVisibility() == View.VISIBLE)
+            policy_layout.setVisibility(View.GONE);
+        else
+            super.onBackPressed();
     }
 }

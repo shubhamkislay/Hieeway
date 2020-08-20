@@ -654,7 +654,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="2dp"
         android:fitsSystemWindows="true"
-        android:background="@drawable/gradient_faded_circle_animation"
+        android:background="@drawable/gradient_faded_circle_dark_animation"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintEnd_toEndOf="@+id/bottom_bar"
