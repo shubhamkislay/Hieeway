@@ -740,6 +740,12 @@ public class ViewProfileActivity extends AppCompatActivity {
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userId);
 
+        DatabaseReference chatUserReference = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userId);
+
+        chatUserReference.removeValue();
+
 
         requestSentReference.removeValue();
 
@@ -747,6 +753,12 @@ public class ViewProfileActivity extends AppCompatActivity {
         DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(userId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        DatabaseReference chatOtherReference = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(userId)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        chatOtherReference.removeValue();
 
 
         requestReceiveReference.removeValue();

@@ -284,6 +284,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     public void run() {
 
 
+
                         greet_text.animateText("Why Hieeway?");
                         greet_text.setCharacterDelay(75);
                         greet_text.setTextSize(32);
@@ -559,6 +560,19 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         public void run() {
 
 
+                            view_flipper.showNext();
+                            next_btn.setRotation(180.0f);
+                            next_btn.setImageDrawable(getResources().getDrawable(R.drawable.ic_swipe_arrow_up_black_24dp));
+                            prev_btn.setVisibility(View.GONE);
+                            full_size_texting.setAlpha(1.0f);
+                            view_flipper.setAlpha(0.0f);
+
+                            greet_text.animateText("");
+                            greet_text.setCharacterDelay(0);
+                            greet_text.setTextSize(32);
+                            greet_text.animate();
+
+                            currentItem = 1;
                             highlights_layout.setVisibility(View.GONE);
                             if (fragment_number == 0) {
                                 get_started.setVisibility(View.VISIBLE);

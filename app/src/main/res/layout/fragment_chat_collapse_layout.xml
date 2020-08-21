@@ -224,7 +224,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginRight="-2dp"
                             android:layout_toLeftOf="@id/search_bar_lay"
-                            android:background="@drawable/gradient_faded_circle_dark_animation"
+                            android:background="@drawable/gradient_faded_music_back"
                             android:padding="6dp"
 
                             android:scaleType="centerInside"
