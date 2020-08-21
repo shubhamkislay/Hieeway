@@ -744,10 +744,13 @@ public class ViewProfileActivity extends AppCompatActivity {
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(userId);
 
+        DatabaseReference messageUserReference = FirebaseDatabase.getInstance().getReference("Messages")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userId);
+
         chatUserReference.removeValue();
-
-
         requestSentReference.removeValue();
+        messageUserReference.removeValue();
 
 
         DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
@@ -758,9 +761,12 @@ public class ViewProfileActivity extends AppCompatActivity {
                 .child(userId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
+        DatabaseReference messageOtherReference = FirebaseDatabase.getInstance().getReference("Messages")
+                .child(userId)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
         chatOtherReference.removeValue();
-
-
+        messageOtherReference.removeValue();
         requestReceiveReference.removeValue();
 
         friendStatus = "notFriend";

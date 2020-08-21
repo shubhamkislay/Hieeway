@@ -6,15 +6,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -43,10 +49,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.DeleteOptionsDialog;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.RemoveFriendDialog;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.hieeway.hieeway.VerticalPageActivity;
@@ -62,6 +70,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
     private Context mContext;
     private Activity activity;
     private List<Friend> mUsers;
+    private RemoveFriendDialog removeFriendDialog;
 
     public FriendsAdapter(Context mContext, List<Friend> mUsers, Activity activity) {
 
@@ -121,9 +130,65 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
 
                     //Unfriend and block options to be built here
+                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+
+
+                    Vibrator vb = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        vb.vibrate(50);
+                    }
+
+
+                    removeFriendDialog = new RemoveFriendDialog(mContext, friend.getFriendId(), friend.getUsername());
+
+                    removeFriendDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                    removeFriendDialog.show();
+
+                    //  DeleteOptionsListener deleteOptionsListener;
+
+                    // deleteOptionsListener.setDeleteOptionsDialog(mContext,chatStamp,position,mChatStamps,activity,viewHolder);
+
+
+                    return true;
+
+                }
+            });
+
+            viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                        // viewHolder.user_photo.setAlpha(0.4f);
+
+                        viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
+
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+
+                        //         viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
+
+
+                    } else {
+                        // viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+
+
+                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                    }
 
                     return false;
                 }
+
             });
 
 
