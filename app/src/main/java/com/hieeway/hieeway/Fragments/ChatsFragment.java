@@ -164,6 +164,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private boolean notLoaded = false;
     private List<ChatStamp> resettedList = new ArrayList<>();
     private AnimationDrawable animationDrawableTop;
+    private boolean blinking = false;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -556,6 +557,31 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         return view;
     }
 
+    private void changeTranslationForSpotifyBack() {
+
+        if (spotify_status_back.getVisibility() == View.VISIBLE) {
+            spotify_status_back.animate().alpha(0.15f).setDuration(350);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    spotify_status_back.animate().alpha(1.0f).setDuration(350);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            changeTranslationForSpotifyBack();
+                        }
+                    }, 350);
+
+                }
+            }, 350);
+        } else {
+            blinking = false;
+            spotify_status_back.animate().alpha(1.0f).setDuration(350);
+        }
+
+    }
+
     private void initialChatstampPopulateThread(List<ChatStamp> chatStamps) {
 
 
@@ -880,6 +906,11 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                                                     if (checkedTimeStamp.compareTo(task.getResult().get(0).getTimestamp()) != 0) {
                                                         spotify_status_back.setVisibility(View.VISIBLE);
+                                                        if (!blinking) {
+                                                            blinking = true;
+                                                            changeTranslationForSpotifyBack();
+
+                                                        }
                                                     } else {
                                                         spotify_status_back.setVisibility(View.GONE);
                                                     }
