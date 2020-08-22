@@ -24,6 +24,7 @@ public class ChatMessage {
     private String gotReplyMsg;
     private Boolean showGotReplyMsg;
 
+
     private String senderReplyMessage;
     private String timeStamp;
 

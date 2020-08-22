@@ -3047,6 +3047,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         timeStampHash.put("id", userIdChattingWith);
         timeStampHash.put("username", usernameUserChattingWith);
         timeStampHash.put("photo", userChattingWith_photo);
+        timeStampHash.put("localuserstamp", ts);
         timeStampHash.put("seen", "notseen");
         timeStampHash.put("chatPending", false);
         senderChatCreateRef.updateChildren(timeStampHash);
@@ -3057,6 +3058,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
         timeStampHashReceiver.put("username", currentUserName);
         timeStampHashReceiver.put("photo", currentUserPhoto);
+        timeStampHashReceiver.put("otheruserstamp", ts);
         timeStampHashReceiver.put("seen", "notseen");
         timeStampHashReceiver.put("chatPending", true);
         receiverChatCreateRef.updateChildren(timeStampHashReceiver);
@@ -4680,6 +4682,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
                         timeStampHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
                         timeStampHash.put("seen", "notseen");
+                        timeStampHash.put("localuserstamp", ts);
                         timeStampHash.put("chatPending", false);
                         timeStampHash.put("gemCount",2);
 
@@ -4687,6 +4690,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("id", sendMessageAsyncModel.getCurrentID());
                         timeStampHashReceiver.put("username", chatListItemCreationModel.getCurrentUserName());
                         timeStampHashReceiver.put("photo", currentUserPhoto);
+                        timeStampHashReceiver.put("otheruserstamp", ts);
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);
                         timeStampHashReceiver.put("gemCount",2);
@@ -4700,6 +4704,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHash.put("id", sendMessageAsyncModel.getUserChattingWithId());
                         timeStampHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
                         timeStampHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
+                        timeStampHash.put("localuserstamp", ts);
                         timeStampHash.put("seen", "notseen");
                         timeStampHash.put("chatPending", false);
 
@@ -4707,6 +4712,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("id", sendMessageAsyncModel.getCurrentID());
                         timeStampHashReceiver.put("username", chatListItemCreationModel.getCurrentUserName());
                         timeStampHashReceiver.put("photo", currentUserPhoto);
+                        timeStampHashReceiver.put("otheruserstamp", ts);
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);
 

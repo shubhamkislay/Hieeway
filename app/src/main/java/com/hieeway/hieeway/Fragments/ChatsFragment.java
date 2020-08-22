@@ -562,20 +562,32 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         int timeInterval = 300;
 
         if (spotify_status_back.getVisibility() == View.VISIBLE) {
-            spotify_status_back.animate().alpha(0.15f).setDuration(timeInterval);
-            spotify_status.animate().scaleY(0.9f).scaleX(0.9f).setDuration(timeInterval);
+            spotify_status_back.animate().alpha(1.0f).setDuration(timeInterval);
+            spotify_status_back.animate().scaleY(1.075f).scaleX(1.075f).setDuration(timeInterval);
+            spotify_status.animate().scaleY(0.95f).scaleX(0.95f).setDuration(timeInterval);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    spotify_status_back.animate().alpha(1.0f).setDuration(timeInterval);
-                    spotify_status.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval);
+
+
+                    //spotify_status_back.setAlpha(0.0f);
+                    spotify_status_back.animate().scaleY(0.94f).scaleX(0.94f).setDuration(0);
+                    spotify_status.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval + 150);
+                    spotify_status_back.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval + 150);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            spotify_status_back.animate().alpha(0.20f).setDuration(timeInterval);
+                        }
+                    }, timeInterval - 150);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             changeTranslationForSpotifyBack();
                         }
-                    }, timeInterval);
+                    }, timeInterval + 150);
 
                 }
             }, timeInterval);
