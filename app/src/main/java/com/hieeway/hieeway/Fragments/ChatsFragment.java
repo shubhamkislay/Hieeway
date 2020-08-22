@@ -559,25 +559,30 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
     private void changeTranslationForSpotifyBack() {
 
+        int timeInterval = 300;
+
         if (spotify_status_back.getVisibility() == View.VISIBLE) {
-            spotify_status_back.animate().alpha(0.15f).setDuration(350);
+            spotify_status_back.animate().alpha(0.15f).setDuration(timeInterval);
+            spotify_status.animate().scaleY(0.9f).scaleX(0.9f).setDuration(timeInterval);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    spotify_status_back.animate().alpha(1.0f).setDuration(350);
+                    spotify_status_back.animate().alpha(1.0f).setDuration(timeInterval);
+                    spotify_status.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             changeTranslationForSpotifyBack();
                         }
-                    }, 350);
+                    }, timeInterval);
 
                 }
-            }, 350);
+            }, timeInterval);
         } else {
             blinking = false;
-            spotify_status_back.animate().alpha(1.0f).setDuration(350);
+            spotify_status_back.animate().alpha(1.0f).setDuration(timeInterval);
+            spotify_status.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval);
         }
 
     }

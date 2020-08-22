@@ -40,6 +40,7 @@ import com.hieeway.hieeway.Interface.LiveMessageEventListener;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
 import com.hieeway.hieeway.Interface.YoutubeBottomFragmentStateListener;
 import com.hieeway.hieeway.Model.ChatMessage;
+import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 
 import java.util.ArrayList;
@@ -107,6 +108,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     private boolean backPressed = false;
     private String usernameChattingWith;
     private String photo;
+    private DatabaseReference userFriendShipReference;
+    private ValueEventListener friendShipValueListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -391,9 +394,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         }
 
 
-
-
-
+        checkFriendshipStatus();
 
 
 
@@ -691,6 +692,35 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
     }
 
+    private void checkFriendshipStatus() {
+        userFriendShipReference = FirebaseDatabase.getInstance().getReference("FriendList")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userIDCHATTINGWITH)
+                .child("status");
+
+
+        friendShipValueListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+
+                    String status = snapshot.getValue(String.class);
+                    if (!status.equals("friends"))
+                        finish();
+                } else {
+                    finish();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        // userFriendShipReference.addValueEventListener();
+    }
+
     private void userStatusOnDiconnect() {
 
         HashMap<String, Object> setOfflineHash = new HashMap<>();
@@ -780,6 +810,12 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         //Log.v(VIDEO_CHECK_TAG,"onPause Parent"+ " called");
         super.onPause();
 
+        try {
+            userFriendShipReference.addValueEventListener(friendShipValueListener);
+        } catch (Exception e) {
+            //
+        }
+
         notificationIDHashMap.put(userIdChattingWith + "numbersent", 0);
         notificationIDHashMap.put(userIdChattingWith + "numberreply", 0);
         isWatching = false;
@@ -827,6 +863,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     @Override
     protected void onResume() {
         super.onResume();
+
+        userFriendShipReference.addValueEventListener(friendShipValueListener);
 
         userNameChattingWith = usernameChattingWith;
         backPressed = false;
