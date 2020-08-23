@@ -463,6 +463,8 @@ public class MusicFeedActivity extends AppCompatActivity {
                             sentListSize = userList.size();
 
 
+                        } else {
+                            Toast.makeText(MusicFeedActivity.this, "You have no friends to looks for music update\nSearch and add friends from the search tab", Toast.LENGTH_SHORT).show();
                         }
                     }
 

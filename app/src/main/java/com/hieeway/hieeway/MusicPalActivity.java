@@ -371,7 +371,7 @@ public class MusicPalActivity extends AppCompatActivity {
                             //  Toast.makeText(getContext(),"Can't fetch friends",Toast.LENGTH_SHORT).show();
 
                             result_text.setVisibility(View.VISIBLE);
-                            result_text.setText("Can't fetch friends");
+                            result_text.setText("Can't fetch friends\nSearch and add friends from the search tab");
 
                             progressBar.setVisibility(View.INVISIBLE);
                             progressBarTwo.setVisibility(View.INVISIBLE);
