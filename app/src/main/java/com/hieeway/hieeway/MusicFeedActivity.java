@@ -336,10 +336,10 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                             loading_feed.setVisibility(View.GONE);
 
                                                                             if (userList.size() > 0)
-                                                                                no_music_txt.setVisibility(View.VISIBLE);
+                                                                                no_music_txt.setVisibility(View.GONE);
 
                                                                             else
-                                                                                no_music_txt.setVisibility(View.GONE);
+                                                                                no_music_txt.setVisibility(View.VISIBLE);
 
                                                                         }
                                                                     }, 500);
