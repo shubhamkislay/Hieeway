@@ -376,6 +376,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
                             emoji_icon.setAlpha(0.2f);
                             feeling_icon.setAlpha(0.2f);
+                            subscribed = false;
                         }
                     });
                 }
@@ -401,6 +402,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
                                     emoji_icon.setAlpha(1.0f);
                                     feeling_icon.setAlpha(1.0f);
+                                    subscribed = true;
                                 }
                             });
 

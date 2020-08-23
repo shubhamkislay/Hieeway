@@ -2928,8 +2928,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         this.parentActivity = activity;
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED)
-            camera_access_layout.setVisibility(View.VISIBLE);
+                != PackageManager.PERMISSION_GRANTED) {
+            try {
+                camera_access_layout.setVisibility(View.VISIBLE);
+            } catch (Exception e) {
+                requestAllPermissionsBeforeStart(activity, live);
+            }
+
+        }
         else {
 
             try {
