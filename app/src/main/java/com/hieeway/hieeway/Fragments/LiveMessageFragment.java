@@ -296,6 +296,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private Button online_ring;
     private AnimationDrawable animationDrawable, animationDrawableTop;
     private RelativeLayout live_exp_back;
+    private RelativeLayout camera_access_layout;
+    private Button camera_access_btn;
+    private TextView request_camera_message;
+    private String live;
 
 
     public LiveMessageFragment() {
@@ -421,6 +425,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
         final String photo = getArguments().getString("photo");
 
+
+        camera_access_btn = view.findViewById(R.id.camera_access_btn);
+        camera_access_layout = view.findViewById(R.id.camera_access_layout);
+        request_camera_message = view.findViewById(R.id.request_camera_message);
 
         messageBox = view.findViewById(R.id.message_box);
         youtube_layout = view.findViewById(R.id.youtube_layout);
@@ -889,6 +897,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         sync_video_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         connecting_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         calling_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        request_camera_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         getLifecycle().addObserver(youtube_player_view);
@@ -930,6 +939,15 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
+
+        camera_access_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                camera_access_layout.setVisibility(View.GONE);
+                requestAllPermissionsBeforeStart(parentActivity, live);
+
+            }
+        });
 
         youtube_button.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -2906,9 +2924,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     public void showLiveMessageDialog(Activity activity, String live) {
 
 
+        this.live = live;
+        this.parentActivity = activity;
+
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED)
-            requestAllPermissionsBeforeStart(activity, live);
+            camera_access_layout.setVisibility(View.VISIBLE);
         else {
 
             try {

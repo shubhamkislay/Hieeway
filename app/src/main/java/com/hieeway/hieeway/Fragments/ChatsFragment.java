@@ -1,5 +1,6 @@
 package com.hieeway.hieeway.Fragments;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 
 import androidx.core.content.ContextCompat;
@@ -562,23 +563,31 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         int timeInterval = 300;
 
         if (spotify_status_back.getVisibility() == View.VISIBLE) {
+
+
+            ObjectAnimator rotate = ObjectAnimator.ofFloat(spotify_status_back, "rotation", 0f, 20f, 0f, -20f, 0f); // rotate o degree then 20 degree and so on for one loop of rotation.
+// animateView (View object)
+            rotate.setRepeatCount(20); // repeat the loop 20 times
+            rotate.setDuration(100); // animation play time 100 ms
+            rotate.start();
+
             spotify_status_back.animate().alpha(1.0f).setDuration(timeInterval);
-            spotify_status_back.animate().scaleY(1.075f).scaleX(1.075f).setDuration(timeInterval);
-            spotify_status.animate().scaleY(0.95f).scaleX(0.95f).setDuration(timeInterval);
+            // spotify_status_back.animate().scaleY(1.05f).scaleX(1.05f).setDuration(timeInterval);
+            spotify_status.animate().scaleY(0.92f).scaleX(0.92f).setDuration(timeInterval);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
 
 
                     //spotify_status_back.setAlpha(0.0f);
-                    spotify_status_back.animate().scaleY(0.94f).scaleX(0.94f).setDuration(0);
+                    // spotify_status_back.animate().scaleY(0.94f).scaleX(0.94f).setDuration(0);
                     spotify_status.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval + 150);
-                    spotify_status_back.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval + 150);
+                    //spotify_status_back.animate().scaleY(1.0f).scaleX(1.0f).setDuration(timeInterval + 150);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            spotify_status_back.animate().alpha(0.20f).setDuration(timeInterval);
+                            spotify_status_back.animate().alpha(0.35f).setDuration(timeInterval);
                         }
                     }, timeInterval - 150);
 

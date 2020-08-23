@@ -738,6 +738,38 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/camera_access_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#070707"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/request_camera_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="Live messaging requires camera to enable Live Expressions on demand"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/camera_access_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/request_camera_message"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/message_box_drawable"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:text="Allow Camera Access "
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+
     <include layout="@layout/activity_web_view" />
 
     <include

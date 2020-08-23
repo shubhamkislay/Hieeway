@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         view_flipper = findViewById(R.id.view_flipper);
 
         greet_text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        why_message.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //why_message.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         //why_hieeway_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
@@ -354,10 +354,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         String whyMessageNew = "Hieeway is created to bring back the magic of texting, that we all used to love.  We believe that the best way to build meaningful and deep connections is by sharing our thoughts, stories and emotions directly with the people we care about.\n" +
                 "\n" +
                 "Hieeway creates a space where we can truly be ourselves, widen our circle of trust and, get to know any person deeply." +
-                "\n" +
-                "Being real and authentic brings the ultimate freedom, and the foundation for true friendships." +
-                "\n" +
-                "Come and celebrate the real you with Hieeway";
+                " Being real and authentic brings the ultimate freedom, and the foundation for true friendships." +
+                " Come and celebrate the real you with Hieeway";
 
 
         String policyText = "By continuing, you agree to our\n Terms of Use and Privacy Policy";
