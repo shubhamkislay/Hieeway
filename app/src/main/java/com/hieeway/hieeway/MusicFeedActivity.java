@@ -74,6 +74,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     ImageView music_pal;
     private RelativeLayout music_pal_lay;
     private Button music_pal_back;
+    private TextView no_music_txt;
 
     @Override
     protected void onResume() {
@@ -220,9 +221,11 @@ public class MusicFeedActivity extends AppCompatActivity {
         music_recyclerview = findViewById(R.id.music_recyclerview);
         loading_feed = findViewById(R.id.loading_feed);
         seeing_music_txt = findViewById(R.id.seeing_music_txt);
+        no_music_txt = findViewById(R.id.no_music_txt);
 
         seeing_music_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         connecting_spotify_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        no_music_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         //new_update.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         music_pal = findViewById(R.id.music_pal);
@@ -331,6 +334,12 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                             music_recyclerview.setAdapter(musicFeedAdapter);
                                                                             musicFeedAdapter.notifyDataSetChanged();
                                                                             loading_feed.setVisibility(View.GONE);
+
+                                                                            if (userList.size() > 0)
+                                                                                no_music_txt.setVisibility(View.VISIBLE);
+
+                                                                            else
+                                                                                no_music_txt.setVisibility(View.GONE);
 
                                                                         }
                                                                     }, 500);
