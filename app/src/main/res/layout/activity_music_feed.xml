@@ -130,6 +130,34 @@
             android:text="Connecting to Spotify..."
             android:textColor="#fff"
             android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/connecting_error_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="16dp"
+            android:background="@drawable/message_box_drawable"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:text="Trouble Connecting?"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/connection_issue_hint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:background="#000"
+            android:gravity="center_vertical"
+            android:text="1. Check if Spotify Connect and Music Beacon are checked from the settings page\n
+\n2. Close and restart spotify app and try to play a song to see if is working fine.
+\n\n3. Come back and try to start again."
+            android:textSize="24sp"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
 </RelativeLayout>

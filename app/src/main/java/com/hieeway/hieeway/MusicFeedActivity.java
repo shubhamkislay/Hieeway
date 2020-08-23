@@ -75,6 +75,9 @@ public class MusicFeedActivity extends AppCompatActivity {
     private RelativeLayout music_pal_lay;
     private Button music_pal_back;
     private TextView no_music_txt;
+    private TextView connection_issue_hint;
+    private Button connection_error_btn;
+    private Boolean connectionSuccessull = false;
 
     @Override
     protected void onResume() {
@@ -97,12 +100,24 @@ public class MusicFeedActivity extends AppCompatActivity {
         }
         //if(remoteReady)
 
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!connectionSuccessull)
+                    connection_error_btn.setVisibility(View.VISIBLE);
+            }
+        }, 10000);
+
+
         SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
                 new Connector.ConnectionListener() {
 
                     @Override
                     public void onConnected(SpotifyAppRemote spotifyAppRemote) {
                         mSpotifyAppRemote = spotifyAppRemote;
+
+                        connectionSuccessull = true;
 
                         // remoteReady = true;
 
@@ -213,6 +228,22 @@ public class MusicFeedActivity extends AppCompatActivity {
         music_pal_lay = findViewById(R.id.music_pal_lay);
 
         music_pal_back = findViewById(R.id.music_pal_back);
+
+        connection_issue_hint = findViewById(R.id.connection_issue_hint);
+
+        connection_error_btn = findViewById(R.id.connecting_error_btn);
+
+
+        connection_error_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connection_issue_hint.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+
+
 
 
 
