@@ -57,6 +57,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     final static String ANGRY = "angry";
     public static final String PHOTO_URL = "photourl";
     public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
 
     public static final String USERNAME = "username";
     ImageView profile_pic_background, center_dp;
@@ -97,6 +98,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private RelativeLayout connect_spotify_layout;
     private TextView connect_spotify_text;
     private String currentUserPhoto;
+    private Boolean spotifyconnect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,6 +147,12 @@ public class ViewProfileActivity extends AppCompatActivity {
         friend_btn.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         friend_btn_cancel.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         start_chat.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
 
         connect_spotify = findViewById(R.id.connect_spotify);
 
@@ -232,6 +240,9 @@ public class ViewProfileActivity extends AppCompatActivity {
 
                 PackageManager pm = getPackageManager();
                 boolean isSpotifyInstalled;
+
+                editor.putBoolean(SPOTIFY_CONNECT, true);
+                editor.apply();
 
 
                 try {
@@ -467,73 +478,81 @@ public class ViewProfileActivity extends AppCompatActivity {
             startBlinking();
 
 
-            ConnectionParams connectionParams =
-                    new ConnectionParams.Builder(CLIENT_ID)
-                            .setRedirectUri(REDIRECT_URI)
-                            .setPreferredThumbnailImageSize(500)
-                            .setPreferredImageSize(500)
-                            .showAuthView(true)
-                            .build();
+            if (spotifyconnect) {
+                ConnectionParams connectionParams =
+                        new ConnectionParams.Builder(CLIENT_ID)
+                                .setRedirectUri(REDIRECT_URI)
+                                .setPreferredThumbnailImageSize(500)
+                                .setPreferredImageSize(500)
+                                .showAuthView(true)
+                                .build();
 
 
-            SpotifyAppRemote.CONNECTOR.connect(ViewProfileActivity.this, connectionParams,
-                    new Connector.ConnectionListener() {
+                SpotifyAppRemote.CONNECTOR.connect(ViewProfileActivity.this, connectionParams,
+                        new Connector.ConnectionListener() {
 
-                        @Override
-                        public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                            mSpotifyAppRemote = spotifyAppRemote;
+                            @Override
+                            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                                mSpotifyAppRemote = spotifyAppRemote;
 
-                            connect_spotify.setVisibility(View.GONE);
-                            connect_spotify_layout.setVisibility(View.GONE);
-                            spotify_icon.setVisibility(View.VISIBLE);
-                            music_loading_layout.setVisibility(View.GONE);
-                            // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                                connect_spotify.setVisibility(View.GONE);
+                                connect_spotify_layout.setVisibility(View.GONE);
+                                spotify_icon.setVisibility(View.VISIBLE);
+                                music_loading_layout.setVisibility(View.GONE);
+                                // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
-                            // Now you can start interacting with App Remote
-
-
+                                // Now you can start interacting with App Remote
 
 
-                            //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
-                            // Now you can start interacting with App Remote
+                                // Now you can start interacting with App Remote
 
-                            try {
-                                song_name.setText(songName);
-                                artist_name.setText(artistName);
+                                try {
+                                    song_name.setText(songName);
+                                    artist_name.setText(artistName);
 
-                                mSpotifyAppRemote.getImagesApi().getImage(songUri)
-                                        .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
-                                            @Override
-                                            public void onResult(Bitmap bitmap) {
+                                    mSpotifyAppRemote.getImagesApi().getImage(songUri)
+                                            .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                                                @Override
+                                                public void onResult(Bitmap bitmap) {
 
-                                                spotify_cover.setImageBitmap(bitmap);
-                                            }
-                                        });
-                            } catch (Exception e) {
-                                //
+                                                    spotify_cover.setImageBitmap(bitmap);
+                                                }
+                                            });
+                                } catch (Exception e) {
+                                    //
+                                }
+
                             }
 
-                        }
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                // spotifyConnected = false;
+                                //song_name.setText(songName);
+                                //artist_name.setText(artistName);
+                                connect_spotify.setVisibility(View.VISIBLE);
+                                connect_spotify_layout.setVisibility(View.VISIBLE);
+                                spotify_icon.setVisibility(View.GONE);
+                                music_loading_layout.setVisibility(View.GONE);
 
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            // spotifyConnected = false;
-                            //song_name.setText(songName);
-                            //artist_name.setText(artistName);
-                            connect_spotify.setVisibility(View.VISIBLE);
-                            connect_spotify_layout.setVisibility(View.VISIBLE);
-                            spotify_icon.setVisibility(View.GONE);
-                            music_loading_layout.setVisibility(View.GONE);
-
-                            music_layout.setVisibility(View.VISIBLE);
+                                music_layout.setVisibility(View.VISIBLE);
 
 
+                                // Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify automatically :( " + throwable.getStackTrace(), Toast.LENGTH_SHORT).show();
+                                // Something went wrong when attempting to connect! Handle errors here
+                            }
+                        });
 
-                            // Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify automatically :( " + throwable.getStackTrace(), Toast.LENGTH_SHORT).show();
-                            // Something went wrong when attempting to connect! Handle errors here
-                        }
-                    });
+            } else {
+                connect_spotify.setVisibility(View.VISIBLE);
+                connect_spotify_layout.setVisibility(View.VISIBLE);
+                spotify_icon.setVisibility(View.GONE);
+                music_loading_layout.setVisibility(View.GONE);
+
+                music_layout.setVisibility(View.VISIBLE);
+
+            }
 
 
 
