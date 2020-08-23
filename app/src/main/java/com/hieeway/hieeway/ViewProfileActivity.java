@@ -99,6 +99,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private TextView connect_spotify_text;
     private String currentUserPhoto;
     private Boolean spotifyconnect;
+    private boolean subscribed = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,6 +205,48 @@ public class ViewProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+
+        FirebaseDatabase.getInstance().getReference("Emosubscribe")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    subscribed = true;
+                    emoji_icon.setAlpha(1.0f);
+                    feeling_icon.setAlpha(1.0f);
+
+                } else {
+                    subscribed = false;
+                    emoji_icon.setAlpha(0.2f);
+                    feeling_icon.setAlpha(0.2f);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+        feeling_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                subscriptionToggle();
+            }
+        });
+
+        emoji_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                subscriptionToggle();
+            }
+        });
+
+
 
 
         spotify_cover.setOnClickListener(new View.OnClickListener() {
@@ -315,6 +358,58 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    private void subscriptionToggle() {
+        if (subscribed) {
+
+
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(usernameText).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    FirebaseDatabase.getInstance().getReference("Emosubscribe")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(ViewProfileActivity.this, usernameText + "'s feelings  notification have been muted", Toast.LENGTH_SHORT).show();
+
+                            emoji_icon.setAlpha(0.2f);
+                            feeling_icon.setAlpha(0.2f);
+                        }
+                    });
+                }
+            });
+
+
+        } else {
+            FirebaseMessaging.getInstance().subscribeToTopic(usernameText)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            HashMap<String, Object> feelingsHash = new HashMap<>();
+
+                            feelingsHash.put("username", usernameText);
+
+                            FirebaseDatabase.getInstance().getReference("Emosubscribe")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(userId).updateChildren(feelingsHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Toast.makeText(ViewProfileActivity.this, "You will now be notified about " + usernameText + "'s feelings", Toast.LENGTH_SHORT).show();
+
+                                    emoji_icon.setAlpha(1.0f);
+                                    feeling_icon.setAlpha(1.0f);
+                                }
+                            });
+
+
+                        }
+                    });
+        }
+    }
+
     private void checkUserData(Intent intent) {
         // try {
 
