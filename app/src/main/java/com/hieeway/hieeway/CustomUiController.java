@@ -27,7 +27,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlay
 
 import java.util.HashMap;
 
-import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
+//import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.userIDCHATTINGWITH;
 
 public class CustomUiController implements YouTubePlayerListener {
 

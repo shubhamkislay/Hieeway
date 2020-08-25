@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.PagerAdapter;
@@ -34,8 +35,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.VPagerAdapter;
 import com.hieeway.hieeway.Fragments.EphemeralMessagingFragment;
-import com.hieeway.hieeway.Fragments.LiveMessageFragment;
+import com.hieeway.hieeway.Fragments.LiveMessageFragmentPerf;
+import com.hieeway.hieeway.Fragments.LiveMessageParentFragment;
 import com.hieeway.hieeway.Fragments.SendMessageFragment;
+import com.hieeway.hieeway.Fragments.SendMessageParentFragment;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
 import com.hieeway.hieeway.Interface.YoutubeBottomFragmentStateListener;
@@ -50,39 +53,35 @@ import java.util.List;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 
 
-public class VerticalPageActivity extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener {
+public class VerticalPageActivityPerf extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener {
 
 
-    private VerticalViewPager verticalViewPager;
-    private fr.castorflex.android.verticalviewpager.VerticalViewPager viewPager;
-    private FlingableViewPager flingableViewPager;
-    public SendMessageFragment  sendMessageFragment;
-    private PagerAdapter pagerAdapter;
-    private String userIdChattingWith;
-    public EphemeralMessagingFragment ephemeralMessagingFragment;
-
-    public Boolean observingSendFragment = false;
     public static final String VIDEO_CHECK_TAG = "Video Check";
-
-    private List<ChatMessage> messageList, sendMessagelist;
-    private Bundle bundle;
-    private Bundle bundleSendMessage;
-    private int pageSelected = 1;
-    private int chatStampSize = 0;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
     final static String HAPPY = "happy";
     final static String BORED = "bored";
     final static String EXCITED = "excited";
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
-    private boolean enabled;
+    public static String userIDCHATTINGWITH = "";
+    public static String userNameChattingWith = "";
+    public static String USERPHOTO = "";
+    public static String USER_PRIVATE_KEY = "";
+    public static String OTHER_USER_PUBLIC_KEY = "";
+    public static String CURRENT_USERNAME = "";
+    public static String CURRENT_USERPHOTO = "";
+    public static Boolean isWatching = false;
+    public SendMessageFragment sendMessageFragment;
+    public EphemeralMessagingFragment ephemeralMessagingFragment;
+    public Boolean observingSendFragment = false;
     String userFeeling;
     String feelingDefault;
-    LiveMessageFragment liveMessageFragment;
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String PRIVATE_KEY = "privateKey";
-    public static final String PUBLIC_KEY = "publicKey";
-    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    LiveMessageFragmentPerf liveMessageFragmentPerf;
+    LiveMessageParentFragment liveMessageParentFragment;
     RelativeLayout feeling_splash_layout;
     ImageView feelingDefaultEmoji;
     TextView feelingCustomEmoji;
@@ -94,19 +93,23 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     Boolean openSendMessageFragment = false;
     String publicKeyText, privateKeyText, otherUserPublicKey, otherUserPublicKeyID, publicKeyId;
     String feededMessageID = "default";
+    private VerticalViewPager verticalViewPager;
+    private fr.castorflex.android.verticalviewpager.VerticalViewPager viewPager;
+    private FlingableViewPager flingableViewPager;
+    private PagerAdapter pagerAdapter;
+    private String userIdChattingWith;
+    private List<ChatMessage> messageList, sendMessagelist;
+    private Bundle bundle;
+    private Bundle bundleSendMessage;
+    private int pageSelected = 1;
+    private int chatStampSize = 0;
+    private boolean enabled;
     private boolean bottomPageUp = false;
-    public static String userIDCHATTINGWITH = "";
-    public static String userNameChattingWith = "";
-    public static String USERPHOTO = "";
-    public static String USER_PRIVATE_KEY = "";
-    public static String OTHER_USER_PUBLIC_KEY = "";
-    public static String CURRENT_USERNAME = "";
-    public static String CURRENT_USERPHOTO = "";
-    public static Boolean isWatching = false;
     private String youtubeID = "default";
     private String youtubeTitle = null;
     private boolean backPressed = false;
     private String usernameChattingWith;
+
     private String photo;
     private DatabaseReference userFriendShipReference;
     private ValueEventListener friendShipValueListener;
@@ -369,14 +372,13 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                     }
                 } else if (key.equals("revealmessage")) {
                     if (intent.getStringExtra("revealmessage").equals("no")) {
-                        Intent revealActivityIntent = new Intent(VerticalPageActivity.this, RevealReplyActivity.class);
+                        Intent revealActivityIntent = new Intent(VerticalPageActivityPerf.this, RevealReplyActivity.class);
 
                         revealActivityIntent.putExtra("userIdChattingWith", userIdChattingWith);
                         revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
                         revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
                         revealActivityIntent.putExtra("photo", photo);
                         revealActivityIntent.putExtra("username", usernameChattingWith);
-
 
 
                         startActivity(revealActivityIntent);
@@ -395,7 +397,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
 
         checkFriendshipStatus();
-
 
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -444,20 +445,19 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         });
         bundle = new Bundle();
         bundle.putString("usernameChattingWith", usernameChattingWith);
-        bundle.putString("userIdChattingWith",userIdChattingWith);
-        bundle.putString("photo",photo);
-        bundle.putString("currentUserPublicKey",publicKeyText);
-        bundle.putString("currentUserPrivateKey",privateKeyText);
-        bundle.putString("otherUserPublicKeyID",otherUserPublicKeyID);
-        bundle.putString("currentUserPublicKeyID",publicKeyId);
-        bundle.putString("otherUserPublicKey",otherUserPublicKey);
-
+        bundle.putString("userIdChattingWith", userIdChattingWith);
+        bundle.putString("photo", photo);
+        bundle.putString("currentUserPublicKey", publicKeyText);
+        bundle.putString("currentUserPrivateKey", privateKeyText);
+        bundle.putString("otherUserPublicKeyID", otherUserPublicKeyID);
+        bundle.putString("currentUserPublicKeyID", publicKeyId);
+        bundle.putString("otherUserPublicKey", otherUserPublicKey);
 
 
         bundleSendMessage = new Bundle();
-        bundleSendMessage.putString("userIdChattingWith",userIdChattingWith);
-        bundleSendMessage.putString("currentUserPrivateKey",privateKeyText);
-        bundleSendMessage.putString("currentUserPublicKeyID",publicKeyId);
+        bundleSendMessage.putString("userIdChattingWith", userIdChattingWith);
+        bundleSendMessage.putString("currentUserPrivateKey", privateKeyText);
+        bundleSendMessage.putString("currentUserPublicKeyID", publicKeyId);
         bundleSendMessage.putString("messageID", feededMessageID);
         bundleSendMessage.putString("usernameChattingWith", usernameChattingWith);
         bundleSendMessage.putString("userIdChattingWith", userIdChattingWith);
@@ -474,21 +474,38 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         sendMessageFragment.setMessageHighlightListener(this);
         sendMessageFragment.setArguments(bundleSendMessage);
 
-        liveMessageFragment = new LiveMessageFragment();
-        liveMessageFragment.setArguments(bundle);
-        liveMessageFragment.setYoutubeBottomFragmentStateListener(this);
+
+        SendMessageParentFragment sendMessageParentFragment = new SendMessageParentFragment();
+        sendMessageParentFragment.setParentActivity(this);
+        sendMessageParentFragment.setArguments(bundleSendMessage);
 
 
+        /**
+         * Uncomment below commented block
+         */
+
+        /*liveMessageFragmentPerf = new LiveMessageFragmentPerf();
+        liveMessageFragmentPerf.setArguments(bundle);
+        liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(this);*/
+
+
+        liveMessageParentFragment = new LiveMessageParentFragment();
+        liveMessageParentFragment.setArguments(bundle);
+        liveMessageParentFragment.setParentActivity(this);
+        liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
 
 
         List<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(sendMessageFragment);
+        //fragmentList.add(sendMessageFragment);
+        fragmentList.add(sendMessageParentFragment);
         fragmentList.add(ephemeralMessagingFragment);
 
         /**
          * Uncomment the following snippet to add live fragment as well
          */
-        fragmentList.add(liveMessageFragment);
+        //fragmentList.add(liveMessageFragmentPerf);
+
+        fragmentList.add(liveMessageParentFragment);
 
 
         verticalViewPager = findViewById(R.id.pager);
@@ -498,8 +515,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        pagerAdapter = new VPagerAdapter(fragmentManager,fragmentList);
-
+        pagerAdapter = new VPagerAdapter(fragmentManager, fragmentList);
 
 
         viewPager.setAdapter(pagerAdapter);
@@ -528,37 +544,72 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                 viewPager.setCurrentItem(fragmentList.size() - 2);
         } else {
 
-            //Toast.makeText(VerticalPageActivity.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(VerticalPageActivityPerf.this,"Swipe up to join live messaging",Toast.LENGTH_SHORT).show();
             if (live.equals("live")) {
 
-                liveMessageFragment
+                /**
+                 * Uncomment below commented block
+                 */
+                /*liveMessageFragmentPerf
                         .setLiveMessageEventListener(
-                                VerticalPageActivity.this,
-                                VerticalPageActivity.this,
+                                VerticalPageActivityPerf.this,
+                                VerticalPageActivityPerf.this,
                                 photo,
                                 usernameChattingWith,
                                 userIdChattingWith,
                                 youtubeID,
-                                youtubeTitle);
+                                youtubeTitle);*/
+
+                fragmentList.clear();
+                fragmentList.add(liveMessageParentFragment);
 
 
-                liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "live");
-                //liveMessageFragment.startLiveMessaging();
+                pagerAdapter = null;
+                pagerAdapter = new VPagerAdapter(fragmentManager, fragmentList);
+
+                viewPager.setAdapter(pagerAdapter);
+
+
+                liveMessageParentFragment
+                        .setLiveMessageEventListener(
+                                VerticalPageActivityPerf.this,
+                                VerticalPageActivityPerf.this,
+                                photo,
+                                usernameChattingWith,
+                                userIdChattingWith,
+                                youtubeID,
+                                youtubeTitle,
+                                live);
+
+/**
+ * Uncomment below commented block
+ */
+                //   liveMessageFragmentPerf.showLiveMessageDialog(VerticalPageActivityPerf.this, "live");
+
                 sendMessageFragment.removeListeners();
 
                 pageSelected = 2;
 
-                viewPager.setCurrentItem(fragmentList.size() - 1);
+                viewPager.setCurrentItem(0);
+                // viewPager.setCurrentItem(fragmentList.size());
+
 
             }
+
         }
 
 
         // observeLiveChatList();
-        viewPager.setOffscreenPageLimit(2);
+
+
+        viewPager.setOffscreenPageLimit(1);
+
+        if (live.equals("live"))
+            ephemeralMessagingFragment.toggleVisibility(View.INVISIBLE);
 
 
         // viewPager.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -570,37 +621,49 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             public void onPageSelected(int i) {
 
 
-                /**
-                 * Uncomment the following snippet to add live fragment also.
-                 */
-                if(i==2)
-                {
+                if (i == 2) {
 
 
-                    //liveMessageFragment.initialiseLiveragment(VerticalPageActivity.this);
+                    //liveMessageFragmentPerf.initialiseLiveragment(VerticalPageActivityPerf.this);
                     isWatching = true;
 
-                    liveMessageFragment.setLiveMessageEventListener(VerticalPageActivity.this, VerticalPageActivity.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle);
+                    /**
+                     * Uncomment below commented block
+                     */
+                    /*liveMessageFragmentPerf.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle);
 
 
-                    liveMessageFragment.showLiveMessageDialog(VerticalPageActivity.this, "no");
+                    liveMessageFragmentPerf.showLiveMessageDialog(VerticalPageActivityPerf.this, "no");
                     sendMessageFragment.removeListeners();
-                    //  Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
+*/
+                    sendMessageParentFragment.removeListeners();
+                    //  Toast.makeText(VerticalPageActivityPerf.this,"Page no."+i,Toast.LENGTH_SHORT).show();
 
                     pageSelected = 2;
 
 
-                }
-                else if(i==1)
-                {
+                } else if (i == 1) {
                     //if(observingSendFragment)
                     //sendMessageFragment.removeObserveLiveChatList();
                     isWatching = false;
                     if (pageSelected == 2) {
+                        live = "no";
+                        ephemeralMessagingFragment.toggleVisibility(View.VISIBLE);
 
                         Log.v(VIDEO_CHECK_TAG, " on page changed calling destoryLiveFragment");
-                        liveMessageFragment.destoryLiveFragment();
+                        /**
+                         * Uncomment below commented block
+                         */
+                        //liveMessageFragmentPerf.destoryLiveFragment();
 
+                        liveMessageParentFragment.destoryLiveFragment();
+                        liveMessageParentFragment = null;
+                        liveMessageParentFragment = new LiveMessageParentFragment();
+                        liveMessageParentFragment.setArguments(bundle);
+                        liveMessageParentFragment.setParentActivity(VerticalPageActivityPerf.this);
+
+
+                        liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
                         FirebaseDatabase.getInstance().getReference("Video")
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .child(userIDCHATTINGWITH)
@@ -623,40 +686,22 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
                     sendMessageFragment.removeListeners();
 
-                    // Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(VerticalPageActivityPerf.this,"Page no."+i,Toast.LENGTH_SHORT).show();
                     pageSelected = 1;
 
-                }
-
-                else if(i==0)
-                {
+                } else if (i == 0) {
                     isWatching = false;
                     // sendMessageFragment.observeLiveChatList(userIdChattingWith);
-/*                    new Handler().post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    });*/
-
-                    /*new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    }).start();*/
-
                     try {
-                        sendMessageFragment.searchChats(userIdChattingWith);
-                    }catch (Exception e)
-                    {
+                        //  sendMessageFragment.searchChats(userIdChattingWith);
+                    } catch (Exception e) {
                         //
                     }
 
 
                     // observingSendFragment = true;
 
-                    //Toast.makeText(VerticalPageActivity.this,"Page no."+i,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(VerticalPageActivityPerf.this,"Page no."+i,Toast.LENGTH_SHORT).show();
 
                     pageSelected = 0;
 
@@ -671,9 +716,11 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             }
         });
 
+
+
 /*        if(viewPager.getCurrentItem()==2)
         {
-            liveMessageFragment.createLiveMessageDbInstance();
+            liveMessageFragmentPerf.createLiveMessageDbInstance();
                     if(observingSendFragment)
             sendMessageFragment.removeObserveLiveChatList();
         }
@@ -687,7 +734,6 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             if(observingSendFragment)
                 sendMessageFragment.removeObserveLiveChatList();
         }*/
-
 
 
     }
@@ -738,7 +784,13 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             try {
-                liveMessageFragment.setBottomSheetBehavior(event);
+                /**
+                 * Uncomment below commented block
+                 */
+                //liveMessageFragmentPerf.setBottomSheetBehavior(event);
+
+                liveMessageParentFragment.setBottomSheetBehavior(event);
+
                 // chatsFragment.setBottomSheetBehavior(event);
             } catch (Exception e) {
                 //
@@ -769,7 +821,13 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
         } else {
             try {
-                liveMessageFragment.closeBottomSheet();
+                /**
+                 * Uncomment below commented block
+                 */
+                //liveMessageFragmentPerf.closeBottomSheet();
+
+                liveMessageParentFragment.closeBottomSheet();
+
                 isWatching = true;
             } catch (Exception e) {
 
@@ -783,7 +841,8 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         if (pageSelected == 2) {
 
             if (!backPressed) {
-                Intent startLiveActiveServiceIntent = new Intent(VerticalPageActivity.this, LiveMessageActiveService.class);
+                Toast.makeText(VerticalPageActivityPerf.this, "onStopCalled", Toast.LENGTH_SHORT).show();
+                Intent startLiveActiveServiceIntent = new Intent(VerticalPageActivityPerf.this, LiveMessageActiveService.class);
                 startLiveActiveServiceIntent.putExtra("username", usernameChattingWith);
                 startLiveActiveServiceIntent.putExtra("userid", userIdChattingWith);
                 startLiveActiveServiceIntent.putExtra("youtubeID", "default");
@@ -828,7 +887,12 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
             try {
 
                 Log.v(VIDEO_CHECK_TAG, "onPause calling destoryLiveFragment");
-                liveMessageFragment.destoryLiveFragment();
+                /**
+                 * Uncomment below commented block
+                 */
+                //liveMessageFragmentPerf.destoryLiveFragment();
+
+                liveMessageParentFragment.destoryLiveFragment();
 
                 HashMap<String, Object> hashMap = new HashMap<>();
                 hashMap.put("present", false);
@@ -837,7 +901,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .updateChildren(hashMap);
             } catch (Exception e) {
-                Toast.makeText(VerticalPageActivity.this, "Exception " + e.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(VerticalPageActivityPerf.this, "Exception " + e.toString(), Toast.LENGTH_SHORT).show();
                 Log.v(VIDEO_CHECK_TAG, "onPause Parent Error" + e.toString());
             }
 
@@ -885,11 +949,10 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
 
             databaseReference.setValue(true);
 
-            if(pageSelected == 0)
-            {
+            if (pageSelected == 0) {
                 sendMessageFragment.searchChats(userIdChattingWith);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             //
         }
 
@@ -901,20 +964,19 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         try {
 
             ephemeralMessagingFragment.setMessageHighlight(highlight);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             //
         }
 
     }
 
     private void LoadKeys() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        privateKeyText = sharedPreferences.getString(PRIVATE_KEY,null);
+        privateKeyText = sharedPreferences.getString(PRIVATE_KEY, null);
 
 
-        publicKeyText = sharedPreferences.getString(PUBLIC_KEY,null);
+        publicKeyText = sharedPreferences.getString(PUBLIC_KEY, null);
 
 
     }
@@ -922,14 +984,25 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     @Override
     public void changeFragment() {
         viewPager.setCurrentItem(1);
-        liveMessageFragment = null;
-        liveMessageFragment = new LiveMessageFragment();
-        liveMessageFragment.setArguments(bundle);
+        /**
+         * Uncomment below commented block
+         */
+        /*liveMessageFragmentPerf = null;
+        liveMessageFragmentPerf = new LiveMessageFragmentPerf();
+        liveMessageFragmentPerf.setArguments(bundle);*/
+
+        liveMessageParentFragment = null;
+        liveMessageParentFragment = new LiveMessageParentFragment();
+        liveMessageParentFragment.setArguments(bundle);
+        liveMessageParentFragment.setParentActivity(this);
+
+
+        liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
+
     }
 
     @Override
     public void setDrag(Boolean state) {
-
 
         bottomPageUp = state;
 

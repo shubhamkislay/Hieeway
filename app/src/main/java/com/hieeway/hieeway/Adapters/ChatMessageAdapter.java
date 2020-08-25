@@ -86,6 +86,7 @@ import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.VerticalPageActivity;
+import com.hieeway.hieeway.VerticalPageActivityPerf;
 import com.hieeway.hieeway.WebViewActivity;
 
 import java.io.IOException;
@@ -556,7 +557,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                         }
                        /* viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                         viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);*/
-                        Intent intent = new Intent(mContext, VerticalPageActivity.class);
+                        Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
                         intent.putExtra("username", chatStamp.getUsername());
                         intent.putExtra("userid", chatStamp.getId());
                         intent.putExtra("photo", chatStamp.getPhoto());

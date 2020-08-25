@@ -88,7 +88,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomUiController;
 import com.hieeway.hieeway.LiveMessageActiveService;
 import com.hieeway.hieeway.Model.YoutubeSync;
-import com.hieeway.hieeway.VerticalPageActivity;
+import com.hieeway.hieeway.VerticalPageActivityPerf;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -142,66 +142,59 @@ import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.hieeway.hieeway.VerticalPageActivity.OTHER_USER_PUBLIC_KEY;
-import static com.hieeway.hieeway.VerticalPageActivity.USER_PRIVATE_KEY;
-import static com.hieeway.hieeway.VerticalPageActivity.VIDEO_CHECK_TAG;
-import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
-import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.OTHER_USER_PUBLIC_KEY;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.USER_PRIVATE_KEY;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.VIDEO_CHECK_TAG;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.userIDCHATTINGWITH;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.userNameChattingWith;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LiveMessageFragment extends Fragment implements LiveMessageRequestListener {
+public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequestListener {
 
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    public static final String PHONE = "phone";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String USERNAME = "username";
+    private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
     // public String userIdChattingWith;
     public String usernameChattingWith;
-    private IRtcEngineEventHandler mRtcEventHandler;
-
-
-
-    private DatabaseReference databaseReferenceUserChattingWith;
-    private DatabaseReference databaseReferenceUser;
-    private  String userChattingWithId;
-    private String liveMessageKey;
-    private RelativeLayout startLiveVideo, stopLiveVideo;
-    private RelativeLayout firstPersonVideo, userChattingPersonVideo;
-    private TextView startLiveVideoTextView, stopLiveVideoTextView;
-    private String key;
-    private Boolean start = true;
-    private Boolean flagActivityClosure = false;
-    private LiveVideoViewModel liveVideoViewModel;
     public TextView message_live_with;
-    BottomSheetBehavior bottomSheetBehavior;
-    RelativeLayout bottom_sheet_dialog_layout;
-    RelativeLayout video_search_progress;
-    RelativeLayout control_layout;
-    private LiveMessageEventListener liveMessageEventListener;
-    DatabaseReference urlRef, seekRef, presenceRef;
     public String photo;
     public EditText messageBox;
     public TextView username, senderTextView, receiverTextView;
     public LiveMessagingViewModel liveMessagingViewModel;
     public Boolean truncateString = false;
     public Boolean stopObservingLiveMessaging = false;
-    //RelativeLayout top_bar;
-    YouTubePlayerSeekBar youtube_player_seekbar;
-    private RtcEngine mRtcEngine = null;
-    public ProgressBar connectingUserVideo, connectedUserVideo ;
+    public ProgressBar connectingUserVideo, connectedUserVideo;
     public Handler handler;
     public Runnable runnable, receiverRunnable;
     public Button backBtn;
-    public Boolean typing=false, receiving = false;
+    public Boolean typing = false, receiving = false;
     public Boolean emojiActive = false;
     public FrameLayout frameLocalContainer;
     public FrameLayout frameRemoteContainer;
     public Boolean checkResult = false;
+    BottomSheetBehavior bottomSheetBehavior;
+    RelativeLayout bottom_sheet_dialog_layout;
+    RelativeLayout video_search_progress;
+    RelativeLayout control_layout;
+    DatabaseReference urlRef, seekRef, presenceRef;
+    //RelativeLayout top_bar;
+    YouTubePlayerSeekBar youtube_player_seekbar;
     LiveMessage checkMessage;
     RelativeLayout youtube_layout;
     int beforetextChangeCounter = 0;
     int textChangeCounter = 0;
     int aftertextChangeCounter = 0;
     Boolean resultReady = false;
-    private RelativeLayout bottom_bar_back, bottom_bar_back_top;
     Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener;
@@ -213,12 +206,28 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     SlideToActView slideToActView;
     RelativeLayout complete_icon;
     Boolean videoLive = false;
-    private String videoID = "kJQP7kiw5Fk";
-    private Boolean userPresent = false;
-    private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
-    private boolean playerInitialised;
     //RelativeLayout bottom_sheet_webview_dialog_layout;
     WebView bottom_sheet_webview_dialog_layout;
+    WebView youtube_web_view;
+    LinearLayout remoteViewlayout;
+    private IRtcEngineEventHandler mRtcEventHandler;
+    private DatabaseReference databaseReferenceUserChattingWith;
+    private DatabaseReference databaseReferenceUser;
+    private String userChattingWithId;
+    private String liveMessageKey;
+    private RelativeLayout startLiveVideo, stopLiveVideo;
+    private RelativeLayout firstPersonVideo, userChattingPersonVideo;
+    private TextView startLiveVideoTextView, stopLiveVideoTextView;
+    private String key;
+    private Boolean start = true;
+    private Boolean flagActivityClosure = false;
+    private LiveVideoViewModel liveVideoViewModel;
+    private LiveMessageEventListener liveMessageEventListener;
+    private RtcEngine mRtcEngine = null;
+    private RelativeLayout bottom_bar_back, bottom_bar_back_top;
+    private String videoID = "kJQP7kiw5Fk";
+    private Boolean userPresent = false;
+    private boolean playerInitialised;
     private com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer mYouTubePlayer = null;
     private boolean initialiseActivity = false, initialiseSeekEvent = false;
     private AbstractYouTubePlayerListener abstractYouTubePlayerListener;
@@ -234,7 +243,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private CustomUiController customUiController = null;
     private TextView sync_video_txt;
     private RelativeLayout sync_video_layout;
-    WebView youtube_web_view;
     private List<VideoItem> searchResults, durationAddedResult;
     private YouTube.Videos.List videoQuery;
     private YouTubeConfig yc;
@@ -259,7 +267,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private DatabaseReference singleSeekRef;
     private float youtubeVideoSec = 0;
     private float youtubeSynSec = 0;
-    LinearLayout remoteViewlayout;
     private ImageButton enable_audio;
     private SurfaceView remotesurfaceView;
     private boolean audioEnabled = false;
@@ -280,17 +287,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private int displayHeight;
     private RelativeLayout other_user_video_wrapper, user_video_wrapper;
     private RelativeLayout live_other_highlight, live_user_highlight;
-    public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String PRIVATE_KEY = "privateKey";
-    public static final String PUBLIC_KEY = "publicKey";
-    public static final String PUBLIC_KEY_ID = "publicKeyID";
-    public static final String USER_ID = "userid";
-    public static final String PHOTO_URL = "photourl";
     private ConstraintLayout parent_layout;
-    public static final String PHONE = "phone";
-    public static final String EMAIL = "email";
-    public static final String NAME = "name";
-    public static final String USERNAME = "username";
     private SurfaceView localSurfaceView;
     private boolean joined = false;
     private Button online_ring;
@@ -300,11 +297,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private Button camera_access_btn;
     private TextView request_camera_message;
     private String live;
-
-
-    public LiveMessageFragment() {
-        // Required empty public constructor
-    }
 
     /**
      *  Live View Model    checkForExistingRequest()
@@ -403,6 +395,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         return checkResult;
     }*/
+    }
+
+    public LiveMessageFragmentPerf() {
+        // Required empty public constructor
     }
 
     @SuppressLint({"SetJavaScriptEnabled", "ClickableViewAccessibility"})
@@ -770,7 +766,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     }, 750);
 
 
-
                     //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
                     //         "text/html", "utf-8", "");
 
@@ -861,16 +856,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                     .updateChildren(youtubeVideoHash);
 
 
-
-
                         }
                     });
-
-
-
-
-
-
 
 
                 }
@@ -1178,7 +1165,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         });
 
 
-
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1217,8 +1203,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                         }
                                     }
                                 }, 500);
-
-
 
 
                             }
@@ -1384,7 +1368,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                     youtubeVideoHash.put("videoTitle", youtubeTitle);
 
 
-
                                     FirebaseDatabase.getInstance().getReference("Video")
                                             .child(userIDCHATTINGWITH)
                                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -1482,8 +1465,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
 
 
-
-
                         try {
 
                             customUiController.setYoutube_player_seekbarVisibility(false);
@@ -1504,6 +1485,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                         mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
                         mYouTubePlayer.play();
+
                         sync_video_layout.setVisibility(View.VISIBLE);
                         youtube_player_view.setVisibility(View.INVISIBLE);
                         youtube_layout.setVisibility(View.VISIBLE);
@@ -1563,7 +1545,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             }
         };
-
 
 
         DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
@@ -1639,11 +1620,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         disconnectHash.put("photo", photo);
 
 
-
-
-
         final View customUiView = youtube_player_view.inflateCustomPlayerUi(R.layout.youtube_player_custom_view);
-
 
 
         abstractYouTubePlayerListener = new AbstractYouTubePlayerListener() {
@@ -1809,8 +1786,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         });
 
 
-
-
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
 
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
@@ -1894,7 +1869,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         runnable = new Runnable() {
             @Override
             public void run() {
-                if(!typing) {
+                if (!typing) {
 
                     liveMessagingViewModel.updateLiveMessage("");
                     senderTextView.setText("");
@@ -1910,7 +1885,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         receiverRunnable = new Runnable() {
             @Override
             public void run() {
-                if(!receiving) {
+                if (!receiving) {
 
                     receiverTextView.setText("");
                     showOtherUserTypingAnimation = false;
@@ -1928,10 +1903,10 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onChanged(@Nullable final String s) {
 
-                if(!stopObservingLiveMessaging) {
+                if (!stopObservingLiveMessaging) {
 
 
-                    if(s.length()<1) {
+                    if (s.length() < 1) {
                         // receiverTextView.animate().alpha(0.0f).setDuration(250);
 
                         confirmShowOtherUserTypingAnimation = false;
@@ -1999,7 +1974,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(!stopObservingLiveMessaging) {
+                if (!stopObservingLiveMessaging) {
 
 
                     /*if(s.length()<1)
@@ -2128,7 +2103,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 if (!blinkReceiver) {
                                     blinkReceiver = true;
                                     blinkReceiverLayout();
-
 
 
                                 }
@@ -2387,7 +2361,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         live_exp_back.animate().alpha(1.0f).setDuration(500);
 
 
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -2506,10 +2479,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         //connecting_text.setText("Initiating live expressions...");
 
 
-
-
-
-
         startLiveVideoTextView.setText("Connecting...");
         stopLiveVideo.setVisibility(View.GONE);
 
@@ -2582,7 +2551,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             seekRef.onDisconnect().removeValue();
             seekRef.addValueEventListener(seekValueEventListener);
 
-            Intent startLiveActiveServiceIntent = new Intent(parentActivity, LiveMessageActiveService.class);
+            /*Intent startLiveActiveServiceIntent = new Intent(parentActivity, LiveMessageActiveService.class);
             startLiveActiveServiceIntent.putExtra("username", usernameChattingWith);
             startLiveActiveServiceIntent.putExtra("userid", userChattingWithId);
             startLiveActiveServiceIntent.putExtra("youtubeID", notifyoutubeID);
@@ -2595,14 +2564,14 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             startLiveActiveServiceIntent.putExtra("photo", photo);
 
 
-            parentActivity.startService(startLiveActiveServiceIntent);
+            parentActivity.startService(startLiveActiveServiceIntent);*/
 
         } catch (NullPointerException e) {
             // liveMessageEventListener.changeFragment();
             //  try {
             // getActivity().finish();
 
-            Intent intent = new Intent(parentActivity, VerticalPageActivity.class);
+            Intent intent = new Intent(parentActivity, VerticalPageActivityPerf.class);
             intent.putExtra("username", usernameChattingWith);
             intent.putExtra("userid", userChattingWithId);
             intent.putExtra("photo", photo);
@@ -2626,8 +2595,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         //Log.v("Refresh TextView called","called!");
 
 
-        if(receiverTextView.getText().toString().length()>0) {
-
+        if (receiverTextView.getText().toString().length() > 0) {
 
 
             final String receiverText = receiverTextView.getText().toString();
@@ -2648,15 +2616,13 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                 }
             }, 1000);
-        }
-        else
-        {
+        } else {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     refreshReceiverText();
                 }
-            },500);
+            }, 500);
         }
 
 
@@ -2684,8 +2650,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
                     updateVideosFound();
                     // checkDurationResult();
-                }
-                else
+                } else
                     CheckSearchResult();
             }
         }, 1000);
@@ -2860,8 +2825,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     }
 
 
-
-
     public void setYoutubeBottomFragmentStateListener(YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener) {
         this.youtubeBottomFragmentStateListener = youtubeBottomFragmentStateListener;
     }
@@ -2949,8 +2912,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 requestAllPermissionsBeforeStart(activity, live);
             }
 
-        }
-        else {
+        } else {
 
             try {
 
@@ -3047,14 +3009,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             //Toast.makeText(getContext(), "Happy Texting!", Toast.LENGTH_SHORT).show();
             //   }
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
 //            Toast.makeText(getContext(),"Null pointer on current user in liveVideoChat Fragment",Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith, String youtubeID, String youtubeTitle) throws NullPointerException
-    {
+    public void setLiveMessageEventListener(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith, String youtubeID, String youtubeTitle) throws NullPointerException {
         this.liveMessageEventListener = liveMessageEventListener;
         this.parentActivity = parentActivity;
         this.photo = photo;
@@ -3076,10 +3036,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
 
-                        if(report.areAllPermissionsGranted())
+                        if (report.areAllPermissionsGranted())
                             initialiseLiveVideo();
-                        else
-                        {
+                        else {
                             // Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
                         }
 
@@ -3108,7 +3067,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         try {
 
-                            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, LiveMessageFragment.this, live);
+                            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(activity, LiveMessageFragmentPerf.this, live);
                             // LiveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                             liveMessageRequestDialog.setCancelable(false);
                             liveMessageRequestDialog.setCanceledOnTouchOutside(false);
@@ -3145,7 +3104,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 }).check();
     }
 
-    private void stopSignalling(){
+    private void stopSignalling() {
 
         /// leaveChannel();
 
@@ -3172,13 +3131,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         // getActivity().finish();
 
 
-
     }
 
     private void setupSignalling(final String userChattingWithId) {
 
 
-        if(!start)
+        if (!start)
             initializeAgoraEngine();
 
 
@@ -3193,12 +3151,12 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     .child(userChattingWithId)
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-            HashMap<String,Object> hashMap = new HashMap<>();
+            HashMap<String, Object> hashMap = new HashMap<>();
             String messageKey = databaseReferenceUser.push().getKey();
             key = messageKey;
-            hashMap.put("messageKey",messageKey);
-            hashMap.put("messageLive","");
-            hashMap.put("iConnect",0);
+            hashMap.put("messageKey", messageKey);
+            hashMap.put("messageLive", "");
+            hashMap.put("iConnect", 0);
             // hashMap.put("senderId",FirebaseAuth.getInstance().getCurrentUser().getUid());
 
             databaseReferenceUserChattingWith.updateChildren(hashMap);
@@ -3207,13 +3165,9 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             initializeAgoraEngine();
 
 
-
         }
 
         //   key = liveMessage.getMessageKey();
-
-
-
 
 
     }
@@ -3308,7 +3262,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                                 //connectingUserVideo.setVisibility(View.GONE);
                                 //enable_audio.setVisibility(View.VISIBLE);
                                 // Toast.makeText(getActivity(), userNameChattingWith + " Joined", Toast.LENGTH_SHORT).show();
-
 
 
                             }
@@ -3532,8 +3485,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         connectingUserVideo.setVisibility(View.GONE);
 
 
-
-
     }
 
     private void removeRemoteVideo() {
@@ -3601,8 +3552,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
 
             //  RtcEngine.destroy();
-        }catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             // Toast.makeText(getActivity(), "Error leaveChannel() " + e.toString(), Toast.LENGTH_LONG).show();
             Log.v(VIDEO_CHECK_TAG, "Error in leaveChannel" + e.toString());
         }
@@ -3638,7 +3588,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
         // Log.v(VIDEO_CHECK_TAG,"onDestroy"+ " called");
 
 
-
         //  Log.v(VIDEO_CHECK_TAG,"onDestroy calling leaveChannel");
 
         //  leaveChannel();
@@ -3656,9 +3605,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             //initializeAgoraEngine();
 
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // Toast.makeText(getActivity(),"Error was in live chat",Toast.LENGTH_SHORT).show();
         }
     }
@@ -3694,7 +3641,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             userid = sharedPreferences.getString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
             username = sharedPreferences.getString(USERNAME, "");
             userphoto = sharedPreferences.getString(PHOTO_URL, "default");
-
 
 
             final HashMap<String, Object> timeStampHash = new HashMap<>();

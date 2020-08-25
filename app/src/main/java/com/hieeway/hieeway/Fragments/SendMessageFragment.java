@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Fragments;
 
 import androidx.lifecycle.Observer;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -80,6 +81,8 @@ public class SendMessageFragment extends Fragment {
     String usernameChattingWith;
     String photo;
     Boolean blinked = false;
+    private RelativeLayout checking_layout;
+    private TextView checking_txt;
     private String messageID = "default";
 
     public SendMessageFragment() {
@@ -104,12 +107,14 @@ public class SendMessageFragment extends Fragment {
         usernameChattingWith = getArguments().getString("usernameChattingWith");
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
         photo = getArguments().getString("photo");
-
-
-
         toggleButton = view.findViewById(R.id.toggle_msg_highlight);
 
         gemSize = view.findViewById(R.id.gems_size);
+
+        checking_layout = view.findViewById(R.id.checking_layout);
+        checking_txt = view.findViewById(R.id.checking_txt);
+
+        checking_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         recharge_gems = view.findViewById(R.id.recharge_gems);
 
@@ -241,8 +246,7 @@ public class SendMessageFragment extends Fragment {
         //searchChats(userIdChattingWith);
 
 
-
-        countGems(userIdChattingWith);
+        // countGems(userIdChattingWith);
 
         recharge_gems.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -532,6 +536,9 @@ public class SendMessageFragment extends Fragment {
                 public void onComplete(@NonNull Task<List<ChatMessage>> task) {
                     if (task.isSuccessful()) {
                         sizeAfterDataChange = sendMessagelist.size();
+
+                        checking_layout.setVisibility(View.GONE);
+
                         try {
                             if (sizeBeforeDeleting <= sizeAfterDataChange) {
                                 refreshChat(
@@ -543,11 +550,17 @@ public class SendMessageFragment extends Fragment {
                                 // sizeBeforeDeleting = sizeAfterDataChange;
                             }
 
+
                         } catch (Exception e) {
                             //refreshChat();
 
                         }
-                    }
+                    } else
+                        try {
+                            checking_layout.setVisibility(View.VISIBLE);
+                        } catch (Exception e) {
+                            //
+                        }
 
                 }
             });
@@ -559,6 +572,11 @@ public class SendMessageFragment extends Fragment {
         } catch (Exception e) {
 
             //
+            try {
+                checking_layout.setVisibility(View.VISIBLE);
+            } catch (Exception ne) {
+                //
+            }
 
         }
 
@@ -568,6 +586,7 @@ public class SendMessageFragment extends Fragment {
     private void addListToRecyclerView(List<ChatMessage> sendMessagelist) {
 
 
+        //checking_layout.setVisibility(View.GONE);
         sendMessageAdapter = new SendMessageAdapter(getActivity(), getContext(), sendMessagelist, userIdChattingWith, readMessageList, gemCount, currentUserPrivateKey, currentUserPublicKeyID, messageID);
         recyclerView.setAdapter(sendMessageAdapter);
         recyclerView.scrollToPosition(sendMessagelist.size() - 1);
@@ -654,7 +673,12 @@ public class SendMessageFragment extends Fragment {
                         }
 
 
-
+                    } else {
+                        try {
+                            checking_layout.setVisibility(View.GONE);
+                        } catch (Exception e) {
+                            //
+                        }
                     }
                     // listTaskCompletionSource.setResult(messageList);
 
@@ -799,6 +823,32 @@ public class SendMessageFragment extends Fragment {
         this.messageHighlightListener = messageHighlightListener;
     }
 
+/*    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if(isVisibleToUser)
+        {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    countGems(userIdChattingWith);
+                    searchChats(userIdChattingWith);
+                }
+            },0);
+
+        }
+        else
+        {
+            try {
+                checking_layout.setVisibility(View.VISIBLE);
+            }catch (Exception e)
+            {
+                //
+            }
+        }
+    }*/
+
     @Override
     public void onPause() {
 
@@ -811,7 +861,15 @@ public class SendMessageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        countGems(userIdChattingWith);
         searchChats(userIdChattingWith);
+        /*try {
+            checking_layout.setVisibility(View.VISIBLE);
+        }catch (Exception e)
+        {
+            //
+        }*/
+
 
     }
 }

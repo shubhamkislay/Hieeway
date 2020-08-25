@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.hieeway.hieeway.MyApplication.CHANNEL_1_ID;
 import static com.hieeway.hieeway.MyApplication.CHANNEL_3_ID;
-import static com.hieeway.hieeway.VerticalPageActivity.isWatching;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.isWatching;
 
 public class LiveMessageActiveService extends Service {
     private static String ACTION_STOP_SERVICE = "stop";
@@ -69,7 +69,7 @@ public class LiveMessageActiveService extends Service {
 
             videoRef.removeEventListener(videoIdListener);
 
-            Intent openIntent = new Intent(this, VerticalPageActivity.class);
+            Intent openIntent = new Intent(this, VerticalPageActivityPerf.class);
             openIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             openIntent.putExtra("username", intent.getStringExtra("username"));
             openIntent.putExtra("userid", intent.getStringExtra("userid"));

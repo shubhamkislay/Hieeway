@@ -388,7 +388,6 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         addFeelingFragment = new AddFeelingFragment();
 
-
         menuFragmentManager.beginTransaction()
                 .replace(R.id.container_layout, chatsFragment).commit();
 

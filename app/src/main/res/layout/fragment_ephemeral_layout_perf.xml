@@ -5,6 +5,7 @@
     android:id="@+id/app_context_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="0dp"
     android:background="@color/backgroundColorTheme"
     tools:context=".VerticalPageActivity">
 
@@ -17,7 +18,7 @@
         android:background="@color/backgroundColorTheme"
         android:scaleType="centerCrop"
         android:transitionName="imageTransition"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/go_live_txt"
         app:layout_constraintTop_toBottomOf="@+id/top_txt_swipe">
 
 
@@ -38,8 +39,8 @@
         android:layout_height="match_parent"
         android:alpha="1.0"
         android:background="@drawable/bottom_fade_dark_background"
-        tools:layout_editor_absoluteX="194dp"
-        tools:layout_editor_absoluteY="-34dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -915,6 +916,69 @@
         </RelativeLayout>
 
 
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/equlizer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/record_button"
+        android:layout_marginBottom="8dp"
+        android:alpha="0.0"
+        android:background="#000"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/equi_one"
+            android:layout_width="20dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/message_bar_ticker" />
+
+        <RelativeLayout
+            android:id="@+id/equi_two"
+            android:layout_width="20dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/equi_one"
+            android:background="@drawable/message_bar_ticker" />
+
+        <RelativeLayout
+            android:id="@+id/equi_three"
+            android:layout_width="20dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:layout_toLeftOf="@id/equi_one"
+            android:background="@drawable/message_bar_ticker" />
+
+        <RelativeLayout
+            android:id="@+id/equi_four"
+            android:layout_width="20dp"
+            android:layout_height="75dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/equi_two"
+            android:background="@drawable/message_bar_ticker" />
+
+        <RelativeLayout
+            android:id="@+id/equi_five"
+            android:layout_width="20dp"
+            android:layout_height="75dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:layout_toLeftOf="@id/equi_three"
+            android:background="@drawable/message_bar_ticker" />
     </RelativeLayout>
 
     <com.devlomi.record_view.RecordView

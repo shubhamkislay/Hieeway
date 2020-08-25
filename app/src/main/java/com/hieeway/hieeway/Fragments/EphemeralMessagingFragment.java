@@ -309,6 +309,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private TextView sender_reply_body_title;
     private Button photo_btn, photo_btn_bg;
     private Activity parentActivity;
+    private boolean liveViewStarted = false;
 
     public EphemeralMessagingFragment() {
         // Required empty public constructor
@@ -346,7 +347,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-       final VerticalPageActivity verticalPageActivity = (VerticalPageActivity) getActivity();
+        //final VerticalPageActivity verticalPageActivity = (VerticalPageActivity) getActivity();
 
 //
 
@@ -1487,43 +1488,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         try {
             if (!photo.equals("default")) {
-               /*
 
-                Glide.with(getActivity()).load(photo*//*.replace("s96-c", "s384-c")*//*)*//*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height)).listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-
-                        if (imageReady) {
-                            {
-                                profile_pic.animate().alpha(1.0f).setDuration(750);
-                                *//*final Matrix matrix = profile_pic.getImageMatrix();
-                                final float imageWidth = resource.getIntrinsicWidth();
-                                final int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels/2;
-                                final float scaleRatio = screenWidth / imageWidth;
-                                matrix.postScale(scaleRatio, scaleRatio);*//*
-                            }
-
-                            imageLoaded = true;
-
-
-                            //   read_message_back.animate().alpha(0.0f);
-
-
-
-                        }
-
-
-                        return false;
-                    }
-                }).into(profile_pic);
-
-                */
                 TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
 
                 new Thread(new Runnable() {
@@ -1571,20 +1536,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
                                                 if (imageReady) {
-                                                    {
                                                         profile_pic.animate().alpha(1.0f).setDuration(750);
-                                /*final Matrix matrix = profile_pic.getImageMatrix();
-                                final float imageWidth = resource.getIntrinsicWidth();
-                                final int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels/2;
-                                final float scaleRatio = screenWidth / imageWidth;
-                                matrix.postScale(scaleRatio, scaleRatio);*/
-                                                    }
-
                                                     imageLoaded = true;
-
-
-                                                    //   read_message_back.animate().alpha(0.0f);
-
 
                                                 }
 
@@ -1621,6 +1574,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         {
             profile_pic.setImageDrawable(getActivity().getDrawable(R.drawable.no_profile));
         }
+
 
         archive_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -4441,6 +4395,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
     }
 
+    public void toggleVisibility(int visibility) {
+        // app_context_layout.setVisibility(visibility);
+
+        if (visibility == View.INVISIBLE)
+            liveViewStarted = true;
+
+    }
+
     private void setTypeFace(String path,String pathLight)
     {
         if(!path.equals("null") && !pathLight.equals("null")) {
@@ -4735,6 +4697,16 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     }
 
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (!isVisibleToUser) {
+            try {
+                if (liveViewStarted)
+                    app_context_layout.setVisibility(View.GONE);
+            } catch (Exception e) {
 
-
+            }
+        }
+    }
 }

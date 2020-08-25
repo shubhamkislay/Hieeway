@@ -33,7 +33,11 @@
         android:roundIcon="@mipmap/ic_launcher_hieeway_circle"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VideoCallTestActivity"></activity>
+        <activity
+            android:name=".VerticalPageActivityPerf"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".VideoCallTestActivity" />
         <activity android:name=".SlideButtonTestActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".WebViewActivity" />
