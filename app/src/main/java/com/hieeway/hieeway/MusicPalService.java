@@ -16,6 +16,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -364,57 +367,82 @@ public class MusicPalService extends Service {
 
                                                 openSpotify = PendingIntent.getService(MusicPalService.this, 0, openSpotifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-                                                Bitmap imageBitmap = null;
+
 
                                                 RemoteViews collapsedView = new RemoteViews(getPackageName(), R.layout.music_pal_collapsed);
                                                 RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.music_pal_expanded);
 
 
-                                                try {
-                                                    imageBitmap = Glide.with(MusicPalService.this)
-                                                            .asBitmap()
-                                                            .load(userPhoto)
-                                                            .submit(512, 512)
-                                                            .get();
+                                                TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Bitmap imageBitmap = null;
+                                                        try {
+                                                            imageBitmap = Glide.with(MusicPalService.this)
+                                                                    .asBitmap()
+                                                                    .load(userPhoto)
+                                                                    .submit(512, 512)
+                                                                    .get();
 
-                                                    collapsedView.setImageViewBitmap(R.id.logo, imageBitmap);
-                                                    expandedView.setImageViewBitmap(R.id.logo, imageBitmap);
-
-                                                } catch (ExecutionException e) {
-                                                    e.printStackTrace();
-                                                } catch (InterruptedException e) {
-                                                    e.printStackTrace();
-                                                }
+                                                            bitmapTaskCompletionSource.setResult(imageBitmap);
 
 
-                                                collapsedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
-                                                collapsedView.setTextViewText(R.id.artist_name, connectionMsg + username);
+                                                        } catch (ExecutionException e) {
+                                                            e.printStackTrace();
+                                                        } catch (InterruptedException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                    }
+                                                }).start();
 
 
-                                                collapsedView.setOnClickPendingIntent(R.id.logo, openProfile);
+                                                Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+
+                                                bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Bitmap> task) {
+
+                                                        if (task.isSuccessful()) {
 
 
-                                                expandedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
-                                                expandedView.setTextViewText(R.id.artist_name, connectionMsg + username);
-                                                // expandedView.setImageViewBitmap(R.id.logo, bitmap);
-                                                expandedView.setOnClickPendingIntent(R.id.logo, openSpotify);
+                                                            collapsedView.setImageViewBitmap(R.id.logo, task.getResult());
+                                                            expandedView.setImageViewBitmap(R.id.logo, task.getResult());
 
-                                                expandedView.setOnClickPendingIntent(R.id.open_spotify, openSpotify);
-                                                expandedView.setOnClickPendingIntent(R.id.stop_beacon, pIntentlogin);
+                                                            collapsedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
+                                                            collapsedView.setTextViewText(R.id.artist_name, connectionMsg + username);
 
-                                                Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
-                                                        .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                                                        .setCustomContentView(collapsedView)
-                                                        .setCustomBigContentView(expandedView)
-                                                        .setAutoCancel(true)
-                                                        .setContentTitle("Music Sync with " + username)
-                                                        .setContentText(track.name + " by " + postArtist)
-                                                        .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                                                        .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
-                                                        .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)
-                                                        .build();
 
-                                                startForeground(notificationId, notification);
+                                                            collapsedView.setOnClickPendingIntent(R.id.logo, openProfile);
+
+
+                                                            expandedView.setTextViewText(R.id.notification_message_collapsed, "Music Sync");
+                                                            expandedView.setTextViewText(R.id.artist_name, connectionMsg + username);
+                                                            // expandedView.setImageViewBitmap(R.id.logo, bitmap);
+                                                            expandedView.setOnClickPendingIntent(R.id.logo, openSpotify);
+
+                                                            expandedView.setOnClickPendingIntent(R.id.open_spotify, openSpotify);
+                                                            expandedView.setOnClickPendingIntent(R.id.stop_beacon, pIntentlogin);
+
+                                                            Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
+                                                                    .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                                                                    .setCustomContentView(collapsedView)
+                                                                    .setCustomBigContentView(expandedView)
+                                                                    .setAutoCancel(true)
+                                                                    .setContentTitle("Music Sync with " + username)
+                                                                    .setContentText(track.name + " by " + postArtist)
+                                                                    .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                                                                    .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
+                                                                    .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)
+                                                                    .build();
+
+                                                            startForeground(notificationId, notification);
+                                                        }
+
+                                                    }
+                                                });
+
 
 
                                                 // palHash.put("connection", connectionStatus);
