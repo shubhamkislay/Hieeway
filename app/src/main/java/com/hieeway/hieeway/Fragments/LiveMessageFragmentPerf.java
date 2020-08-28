@@ -307,6 +307,9 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private boolean nativePlayerInitialized = false;
     private boolean isStartedPlaying = false;
     private boolean localUserChanged = true;
+    private boolean buffering = true;
+    private boolean videoLoaded = false;
+    private Integer nativeYoutubeSync = 0;
 
     /**
      *  Live View Model    checkForExistingRequest()
@@ -728,9 +731,11 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         });
 
 
-
-
-
+        FirebaseDatabase.getInstance().getReference("Video")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(userIDCHATTINGWITH)
+                .onDisconnect()
+                .removeValue();
 
 
 
@@ -786,6 +791,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     youtube_web_view.stopLoading();
                     youtube_web_view.loadUrl(youtubeUrl);
 
+                    videoLoaded = true;
+
                     Rect outRect = new Rect();
 
                     //Native UI youtube search using data api
@@ -837,11 +844,11 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         Log.d("YC", "Could not initialize: " + e);
                     }
 
-                    youtubeID = videoID;
+                    //youtubeID = videoID;
                     videoQuery.setId(videoID);
 
-                    sync_video_layout.setAlpha(1.0f);
-                    sync_video_layout.setVisibility(View.VISIBLE);
+                   /* sync_video_layout.setAlpha(1.0f);
+                    sync_video_layout.setVisibility(View.VISIBLE);*/
                     youtube_layout.setVisibility(View.VISIBLE);
                     youtube_api_player_view.setVisibility(View.VISIBLE);
 
@@ -887,7 +894,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                             }
 
                             HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-                            youtubeVideoHash.put("youtubeID", youtubeID);
+                            youtubeVideoHash.put("youtubeID", videoID);
                             youtubeVideoHash.put("videoSec", 0);
                             youtubeVideoHash.put("videoTitle", youtubeTitle);
 
@@ -896,11 +903,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                                     .child(userIDCHATTINGWITH)
                                     .updateChildren(youtubeVideoHash);
 
-                            FirebaseDatabase.getInstance().getReference("Video")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(userIDCHATTINGWITH)
-                                    .onDisconnect()
-                                    .removeValue();
+
 
 
                             FirebaseDatabase.getInstance().getReference("Video")
@@ -1641,17 +1644,23 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
                         Integer videoSec = youtubeSync.getVideoSec();
                         loadWhenInitialised = false;
-                        int nativeYoutubeSync = videoSec;
 
 
                         if (youtubeID.equals(youtubeSync.getYoutubeID()) && !youtubeID.equals("default")) {
                             localUserChanged = false;
-                            nativeYoutubePlayer.seekToMillis(nativeYoutubeSync);
+                            if (nativeYoutubeSync != videoSec)
+                                nativeYoutubePlayer.seekToMillis(videoSec);
 
                         } else {
                             youtubeID = youtubeSync.getYoutubeID();
-                            nativeYoutubePlayer.loadVideo(youtubeID, nativeYoutubeSync);
-                            nativeYoutubePlayer.play();
+
+                            if (nativePlayerInitialized) {
+                                nativeYoutubeSync = videoSec;
+                                youtube_layout.setVisibility(View.VISIBLE);
+                                youtube_api_player_view.setVisibility(View.VISIBLE);
+                                nativeYoutubePlayer.loadVideo(youtubeID, nativeYoutubeSync);
+                                nativeYoutubePlayer.play();
+                            }
 
                         }
 
@@ -2339,8 +2348,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             @Override
             public void onPlaying() {
 
-                isStartedPlaying = true;
-                sync_video_layout.setVisibility(View.GONE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isStartedPlaying = true;
+                    }
+                }, 0);
+
+                // sync_video_layout.setVisibility(View.GONE);
                 youtube_layout.setVisibility(View.VISIBLE);
                 youtube_api_player_view.setVisibility(View.VISIBLE);
 
@@ -2356,21 +2371,31 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             @Override
             public void onStopped() {
 
-                if (isStartedPlaying) {
+                if (isStartedPlaying && !buffering) {
 
                     if (youtube_web_view.getVisibility() != View.VISIBLE) {
 
-                        Toast.makeText(parentActivity, "Player Stopped", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(parentActivity, "Player Stopped", Toast.LENGTH_SHORT).show();
 
                         if (nativeYoutubePlayer.getDurationMillis() == nativeYoutubePlayer.getCurrentTimeMillis()) {
 
                             FirebaseDatabase.getInstance().getReference("Video")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(userChattingWithId).removeValue();
+                                    .child(userChattingWithId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    //  Toast.makeText(parentActivity,"Removed video",Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
                             //top_bar.setVisibility(View.VISIBLE);
-                            youtube_layout.setVisibility(View.GONE);
-                            youtube_api_player_view.setVisibility(View.GONE);
+                            if (!videoLoaded) {
+                                youtube_layout.setVisibility(View.GONE);
+                                youtube_api_player_view.setVisibility(View.GONE);
+                            } else {
+                                videoLoaded = false;
+                            }
+
 
                             videoStarted = false;
                             isStartedPlaying = false;
@@ -2382,6 +2407,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             @Override
             public void onBuffering(boolean b) {
 
+                buffering = b;
 
             }
 
@@ -2390,9 +2416,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                 // Toast.makeText(getContext(), "Seeked to: " + i, Toast.LENGTH_SHORT).show();
 
-                //if(localUserChanged) {
+                nativeYoutubeSync = i;
+
+                // if(localUserChanged) {
+
+
+
                 HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-                youtubeVideoHash.put("videoSec", i);
+                youtubeVideoHash.put("videoSec", nativeYoutubeSync);
                 youtubeVideoHash.put("youtubeID", youtubeID);
                 youtubeVideoHash.put("videoTitle", youtubeTitle);
 
@@ -2400,7 +2431,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         .child(userIDCHATTINGWITH)
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .updateChildren(youtubeVideoHash);
-                //}
+                //   }
 
                 localUserChanged = true;
 
@@ -2806,7 +2837,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             presenceRef.addValueEventListener(presentEventListener);
             seekRef.onDisconnect().removeValue();
             //seekRef.addValueEventListener(seekValueEventListener);
-            urlRef.addValueEventListener(youtUrlEventListener);
+            //urlRef.addValueEventListener(youtUrlEventListener);
             seekNativeRef.addValueEventListener(seekNativeValueEventListener);
             /*Intent startLiveActiveServiceIntent = new Intent(parentActivity, LiveMessageActiveService.class);
             startLiveActiveServiceIntent.putExtra("username", usernameChattingWith);
@@ -3217,7 +3248,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
 
                 presenceRef.removeEventListener(presentEventListener);
-                urlRef.removeEventListener(youtUrlEventListener);
+                // urlRef.removeEventListener(youtUrlEventListener);
                 //seekRef.removeEventListener(seekValueEventListener);
                 seekNativeRef.removeEventListener(seekNativeValueEventListener);
 
