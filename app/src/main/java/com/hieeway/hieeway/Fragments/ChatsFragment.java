@@ -83,6 +83,7 @@ import com.hieeway.hieeway.UserPicViewModel;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.VideoCallTestActivity;
 import com.hieeway.hieeway.WebViewActivity;
+import com.hieeway.hieeway.YoutubeTestActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -456,7 +457,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 //spotify_status_back.setVisibility(View.GONE);
 
 
-                if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
+                /*if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
                     startActivity(new Intent(getActivity(), MusicFeedActivity.class));
 
                 else {
@@ -466,8 +467,8 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         Toast.makeText(getActivity(), "Turn on Spotify Connection and Music Beacon", Toast.LENGTH_LONG).show();
 
                     startActivity(new Intent(getActivity(), SettingsActivity.class));
-                }
-                //startActivity(new Intent(getActivity(), VideoCallTestActivity.class));
+                }*/
+                startActivity(new Intent(getActivity(), YoutubeTestActivity.class));
 
                 //throw new RuntimeException("Test Crash");
 

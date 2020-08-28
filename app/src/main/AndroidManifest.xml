@@ -33,6 +33,7 @@
         android:roundIcon="@mipmap/ic_launcher_hieeway_circle"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".YoutubeTestActivity"></activity>
         <activity
             android:name=".VerticalPageActivityPerf"
             android:screenOrientation="portrait"
