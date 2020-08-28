@@ -127,7 +127,7 @@ public class MusicPalService extends Service {
             startActivity(openIntent);
             sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         } else if (OPEN_PROFILE.equals(intent.getAction())) {
-            Intent openProfileIntent = new Intent(this, VerticalPageActivity.class);
+            Intent openProfileIntent = new Intent(this, VerticalPageActivityPerf.class);
             openProfileIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             openProfileIntent.putExtra("username", username);
             openProfileIntent.putExtra("userid", otherUserId);

@@ -121,13 +121,19 @@
                 android:background="@drawable/live_youtube_back"
                 android:hardwareAccelerated="true"
                 android:padding="4dp"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:autoPlay="false"
                 app:showFullScreenButton="false"
                 app:showSeekBar="false"
                 app:showVideoCurrentTime="true"
                 app:showVideoDuration="true"
                 app:useWebUi="false" />
+
+            <FrameLayout
+                android:id="@+id/youtube_api_player_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible" />
 
 
             <RelativeLayout

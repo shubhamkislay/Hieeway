@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import static br.com.instachat.emojilibrary.model.Emoji.TAG;
 import static com.hieeway.hieeway.MyApplication.CHANNEL_1_ID;
 import static com.hieeway.hieeway.MyApplication.CHANNEL_3_ID;
-import static com.hieeway.hieeway.VerticalPageActivity.isWatching;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.isWatching;
 
 public class LiveMessageNotificationService extends Service {
 
@@ -76,7 +76,7 @@ public class LiveMessageNotificationService extends Service {
 
 
         } else if (OPEN_PROFILE.equals(intent.getAction())) {
-            Intent openIntent = new Intent(this, VerticalPageActivity.class);
+            Intent openIntent = new Intent(this, VerticalPageActivityPerf.class);
             openIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             openIntent.putExtra("username", intent.getStringExtra("username"));
             openIntent.putExtra("userid", intent.getStringExtra("userid"));

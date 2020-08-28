@@ -831,6 +831,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                 isWatching = true;
             } catch (Exception e) {
 
+                Toast.makeText(VerticalPageActivityPerf.this, "Closing Exception: " + e.toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }
