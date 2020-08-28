@@ -96,7 +96,7 @@ public class YoutubeFragment extends Fragment {
 
                 mYouTubePlayer = player;
                 mYouTubePlayer.setFullscreen(false);
-                mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+                //mYouTubePlayer.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                 //mYouTubePlayer.setFullscreenControlFlags(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
 
                 mYouTubePlayer.setShowFullscreenButton(false);
