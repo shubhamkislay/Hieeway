@@ -795,62 +795,63 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                                             if (dataSnapshot.exists()) {
                                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                                     Friend friend = snapshot.getValue(Friend.class);
-                                                    if (friend.getStatus().equals("friends")) {
+                                                    try {
+                                                        if (friend.getStatus().equals("friends")) {
 
-                                                        FirebaseDatabase.getInstance().getReference("Music")
-                                                                .child(friend.getFriendId())
-                                                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                    @Override
-                                                                    public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
-                                                                        if (musicSnapshot.exists()) {
+                                                            FirebaseDatabase.getInstance().getReference("Music")
+                                                                    .child(friend.getFriendId())
+                                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                        @Override
+                                                                        public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                                            if (musicSnapshot.exists()) {
 
-                                                                            try {
-                                                                                Music music = musicSnapshot.getValue(Music.class);
-
-
-                                                                                if (!userList.contains(music)) {
-                                                                                    userList.add(music);
-                                                                                } else {
-                                                                                    userList.remove(music);
-                                                                                    userList.add(music);
-                                                                                }
+                                                                                try {
+                                                                                    Music music = musicSnapshot.getValue(Music.class);
 
 
-                                                                                if (searchedList) {
-                                                                                    if (sentListSize < userList.size()) {
-                                                                                        try {
+                                                                                    if (!userList.contains(music)) {
+                                                                                        userList.add(music);
+                                                                                    } else {
+                                                                                        userList.remove(music);
+                                                                                        userList.add(music);
+                                                                                    }
 
-                                                                                            Collections.sort(userList, Collections.<Music>reverseOrder());
 
-                                                                                            musicTaskCompletionSource.setResult(userList);
+                                                                                    if (searchedList) {
+                                                                                        if (sentListSize < userList.size()) {
+                                                                                            try {
+
+                                                                                                Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                                                musicTaskCompletionSource.setResult(userList);
 
 
-                                                                                        } catch (Exception e) {
-                                                                                            //
+                                                                                            } catch (Exception e) {
+                                                                                                //
+                                                                                            }
                                                                                         }
-                                                                                    }
-                                                                                    if (userList.size() < 1) {
-                                                                                        spotify_status_back.setVisibility(View.GONE);
+                                                                                        if (userList.size() < 1) {
+                                                                                            spotify_status_back.setVisibility(View.GONE);
+                                                                                        }
+
                                                                                     }
 
+
+                                                                                } catch (Exception e) {
+                                                                                    //
                                                                                 }
 
 
-                                                                            } catch (Exception e) {
-                                                                                //
                                                                             }
 
 
                                                                         }
 
+                                                                        @Override
+                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                                    }
-                                                                });
+                                                                        }
+                                                                    });
 
                                     /*FirebaseDatabase.getInstance().getReference("Music")
                                             .child(friend.getFriendId())
@@ -898,6 +899,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                                                 }
                                             });*/
 
+
+                                                        }
+                                                    } catch (Exception e) {
 
                                                     }
                                                 }

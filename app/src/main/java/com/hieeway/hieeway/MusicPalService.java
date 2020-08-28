@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Helper.SpotifyMusicPalRemoteHelper;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.Pal;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -58,7 +59,7 @@ public class MusicPalService extends Service {
     private static String OPEN_SPOTIFY = "spotify";
     private static String OPEN_PROFILE = "profile";
     final String appPackageName = "com.spotify.music";
-    SpotifyAppRemote mSpotifyAppRemote;
+    SpotifyAppRemote mSpotifyAppRemote = SpotifyMusicPalRemoteHelper.getInstance().getSpotifyAppRemote();
     Intent stopSelfIntent, openSpotifyIntent, openProfileIntent;
     String username, otherUserId, userPhoto;
     String songID = "default";
@@ -94,7 +95,7 @@ public class MusicPalService extends Service {
             USER_NAME_MUSIC_SYNC = "";
 
             try {
-                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                SpotifyAppRemote.CONNECTOR.disconnect(SpotifyMusicPalRemoteHelper.getInstance().getSpotifyAppRemote());
             } catch (Exception e) {
                 //
             }
@@ -184,10 +185,12 @@ public class MusicPalService extends Service {
                             .build();
 
 
-            try {
-                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-            } catch (Exception e) {
+            if (mSpotifyAppRemote != null) {
+                try {
+                    SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                } catch (Exception e) {
 
+                }
             }
 
 
@@ -199,6 +202,7 @@ public class MusicPalService extends Service {
                             mSpotifyAppRemote = spotifyAppRemote;
 
 
+                            SpotifyMusicPalRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
 
 
 
@@ -416,13 +420,6 @@ public class MusicPalService extends Service {
                                                 // palHash.put("connection", connectionStatus);
 
 
-
-
-
-
-
-
-
                                             }
                                         });
 
@@ -454,7 +451,7 @@ public class MusicPalService extends Service {
                             if (pal.getConnection().equals("join")) {
 
 
-                                connectionStatus = "join";
+
                                 connectionMsg = "You are connected with ";
 
                                 /*if (!songID.equals(pal.getSongID())) {
@@ -463,22 +460,37 @@ public class MusicPalService extends Service {
                                 }*/
                                 musicConnected = true;
 
-                                if (!songID.equals(pal.getSongID()) && !syncStart) {
-                                    if (!pal.getSongID().equals("default")) {
-                                        try {
-                                            mSpotifyAppRemote.getPlayerApi().play(pal.getSongID());
-                                        } catch (Exception e) {
+                                if (connectionStatus.equals("join")) {
+                                    if (!songID.equals(pal.getSongID()) && !syncStart) {
+                                        if (!pal.getSongID().equals("default")) {
+                                            try {
+                                                mSpotifyAppRemote.getPlayerApi().play(pal.getSongID());
+                                            } catch (Exception e) {
+                                                //
+                                            }
+                                            // songID = pal.getSongID();
+                                            // listedToSpotifySong();
+                                        }
+                                    }
+                                } else {
+                                    mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(new CallResult.ResultCallback<PlayerState>() {
+                                        @Override
+                                        public void onResult(PlayerState playerState) {
+                                            if (playerState.isPaused)
+                                                try {
+                                                    songID = playerState.track.uri;
+                                                    mSpotifyAppRemote.getPlayerApi().play(playerState.track.uri);
+                                                } catch (Exception e) {
+                                                    //
+                                                }
                                             //
                                         }
-                                        // songID = pal.getSongID();
-                                        // listedToSpotifySong();
-                                    }
+                                    });
                                 }
 
+                                connectionStatus = "join";
+
                                 syncStart = false;
-
-
-
 
 
                             } else if (pal.getConnection().equals("disconnect")) {
