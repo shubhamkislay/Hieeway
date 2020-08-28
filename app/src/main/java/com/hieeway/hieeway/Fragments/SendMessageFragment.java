@@ -37,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hieeway.hieeway.Interface.CloseLiveMessagingLoading;
 import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.Adapters.SendMessageAdapter;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
@@ -81,9 +82,9 @@ public class SendMessageFragment extends Fragment {
     String usernameChattingWith;
     String photo;
     Boolean blinked = false;
-    private RelativeLayout checking_layout;
-    private TextView checking_txt;
+
     private String messageID = "default";
+    private CloseLiveMessagingLoading closeLiveMessagingLoading;
 
     public SendMessageFragment() {
         // Required empty public constructor
@@ -107,14 +108,12 @@ public class SendMessageFragment extends Fragment {
         usernameChattingWith = getArguments().getString("usernameChattingWith");
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
         photo = getArguments().getString("photo");
+
         toggleButton = view.findViewById(R.id.toggle_msg_highlight);
 
         gemSize = view.findViewById(R.id.gems_size);
 
-        checking_layout = view.findViewById(R.id.checking_layout);
-        checking_txt = view.findViewById(R.id.checking_txt);
 
-        checking_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         recharge_gems = view.findViewById(R.id.recharge_gems);
 
@@ -534,10 +533,16 @@ public class SendMessageFragment extends Fragment {
             listTask.addOnCompleteListener(new OnCompleteListener<List<ChatMessage>>() {
                 @Override
                 public void onComplete(@NonNull Task<List<ChatMessage>> task) {
+
+                    try {
+                        closeLiveMessagingLoading.turnOffLoadingScreen();
+                    } catch (Exception e) {
+                        //
+                    }
+
                     if (task.isSuccessful()) {
                         sizeAfterDataChange = sendMessagelist.size();
 
-                        checking_layout.setVisibility(View.GONE);
 
                         try {
                             if (sizeBeforeDeleting <= sizeAfterDataChange) {
@@ -557,12 +562,13 @@ public class SendMessageFragment extends Fragment {
                         }
                     } else
                         try {
-                            checking_layout.setVisibility(View.VISIBLE);
+
                         } catch (Exception e) {
                             //
                         }
 
                 }
+
             });
 
             // addListToRecyclerView(sendMessagelist);
@@ -570,13 +576,6 @@ public class SendMessageFragment extends Fragment {
 
 
         } catch (Exception e) {
-
-            //
-            try {
-                checking_layout.setVisibility(View.VISIBLE);
-            } catch (Exception ne) {
-                //
-            }
 
         }
 
@@ -619,6 +618,7 @@ public class SendMessageFragment extends Fragment {
 
         filterList(messageList);
     }
+
 
     public void searchChats(String userIdChattingWith) {
 
@@ -674,14 +674,15 @@ public class SendMessageFragment extends Fragment {
 
 
                     } else {
-                        try {
-                            checking_layout.setVisibility(View.GONE);
-                        } catch (Exception e) {
-                            //
-                        }
+
                     }
                     // listTaskCompletionSource.setResult(messageList);
 
+                    try {
+                        closeLiveMessagingLoading.turnOffLoadingScreen();
+                    } catch (Exception e) {
+
+                    }
 
 
                     /*    }
@@ -821,6 +822,11 @@ public class SendMessageFragment extends Fragment {
 
     public void setMessageHighlightListener(MessageHighlightListener messageHighlightListener) {
         this.messageHighlightListener = messageHighlightListener;
+
+    }
+
+    public void setCloseLiveMessagingLoadingListener(CloseLiveMessagingLoading closeLiveMessagingLoading) {
+        this.closeLiveMessagingLoading = closeLiveMessagingLoading;
     }
 
 /*    @Override

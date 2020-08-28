@@ -86,6 +86,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomUiController;
+import com.hieeway.hieeway.Interface.CloseLiveMessagingLoading;
 import com.hieeway.hieeway.LiveMessageActiveService;
 import com.hieeway.hieeway.Model.YoutubeSync;
 import com.hieeway.hieeway.VerticalPageActivityPerf;
@@ -297,6 +298,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private Button camera_access_btn;
     private TextView request_camera_message;
     private String live;
+    private CloseLiveMessagingLoading closeLiveMessagingLoading;
 
     /**
      *  Live View Model    checkForExistingRequest()
@@ -2898,11 +2900,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
     }
 
-    public void showLiveMessageDialog(Activity activity, String live) {
+    public void showLiveMessageDialog(Activity activity, String live, CloseLiveMessagingLoading closeLiveMessagingLoading) {
 
 
         this.live = live;
         this.parentActivity = activity;
+        this.closeLiveMessagingLoading = closeLiveMessagingLoading;
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -2922,6 +2925,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 liveMessageRequestDialog.setCanceledOnTouchOutside(false);
 
                 liveMessageRequestDialog.show();
+
+                closeLiveMessagingLoading.turnOffLoadingScreen();
             } catch (NullPointerException e) {
                 liveMessageEventListener.changeFragment();
 
@@ -3706,6 +3711,11 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
         initialiseLiveragment();
         createLiveMessageDbInstance();
+        try {
+            closeLiveMessagingLoading.turnOffLoadingScreen();
+        } catch (Exception e) {
+            //
+        }
 
         try {
             askRunnable = new Runnable() {

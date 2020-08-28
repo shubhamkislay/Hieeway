@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.MusicFeedAdapter;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.Music;
@@ -83,119 +84,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        userStatusOnDiconnect();
-        ConnectionParams connectionParams =
-                new ConnectionParams.Builder(CLIENT_ID)
-                        .setRedirectUri(REDIRECT_URI)
-                        .setPreferredThumbnailImageSize(1500)
-                        .setPreferredImageSize(1500)
-                        .showAuthView(true)
-                        .build();
 
-
-        try {
-            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-        } catch (Exception e) {
-
-        }
-        //if(remoteReady)
-
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!connectionSuccessull)
-                    connection_error_btn.setVisibility(View.VISIBLE);
-            }
-        }, 10000);
-
-
-        SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
-                new Connector.ConnectionListener() {
-
-                    @Override
-                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                        mSpotifyAppRemote = spotifyAppRemote;
-
-                        connectionSuccessull = true;
-
-                        // remoteReady = true;
-
-                        connecting_spotify_txt.setText("Launching Music Beacon...");
-
-
-                        Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
-                        startService(intent1);
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                populateMusicList();
-                            }
-                        }, 500);
-
-                        // Toast.makeText(MusicFeedActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
-
-                        // Now you can start interacting with App Remote
-
-
-                    }
-
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        Log.e("MainActivity", throwable.getMessage(), throwable);
-
-                        PackageManager pm = null;
-                        try {
-                            pm = getPackageManager();
-
-                            boolean isSpotifyInstalled;
-
-
-                            try {
-                                pm.getPackageInfo("com.spotify.music", 0);
-                                isSpotifyInstalled = true;
-                                Toast.makeText(MusicFeedActivity.this, "Log in to Spotify", Toast.LENGTH_SHORT).show();
-                                AuthenticationRequest.Builder builder =
-                                        new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-
-                                builder.setScopes(new String[]{"streaming"});
-                                AuthenticationRequest request = builder.build();
-
-                                AuthenticationClient.openLoginActivity(MusicFeedActivity.this, REQUEST_CODE, request);
-                            } catch (PackageManager.NameNotFoundException e) {
-                                isSpotifyInstalled = false;
-
-                                finish();
-                                Toast.makeText(MusicFeedActivity.this, "Install spotify app to continue", Toast.LENGTH_LONG).show();
-
-                                try {
-                                    Uri uri = Uri.parse("market://details")
-                                            .buildUpon()
-                                            .appendQueryParameter("id", appPackageName)
-                                            .appendQueryParameter("referrer", referrer)
-                                            .build();
-                                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                                } catch (android.content.ActivityNotFoundException ignored) {
-                                    Uri uri = Uri.parse("https://play.google.com/store/apps/details")
-                                            .buildUpon()
-                                            .appendQueryParameter("id", appPackageName)
-                                            .appendQueryParameter("referrer", referrer)
-                                            .build();
-                                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
-
-
-                                }
-
-                            }
-                        } catch (Exception e) {
-                            Toast.makeText(MusicFeedActivity.this, "Cannot connect with Spotify App", Toast.LENGTH_SHORT).show();
-                        }
-
-                        
-                        // Something went wrong when attempting to connect! Handle errors here
-                    }
-                });
 
     }
 
@@ -312,6 +201,151 @@ public class MusicFeedActivity extends AppCompatActivity {
             }
         });
 
+
+        userStatusOnDiconnect();
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .setPreferredThumbnailImageSize(1500)
+                        .setPreferredImageSize(1500)
+                        .showAuthView(true)
+                        .build();
+
+
+        try {
+            SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+        } catch (Exception e) {
+
+        }
+        //if(remoteReady)
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!connectionSuccessull)
+                    connection_error_btn.setVisibility(View.VISIBLE);
+            }
+        }, 10000);
+
+
+        SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
+
+        if (spotifyAppRemote == null) {
+            SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
+                    new Connector.ConnectionListener() {
+
+                        @Override
+                        public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                            mSpotifyAppRemote = spotifyAppRemote;
+
+                            connectionSuccessull = true;
+
+                            // remoteReady = true;
+
+                            connecting_spotify_txt.setText("Launching Music Beacon...");
+
+
+                            SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
+
+                            Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
+                            startService(intent1);
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    populateMusicList();
+                                }
+                            }, 500);
+
+                            // Toast.makeText(MusicFeedActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                            // Now you can start interacting with App Remote
+
+
+                        }
+
+                        @Override
+                        public void onFailure(Throwable throwable) {
+                            Log.e("MainActivity", throwable.getMessage(), throwable);
+
+                            PackageManager pm = null;
+                            try {
+                                pm = getPackageManager();
+
+                                boolean isSpotifyInstalled;
+
+
+                                try {
+                                    pm.getPackageInfo("com.spotify.music", 0);
+                                    isSpotifyInstalled = true;
+                                    //Toast.makeText(MusicFeedActivity.this, "Log in to Spotify", Toast.LENGTH_SHORT).show();
+                                    AuthenticationRequest.Builder builder =
+                                            new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+                                    builder.setScopes(new String[]{"streaming"});
+                                    AuthenticationRequest request = builder.build();
+
+                                    AuthenticationClient.openLoginActivity(MusicFeedActivity.this, REQUEST_CODE, request);
+                                } catch (PackageManager.NameNotFoundException e) {
+                                    isSpotifyInstalled = false;
+
+                                    finish();
+                                    //Toast.makeText(MusicFeedActivity.this, "Install spotify app to continue", Toast.LENGTH_LONG).show();
+
+                                    try {
+                                        Uri uri = Uri.parse("market://details")
+                                                .buildUpon()
+                                                .appendQueryParameter("id", appPackageName)
+                                                .appendQueryParameter("referrer", referrer)
+                                                .build();
+                                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                                    } catch (android.content.ActivityNotFoundException ignored) {
+                                        Uri uri = Uri.parse("https://play.google.com/store/apps/details")
+                                                .buildUpon()
+                                                .appendQueryParameter("id", appPackageName)
+                                                .appendQueryParameter("referrer", referrer)
+                                                .build();
+                                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+
+
+                                    }
+
+                                }
+                            } catch (Exception e) {
+                                Toast.makeText(MusicFeedActivity.this, "Cannot connect with Spotify App", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                            // Something went wrong when attempting to connect! Handle errors here
+                        }
+                    });
+        } else {
+            mSpotifyAppRemote = spotifyAppRemote;
+            connectionSuccessull = true;
+
+            // remoteReady = true;
+
+            connecting_spotify_txt.setText("Launching Music Beacon...");
+
+            SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
+
+            Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
+            startService(intent1);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    populateMusicList();
+                }
+            }, 500);
+
+
+            // Toast.makeText(MusicFeedActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+            // Now you can start interacting with App Remote
+
+
+        }
 
     }
 

@@ -22,8 +22,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.Pal;
 import com.hieeway.hieeway.Model.User;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import java.util.HashMap;
 
@@ -259,6 +261,13 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.putBoolean(MUSIC_BEACON, isChecked);
                     editor.putBoolean(SPOTIFY_CONNECT, isChecked);
                     editor.apply();
+
+                    try {
+                        SpotifyAppRemote.CONNECTOR.disconnect(SpotifyRemoteHelper.getInstance().getSpotifyAppRemote());
+                    } catch (Exception e) {
+
+                    }
+                    SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(null);
 
                     FirebaseDatabase.getInstance().getReference("Music")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

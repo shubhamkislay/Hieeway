@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -585,61 +586,99 @@ public class ViewProfileActivity extends AppCompatActivity {
                                 .build();
 
 
-                SpotifyAppRemote.CONNECTOR.connect(ViewProfileActivity.this, connectionParams,
-                        new Connector.ConnectionListener() {
+                SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
+                if (spotifyAppRemote == null) {
+                    SpotifyAppRemote.CONNECTOR.connect(ViewProfileActivity.this, connectionParams,
+                            new Connector.ConnectionListener() {
 
-                            @Override
-                            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                                mSpotifyAppRemote = spotifyAppRemote;
+                                @Override
+                                public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                                    mSpotifyAppRemote = spotifyAppRemote;
 
-                                connect_spotify.setVisibility(View.GONE);
-                                connect_spotify_layout.setVisibility(View.GONE);
-                                spotify_icon.setVisibility(View.VISIBLE);
-                                music_loading_layout.setVisibility(View.GONE);
-                                // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                                    connect_spotify.setVisibility(View.GONE);
+                                    connect_spotify_layout.setVisibility(View.GONE);
+                                    spotify_icon.setVisibility(View.VISIBLE);
+                                    music_loading_layout.setVisibility(View.GONE);
+                                    // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
-                                // Now you can start interacting with App Remote
+                                    // Now you can start interacting with App Remote
 
 
-                                //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
-                                // Now you can start interacting with App Remote
+                                    // Now you can start interacting with App Remote
 
-                                try {
-                                    song_name.setText(songName);
-                                    artist_name.setText(artistName);
+                                    try {
+                                        song_name.setText(songName);
+                                        artist_name.setText(artistName);
 
-                                    mSpotifyAppRemote.getImagesApi().getImage(songUri)
-                                            .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
-                                                @Override
-                                                public void onResult(Bitmap bitmap) {
+                                        mSpotifyAppRemote.getImagesApi().getImage(songUri)
+                                                .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                                                    @Override
+                                                    public void onResult(Bitmap bitmap) {
 
-                                                    spotify_cover.setImageBitmap(bitmap);
-                                                }
-                                            });
-                                } catch (Exception e) {
-                                    //
+                                                        spotify_cover.setImageBitmap(bitmap);
+                                                    }
+                                                });
+                                    } catch (Exception e) {
+                                        //
+                                    }
+
                                 }
 
-                            }
+                                @Override
+                                public void onFailure(Throwable throwable) {
+                                    // spotifyConnected = false;
+                                    //song_name.setText(songName);
+                                    //artist_name.setText(artistName);
+                                    connect_spotify.setVisibility(View.VISIBLE);
+                                    connect_spotify_layout.setVisibility(View.VISIBLE);
+                                    spotify_icon.setVisibility(View.GONE);
+                                    music_loading_layout.setVisibility(View.GONE);
 
-                            @Override
-                            public void onFailure(Throwable throwable) {
-                                // spotifyConnected = false;
-                                //song_name.setText(songName);
-                                //artist_name.setText(artistName);
-                                connect_spotify.setVisibility(View.VISIBLE);
-                                connect_spotify_layout.setVisibility(View.VISIBLE);
-                                spotify_icon.setVisibility(View.GONE);
-                                music_loading_layout.setVisibility(View.GONE);
-
-                                music_layout.setVisibility(View.VISIBLE);
+                                    music_layout.setVisibility(View.VISIBLE);
 
 
-                                // Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify automatically :( " + throwable.getStackTrace(), Toast.LENGTH_SHORT).show();
-                                // Something went wrong when attempting to connect! Handle errors here
-                            }
-                        });
+                                    // Toast.makeText(ViewProfileActivity.this, "Cannot connect to spotify automatically :( " + throwable.getStackTrace(), Toast.LENGTH_SHORT).show();
+                                    // Something went wrong when attempting to connect! Handle errors here
+                                }
+                            });
+
+                } else {
+                    mSpotifyAppRemote = spotifyAppRemote;
+                    connect_spotify_layout.setVisibility(View.GONE);
+                    spotify_icon.setVisibility(View.VISIBLE);
+                    music_loading_layout.setVisibility(View.GONE);
+                    // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                    // Now you can start interacting with App Remote
+
+
+                    //Toast.makeText(SpotifyActivity.this,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                    // Now you can start interacting with App Remote
+
+                    try {
+                        song_name.setText(songName);
+                        artist_name.setText(artistName);
+
+                        mSpotifyAppRemote.getImagesApi().getImage(songUri)
+                                .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                                    @Override
+                                    public void onResult(Bitmap bitmap) {
+
+                                        spotify_cover.setImageBitmap(bitmap);
+                                    }
+                                });
+                    } catch (Exception e) {
+                        //
+                    }
+
+                }
+
+
+
+
 
             } else {
                 connect_spotify.setVisibility(View.VISIBLE);

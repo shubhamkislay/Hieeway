@@ -71,6 +71,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.hieeway.hieeway.FeelingDialog;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.EditBioFragmentListener;
 import com.hieeway.hieeway.Interface.EditProfileOptionListener;
@@ -243,87 +244,115 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
         spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
 
-        if (sharedPreferences.getBoolean(SPOTIFY_CONNECT, false)) {
 
-            ConnectionParams connectionParams =
-                    new ConnectionParams.Builder(CLIENT_ID)
-                            .setRedirectUri(REDIRECT_URI)
-                            .setPreferredThumbnailImageSize(1500)
-                            .setPreferredImageSize(1500)
-                            .showAuthView(true)
-                            .build();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (sharedPreferences.getBoolean(SPOTIFY_CONNECT, false)) {
 
-            try {
-                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-            } catch (Exception e) {
-                //
-            }
+                    ConnectionParams connectionParams =
+                            new ConnectionParams.Builder(CLIENT_ID)
+                                    .setRedirectUri(REDIRECT_URI)
+                                    .setPreferredThumbnailImageSize(1500)
+                                    .setPreferredImageSize(1500)
+                                    .showAuthView(true)
+                                    .build();
 
-            SpotifyAppRemote.CONNECTOR.connect(getActivity(), connectionParams,
-                    new Connector.ConnectionListener() {
+                    SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
+                    if (spotifyAppRemote == null) {
+                /*try {
+                    SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                } catch (Exception e) {
+                    //
+                }*/
 
-                        @Override
-                        public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                            mSpotifyAppRemote = spotifyAppRemote;
-                            connect_spotify.setVisibility(View.GONE);
-                            connect_spotify_layout.setVisibility(View.GONE);
-                            spotify_icon.setVisibility(View.VISIBLE);
-                            music_layout.setVisibility(View.VISIBLE);
-                            music_loading_layout.setVisibility(View.GONE);
-                            // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                        SpotifyAppRemote.CONNECTOR.connect(getActivity(), connectionParams,
+                                new Connector.ConnectionListener() {
 
-                            // Now you can start interacting with App Remote
-                            spotifyConnected = true;
-                            listedToSpotifySong();
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            Log.e("MainActivity", throwable.getMessage(), throwable);
-                            connect_spotify.setVisibility(View.VISIBLE);
-                            connect_spotify_layout.setVisibility(View.VISIBLE);
-                            spotify_icon.setVisibility(View.GONE);
-                            music_loading_layout.setVisibility(View.GONE);
-
-                            song_name.setVisibility(View.GONE);
-                            artist_name.setVisibility(View.GONE);
-                            spotify_cover.setVisibility(View.GONE);
-
-                            music_layout.setVisibility(View.VISIBLE);
-                            //song_name.setText("Connect to spotify");
-
-                            spotifyConnected = false;
-                            // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                            // Something went wrong when attempting to connect! Handle errors here
-                        }
-                    });
-
-        } else {
-            try {
-                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-            } catch (Exception e) {
-                //
-            }
-
-            connect_spotify.setVisibility(View.VISIBLE);
-            connect_spotify_layout.setVisibility(View.VISIBLE);
-            spotify_icon.setVisibility(View.GONE);
-            music_loading_layout.setVisibility(View.GONE);
-
-            song_name.setVisibility(View.GONE);
-            artist_name.setVisibility(View.GONE);
-            spotify_cover.setVisibility(View.GONE);
+                                    @Override
+                                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                                        mSpotifyAppRemote = spotifyAppRemote;
 
 
-            music_layout.setVisibility(View.VISIBLE);
+                                        SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
 
-            //song_name.setText("Connect to spotify");
+                                        connect_spotify.setVisibility(View.GONE);
+                                        connect_spotify_layout.setVisibility(View.GONE);
+                                        spotify_icon.setVisibility(View.VISIBLE);
+                                        music_layout.setVisibility(View.VISIBLE);
+                                        music_loading_layout.setVisibility(View.GONE);
+                                        // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
-            spotifyConnected = false;
-        }
+                                        // Now you can start interacting with App Remote
+                                        spotifyConnected = true;
+                                        listedToSpotifySong();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable throwable) {
+                                        Log.e("MainActivity", throwable.getMessage(), throwable);
+                                        connect_spotify.setVisibility(View.VISIBLE);
+                                        connect_spotify_layout.setVisibility(View.VISIBLE);
+                                        spotify_icon.setVisibility(View.GONE);
+                                        music_loading_layout.setVisibility(View.GONE);
+
+                                        song_name.setVisibility(View.GONE);
+                                        artist_name.setVisibility(View.GONE);
+                                        spotify_cover.setVisibility(View.GONE);
+
+                                        music_layout.setVisibility(View.VISIBLE);
+                                        //song_name.setText("Connect to spotify");
+
+                                        spotifyConnected = false;
+                                        // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                        // Something went wrong when attempting to connect! Handle errors here
+                                    }
+                                });
+                    } else {
+                        mSpotifyAppRemote = spotifyAppRemote;
+                        connect_spotify.setVisibility(View.GONE);
+                        connect_spotify_layout.setVisibility(View.GONE);
+                        spotify_icon.setVisibility(View.VISIBLE);
+                        music_layout.setVisibility(View.VISIBLE);
+                        music_loading_layout.setVisibility(View.GONE);
+                        // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+
+                        // Now you can start interacting with App Remote
+                        spotifyConnected = true;
+                        listedToSpotifySong();
+
+                    }
+
+
+                } else {
+                    try {
+                        SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                    } catch (Exception e) {
+                        //
+                    }
+
+                    connect_spotify.setVisibility(View.VISIBLE);
+                    connect_spotify_layout.setVisibility(View.VISIBLE);
+                    spotify_icon.setVisibility(View.GONE);
+                    music_loading_layout.setVisibility(View.GONE);
+
+                    song_name.setVisibility(View.GONE);
+                    artist_name.setVisibility(View.GONE);
+                    spotify_cover.setVisibility(View.GONE);
+
+
+                    music_layout.setVisibility(View.VISIBLE);
+
+                    //song_name.setText("Connect to spotify");
+
+                    spotifyConnected = false;
+                }
 
         /*Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
         getActivity().startService(intent1);*/
+            }
+        }, 500);
+
 
 
 
@@ -1037,7 +1066,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                                 spotify_cover.setImageBitmap(bitmap);
 
 
-                                                updateMusicStatus(track.name, track.artist.name, track.imageUri);
+                                                //updateMusicStatus(track.name, track.artist.name, track.imageUri);
                                             }
                                         });
 
@@ -1609,10 +1638,17 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     @Override
     public void onPause() {
         super.onPause();
-        try {
+        /*try {
             SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
         } catch (Exception e) {
             //
-        }
+        }*/
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+
     }
 }

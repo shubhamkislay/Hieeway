@@ -39,7 +39,7 @@ import static com.hieeway.hieeway.MusicPalService.MUSIC_PAL_SERVICE_RUNNING;
 import static com.hieeway.hieeway.MusicPalService.USER_NAME_MUSIC_SYNC;
 import static com.hieeway.hieeway.MyApplication.CHANNEL_1_ID;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
-import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.userNameChattingWith;
 
 public class MyMessagingService extends FirebaseMessagingService {
 
@@ -190,7 +190,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberrevealrequestaccepted", messageNotificationCount);
         }
 
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -405,7 +405,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             notificationIDHashMap.put(remoteMessage.getData().get("userId") + "numberrevealrequest", messageNotificationCount);
         }
 
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -614,7 +614,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "accept");
         }
 
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -732,7 +732,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "accept");
         }*/
 
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -940,7 +940,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
 
         Intent intent;
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
 
 
 
@@ -1104,7 +1104,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         context = this;
 
         Intent intent;
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
 
 
         collapsedView = new RemoteViews(getPackageName(), R.layout.collapsed_message_notification);
@@ -1309,7 +1309,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             }
         }
 
-        intent = new Intent(this, VerticalPageActivity.class);
+        intent = new Intent(this, VerticalPageActivityPerf.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -1694,7 +1694,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             if (remoteMessage.getData().get("default").equals("no")) {
 
 
-                Intent intent = new Intent(this, VerticalPageActivity.class);
+                Intent intent = new Intent(this, VerticalPageActivityPerf.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -1742,7 +1742,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             } else {
 
 
-                Intent intent = new Intent(this, VerticalPageActivity.class);
+                Intent intent = new Intent(this, VerticalPageActivityPerf.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -1978,7 +1978,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             if (remoteMessage.getData().get("default").equals("no")) {
 
 
-                Intent intent = new Intent(this, VerticalPageActivity.class);
+                Intent intent = new Intent(this, VerticalPageActivityPerf.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -2024,7 +2024,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             } else {
 
 
-                Intent intent = new Intent(this, VerticalPageActivity.class);
+                Intent intent = new Intent(this, VerticalPageActivityPerf.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));

@@ -2,6 +2,7 @@ package com.hieeway.hieeway.Fragments;
 
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,7 +13,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.hieeway.hieeway.Interface.CloseLiveMessagingLoading;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.VerticalPageActivityPerf;
@@ -21,7 +25,7 @@ import com.hieeway.hieeway.VerticalPageActivityPerf;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LiveMessageParentFragment extends Fragment {
+public class LiveMessageParentFragment extends Fragment implements CloseLiveMessagingLoading {
 
     LiveMessageEventListener liveMessageEventListener;
     Activity parentActivity;
@@ -38,6 +42,10 @@ public class LiveMessageParentFragment extends Fragment {
     private VerticalPageActivityPerf activity;
     private FragmentManager menuFragmentManager;
     private Boolean userVisited = false;
+    private RelativeLayout checking_layout;
+    private TextView checking_txt;
+
+
 
 
     public LiveMessageParentFragment() {
@@ -58,6 +66,12 @@ public class LiveMessageParentFragment extends Fragment {
         userChattingWithId = getArguments().getString("userIdChattingWith");
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
         photo = getArguments().getString("photo");
+
+
+        checking_layout = view.findViewById(R.id.checking_layout);
+        checking_txt = view.findViewById(R.id.checking_txt);
+
+        checking_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         /*bundle = new Bundle();
         bundle.putString("usernameChattingWith", usernameChattingWith);
@@ -96,7 +110,7 @@ public class LiveMessageParentFragment extends Fragment {
     public void showLiveMessageDialog(Activity activity, String live) {
         this.live = live;
         try {
-            liveMessageFragmentPerf.showLiveMessageDialog(activity, live);
+            liveMessageFragmentPerf.showLiveMessageDialog(activity, live, this);
         } catch (Exception e) {
 
         }
@@ -142,10 +156,10 @@ public class LiveMessageParentFragment extends Fragment {
                             userIdChattingWith,
                             youtubeID,
                             youtubeTitle);
+
+            liveMessageFragmentPerf.showLiveMessageDialog(parentActivity, live, this);
             menuFragmentManager.beginTransaction()
                     .replace(R.id.framelayout, liveMessageFragmentPerf).commit();
-
-            liveMessageFragmentPerf.showLiveMessageDialog(parentActivity, live);
 
 
         } else {
@@ -157,6 +171,15 @@ public class LiveMessageParentFragment extends Fragment {
             liveMessageFragmentPerf = null;
             if (userVisited)
                 live = "no";
+        }
+    }
+
+    @Override
+    public void turnOffLoadingScreen() {
+        try {
+            checking_layout.setVisibility(View.GONE);
+        } catch (Exception e) {
+            //
         }
     }
 }

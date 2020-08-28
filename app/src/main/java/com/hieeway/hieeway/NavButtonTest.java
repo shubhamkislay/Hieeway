@@ -66,6 +66,7 @@ import com.hieeway.hieeway.Fragments.EditBioLayoutFragment;
 import com.hieeway.hieeway.Fragments.FriendListFagment;
 import com.hieeway.hieeway.Fragments.PeopleFragment;
 import com.hieeway.hieeway.Fragments.ProfileFragment;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatStampSizeListener;
@@ -76,6 +77,7 @@ import com.hieeway.hieeway.Model.User;
 import static com.hieeway.hieeway.MyApplication.darkMutedSwatch;
 
 import com.hieeway.hieeway.Utils.MutedVideoView;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -1722,17 +1724,25 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     .child("online");
 
             databaseReference.setValue(true);
-        }catch (Exception e)
-        {
-
+        } catch (Exception e) {
+            //
         }
+
+        /**
+         * Music Beacon start
+         */
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-
-
         try {
             if (sharedPreferences.getBoolean(MUSIC_BEACON, false)
-                    && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))
-                startService(new Intent(NavButtonTest.this, MusicBeamService.class));
+                    && sharedPreferences.getBoolean(SPOTIFY_CONNECT, false)) {
+
+
+                SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
+                //if(spotifyAppRemote==null)
+                Intent intent = new Intent(NavButtonTest.this, MusicBeamService.class);
+                intent.putExtra("forcestart", true);
+                startService(intent);
+            }
         } catch (Exception e) {
             //
         }

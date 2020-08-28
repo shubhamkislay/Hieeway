@@ -57,7 +57,7 @@ import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.RemoveFriendDialog;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
-import com.hieeway.hieeway.VerticalPageActivity;
+import com.hieeway.hieeway.VerticalPageActivityPerf;
 
 import java.util.HashMap;
 import java.util.List;
@@ -300,7 +300,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = new Intent(mContext, VerticalPageActivity.class);
+                            Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
                             intent.putExtra("username", friend.getUsername());
                             intent.putExtra("userid", friend.getFriendId());
                             intent.putExtra("photo", friend.getPhoto());

@@ -374,7 +374,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                     if (intent.getStringExtra("revealmessage").equals("no")) {
                         Intent revealActivityIntent = new Intent(VerticalPageActivityPerf.this, RevealReplyActivity.class);
 
-                        revealActivityIntent.putExtra("userIdChattingWith", userIdChattingWith);
+                        revealActivityIntent.putExtra("userIdChattingWith", intent.getStringExtra("userid"));
                         revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
                         revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
                         revealActivityIntent.putExtra("photo", photo);
@@ -445,7 +445,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         });
         bundle = new Bundle();
         bundle.putString("usernameChattingWith", usernameChattingWith);
-        bundle.putString("userIdChattingWith", userIdChattingWith);
+        bundle.putString("userIdChattingWith", intent.getStringExtra("userid"));
         bundle.putString("photo", photo);
         bundle.putString("currentUserPublicKey", publicKeyText);
         bundle.putString("currentUserPrivateKey", privateKeyText);
@@ -455,12 +455,11 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
 
         bundleSendMessage = new Bundle();
-        bundleSendMessage.putString("userIdChattingWith", userIdChattingWith);
+        bundleSendMessage.putString("userIdChattingWith", intent.getStringExtra("userid"));
         bundleSendMessage.putString("currentUserPrivateKey", privateKeyText);
         bundleSendMessage.putString("currentUserPublicKeyID", publicKeyId);
         bundleSendMessage.putString("messageID", feededMessageID);
         bundleSendMessage.putString("usernameChattingWith", usernameChattingWith);
-        bundleSendMessage.putString("userIdChattingWith", userIdChattingWith);
         bundleSendMessage.putString("photo", photo);
 
         // set Fragmentclass Arguments
@@ -469,15 +468,16 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         ephemeralMessagingFragment.setArguments(bundle);
 
 
-        sendMessageFragment = new SendMessageFragment();
+        /*sendMessageFragment = new SendMessageFragment();
 
         sendMessageFragment.setMessageHighlightListener(this);
-        sendMessageFragment.setArguments(bundleSendMessage);
+        sendMessageFragment.setArguments(bundleSendMessage);*/
 
 
         SendMessageParentFragment sendMessageParentFragment = new SendMessageParentFragment();
         sendMessageParentFragment.setParentActivity(this);
         sendMessageParentFragment.setArguments(bundleSendMessage);
+        sendMessageParentFragment.setUserId(intent.getStringExtra("userid"));
 
 
         /**
@@ -586,7 +586,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
  */
                 //   liveMessageFragmentPerf.showLiveMessageDialog(VerticalPageActivityPerf.this, "live");
 
-                sendMessageFragment.removeListeners();
+                //sendMessageFragment.removeListeners();
 
                 pageSelected = 2;
 
@@ -684,7 +684,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
                     }
 
-                    sendMessageFragment.removeListeners();
+                    //sendMessageFragment.removeListeners();
 
                     // Toast.makeText(VerticalPageActivityPerf.this,"Page no."+i,Toast.LENGTH_SHORT).show();
                     pageSelected = 1;
@@ -950,7 +950,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
             databaseReference.setValue(true);
 
             if (pageSelected == 0) {
-                sendMessageFragment.searchChats(userIdChattingWith);
+                //sendMessageFragment.searchChats(userIdChattingWith);
             }
         } catch (Exception e) {
             //

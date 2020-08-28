@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Music;
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -60,7 +61,7 @@ public class MusicBeamService extends Service {
     public static final String SPOTIFY_CONNECT = "spotifyconnect";
     public static final String SHARED_PREFS = "sharedPrefs";
     Intent stopSelfIntent, openSpotifyIntent;
-    private SpotifyAppRemote mSpotifyAppRemote;
+    private SpotifyAppRemote mSpotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
     private PendingIntent pIntentlogin, openSpotify;
     private MediaSessionCompat mediaSessionCompat;
     private int notificationId;
@@ -83,11 +84,14 @@ public class MusicBeamService extends Service {
 
             try {
                 SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-                stopSelf();
+
             } catch (Exception e) {
 
                 //
             }
+
+            SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(null);
+            stopSelf();
 
 
         } else if (OPEN_SPOTIFY.equals(intent.getAction())) {
@@ -101,6 +105,9 @@ public class MusicBeamService extends Service {
             startActivity(openIntent);
             sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         } else {
+
+
+            boolean forceStart = intent.getBooleanExtra("forcestart", false);
 
             notificationId = MyApplication.NotificationID.getID();
 
@@ -116,59 +123,91 @@ public class MusicBeamService extends Service {
                             .build();
 
 
-            try {
-                SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-            } catch (Exception e) {
+            if (mSpotifyAppRemote == null || forceStart) {
 
+                try {
+                    SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                } catch (Exception e) {
+
+                }
+
+
+                SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
+                        new Connector.ConnectionListener() {
+
+                            @Override
+                            public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                                mSpotifyAppRemote = spotifyAppRemote;
+
+                                SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
+
+                                stopSelfIntent = new Intent(MusicBeamService.this, MusicBeamService.class);
+
+                                stopSelfIntent.setAction(ACTION_STOP_SERVICE);
+
+                                //This is optional if you have more than one buttons and want to differentiate between two
+
+
+                                pIntentlogin = PendingIntent.getService(MusicBeamService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+                                Notification notification = new NotificationCompat.Builder(MusicBeamService.this, CHANNEL_3_ID)
+                                        .setContentTitle("Listening to music from spotify app")
+                                        .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                                        .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
+                                        // .setContentIntent(pendingIntent)
+                                        .setAutoCancel(true)
+                                        .build();
+
+
+                                startForeground(notificationId, notification);
+
+
+                                listedToSpotifySong();
+
+                                sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+                                checkSettings();
+
+
+                            }
+
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                Log.e("Music Beam Service", throwable.getMessage(), throwable);
+                                stopSelf();
+                                // Something went wrong when attempting to connect! Handle errors here
+                            }
+                        });
+            } else {
+                stopSelfIntent = new Intent(MusicBeamService.this, MusicBeamService.class);
+
+                stopSelfIntent.setAction(ACTION_STOP_SERVICE);
+
+                //This is optional if you have more than one buttons and want to differentiate between two
+
+
+                pIntentlogin = PendingIntent.getService(MusicBeamService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+
+                Notification notification = new NotificationCompat.Builder(MusicBeamService.this, CHANNEL_3_ID)
+                        .setContentTitle("Listening to music from spotify app")
+                        .setSmallIcon(R.mipmap.ic_hieeway_logo)
+                        .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
+                        // .setContentIntent(pendingIntent)
+                        .setAutoCancel(true)
+                        .build();
+
+
+                startForeground(notificationId, notification);
+
+
+                listedToSpotifySong();
+
+                sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+                checkSettings();
             }
-
-
-            SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
-                    new Connector.ConnectionListener() {
-
-                        @Override
-                        public void onConnected(SpotifyAppRemote spotifyAppRemote) {
-                            mSpotifyAppRemote = spotifyAppRemote;
-
-
-                            stopSelfIntent = new Intent(MusicBeamService.this, MusicBeamService.class);
-
-                            stopSelfIntent.setAction(ACTION_STOP_SERVICE);
-
-                            //This is optional if you have more than one buttons and want to differentiate between two
-
-
-                            pIntentlogin = PendingIntent.getService(MusicBeamService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-
-                            Notification notification = new NotificationCompat.Builder(MusicBeamService.this, CHANNEL_3_ID)
-                                    .setContentTitle("Listening to music from spotify app")
-                                    .setSmallIcon(R.mipmap.ic_hieeway_logo)
-                                    .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
-                                    // .setContentIntent(pendingIntent)
-                                    .setAutoCancel(true)
-                                    .build();
-
-
-                            startForeground(notificationId, notification);
-
-
-                            listedToSpotifySong();
-
-                            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-
-                            checkSettings();
-
-
-                        }
-
-                        @Override
-                        public void onFailure(Throwable throwable) {
-                            Log.e("Music Beam Service", throwable.getMessage(), throwable);
-                            stopSelf();
-                            // Something went wrong when attempting to connect! Handle errors here
-                        }
-                    });
 
 
         }
@@ -183,8 +222,16 @@ public class MusicBeamService extends Service {
             @Override
             public void run() {
                 if (!(sharedPreferences.getBoolean(MUSIC_BEACON, false) &&
-                        sharedPreferences.getBoolean(SPOTIFY_CONNECT, false)))
+                        sharedPreferences.getBoolean(SPOTIFY_CONNECT, false))) {
+
+                    try {
+                        SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+                    } catch (Exception e) {
+
+                    }
+                    SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(null);
                     stopSelf();
+                }
 
                 else
                     checkSettings();

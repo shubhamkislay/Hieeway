@@ -1047,8 +1047,7 @@ public class FriendListFagment extends Fragment {
         imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 
-    private void animateMenuImage(ImageView imageView, ImageView imageViewTwo)
-    {
+    private void animateMenuImage(ImageView imageView, ImageView imageViewTwo) {
 
 
 
