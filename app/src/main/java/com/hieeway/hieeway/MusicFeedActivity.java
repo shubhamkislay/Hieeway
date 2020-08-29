@@ -328,6 +328,7 @@ public class MusicFeedActivity extends AppCompatActivity {
 
             connecting_spotify_txt.setText("Launching Music Beacon...");
 
+
             SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
 
             Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);

@@ -300,6 +300,9 @@ public class MusicPalService extends Service {
     private void listedToSpotifySong() {
         //    mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:37i9dQZF1DX2sUQwD7tbmL");
 
+        Intent intent = new Intent(MusicPalService.this, MusicBeamService.class);
+        intent.putExtra("forcestart", true);
+        startService(intent);
 
         mSpotifyAppRemote.getPlayerApi()
                 .subscribeToPlayerState()

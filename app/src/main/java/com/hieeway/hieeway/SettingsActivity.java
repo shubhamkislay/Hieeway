@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -23,13 +25,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
+import com.hieeway.hieeway.Interface.DeleteUserListener;
 import com.hieeway.hieeway.Model.Pal;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 import java.util.HashMap;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements DeleteUserListener {
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
@@ -65,6 +68,7 @@ public class SettingsActivity extends AppCompatActivity {
     private RelativeLayout phone_btn;
     private RelativeLayout logout_lay;
     private RelativeLayout privacy_Policy;
+    private DeleteUserDialog deleteUserDialog;
 
 
     @Override
@@ -216,6 +220,20 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
 
+        delete_account_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                deleteUserDialog = new DeleteUserDialog(SettingsActivity.this, SettingsActivity.this);
+
+                deleteUserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                deleteUserDialog.show();
+            }
+        });
+
+
         visible_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -314,5 +332,19 @@ public class SettingsActivity extends AppCompatActivity {
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .onDisconnect()
                 .updateChildren(setOfflineHash);
+    }
+
+    @Override
+    public void changeActivity() {
+
+        SharedPreferences preferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+        // finish();
+
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }
