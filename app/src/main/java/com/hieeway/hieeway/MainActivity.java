@@ -1044,7 +1044,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
                             startSplash();
-                            mediaPlayer.pause();
+                            try {
+                                mediaPlayer.pause();
+                            } catch (Exception e) {
+                                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                                finish();
+                            }
 
 
                             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);

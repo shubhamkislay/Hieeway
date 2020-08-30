@@ -228,6 +228,7 @@ public class SettingsActivity extends AppCompatActivity implements DeleteUserLis
                 deleteUserDialog = new DeleteUserDialog(SettingsActivity.this, SettingsActivity.this);
 
                 deleteUserDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                deleteUserDialog.setCancelable(false);
 
                 deleteUserDialog.show();
             }
