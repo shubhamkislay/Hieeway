@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -121,7 +122,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
             viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
 
 
-            checkUserChangeAccountChange(friend.getFriendId(), friend.getPhoto(), viewHolder.user_photo);
+            checkUserChangeAccountChange(friend.getFriendId(), friend.getPhoto(), viewHolder.user_photo, viewHolder.username);
 
 
             viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
@@ -292,28 +293,33 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                 public void onClick(View v) {
 
 
+                    if (!viewHolder.username.getText().equals("User Unavailable")) {
+
               /*  viewHolder.progressBarOne.setVisibility(View.VISIBLE);
                 viewHolder.progressBarTwo.setVisibility(View.VISIBLE);*/
-                    viewHolder.user_photo.setAlpha(0.5f);
-                    viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                        viewHolder.user_photo.setAlpha(0.5f);
+                        viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
-                            intent.putExtra("username", friend.getUsername());
-                            intent.putExtra("userid", friend.getFriendId());
-                            intent.putExtra("photo", friend.getPhoto());
-                            intent.putExtra("live", "no");
-                            mContext.startActivity(intent);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
+                                intent.putExtra("username", friend.getUsername());
+                                intent.putExtra("userid", friend.getFriendId());
+                                intent.putExtra("photo", friend.getPhoto());
+                                intent.putExtra("live", "no");
+                                mContext.startActivity(intent);
                         /*viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                         viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);*/
-                            viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
-                            viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                                viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
+                                viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
 
 
-                        }
-                    }, 50);
+                            }
+                        }, 50);
+                    } else {
+                        Toast.makeText(mContext, "This account is deleted", Toast.LENGTH_SHORT).show();
+                    }
 
                 }
             });
@@ -395,7 +401,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
     }
 
-    private void checkUserChangeAccountChange(final String userIDChattingWith, final String photo, final ImageView user_photo) {
+    private void checkUserChangeAccountChange(final String userIDChattingWith, final String photo, final ImageView user_photo, final TextView username) {
 
 
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -413,37 +419,42 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                     @Override
                     public void run() {
                         if (dataSnapshot.exists()) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
+                            try {
+                                User user = dataSnapshot.getValue(User.class);
+                                if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
 
-                                HashMap<String, Object> userPhotoChangehash = new HashMap<>();
-                                userPhotoChangehash.put("photo", user.getPhoto());
-                                DatabaseReference databaseReferenceChatStamp = FirebaseDatabase.getInstance().getReference("FriendList")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(userIDChattingWith);
+                                    HashMap<String, Object> userPhotoChangehash = new HashMap<>();
+                                    userPhotoChangehash.put("photo", user.getPhoto());
+                                    DatabaseReference databaseReferenceChatStamp = FirebaseDatabase.getInstance().getReference("FriendList")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(userIDChattingWith);
 
-                                databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
+                                    databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
 
-                                try {
-                                    //Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
-
-
-                                    Bitmap bitmap = Glide.with(mContext)
-                                            .asBitmap()
-                                            .load(user.getPhoto().replace("s96-c", "s384-c"))
-                                            .submit(300, 300)
-                                            .get();
-
-                                    bitmapTaskCompletionSource.setResult(bitmap);
+                                    try {
+                                        //Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
 
 
-                                } catch (Exception e) {
+                                        Bitmap bitmap = Glide.with(mContext)
+                                                .asBitmap()
+                                                .load(user.getPhoto().replace("s96-c", "s384-c"))
+                                                .submit(300, 300)
+                                                .get();
 
-                                    bitmapTaskCompletionSource.setException(new NullPointerException());
+                                        bitmapTaskCompletionSource.setResult(bitmap);
+
+
+                                    } catch (Exception e) {
+
+                                        bitmapTaskCompletionSource.setResult(null);
+                                    }
+
+                                }
+                                if (user.getPhoto().equals("default")) {
+                                    bitmapTaskCompletionSource.setResult(null);
                                 }
 
-                            }
-                            if (user.getPhoto().equals("default")) {
+                            } catch (Exception e) {
                                 bitmapTaskCompletionSource.setException(new NullPointerException());
                             }
                         } else {
@@ -458,31 +469,64 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                     public void onComplete(@NonNull Task<Bitmap> task) {
 
                         if (task.isSuccessful()) {
-                            Glide.with(mContext).load(task.getResult()).addListener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    return false;
-                                }
 
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            if (task.getResult() != null) {
+                                Glide.with(mContext).load(task.getResult()).addListener(new RequestListener<Drawable>() {
+                                    @Override
+                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                        return false;
+                                    }
 
-                                    final Matrix matrix = user_photo.getImageMatrix();
-                                    matrix.postScale(1, 1);
-                                    //final float scaleRatio = screenWidth / imageWidth;
-                                    //matrix.postScale(scaleRatio, scaleRatio);
+                                    @Override
+                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
-                                    user_photo.setImageMatrix(matrix);
+                                        final Matrix matrix = user_photo.getImageMatrix();
+                                        matrix.postScale(1, 1);
+                                        //final float scaleRatio = screenWidth / imageWidth;
+                                        //matrix.postScale(scaleRatio, scaleRatio);
+
+                                        user_photo.setImageMatrix(matrix);
 
 
-                                    return false;
-                                }
-                            }).into(user_photo);
+                                        return false;
+                                    }
+                                }).into(user_photo);
+                            } else {
+                                user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                user_photo.setImageResource(R.drawable.no_profile);
+                            }
+
                         } else {
-                            final Matrix matrix = user_photo.getImageMatrix();
-                            matrix.postScale(1, 1);
-                            user_photo.setImageMatrix(matrix);
+                            // user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             user_photo.setImageResource(R.drawable.no_profile);
+                            username.setText("User Unavailable");
+
+                            if (task.getException() instanceof NullPointerException) {
+                                FirebaseDatabase.getInstance().getReference("FriendList")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userIDChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("LiveMessages")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userIDChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("Reports")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userIDChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("Video")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userIDChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("ChatList")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userIDChattingWith)
+                                        .removeValue();
+                            }
                         }
 
                     }

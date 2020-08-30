@@ -265,7 +265,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         /**
          * Uncomment the below code to listen to changes in the user profile photos
          */
-        checkUserChangeAccountChange(chatStamp.getId(), chatStamp.getPhoto(), viewHolder.user_photo);
+        checkUserChangeAccountChange(chatStamp.getId(), chatStamp.getPhoto(), viewHolder.user_photo, viewHolder.username);
         checkForMessageRequests(chatStamp.getId(), viewHolder.longMsgBtn);
         Log.v("ChatMessageAdapter", "onBindViewHolder called!!!!!!");
 
@@ -539,38 +539,43 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                 // viewHolder.user_photo.setAlpha(0.4f);
 
-                viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
-                viewHolder.count_message_layout.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
+                if (!viewHolder.username.getText().equals("User Unavaliable")) {
 
-                // viewHolder.progressBarOne.setVisibility(View.VISIBLE);
-                //  viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        try{
-                            deleteOptionsDialog.hide();
+                    viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                    viewHolder.count_message_layout.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
 
-                        }catch (Exception e)
-                        {
+                    // viewHolder.progressBarOne.setVisibility(View.VISIBLE);
+                    //  viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
 
-                        }
+                            try {
+                                deleteOptionsDialog.hide();
+
+                            } catch (Exception e) {
+
+                            }
                        /* viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                         viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);*/
-                        Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
-                        intent.putExtra("username", chatStamp.getUsername());
-                        intent.putExtra("userid", chatStamp.getId());
-                        intent.putExtra("photo", chatStamp.getPhoto());
-                        intent.putExtra("live", "no");
-                        //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
+                            Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
+                            intent.putExtra("username", chatStamp.getUsername());
+                            intent.putExtra("userid", chatStamp.getId());
+                            intent.putExtra("photo", chatStamp.getPhoto());
+                            intent.putExtra("live", "no");
+                            //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
 
-                        mContext.startActivity(intent);
+                            mContext.startActivity(intent);
 
-                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0);
-                        viewHolder.count_message_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0);
+                            viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0);
+                            viewHolder.count_message_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(0);
 
-                    }
-                }, 50);
+                        }
+                    }, 50);
+                } else {
+                    Toast.makeText(mContext, "This account is deleted", Toast.LENGTH_SHORT).show();
+                }
 
 
 
@@ -584,7 +589,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     }
 
-    private void checkUserChangeAccountChange(final String userChattingWith, final String photo, final ImageView user_photo) {
+    private void checkUserChangeAccountChange(final String userChattingWith, final String photo, final ImageView user_photo, final TextView username) {
 
 
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -602,37 +607,41 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                     @Override
                     public void run() {
                         if (dataSnapshot.exists()) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
+                            try {
+                                User user = dataSnapshot.getValue(User.class);
+                                if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
 
-                                HashMap<String, Object> userPhotoChangehash = new HashMap<>();
-                                userPhotoChangehash.put("photo", user.getPhoto());
-                                DatabaseReference databaseReferenceChatStamp = FirebaseDatabase.getInstance().getReference("ChatList")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(userChattingWith);
+                                    HashMap<String, Object> userPhotoChangehash = new HashMap<>();
+                                    userPhotoChangehash.put("photo", user.getPhoto());
+                                    DatabaseReference databaseReferenceChatStamp = FirebaseDatabase.getInstance().getReference("ChatList")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(userChattingWith);
 
-                                databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
+                                    databaseReferenceChatStamp.updateChildren(userPhotoChangehash);
 
-                                try {
-                                    //Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
-
-
-                                    Bitmap bitmap = Glide.with(mContext)
-                                            .asBitmap()
-                                            .load(user.getPhoto().replace("s96-c", "s384-c"))
-                                            .submit(300, 300)
-                                            .get();
-
-                                    bitmapTaskCompletionSource.setResult(bitmap);
+                                    try {
+                                        //Glide.with(mContext).load(user.getPhoto().replace("s96-c", "s384-c")).into(user_photo);
 
 
-                                } catch (Exception e) {
+                                        Bitmap bitmap = Glide.with(mContext)
+                                                .asBitmap()
+                                                .load(user.getPhoto().replace("s96-c", "s384-c"))
+                                                .submit(300, 300)
+                                                .get();
 
-                                    bitmapTaskCompletionSource.setException(new NullPointerException());
+                                        bitmapTaskCompletionSource.setResult(bitmap);
+
+
+                                    } catch (Exception e) {
+
+                                        //  bitmapTaskCompletionSource.setException(new NullPointerException());
+                                    }
+
                                 }
-
-                            }
-                            if (user.getPhoto().equals("default")) {
+                                if (user.getPhoto().equals("default")) {
+                                    bitmapTaskCompletionSource.setResult(null);
+                                }
+                            } catch (Exception e) {
                                 bitmapTaskCompletionSource.setException(new NullPointerException());
                             }
                         } else {
@@ -647,9 +656,46 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                     public void onComplete(@NonNull Task<Bitmap> task) {
 
                         if (task.isSuccessful()) {
-                            Glide.with(mContext).load(task.getResult()).into(user_photo);
+
+                            if (task.getResult() != null) {
+
+                                Glide.with(mContext).load(task.getResult()).into(user_photo);
+                            } else {
+                                user_photo.setImageResource(R.drawable.no_profile);
+                                username.setText("User Unavaliable");
+                            }
                         } else {
+
+
                             user_photo.setImageResource(R.drawable.no_profile);
+
+                            if (task.getException() instanceof NullPointerException) {
+                                username.setText("User Unavaliable");
+                                FirebaseDatabase.getInstance().getReference("FriendList")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("LiveMessages")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("Reports")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("Video")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userChattingWith)
+                                        .removeValue();
+
+                                FirebaseDatabase.getInstance().getReference("ChatList")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(userChattingWith)
+                                        .removeValue();
+                            }
                         }
 
                     }

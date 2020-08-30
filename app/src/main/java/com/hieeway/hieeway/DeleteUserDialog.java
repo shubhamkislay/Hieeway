@@ -7,16 +7,23 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hieeway.hieeway.Interface.DeleteUserListener;
+import com.hieeway.hieeway.Model.User;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -73,27 +80,65 @@ public class DeleteUserDialog extends Dialog {
 
         String photo = sharedPreferences.getString(PHOTO_URL, "default");
         String userID = sharedPreferences.getString(USER_ID, "default");
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(photo);
-        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                // File deleted successfully
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Uh-oh, an error occurred!
-
-            }
-        });
 
 
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(userID)
-                .removeValue();
+                .runTransaction(new Transaction.Handler() {
+                    @NonNull
+                    @Override
+                    public Transaction.Result doTransaction(@NonNull MutableData currentData) {
 
-        FirebaseDatabase.getInstance().getReference("ChatList")
+                        try {
+                            User user = currentData.getValue(User.class);
+                            if (!user.getDeleteUser()) {
+                                user.setDeleteUser(true);
+                                currentData.setValue(user);
+
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+
+                        return Transaction.success(currentData);
+
+                    }
+
+                    @Override
+                    public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+
+                        if (committed) {
+                            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(photo);
+                            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    // File deleted successfully
+                                    FirebaseAuth.getInstance().getCurrentUser().delete();
+
+                                    deleteUserListener.changeActivity();
+                                    dismiss();
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Uh-oh, an error occurred!
+
+                                    FirebaseAuth.getInstance().getCurrentUser().delete();
+
+                                    deleteUserListener.changeActivity();
+                                    dismiss();
+
+                                }
+                            });
+                        } else {
+                            Toast.makeText(context, "Error while deleting your account: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+/*        FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(userID)
                 .removeValue();
 
@@ -127,12 +172,9 @@ public class DeleteUserDialog extends Dialog {
 
         FirebaseDatabase.getInstance().getReference("Video")
                 .child(userID)
-                .removeValue();
+                .removeValue();*/
 
-        FirebaseAuth.getInstance().getCurrentUser().delete();
 
-        deleteUserListener.changeActivity();
-        dismiss();
 
 
     }

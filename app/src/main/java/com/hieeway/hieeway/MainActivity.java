@@ -1503,6 +1503,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerMap.put("feelingIcon", "default");
         registerMap.put(PUBLIC_KEY,public_key);
         registerMap.put("publicKeyId",publickeyid);
+        registerMap.put("deleteUser", false);
         registerMap.put("cloud", false);
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);

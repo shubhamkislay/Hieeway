@@ -114,6 +114,7 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
                                         registerHash.put("photo", "default");
                                         registerHash.put("phonenumber", "default");
                                         registerHash.put("feelingIcon", "default");
+                                        registerHash.put("deleteUser", false);
                                         registerHash.put("synced", false);
 
                                         FirebaseDatabase.getInstance().getReference("Users")
