@@ -79,12 +79,12 @@ public class YoutubeFragment extends Fragment {
         });
 
 
-        YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
+        /*YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.youtube_player_view, youTubePlayerFragment);
         transaction.commit();
-
+*//*
 
         youTubePlayerFragment.initialize(YouTubeConfig.getApiKey(), new YouTubePlayer.OnInitializedListener() {
 
@@ -115,7 +115,7 @@ public class YoutubeFragment extends Fragment {
 
             }
         });
-
+*/
 
         return view;
     }

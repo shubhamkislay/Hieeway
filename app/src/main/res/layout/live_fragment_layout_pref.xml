@@ -19,6 +19,8 @@
     <TextView
 
         android:id="@+id/message_live_with"
+        style="@style/Theme.AppCompat"
+        android:theme="@style/Theme.AppCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -58,6 +60,8 @@
 
     <TextView
         android:id="@+id/username"
+        style="@style/Theme.AppCompat"
+        android:theme="@style/Theme.AppCompat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -129,11 +133,12 @@
                 app:showVideoDuration="true"
                 app:useWebUi="false" />
 
+
             <FrameLayout
                 android:id="@+id/youtube_api_player_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible" />
+                android:visibility="gone" />
 
 
             <RelativeLayout
@@ -141,15 +146,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
+                android:background="#000"
                 android:visibility="gone">
 
                 <TextView
                     android:id="@+id/sync_video_txt"
+                    style="@style/Theme.AppCompat"
+                    android:layout_centerInParent="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/pb"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="12dp"
                     android:gravity="center"
+                    android:theme="@style/Theme.AppCompat"
                     android:text="Syncing Video"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp"
@@ -159,12 +167,13 @@
 
                 <com.github.ybq.android.spinkit.SpinKitView
                     android:id="@+id/pb"
-                    android:layout_width="85dp"
-                    android:layout_height="85dp"
-                    android:layout_centerInParent="true"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    app:SpinKit_Color="@color/colorPrimaryDark"
-                    app:SpinKit_Style="Wave" />
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:layout_above="@id/sync_video_txt"
+                    android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/white"
+                    app:SpinKit_Color="@color/white"
+                    app:SpinKit_Style="Circle" />
 
 
             </RelativeLayout>
@@ -263,7 +272,8 @@
                 android:id="@+id/receiver_message"
                 android:layout_width="match_parent"
 
-
+                style="@style/Theme.AppCompat"
+                android:theme="@style/Theme.AppCompat"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|start"
                 android:layout_marginStart="8dp"
@@ -288,97 +298,6 @@
                 tools:ignore="UnusedAttribute" />
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/control_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:animateLayoutChanges="true"
-                android:orientation="horizontal">
-
-                <RelativeLayout
-                    android:id="@+id/startLiveVideo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/default_background_oval"
-                    android:paddingLeft="12dp"
-                    android:paddingTop="4dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="4dp">
-
-                    <TextView
-
-                        android:id="@+id/startLiveVideoText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_margin="8dp"
-                        android:background="#fff"
-                        android:backgroundTint="#fff"
-                        android:text="Expressions"
-                        android:textAllCaps="false"
-                        android:textColor="#000" />
-
-                    <ImageView
-                        android:layout_width="26dp"
-                        android:layout_height="26dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="-4dp"
-                        android:layout_toRightOf="@id/startLiveVideoText"
-                        android:background="@drawable/live_expression" />
-                </RelativeLayout>
-
-
-                <RelativeLayout
-                    android:id="@+id/stopLiveVideo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:background="@drawable/default_background_oval"
-                    android:backgroundTint="@color/darkThemeOval"
-                    android:paddingLeft="12dp"
-                    android:paddingTop="8dp"
-                    android:paddingRight="12dp"
-                    android:paddingBottom="8dp"
-                    android:visibility="gone">
-
-
-                    <TextView
-                        android:id="@+id/stopLiveVideoText"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:backgroundTint="#222222"
-                        android:text="Stop"
-
-                        android:textAllCaps="true"
-                        android:textStyle="bold"
-                        android:visibility="visible" />
-
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="-4dp"
-                        android:layout_toRightOf="@id/stopLiveVideoText"
-                        android:backgroundTint="#fff"
-                        android:src="@drawable/ic_video_off" />
-
-                </RelativeLayout>
-
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/live_video_control_layout"
@@ -497,7 +416,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-
+                    style="@style/Theme.AppCompat"
+                    android:theme="@style/Theme.AppCompat"
                     android:layout_margin="5dp"
                     android:layout_weight="2"
                     android:gravity="center"
@@ -537,6 +457,8 @@
                         android:gravity="center"
                         android:paddingLeft="16dp"
                         android:paddingTop="5dp"
+                        style="@style/Theme.AppCompat"
+                        android:theme="@style/Theme.AppCompat"
                         android:paddingRight="16dp"
                         android:paddingBottom="5dp"
                         android:text="Asking user to join"
@@ -575,7 +497,8 @@
                 android:layout_gravity="right|end"
                 android:layout_marginStart="16dp"
 
-
+                style="@style/Theme.AppCompat"
+                android:theme="@style/Theme.AppCompat"
                 android:layout_marginEnd="8dp"
                 android:layout_toLeftOf="@id/first_person_video"
                 android:layout_weight="1"
@@ -758,6 +681,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="16dp"
+            style="@style/Theme.AppCompat"
+            android:theme="@style/Theme.AppCompat"
             android:gravity="center"
             android:text="Live messaging requires camera to enable Live Expressions on demand"
             android:textSize="16sp" />
@@ -783,3 +708,7 @@
         android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--
+    -->

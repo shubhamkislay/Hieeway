@@ -12,7 +12,9 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -40,6 +42,7 @@ import com.hieeway.hieeway.Fragments.LiveMessageParentFragment;
 import com.hieeway.hieeway.Fragments.SendMessageFragment;
 import com.hieeway.hieeway.Fragments.SendMessageParentFragment;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
+import com.hieeway.hieeway.Interface.LiveMessageRequestListener;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
 import com.hieeway.hieeway.Interface.YoutubeBottomFragmentStateListener;
 import com.hieeway.hieeway.Model.ChatMessage;
@@ -53,7 +56,7 @@ import java.util.List;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 
 
-public class VerticalPageActivityPerf extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener {
+public class VerticalPageActivityPerf extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener, LiveMessageRequestListener {
 
 
     public static final String VIDEO_CHECK_TAG = "Video Check";
@@ -489,11 +492,17 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(this);*/
 
 
-        liveMessageParentFragment = new LiveMessageParentFragment();
+        liveMessageParentFragment = new LiveMessageParentFragment(VerticalPageActivityPerf.this,
+                VerticalPageActivityPerf.this,
+                photo,
+                usernameChattingWith,
+                userIdChattingWith,
+                youtubeID,
+                youtubeTitle,
+                live);
         liveMessageParentFragment.setArguments(bundle);
         liveMessageParentFragment.setParentActivity(this);
-        liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
-
+        // liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
 
         List<Fragment> fragmentList = new ArrayList<>();
         //fragmentList.add(sendMessageFragment);
@@ -570,7 +579,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                 viewPager.setAdapter(pagerAdapter);
 
 
-                liveMessageParentFragment
+                /*liveMessageParentFragment
                         .setLiveMessageEventListener(
                                 VerticalPageActivityPerf.this,
                                 VerticalPageActivityPerf.this,
@@ -579,7 +588,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                                 userIdChattingWith,
                                 youtubeID,
                                 youtubeTitle,
-                                live);
+                                live);*/
 
 /**
  * Uncomment below commented block
@@ -627,6 +636,21 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                     //liveMessageFragmentPerf.initialiseLiveragment(VerticalPageActivityPerf.this);
                     isWatching = true;
 
+
+                    /**
+                     * uncomment the below code to show start live message dialog created directly by this parent Activity instead
+                     * of inside the fragment
+                     */
+
+                    /*LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, live);
+                    //liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    liveMessageRequestDialog.setCancelable(false);
+                    liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+
+                    liveMessageRequestDialog.show();*/
+
                     /**
                      * Uncomment below commented block
                      */
@@ -634,9 +658,17 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
 
                     liveMessageFragmentPerf.showLiveMessageDialog(VerticalPageActivityPerf.this, "no");
-                    sendMessageFragment.removeListeners();
-*/
-                    sendMessageParentFragment.removeListeners();
+                    try {
+                        sendMessageFragment.removeListeners();
+                    }catch (Exception e)
+                    {
+                        //
+                    }*/
+                    try {
+                        sendMessageParentFragment.removeListeners();
+                    } catch (Exception e) {
+
+                    }
                     //  Toast.makeText(VerticalPageActivityPerf.this,"Page no."+i,Toast.LENGTH_SHORT).show();
 
                     pageSelected = 2;
@@ -656,14 +688,16 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                          */
                         //liveMessageFragmentPerf.destoryLiveFragment();
 
+
                         liveMessageParentFragment.destoryLiveFragment();
-                        liveMessageParentFragment = null;
-                        liveMessageParentFragment = new LiveMessageParentFragment();
+                        //liveMessageParentFragment = null;
+                       /* liveMessageParentFragment = new LiveMessageParentFragment();
                         liveMessageParentFragment.setArguments(bundle);
                         liveMessageParentFragment.setParentActivity(VerticalPageActivityPerf.this);
 
 
                         liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
+                      */
                         FirebaseDatabase.getInstance().getReference("Video")
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .child(userIDCHATTINGWITH)
@@ -830,7 +864,6 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
                 isWatching = true;
             } catch (Exception e) {
-
                 Toast.makeText(VerticalPageActivityPerf.this, "Closing Exception: " + e.toString(), Toast.LENGTH_SHORT).show();
             }
         }
@@ -992,14 +1025,20 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         liveMessageFragmentPerf = new LiveMessageFragmentPerf();
         liveMessageFragmentPerf.setArguments(bundle);*/
 
-        liveMessageParentFragment = null;
-        liveMessageParentFragment = new LiveMessageParentFragment();
+        //liveMessageParentFragment = null;
+        liveMessageParentFragment = new LiveMessageParentFragment(VerticalPageActivityPerf.this,
+                VerticalPageActivityPerf.this,
+                photo,
+                usernameChattingWith,
+                userIdChattingWith,
+                youtubeID,
+                youtubeTitle,
+                live);
         liveMessageParentFragment.setArguments(bundle);
         liveMessageParentFragment.setParentActivity(this);
 
 
-        liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
-
+        //liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
     }
 
     @Override
@@ -1017,4 +1056,15 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     }
 
 
+    @Override
+    public void startLiveMessaging() {
+
+        liveMessageParentFragment.startLiveMessaging();
+    }
+
+    @Override
+    public void stopLiveMessaging() {
+        viewPager.setCurrentItem(1);
+
+    }
 }

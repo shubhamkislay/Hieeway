@@ -3,7 +3,7 @@ package com.hieeway.hieeway.Model;
 public class YoutubeSync {
 
     private String youtubeID;
-    private int videoSec;
+    private float videoSec;
     private String videoTitle;
 
     public YoutubeSync() {
@@ -17,11 +17,11 @@ public class YoutubeSync {
         this.youtubeID = youtubeID;
     }
 
-    public int getVideoSec() {
+    public float getVideoSec() {
         return videoSec;
     }
 
-    public void setVideoSec(int videoSec) {
+    public void setVideoSec(float videoSec) {
         this.videoSec = videoSec;
     }
 

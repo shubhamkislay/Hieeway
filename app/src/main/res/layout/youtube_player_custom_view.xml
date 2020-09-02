@@ -1,8 +1,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_container"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/text_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/top_fade_dark_background" />
+
+    <RelativeLayout
+        android:id="@+id/text_back_two"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_fade_dark_background" />
 
 
     <RelativeLayout
@@ -23,11 +36,35 @@
         app:color="@color/colorPrimaryDark"
         app:fontSize="16sp" />
 
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/buffering_progress"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:SpinKit_Style="Circle"
+
+        />
+
+
     <RelativeLayout
         android:id="@+id/play_pause_btn"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
         android:layout_gravity="center"
-        android:background="@drawable/ic_pause_circle_filled_black_24dp" />
+        android:background="@drawable/pause_btn"
+        android:backgroundTint="#fff" />
+
+    <TextView
+        android:id="@+id/video_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:padding="12sp"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        tools:text="Youtube video" />
 
 </FrameLayout>

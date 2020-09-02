@@ -932,27 +932,33 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         text_friends.setVisibility(View.VISIBLE);
 
-        if(fragmentId>2) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (fragmentId > 2) {
 
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                    .replace(R.id.container_layout, friendListFagment)
-                    .remove(chatsFragment)
-                    .remove(peopleFragment)
-                    .remove(profileFragment).commit();
-        }
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                            .replace(R.id.container_layout, friendListFagment)
+                            .remove(chatsFragment)
+                            .remove(peopleFragment)
+                            .remove(profileFragment).commit();
+                } else {
 
-        else {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                            .replace(R.id.container_layout, friendListFagment)
+                            .remove(chatsFragment)
+                            .remove(peopleFragment)
+                            .remove(profileFragment).commit();
+                }
 
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
-                    .replace(R.id.container_layout, friendListFagment)
-                    .remove(chatsFragment)
-                    .remove(peopleFragment)
-                    .remove(profileFragment).commit();
-        }
+                fragmentId = 2;
 
-        fragmentId=2;
+            }
+        }, 500);
+
+
     }
 
     @Override
@@ -1018,14 +1024,21 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         text_home.setVisibility(View.VISIBLE);
 
 
-        menuFragmentManager.beginTransaction()
-                   .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                .replace(R.id.container_layout, chatsFragment)
-                .remove(friendListFagment)
-                .remove(peopleFragment)
-                .remove(profileFragment).commit();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                menuFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                        .replace(R.id.container_layout, chatsFragment)
+                        .remove(friendListFagment)
+                        .remove(peopleFragment)
+                        .remove(profileFragment).commit();
 
-        fragmentId=1;
+                fragmentId = 1;
+
+            }
+        }, 500);
+
 
 
     }
@@ -1079,22 +1092,27 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                  .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
                 .replace(R.id.container_layout, peopleFragment).commit();*/
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(fragmentId>3) {
+
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                            .replace(R.id.container_layout, peopleFragment).commit();
+                } else {
+
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                            .replace(R.id.container_layout, peopleFragment).commit();
+                }
+                fragmentId=3;
+
+            }
+        }, 500);
 
 
-        if(fragmentId>3) {
 
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                    .replace(R.id.container_layout, peopleFragment).commit();
-        }
-
-        else {
-
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
-                    .replace(R.id.container_layout, peopleFragment).commit();
-        }
-        fragmentId=3;
     }
 
     public void deactivateSearchBtn()
@@ -1154,10 +1172,19 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
         getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
-        menuFragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
-                .replace(R.id.container_layout, profileFragment).commit();
-        fragmentId=4;
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                menuFragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                        .replace(R.id.container_layout, profileFragment).commit();
+                fragmentId = 4;
+
+            }
+        }, 500);
+
     }
 
     @Override
@@ -1739,9 +1766,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                 SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
                 //if(spotifyAppRemote==null)
-                Intent intent = new Intent(NavButtonTest.this, MusicBeamService.class);
+                /**
+                 * Uncomment this to start Music Beam Service
+                 */
+                /*Intent intent = new Intent(NavButtonTest.this, MusicBeamService.class);
                 intent.putExtra("forcestart", true);
-                startService(intent);
+                startService(intent);*/
             }
         } catch (Exception e) {
             //
@@ -1794,17 +1824,30 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
 
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
-                    .replace(R.id.container_layout, profileFragment).commit();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                            .replace(R.id.container_layout, profileFragment).commit();
+                }
+            }, 500);
+
         }
         else
         {
             editBioLayoutFragment = new EditBioLayoutFragment();
             editBioLayoutFragment.setCurrentBio(NavButtonTest.this,currentBio);
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                    .replace(R.id.container_layout, editBioLayoutFragment).commit();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                            .replace(R.id.container_layout, editBioLayoutFragment).commit();
+                }
+            }, 500);
+
         }
 
     }
@@ -1818,17 +1861,31 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             profileFragment.setEditBioFragmentListener(NavButtonTest.this);
             profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                            .replace(R.id.container_layout, profileFragment).commit();
+                }
+            }, 500);
 
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                    .replace(R.id.container_layout, profileFragment).commit();
+
         } else {
             addFeelingFragment = new AddFeelingFragment();
 
             addFeelingFragment.setAddFeelingFragmentListener(NavButtonTest.this);
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
-                    .replace(R.id.container_layout, addFeelingFragment).commit();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                            .replace(R.id.container_layout, addFeelingFragment).commit();
+
+                }
+            }, 500);
+
         }
 
     }

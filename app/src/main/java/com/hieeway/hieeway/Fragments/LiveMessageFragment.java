@@ -1652,7 +1652,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 super.onReady(youTubePlayer);
 
                 mYouTubePlayer = youTubePlayer;
-                customUiController = new CustomUiController(customUiView, mYouTubePlayer, getContext(), youtubeID);
+                //customUiController = new CustomUiController(customUiView, mYouTubePlayer, getContext(), youtubeID);
 
                 //mYouTubePlayer.addListener(customUiController);
                 playerInitialised = true;

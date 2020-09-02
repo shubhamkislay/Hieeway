@@ -37,6 +37,7 @@
         <activity
             android:name=".VerticalPageActivityPerf"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".VideoCallTestActivity" />
         <activity android:name=".SlideButtonTestActivity" />
@@ -73,7 +74,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".NavButtonTest"
-            android:screenOrientation="portrait" /> <!-- android:screenOrientation="portrait" -->
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" /> <!-- android:screenOrientation="portrait" -->
         <activity
             android:name=".NavButtonTestActivity"
             android:screenOrientation="portrait" />
@@ -92,6 +94,7 @@
         <activity
             android:name=".VerticalPageActivity"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" /> <!-- android:screenOrientation="portrait" -->
         <activity
             android:name=".PhotoTreatmentActivity"

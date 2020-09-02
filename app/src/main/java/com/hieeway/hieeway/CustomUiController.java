@@ -3,12 +3,15 @@ package com.hieeway.hieeway;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -39,14 +42,17 @@ public class CustomUiController implements YouTubePlayerListener {
     RelativeLayout toggle_view;
     RelativeLayout play_pause_btn;
     YouTubePlayer youTubePlayer;
+    RelativeLayout text_back, text_back_two;
+    private TextView video_title;
     Context context;
     private boolean seekVisible = true;
     private boolean playing = true;
+    private ProgressBar buffering_progress;
     private boolean displayPreview = false;
 
 
     @SuppressLint("ClickableViewAccessibility")
-    public CustomUiController(View customPlayerUI, final YouTubePlayer youTubePlayer, final Context context, String videoID) {
+    public CustomUiController(View customPlayerUI, final YouTubePlayer youTubePlayer, final Context context, String videoID, String videoTitle) {
 
 
 
@@ -62,11 +68,28 @@ public class CustomUiController implements YouTubePlayerListener {
 
         play_pause_btn = customPlayerUI.findViewById(R.id.play_pause_btn);
 
+        video_title = customPlayerUI.findViewById(R.id.video_title);
+
+        text_back = customPlayerUI.findViewById(R.id.text_back);
+
+        text_back_two = customPlayerUI.findViewById(R.id.text_back_two);
+
+        //video_title.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+        buffering_progress = customPlayerUI.findViewById(R.id.buffering_progress);
+
+
+
 
         customPlayerUI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fadeViewHelper.toggleVisibility();
+                if (playing)
+                    fadeViewHelper.toggleVisibility();
+
+
+
+
                 youtube_player_seekbar.setVisibility(View.VISIBLE);
                 youtube_player_seekbar.setAlpha(1.0f);
             }
@@ -78,7 +101,8 @@ public class CustomUiController implements YouTubePlayerListener {
             public void onClick(View v) {
 
                 //fadeViewHelper.toggleVisibility();
-                updateControllView();
+                if (playing)
+                    updateControllView();
                 //youtube_player_seekbar.setAlpha(1.0f);
             }
         });
@@ -90,12 +114,23 @@ public class CustomUiController implements YouTubePlayerListener {
             public void onClick(View v) {
                 if (playing) {
                     youTubePlayer.pause();
-                    play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.ic_play_circle_filled_black_24dp));
+                    // video_title.setVisibility(View.GONE);
+                    play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.play_btn));
+
+                    play_pause_btn.animate().setDuration(300).alpha(1.0f);
+                    youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
+                    video_title.animate().setDuration(300).alpha(1.0f);
+                    text_back.animate().setDuration(300).alpha(1.0f);
+                    text_back_two.animate().setDuration(300).alpha(1.0f);
                     playing = false;
+
                 } else {
                     youTubePlayer.play();
-                    play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.ic_pause_circle_filled_black_24dp));
+                    //video_title.setVisibility(View.VISIBLE);
+                    play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.pause_btn));
                     playing = true;
+
+
                 }
             }
         });
@@ -200,10 +235,25 @@ public class CustomUiController implements YouTubePlayerListener {
     }
 
 
+    public void setVideo_title(String videoTitle) {
+        video_title.setText(videoTitle);
+    }
+
+
+    public void setBufferingProgress(int visible) {
+        buffering_progress.setVisibility(visible);
+    }
+
+    public void setPlayPauseBtn(int visible) {
+        play_pause_btn.setVisibility(visible);
+    }
 
     public void autoUpdateControlView() {
         play_pause_btn.animate().setDuration(300).alpha(0.0f);
         youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
+        video_title.animate().setDuration(300).alpha(0.0f);
+        text_back.animate().setDuration(300).alpha(0.0f);
+        text_back_two.animate().setDuration(300).alpha(0.0f);
         seekVisible = false;
     }
 
@@ -212,10 +262,30 @@ public class CustomUiController implements YouTubePlayerListener {
         if (!seekVisible) {
             play_pause_btn.animate().setDuration(300).alpha(1.0f);
             youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
+            video_title.animate().setDuration(300).alpha(1.0f);
+            text_back.animate().setDuration(300).alpha(1.0f);
+            text_back_two.animate().setDuration(300).alpha(1.0f);
             seekVisible = true;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (playing) {
+                        play_pause_btn.animate().setDuration(300).alpha(0.0f);
+                        youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
+                        video_title.animate().setDuration(300).alpha(0.0f);
+                        text_back.animate().setDuration(300).alpha(0.0f);
+                        text_back_two.animate().setDuration(300).alpha(0.0f);
+                        seekVisible = false;
+                    }
+                }
+            }, 2000);
         } else {
             play_pause_btn.animate().setDuration(300).alpha(0.0f);
             youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
+            video_title.animate().setDuration(300).alpha(0.0f);
+            text_back.animate().setDuration(300).alpha(0.0f);
+            text_back_two.animate().setDuration(300).alpha(0.0f);
             seekVisible = false;
         }
     }

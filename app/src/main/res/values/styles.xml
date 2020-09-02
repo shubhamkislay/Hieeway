@@ -76,10 +76,9 @@
 
     <style name="Activity.Dialog" parent="Theme.AppCompat.Dialog">
         <item name="android:backgroundTint">#000</item>
-        <item name="actionBarTheme">@style/AppTheme.NoActionBar.FullScreen</item>
     </style>
 
-    <style name="AppTheme.NoActionBar.FullScreen">
+    <style name="AppTheme.NoActionBar.FullScreen" parent="Theme.AppCompat.Dialog">
 
 
         <item name="windowActionBar">false</item>

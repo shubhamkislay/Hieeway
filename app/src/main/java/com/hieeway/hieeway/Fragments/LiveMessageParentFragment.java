@@ -46,10 +46,19 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
     private TextView checking_txt;
 
 
-
-
-    public LiveMessageParentFragment() {
+    public LiveMessageParentFragment(LiveMessageEventListener liveMessageEventListener, Activity parentActivity,
+                                     String photo, String usernameChattingWith, String userIdChattingWith,
+                                     String youtubeID, String youtubeTitle, String live) {
         // Required empty public constructor
+
+        this.liveMessageEventListener = liveMessageEventListener;
+        this.parentActivity = parentActivity;
+        this.photo = photo;
+        this.usernameChattingWith = usernameChattingWith;
+        this.userIdChattingWith = userIdChattingWith;
+        this.youtubeID = youtubeID;
+        this.youtubeTitle = youtubeTitle;
+        this.live = live;
     }
 
 
@@ -110,7 +119,7 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
     public void showLiveMessageDialog(Activity activity, String live) {
         this.live = live;
         try {
-            liveMessageFragmentPerf.showLiveMessageDialog(activity, live, this);
+            //  liveMessageFragmentPerf.showLiveMessageDialog((VerticalPageActivityPerf)activity, live, this);
         } catch (Exception e) {
 
         }
@@ -143,11 +152,17 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
             bundle.putString("userIdChattingWith", userIdChattingWith);
 
 
-            liveMessageFragmentPerf = new LiveMessageFragmentPerf();
+            liveMessageFragmentPerf = new LiveMessageFragmentPerf(liveMessageEventListener,
+                    parentActivity,
+                    photo,
+                    usernameChattingWith,
+                    userIdChattingWith,
+                    youtubeID,
+                    youtubeTitle);
             liveMessageFragmentPerf.setArguments(bundle);
             liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(activity);
 
-            liveMessageFragmentPerf
+            /*liveMessageFragmentPerf
                     .setLiveMessageEventListener(
                             liveMessageEventListener,
                             parentActivity,
@@ -155,12 +170,12 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
                             usernameChattingWith,
                             userIdChattingWith,
                             youtubeID,
-                            youtubeTitle);
+                            youtubeTitle);*/
 
-            liveMessageFragmentPerf.showLiveMessageDialog(parentActivity, live, this);
+
             menuFragmentManager.beginTransaction()
                     .replace(R.id.framelayout, liveMessageFragmentPerf).commit();
-
+            liveMessageFragmentPerf.showLiveMessageDialog(parentActivity, live, this);
 
         } else {
             try {
@@ -178,8 +193,49 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
     public void turnOffLoadingScreen() {
         try {
             checking_layout.setVisibility(View.GONE);
+            //liveMessageFragmentPerf.turnOffRequestDialogVisibility();
         } catch (Exception e) {
             //
         }
+    }
+
+    public void startLiveMessaging() {
+        try {
+            checking_layout.setVisibility(View.GONE);
+            //liveMessageFragmentPerf.turnOffRequestDialogVisibility();
+        } catch (Exception e) {
+            //
+        }
+        bundle = new Bundle();
+        bundle.putString("usernameChattingWith", usernameChattingWith);
+        bundle.putString("photo", photo);
+        bundle.putString("userIdChattingWith", userIdChattingWith);
+
+
+        liveMessageFragmentPerf = new LiveMessageFragmentPerf(liveMessageEventListener,
+                parentActivity,
+                photo,
+                usernameChattingWith,
+                userIdChattingWith,
+                youtubeID,
+                youtubeTitle);
+        liveMessageFragmentPerf.setArguments(bundle);
+        liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(activity);
+
+            /*liveMessageFragmentPerf
+                    .setLiveMessageEventListener(
+                            liveMessageEventListener,
+                            parentActivity,
+                            photo,
+                            usernameChattingWith,
+                            userIdChattingWith,
+                            youtubeID,
+                            youtubeTitle);*/
+
+
+        menuFragmentManager.beginTransaction()
+                .replace(R.id.framelayout, liveMessageFragmentPerf).commit();
+        /*liveMessageFragmentPerf.showLiveMessageDialog((VerticalPageActivityPerf) getActivity(), live, this)*/
+        ;
     }
 }
