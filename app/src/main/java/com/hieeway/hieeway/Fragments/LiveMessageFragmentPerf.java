@@ -4101,6 +4101,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     timeStampHash.put("photo", photo);
                     timeStampHash.put("seen", "notseen");
                     timeStampHash.put("chatPending", false);
+                    timeStampHash.put("localuserstamp", tsLong);
 
                     senderChatCreateRef.updateChildren(timeStampHash);
 
@@ -4113,6 +4114,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     timeStampHashReceiver.put("seen", "notseen");
                     timeStampHashReceiver.put("present", true);
                     timeStampHashReceiver.put("chatPending", true);
+                    timeStampHashReceiver.put("otheruserstamp", tsLong);
+
 
 
                     receiverChatCreateRef.updateChildren(timeStampHashReceiver);

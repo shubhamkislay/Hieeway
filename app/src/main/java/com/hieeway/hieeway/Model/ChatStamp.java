@@ -2,6 +2,8 @@ package com.hieeway.hieeway.Model;
 
 import androidx.annotation.Nullable;
 
+import java.sql.Timestamp;
+
 public class ChatStamp implements Comparable<ChatStamp>{
 
 
@@ -16,8 +18,8 @@ public class ChatStamp implements Comparable<ChatStamp>{
     private String youtubeUrl;
     private float videoSec;
     private Boolean present;
-    private String localuserstamp;
-    private String otheruserstamp;
+    private long localuserstamp;
+    private long otheruserstamp;
 
 
     public ChatStamp() {
@@ -25,7 +27,7 @@ public class ChatStamp implements Comparable<ChatStamp>{
 
 
     public ChatStamp(String timeStamp, String id, String photo, String username, String seen, Boolean chatPending,
-                     int gemCount, String youtubeUrl, float videoSec, Boolean present, String localuserstamp, String otheruserstamp) {
+                     int gemCount, String youtubeUrl, float videoSec, Boolean present, long localuserstamp, long otheruserstamp) {
         this.timeStamp = timeStamp;
         this.id = id;
         this.photo = photo;
@@ -140,19 +142,19 @@ public class ChatStamp implements Comparable<ChatStamp>{
         this.present = present;
     }
 
-    public String getLocaluserstamp() {
+    public long getLocaluserstamp() {
         return localuserstamp;
     }
 
-    public void setLocaluserstamp(String localuserstamp) {
+    public void setLocaluserstamp(long localuserstamp) {
         this.localuserstamp = localuserstamp;
     }
 
-    public String getOtheruserstamp() {
+    public long getOtheruserstamp() {
         return otheruserstamp;
     }
 
-    public void setOtheruserstamp(String otheruserstamp) {
+    public void setOtheruserstamp(long otheruserstamp) {
         this.otheruserstamp = otheruserstamp;
     }
 }

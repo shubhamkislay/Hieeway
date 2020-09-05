@@ -135,7 +135,12 @@ import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -311,8 +316,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private Activity parentActivity;
     private boolean liveViewStarted = false;
 
-    public EphemeralMessagingFragment() {
+
+    public EphemeralMessagingFragment(Activity parentActivity) {
         // Required empty public constructor
+        this.parentActivity = parentActivity;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -324,13 +331,13 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         /**
          * The below code is used to block screenshots
          */
-        /*getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+        /*parentActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);*/
 
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        parentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = parentActivity.getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
@@ -340,14 +347,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         disablerecord_button = (ImageView) view.findViewById(R.id.disablerecord_button);
 
 
-
-        NotificationManager notificationManager = (NotificationManager) getContext().getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
+        NotificationManager notificationManager = (NotificationManager) parentActivity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
 
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        parentActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        //final VerticalPageActivity verticalPageActivity = (VerticalPageActivity) getActivity();
+        //final VerticalPageActivity verticalPageActivity = (VerticalPageActivity) parentActivity;
 
 //
 
@@ -388,7 +393,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         sender_reply_body_title = view.findViewById(R.id.sender_reply_body_title);
 
-        sender_reply_body_title.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        sender_reply_body_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
         recordView.setSmallMicColor(Color.parseColor("#ffffff"));
@@ -410,11 +415,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         //change slide To Cancel Arrow Color
         recordView.setSlideToCancelArrowColor(Color.parseColor("#ffffff"));
         //change Counter Time (Chronometer) color
-        recordView.setCounterTimeColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+        recordView.setCounterTimeColor(parentActivity.getResources().getColor(R.color.colorPrimaryDark));
 
 
         //recordButton.setListenForRecord(false);
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+        if (ContextCompat.checkSelfPermission(parentActivity, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             disablerecord_button.setVisibility(View.VISIBLE);
             isDisablerecord_button = true;
@@ -430,10 +435,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             @Override
             public void onClick(View v) {
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+                if (ContextCompat.checkSelfPermission(parentActivity, Manifest.permission.RECORD_AUDIO)
                         != PackageManager.PERMISSION_GRANTED) {
                     requestAudioPermisson();
-                    Toast.makeText(getContext(), "Requesting Audio Permission", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(parentActivity, "Requesting Audio Permission", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -473,7 +478,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onStart() {
                 //Start Recording..
 
-                /*if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO)
+                /*if (ContextCompat.checkSelfPermission(parentActivity, Manifest.permission.RECORD_AUDIO)
                         != PackageManager.PERMISSION_GRANTED )
                     requestAudioPermisson();
 
@@ -644,34 +649,34 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 /*Snackbar snackbar = Snackbar
                                         .make(app_context_layout,   task.getResult().getUsername()+" has logged out.", Snackbar.LENGTH_SHORT);
                                 View snackBarView = snackbar.getView();
-                                snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.red_active));
+                                snackBarView.setBackgroundColor(ContextCompat.getColor(parentActivity, R.color.red_active));
                                 snackBarView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                 snackbar.show();*/
                                 try {
 
                                     LayoutInflater inflater = getLayoutInflater();
                                     View layout = inflater.inflate(R.layout.custom_toast,
-                                            (ViewGroup) getActivity().findViewById(R.id.toast_parent));
+                                            (ViewGroup) parentActivity.findViewById(R.id.toast_parent));
 
-                                    Toast toast = new Toast(getActivity());
+                                    Toast toast = new Toast(parentActivity);
 
 
                                     TextView toast_message = layout.findViewById(R.id.toast_message);
-                                    toast_message.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                                    toast_message.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
                                     toast_message.setText(task.getResult().getUsername() + " has logged out.");
-                                    toast_message.setBackgroundTintList(getActivity().getResources().getColorStateList(R.color.darkGrey));
+                                    toast_message.setBackgroundTintList(parentActivity.getResources().getColorStateList(R.color.darkGrey));
 
                                     toast.setGravity(Gravity.CENTER, 0, 0);
                                     toast.setDuration(Toast.LENGTH_SHORT);
                                     toast.setView(layout);
                                     toast.show();
 
-                                    getActivity().finish();
+                                    parentActivity.finish();
                                 } catch (Exception e) {
                                     try {
-                                        getActivity().finish();
+                                        parentActivity.finish();
                                     } catch (Exception ee) {
                                         //
                                     }
@@ -762,18 +767,18 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             @Override
             public void onClick(View v) {
 
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                if (ContextCompat.checkSelfPermission(parentActivity, Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                        ContextCompat.checkSelfPermission(parentActivity, Manifest.permission.READ_EXTERNAL_STORAGE)
                                 != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        ContextCompat.checkSelfPermission(parentActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                 != PackageManager.PERMISSION_GRANTED)
                     requestAllPermissions();
 
 
                 else
                 {
-                Intent intent = new Intent(getContext(), CameraActivity.class);
+                    Intent intent = new Intent(parentActivity, CameraActivity.class);
 
                 // ephemeralMessageViewModel.createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
                 if (currentUsername != null && currentUserPhoto != null) {
@@ -795,7 +800,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     startActivity(intent);
                 } else
-                    Toast.makeText(getActivity(), "Getting user details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(parentActivity, "Getting user details", Toast.LENGTH_SHORT).show();
             }
             }
         });
@@ -1021,7 +1026,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), ViewProfileActivity.class);
+                Intent intent = new Intent(parentActivity, ViewProfileActivity.class);
 
 
                 intent.putExtra("username", usernameChattingWith);
@@ -1032,7 +1037,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 intent.putExtra("friendStatus", "friends");
 
 
-                getContext().startActivity(intent);
+                parentActivity.startActivity(intent);
             }
         });
 
@@ -1060,7 +1065,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         chainBtn.setVisibility(View.GONE);
                         chain_pulse.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Chained", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(parentActivity, "Chained", Toast.LENGTH_SHORT).show();
 
                     } else if (typingID == MSG_TYPING_BOX_TWO_ID) {
                         soundPool.play(sendingSound5, 1, 1, 0, 0, 1);
@@ -1078,7 +1083,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         chainBtn.setVisibility(View.GONE);
                         chain_pulse.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Chained", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(parentActivity, "Chained", Toast.LENGTH_SHORT).show();
 
                     }
                 }
@@ -1222,7 +1227,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getActivity().getWindow();
+            Window window = parentActivity.getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.BLACK);
         }
@@ -1256,7 +1261,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         message_counter = view.findViewById(R.id.message_counter);
 
-        window = getActivity().getWindow();
+        window = parentActivity.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
         message_counter_background = view.findViewById(R.id.message_counter_background);
@@ -1294,8 +1299,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onClick(View v) {
 
 
-                //startActivity(new Intent(getActivity(), NavButtonTest.class));
-                getActivity().finish();
+                //startActivity(new Intent(parentActivity, NavButtonTest.class));
+                parentActivity.finish();
 
             }
         });
@@ -1340,15 +1345,15 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     if (!isMessageRunning)
                         readNextMessage();
                     try {
-                        swipeButton.setBackground(getActivity().getDrawable(R.drawable.message_swipe_bg));
+                        swipeButton.setBackground(parentActivity.getDrawable(R.drawable.message_swipe_bg));
                     }catch (Exception e)
                     {
-                        Toast.makeText(getContext(),"Swipe Button Null pointer",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(parentActivity,"Swipe Button Null pointer",Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(getContext(), "Message chained", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(parentActivity, "Message chained", Toast.LENGTH_SHORT).show();
                 } else {
                     setChainBtn = false;
-                    Toast.makeText(getContext(), "Message de-chained!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(parentActivity, "Message de-chained!", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -1370,7 +1375,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     if (!chatMessage.getPhotourl().equals("none")) {
 
-                        Intent intent = new Intent(getActivity(), EphemeralPhotoActivity.class);
+                        Intent intent = new Intent(parentActivity, EphemeralPhotoActivity.class);
                         intent.putExtra("userIdChattingWith", userIdChattingWith);
                         intent.putExtra("photoUrl", chatMessage.getPhotourl());
                         intent.putExtra("mKey", chatMessage.getMessageId());
@@ -1383,7 +1388,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         startActivity(intent);
                     } else if (!chatMessage.getAudiourl().equals("none")) {
-                        Intent intent = new Intent(getActivity(), AudioRecorderActivity.class);
+                        Intent intent = new Intent(parentActivity, AudioRecorderActivity.class);
                         intent.putExtra("userIdChattingWith", userIdChattingWith);
                         intent.putExtra("audiourl", chatMessage.getAudiourl());
                         intent.putExtra("mKey", chatMessage.getMessageId());
@@ -1396,7 +1401,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         startActivity(intent);
                     } else if (!chatMessage.getVideourl().equals("none")) {
-                        Intent intent = new Intent(getActivity(), VideoPlayActivity.class);
+                        Intent intent = new Intent(parentActivity, VideoPlayActivity.class);
 
                         intent.putExtra("userIdChattingWith", userIdChattingWith);
                         intent.putExtra("videoUrl", chatMessage.getVideourl());
@@ -1413,7 +1418,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 }
                 else
                 {
-                    Toast.makeText(getActivity(),"You have no photo messages",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(parentActivity, "You have no photo messages", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -1437,7 +1442,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     reply_btn.setVisibility(View.GONE);
                     message_box.requestFocus();
                     InputMethodManager inputMethodManager =
-                            (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            (InputMethodManager) parentActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputMethodManager.toggleSoftInputFromWindow(
                             app_context_layout.getApplicationWindowToken(),
                             InputMethodManager.SHOW_FORCED, 0);
@@ -1465,7 +1470,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        parentActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         final int height = displayMetrics.heightPixels;
         final int width = displayMetrics.widthPixels;
 
@@ -1477,89 +1482,214 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         //  delSound1 = soundPool.load(this,R.raw.communication_channel,1 );
-        delSound1 = soundPool.load(getContext(), R.raw.forsure, 1);
-        cantDelSound2 = soundPool.load(getContext(), R.raw.knuckle, 1);
-        sendSound3 = soundPool.load(getContext(),R.raw.show_stopper,1);
-        //sendSound3 = soundPool.load(getContext(), R.raw.justmaybe, 1);
-        sendingSound4 = soundPool.load(getContext(), R.raw.youwouldntbelieve, 1);
+        delSound1 = soundPool.load(parentActivity, R.raw.forsure, 1);
+        cantDelSound2 = soundPool.load(parentActivity, R.raw.knuckle, 1);
+        sendSound3 = soundPool.load(parentActivity, R.raw.show_stopper, 1);
+        //sendSound3 = soundPool.load(parentActivity, R.raw.justmaybe, 1);
+        sendingSound4 = soundPool.load(parentActivity, R.raw.youwouldntbelieve, 1);
 
-        sendingSound5 = soundPool.load(getContext(), R.raw.knob, 1);
+        sendingSound5 = soundPool.load(parentActivity, R.raw.knob, 1);
 
 
         try {
             if (!photo.equals("default")) {
 
-                TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Bitmap bitmap = Glide.with(getContext())
-                                    .asBitmap()
-                                    .load(photo.replace("s96-c", "s384-c"))
-                                    .submit(width, height)
-                                    .get();
-
-                            bitmapTaskCompletionSource.setResult(bitmap);
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userIdChattingWith)
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    TaskCompletionSource<Boolean> booleanTaskCompletionSource = new TaskCompletionSource<>();
 
 
-                    }
-                }).start();
-
-                Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
-
-                bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Bitmap> task) {
-                        if (task.isSuccessful()) {
-                            try {
+                                    ChatStamp chatStamp = snapshot.getValue(ChatStamp.class);
 
 
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
+                                    try {
 
-                                        Glide.with(getActivity()).load(task.getResult()/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height))*/.listener(new RequestListener<Drawable>() {
+
+                                        new Thread(new Runnable() {
                                             @Override
-                                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                                return false;
+                                            public void run() {
+                                                Long tsLong = System.currentTimeMillis() / 1000;
+
+                                                /*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                                                Date localParsedDate = null;
+                                                Date remoteParsedDate = null;
+                                                try {
+                                                    localParsedDate = dateFormat.parse(chatStamp.getLocaluserstamp());
+                                                    remoteParsedDate = dateFormat.parse(chatStamp.getOtheruserstamp());
+                                                } catch (ParseException e) {
+                                                    e.printStackTrace();
+                                                }
+*/
+
+
+                                                try {
+
+                                                    /*long localUserTimeStamp = Long.parseLong(chatStamp.getLocaluserstamp());
+                                                    long otherUserTimeStamp = Long.parseLong(chatStamp.getOtheruserstamp());*/
+
+
+                                                    /*Timestamp localUsertimestamp = new java.sql.Timestamp(localParsedDate.getTime());
+                                                    Timestamp otjerUsertimestamp = new java.sql.Timestamp(remoteParsedDate.getTime());*/
+
+                                                    long localUserDiff = tsLong - chatStamp.getLocaluserstamp();
+                                                    long remoteUserDiff = tsLong - chatStamp.getOtheruserstamp();
+
+
+                                                    long localDiffHours = localUserDiff / (60 * 60 * 1000);
+                                                    long otherDiffHours = remoteUserDiff / (60 * 60 * 1000);
+
+                                                    Log.i("localDiffHours", "" + localDiffHours);
+                                                    Log.i("otherDiffHours", "" + otherDiffHours);
+
+
+                                                    if (localDiffHours < 24 && otherDiffHours < 24)
+                                                        booleanTaskCompletionSource.setResult(true);
+                                                    else
+                                                        booleanTaskCompletionSource.setResult(false);
+                                                } catch (Exception e) {
+                                                    booleanTaskCompletionSource.setResult(false);
+                                                }
                                             }
+                                        }).start();
 
+                                        Task<Boolean> booleanTask = booleanTaskCompletionSource.getTask();
+
+                                        booleanTask.addOnCompleteListener(new OnCompleteListener<Boolean>() {
                                             @Override
-                                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                            public void onComplete(@NonNull Task<Boolean> task) {
+
+                                                if (task.getResult()) {
+                                                    TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+                                                    new Thread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            try {
+                                                                Bitmap bitmap = Glide.with(parentActivity)
+                                                                        .asBitmap()
+                                                                        .load(photo.replace("s96-c", "s384-c"))
+                                                                        .submit(width, height)
+                                                                        .get();
+
+                                                                bitmapTaskCompletionSource.setResult(bitmap);
+                                                            } catch (ExecutionException e) {
+                                                                e.printStackTrace();
+                                                            } catch (InterruptedException e) {
+                                                                e.printStackTrace();
+                                                            }
 
 
-                                                if (imageReady) {
-                                                        profile_pic.animate().alpha(1.0f).setDuration(750);
-                                                    imageLoaded = true;
+                                                        }
+                                                    }).start();
 
+                                                    Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+
+                                                    bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Bitmap> task) {
+                                                            if (task.isSuccessful()) {
+                                                                try {
+
+                                                                    if (!imageLoaded)
+                                                                        Glide.with(parentActivity).load(task.getResult()/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height))*/
+                                                                                .listener(new RequestListener<Drawable>() {
+                                                                                    @Override
+                                                                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                                                                        return false;
+                                                                                    }
+
+                                                                                    @Override
+                                                                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+
+                                                                                        if (imageReady) {
+
+                                                                                            profile_pic.setImageDrawable(null);
+                                                                                            profile_pic.setAlpha(0.0f);
+                                                                                            profile_pic.animate().alpha(1.0f).setDuration(750);
+                                                                                            imageLoaded = true;
+
+                                                                                        }
+
+
+                                                                                        return false;
+                                                                                    }
+                                                                                })
+                                                                                .into(profile_pic);
+
+                                                                } catch (Exception ne) {
+                                                                    //
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                    });
+                                                } else {
+                                                    try {
+                                                        if (!imageLoaded) {
+                                                            profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
+                                                            profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                                        }
+                                                    } catch (Exception e) {
+                                                        //
+                                                    }
                                                 }
 
 
-                                                return false;
                                             }
-                                        }).into(profile_pic);
+                                        });
+
+
+                                    } catch (Exception e) {
+                                        try {
+                                            if (!imageLoaded) {
+                                                profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
+                                                profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                            }
+                                        } catch (Exception ne) {
+                                            //
+                                        }
+                                    }
+
+
+                                    /**
+                                     * Remove the below code before commiting to prod
+                                     */
+                                    try {
+                                        Long tsLong = System.currentTimeMillis() / 1000;
+
+                                        long localUserDiff = tsLong - chatStamp.getLocaluserstamp();
+                                        long remoteUserDiff = tsLong - chatStamp.getOtheruserstamp();
+
+
+                                        long localDiffHours = localUserDiff / (60 * 60 * 1000);
+                                        long otherDiffHours = remoteUserDiff / (60 * 60 * 1000);
+
+                                        Toast.makeText(parentActivity, "localUserDiff: " + localDiffHours + "\n" + "otherDiffHours: " + otherDiffHours, Toast.LENGTH_LONG).show();
+
+                                    } catch (Exception e) {
 
                                     }
-                                }, 0);
 
+                                }
 
-
-
-                            } catch (NullPointerException ne) {
-                                //
                             }
 
-                        }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
+                            }
+                        });
+
+
+
 
 
 
@@ -1567,12 +1697,17 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             }
             else
             {
-                profile_pic.setImageResource(R.drawable.no_profile);
-                profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                if (!imageLoaded) {
+                    profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
+                    profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                }
             }
         }catch (Exception e)
         {
-            profile_pic.setImageDrawable(getActivity().getDrawable(R.drawable.no_profile));
+            if (!imageLoaded) {
+                profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
+                profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+            }
         }
 
 
@@ -1581,7 +1716,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onClick(View v) {
 
 
-                Toast.makeText(getActivity(),"Sending Message...",Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, "Sending Message...", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -1814,7 +1949,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 break;
 
                         }
-                        message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_sender_drawable));
+                        message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_sender_drawable));
 
                         profile_pic.setAlpha(0.0f);
                         // read_message_back.animate().alpha(1.0f).setDuration(750);
@@ -1907,7 +2042,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                 break;
 
                         }
-                        message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_sender_drawable));
+                        message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_sender_drawable));
 
                         profile_pic.animate().alpha(opacity).setDuration(250);
                        // read_message_back.animate().alpha(1.0f).setDuration(750);
@@ -1949,9 +2084,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         // profile_pic.setBlur(0);
                         if (messageList.size() < 1)
-                            message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+                            message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_no_message));
                         else
-                            message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+                            message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_reply_drawable));
 
                         //message_text_sender.setText("");
 
@@ -2147,7 +2282,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     message_running.setVisibility(View.INVISIBLE);
                     message_running_two.setVisibility(View.INVISIBLE);
-                    //Toast.makeText(getContext(),"Button Released!",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(parentActivity,"Button Released!",Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -2210,7 +2345,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
 
-        /*Dexter.withActivity(getActivity())
+        /*Dexter.withActivity(parentActivity)
                 .withPermission(Manifest.permission.RECORD_AUDIO)
                 .withListener(new PermissionListener() {
                     @Override
@@ -2230,7 +2365,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     }
                 }).check();*/
 
-        Dexter.withActivity(getActivity())
+        Dexter.withActivity(parentActivity)
                 .withPermissions(Manifest.permission.RECORD_AUDIO)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
@@ -2240,7 +2375,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             disablerecord_button.setVisibility(View.GONE);
                             recordButton.setVisibility(View.VISIBLE);
                         } else {
-                            Toast.makeText(getActivity(), "Please give audio record permission", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(parentActivity, "Please give audio record permission", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -2250,7 +2385,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         token.continuePermissionRequest();
 
-                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(parentActivity, "Permission Denied!", Toast.LENGTH_SHORT).show();
                     }
                 }).check();
     }
@@ -2286,7 +2421,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             senderCopyMessageTwo = encryptRSAToString(messageStrTwo,currentUserPublicKey);
 
             /*if(!otherUserPublicKey.equals(null))
-              Toast.makeText(getContext(),"Encrypted", Toast.LENGTH_SHORT).show();*/
+              Toast.makeText(parentActivity,"Encrypted", Toast.LENGTH_SHORT).show();*/
         } else {
             setMessageTextTwo = "";
             senderCopyMessageTwo = "";
@@ -2420,7 +2555,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 textFieldAnimating = false;
 
 
-                //Toast.makeText(getContext(),"Why is the send asyncTask being called?",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(parentActivity,"Why is the send asyncTask being called?",Toast.LENGTH_SHORT).show();
 
 
                 ChatListItemCreationModel chatListItemCreationModel = new ChatListItemCreationModel();
@@ -2468,14 +2603,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 //message_text_sender.setAlpha(0.0f);
         if (messageList.size() < 1) {
             try {
-                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+                message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_no_message));
             } catch (Exception e) {
                 //
             }
         }
                 else
             try {
-                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+                message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_reply_drawable));
             } catch (Exception e) {
                 //
             }
@@ -2521,7 +2656,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         if(!getIsMessageRunning())
             if (messageList.size() < 1)
-                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+                message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_no_message));
 
        // final ChatMessage chatMessage = setUpSendingChat();
         final ChatMessageCompound  chatMessageCompound = setUpSendingChat();
@@ -2536,7 +2671,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         //sending_progress_bar.setVisibility(View.VISIBLE);
         archive_btn.setVisibility(View.VISIBLE);
         archive_btn.setBackgroundTintList
-                (ContextCompat.getColorStateList(getContext(), R.color.colorPending));
+                (ContextCompat.getColorStateList(parentActivity, R.color.colorPending));
 
 
         try {
@@ -2548,7 +2683,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         }
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = parentActivity.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         displayHeight = size.y;
@@ -2712,7 +2847,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         continue_message_box_blinking = false;
         message_box_behind.setAlpha(0.0f);
         try {
-            message_box.setHintTextColor(getActivity().getResources().getColor(R.color.textThemeColorDark));
+            message_box.setHintTextColor(parentActivity.getResources().getColor(R.color.textThemeColorDark));
         }catch (Exception e)
         {
 
@@ -2770,10 +2905,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         equilizerAnimation(equi_five);
 
         recorder = new MediaRecorder();
-        fileName = getActivity().getExternalCacheDir().getAbsolutePath();
+        fileName = parentActivity.getExternalCacheDir().getAbsolutePath();
         fileName += "/audiorecordtest.3gp";
         //play_btn.setVisibility(View.GONE);
-        Toast.makeText(getActivity(), "Recording started", Toast.LENGTH_SHORT).show();
+        Toast.makeText(parentActivity, "Recording started", Toast.LENGTH_SHORT).show();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         recorder.setOutputFile(fileName);
@@ -2797,7 +2932,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         //audioRecording = true;
 
 
-        Toast.makeText(getActivity(), "Recording stopped", Toast.LENGTH_SHORT).show();
+        Toast.makeText(parentActivity, "Recording stopped", Toast.LENGTH_SHORT).show();
         recorder.stop();
         recorder.release();
         recorder = null;
@@ -2820,7 +2955,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         final String mKey = databaseReference.push().getKey();
 
         Uri uri = Uri.fromFile(new File(fileName));
-        Intent intent1 = new Intent(getActivity(), SendMediaService.class);
+        Intent intent1 = new Intent(parentActivity, SendMediaService.class);
         intent1.putExtra("userChattingWithId", userIdChattingWith);
         intent1.putExtra("imageUri", uri.toString());
         //intent1.putExtra("encrptedVide", videoUri.toString());
@@ -2837,7 +2972,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         intent1.putExtra("type", "audio");
 
 
-        getActivity().startService(intent1);
+        parentActivity.startService(intent1);
 
         // finish();
 
@@ -2982,7 +3117,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private String getExtension(Uri uri) {
 
 
-        ContentResolver contentResolver = getActivity().getContentResolver();
+        ContentResolver contentResolver = parentActivity.getContentResolver();
 
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
@@ -3001,7 +3136,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         timeStampHash.put("id", userIdChattingWith);
         timeStampHash.put("username", usernameUserChattingWith);
         timeStampHash.put("photo", userChattingWith_photo);
-        timeStampHash.put("localuserstamp", ts);
+        timeStampHash.put("localuserstamp", tsLong);
         timeStampHash.put("seen", "notseen");
         timeStampHash.put("chatPending", false);
         senderChatCreateRef.updateChildren(timeStampHash);
@@ -3012,7 +3147,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
         timeStampHashReceiver.put("username", currentUserName);
         timeStampHashReceiver.put("photo", currentUserPhoto);
-        timeStampHashReceiver.put("otheruserstamp", ts);
+        timeStampHashReceiver.put("otheruserstamp", tsLong);
         timeStampHashReceiver.put("seen", "notseen");
         timeStampHashReceiver.put("chatPending", true);
         receiverChatCreateRef.updateChildren(timeStampHashReceiver);
@@ -3100,14 +3235,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         if (!chatMessage.getPhotourl().equals("none")) {
 
 
-                            photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_image_white_24dp));
+                            photo_btn.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_image_white_24dp));
 
                         } else if (!chatMessage.getAudiourl().equals("none")) {
 
-                            photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_mic_black_24dp));
+                            photo_btn.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_mic_black_24dp));
 
                         } else if (!chatMessage.getVideourl().equals("none")) {
-                            photo_btn.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
+                            photo_btn.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_videocam_black_24dp));
                         }
                     } else {
                         photo_btn.setVisibility(View.INVISIBLE);
@@ -3165,7 +3300,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         try {
 
-                            message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_drawable));
+                            message_counter.setBackground(parentActivity.getDrawable(R.drawable.message_counter_drawable));
                         } catch (Exception e) {
                             //
                         }
@@ -3175,7 +3310,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         try {
 
                             if (!isMessageRunning)
-                                message_counter.setBackground(getActivity().getDrawable(R.drawable.message_counter_drawable));
+                                message_counter.setBackground(parentActivity.getDrawable(R.drawable.message_counter_drawable));
                         } catch (Exception e) {
                             //
                         }
@@ -3313,7 +3448,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                 } catch (Exception e) {
                     //ifHintExists=false;
-                    //Toast.makeText(getContext(),"Exception : "+e.toString(),Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(parentActivity,"Exception : "+e.toString(),Toast.LENGTH_SHORT).show();
                     booleanTaskCompletionSource.setResult(true);
                 }
 
@@ -3342,7 +3477,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     }
     private void requestAllPermissions() {
 
-        Dexter.withActivity(getActivity())
+        Dexter.withActivity(parentActivity)
                 .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CAMERA)
@@ -3352,7 +3487,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         if(report.areAllPermissionsGranted())
                         {
-                            Intent intent = new Intent(getContext(), CameraActivity.class);
+                            Intent intent = new Intent(parentActivity, CameraActivity.class);
 
                             // ephemeralMessageViewModel.createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
                             if (currentUsername != null && currentUserPhoto != null) {
@@ -3374,11 +3509,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                 startActivity(intent);
                             } else
-                                Toast.makeText(getActivity(), "Getting user details", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(parentActivity, "Getting user details", Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
-                            Toast.makeText(getActivity(), "Permission not given!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(parentActivity, "Permission not given!", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -3388,7 +3523,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                         token.continuePermissionRequest();
 
-                        // Toast.makeText(getActivity(), "Permission Denied!", Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(parentActivity, "Permission Denied!", Toast.LENGTH_SHORT).show();
                     }
                 }).check();
     }
@@ -3422,14 +3557,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 }
             },300);
 
-            Toast.makeText(getContext(), "You have no messages to read!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(parentActivity, "You have no messages to read!", Toast.LENGTH_SHORT).show();
         }
 
         else {
 
             animateReceiveArrow();
 
-            Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            Vibrator v = (Vibrator) parentActivity.getSystemService(Context.VIBRATOR_SERVICE);
 // Vibrate for 500 milliseconds
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 v.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE));
@@ -3503,7 +3638,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
          *set message bar indicator for reading message background
          */
 
-        message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_drawable));
+        message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_drawable));
 
         /**
          * place the receiving arrow to its original positon and set the opacity to 100%
@@ -3708,9 +3843,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             try {
 
                                 if (messageList.size() < 1)
-                                    message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_no_message));
+                                    message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_no_message));
                                 else
-                                    message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_reply_drawable));
+                                    message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_reply_drawable));
 
                             } catch (Exception e) {
                                 //
@@ -3724,7 +3859,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             if(!isMessageRunning) {
                                 username.setVisibility(View.VISIBLE);
 
-                                //  Toast.makeText(getContext(),"entered block isMessageRunning line 2356",Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(parentActivity,"entered block isMessageRunning line 2356",Toast.LENGTH_SHORT).show();
 
 
                                 List<ObjectAnimator> objectAnimators = new ArrayList<>();
@@ -3772,7 +3907,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     animatorSet1.start();
                                 }catch (Exception e)
                                 {
-                                    // Toast.makeText(getContext(),"Problem in playing animation together using a list",Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(parentActivity,"Problem in playing animation together using a list",Toast.LENGTH_SHORT).show();
                                 }
 
                             }
@@ -3790,7 +3925,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     message_text_two_sender.getText().length() > 0 ||
                                     message_text_three_sender.getText().length() > 0) {
 
-                                message_bar.setBackground(getActivity().getDrawable(R.drawable.message_identifier_sender_drawable));
+                                message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_sender_drawable));
 
                             }
 
@@ -3843,14 +3978,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                 message_box.setHint("Reply to last message...");
                                                 try {
 
-                                                    message_box.setHintTextColor(getActivity().getResources().getColor(R.color.textThemeColorSemiDark));
+                                                    message_box.setHintTextColor(parentActivity.getResources().getColor(R.color.textThemeColorSemiDark));
                                                 } catch (NullPointerException e) {
                                                     //
                                                 }
 
 
                                                 try {
-                                                    final Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.text_bounce_anim);
+                                                    final Animation hyperspaceJump = AnimationUtils.loadAnimation(parentActivity, R.anim.text_bounce_anim);
 
                                                     hyperspaceJump.setRepeatMode(Animation.INFINITE);
 
@@ -3864,7 +3999,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                                             try {
 
-                                                                Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                                                                Vibrator v = (Vibrator) parentActivity.getSystemService(Context.VIBRATOR_SERVICE);
 
 // Vibrate for 500 milliseconds
                                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -3892,7 +4027,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                             } else {
 
 
-                                                final Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.text_bounce_anim);
+                                                final Animation hyperspaceJump = AnimationUtils.loadAnimation(parentActivity, R.anim.text_bounce_anim);
 
                                                 hyperspaceJump.setRepeatMode(Animation.INFINITE);
                                                 message_box.setAnimation(hyperspaceJump);
@@ -4044,7 +4179,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         liveMessage = senderReplyMessage;
 
-        //Toast.makeText(getContext(),"Setup Receive Message is called",Toast.LENGTH_SHORT).show();
+        //Toast.makeText(parentActivity,"Setup Receive Message is called",Toast.LENGTH_SHORT).show();
 
         if(chatMessage.getIfMessageTwo()) {
             senderReplyMessage = senderReplyMessage + " " + decryptRSAToString(chatMessage.getMessageTextTwo(),currentUserPrivateKey);
@@ -4277,7 +4412,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     online_ring.setVisibility(View.VISIBLE);
 
                     // Log.d(TAG, "connected");
-                   // Toast.makeText(getActivity(),"You are connected!",Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(parentActivity,"You are connected!",Toast.LENGTH_SHORT).show();
 
                    // updateUserPresence(false);
 /*                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -4300,7 +4435,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                             Snackbar snackbar = Snackbar
                                     .make(app_context_layout, "You are connected", Snackbar.LENGTH_SHORT);
                             View snackBarView = snackbar.getView();
-                            snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorGreen));
+                            snackBarView.setBackgroundColor(ContextCompat.getColor(parentActivity, R.color.colorGreen));
                             snackbar.show();
                         } catch (Exception e) {
                             //
@@ -4312,7 +4447,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                 } else {
                    // Log.d(TAG, "not connected");
-                   // Toast.makeText(getActivity(),"You are disconnected!",Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(parentActivity,"You are disconnected!",Toast.LENGTH_SHORT).show();
 
                     online_ring.setVisibility(View.INVISIBLE);
 
@@ -4328,7 +4463,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     Snackbar snackbar = Snackbar
                                             .make(app_context_layout, "You are disconnected", Snackbar.LENGTH_SHORT);
                                     View snackBarView = snackbar.getView();
-                                    snackBarView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
+                                    snackBarView.setBackgroundColor(ContextCompat.getColor(parentActivity, R.color.darkGrey));
                                     snackbar.show();
                                     checkConnectedSatus = true;
                                 } catch (Exception e) {
@@ -4406,25 +4541,25 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private void setTypeFace(String path,String pathLight)
     {
         if(!path.equals("null") && !pathLight.equals("null")) {
-            message_text.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
-            message_text_two.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
-            message_text_three.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+            message_text.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
+            message_text_two.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
+            message_text_three.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
 
-            message_text_sender.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
-            message_text_two_sender.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
-            message_text_three_sender.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+            message_text_sender.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
+            message_text_two_sender.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
+            message_text_three_sender.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
 
-            username.setTypeface(Typeface.createFromAsset(getContext().getAssets(), pathLight));
+            username.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), pathLight));
 
-            message_box.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+            message_box.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
 
-            top_swipe_text.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+            top_swipe_text.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
 
-            message_log_text.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+            message_log_text.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
 
 
-            swipe_down.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
-            go_live_txt.setTypeface(Typeface.createFromAsset(getContext().getAssets(), path));
+            swipe_down.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
+            go_live_txt.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), path));
         }
 
     }
@@ -4568,7 +4703,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 messageReportUpdateReply.child(chatMessageReceiverCopy.getReplyID()).updateChildren(hashMap);
                 messageReportReceiver.child(chatMessageReceiverCopy.getReplyID()).updateChildren(hashMap);
 
-              //  Toast.makeText(getContext(),"Why is the send asyncTask being called?",Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(parentActivity,"Why is the send asyncTask being called?",Toast.LENGTH_SHORT).show();
             }
 
 /*            if(!chatMessageSenderCopy.getReplyID().equals("none"))
@@ -4644,7 +4779,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
                         timeStampHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
                         timeStampHash.put("seen", "notseen");
-                        timeStampHash.put("localuserstamp", ts);
+                        timeStampHash.put("localuserstamp", tsLong);
                         timeStampHash.put("chatPending", false);
                         timeStampHash.put("gemCount",2);
 
@@ -4652,7 +4787,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("id", sendMessageAsyncModel.getCurrentID());
                         timeStampHashReceiver.put("username", chatListItemCreationModel.getCurrentUserName());
                         timeStampHashReceiver.put("photo", currentUserPhoto);
-                        timeStampHashReceiver.put("otheruserstamp", ts);
+                        timeStampHashReceiver.put("otheruserstamp", tsLong);
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);
                         timeStampHashReceiver.put("gemCount",2);
@@ -4666,7 +4801,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHash.put("id", sendMessageAsyncModel.getUserChattingWithId());
                         timeStampHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
                         timeStampHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
-                        timeStampHash.put("localuserstamp", ts);
+                        timeStampHash.put("localuserstamp", tsLong);
                         timeStampHash.put("seen", "notseen");
                         timeStampHash.put("chatPending", false);
 
@@ -4674,7 +4809,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("id", sendMessageAsyncModel.getCurrentID());
                         timeStampHashReceiver.put("username", chatListItemCreationModel.getCurrentUserName());
                         timeStampHashReceiver.put("photo", currentUserPhoto);
-                        timeStampHashReceiver.put("otheruserstamp", ts);
+                        timeStampHashReceiver.put("otheruserstamp", tsLong);
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);
 

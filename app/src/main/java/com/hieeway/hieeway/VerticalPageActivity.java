@@ -464,7 +464,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         bundleSendMessage.putString("photo", photo);
 
         // set Fragmentclass Arguments
-        ephemeralMessagingFragment = new EphemeralMessagingFragment();
+        ephemeralMessagingFragment = new EphemeralMessagingFragment(VerticalPageActivity.this);
         ephemeralMessagingFragment.setParentActivity(this);
         ephemeralMessagingFragment.setArguments(bundle);
 
