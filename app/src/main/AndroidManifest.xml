@@ -33,7 +33,19 @@
         android:roundIcon="@mipmap/ic_launcher_hieeway_circle"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".YoutubeTestActivity"></activity>
+        <activity android:name=".YoutubeLiveVideoSelectionActivity">
+            <intent-filter android:label="Watch Together">
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:host="www.youtube.com"
+                    android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".YoutubeUriParseActivity"></activity>
+        <activity android:name=".YoutubeTestActivity" />
         <activity
             android:name=".VerticalPageActivityPerf"
             android:screenOrientation="portrait"
@@ -43,7 +55,9 @@
         <activity android:name=".SlideButtonTestActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".WebViewActivity" />
-        <activity android:name=".MusicPalActivity" />
+        <activity android:name=".MusicPalActivity">
+
+        </activity>
         <activity
             android:name=".MusicFeedActivity"
             android:theme="@style/MusicFeed" />
@@ -75,7 +89,7 @@
         <activity
             android:name=".NavButtonTest"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" /> <!-- android:screenOrientation="portrait" -->
+            android:theme="@style/AppTheme"></activity> <!-- android:screenOrientation="portrait" -->
         <activity
             android:name=".NavButtonTestActivity"
             android:screenOrientation="portrait" />

@@ -43,6 +43,7 @@ public class LiveMessageNotificationService extends Service {
     private int i = 0;
     private boolean stop = false;
     private boolean serviceStarted = false;
+    private String loadedVideo;
 
     @Nullable
     @Override
@@ -93,6 +94,9 @@ public class LiveMessageNotificationService extends Service {
             username = intent.getStringExtra("username");
             userid = intent.getStringExtra("userid");
             photo = intent.getStringExtra("photo");
+            loadedVideo = intent.getStringExtra("loadedVideo");
+
+            //loadedVideo
             stopSelfIntent = new Intent(LiveMessageNotificationService.this, LiveMessageNotificationService.class);
             stopSelfIntent.putExtra("username", username);
             stopSelfIntent.putExtra("userid", userid);
@@ -173,8 +177,26 @@ public class LiveMessageNotificationService extends Service {
                 .build();
 
         if (isWatching == null || !isWatching) {
-            startForeground(notificationId, notification);
-            startRing();
+
+
+            if (loadedVideo.equals("no")) {
+                startForeground(notificationId, notification);
+                startRing();
+            } else {
+                if (!serviceStarted) {
+                    Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
+                    startLiveActiveServiceIntent.putExtra("username", username);
+                    startLiveActiveServiceIntent.putExtra("userid", userid);
+                    startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+                    startLiveActiveServiceIntent.putExtra("photo", photo);
+                    startLiveActiveServiceIntent.putExtra("loadedVideo", "yes");
+
+                    startService(startLiveActiveServiceIntent);
+                }
+                stopSelf();
+            }
+
+
         }
 
 
@@ -194,7 +216,7 @@ public class LiveMessageNotificationService extends Service {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!stop && i != 25)
+                if (!stop && i != 15)
                     startRing();
                 else {
 

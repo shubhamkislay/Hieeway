@@ -44,11 +44,12 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
     private Boolean userVisited = false;
     private RelativeLayout checking_layout;
     private TextView checking_txt;
+    private String loadVideo;
 
 
     public LiveMessageParentFragment(LiveMessageEventListener liveMessageEventListener, Activity parentActivity,
                                      String photo, String usernameChattingWith, String userIdChattingWith,
-                                     String youtubeID, String youtubeTitle, String live) {
+                                     String youtubeID, String youtubeTitle, String live, String loadVideo) {
         // Required empty public constructor
 
         this.liveMessageEventListener = liveMessageEventListener;
@@ -59,6 +60,7 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
         this.youtubeID = youtubeID;
         this.youtubeTitle = youtubeTitle;
         this.live = live;
+        this.loadVideo = loadVideo;
     }
 
 
@@ -158,7 +160,8 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
                     usernameChattingWith,
                     userIdChattingWith,
                     youtubeID,
-                    youtubeTitle);
+                    youtubeTitle,
+                    loadVideo);
             liveMessageFragmentPerf.setArguments(bundle);
             liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(activity);
 
@@ -218,7 +221,7 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
                 usernameChattingWith,
                 userIdChattingWith,
                 youtubeID,
-                youtubeTitle);
+                youtubeTitle, loadVideo);
         liveMessageFragmentPerf.setArguments(bundle);
         liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(activity);
 

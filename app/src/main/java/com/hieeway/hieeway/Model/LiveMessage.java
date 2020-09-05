@@ -7,20 +7,21 @@ public class LiveMessage {
     private String messageKey;
     private int iConnect;
     private String senderId;
+    private String loadedVideo;
 
 
     public LiveMessage()
     {}
 
 
-
-    public LiveMessage(String messageLive, String messageKey, int iConnect, String senderId)
+    public LiveMessage(String messageLive, String messageKey, int iConnect, String senderId, String loadedVideo)
     {
 
         this.messageLive = messageLive;
         this.messageKey = messageKey;
         this.iConnect = iConnect;
         this.senderId = senderId;
+        this.loadedVideo = loadedVideo;
 
     }
 
@@ -55,5 +56,13 @@ public class LiveMessage {
 
     public void setSenderId(String senderId) {
         this.senderId = senderId;
+    }
+
+    public String getLoadedVideo() {
+        return loadedVideo;
+    }
+
+    public void setLoadedVideo(String loadedVideo) {
+        this.loadedVideo = loadedVideo;
     }
 }

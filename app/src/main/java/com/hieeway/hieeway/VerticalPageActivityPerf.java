@@ -112,6 +112,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     private String youtubeTitle = null;
     private boolean backPressed = false;
     private String usernameChattingWith;
+    private String loadVideo = "no";
 
     private String photo;
     private DatabaseReference userFriendShipReference;
@@ -491,15 +492,32 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         liveMessageFragmentPerf.setArguments(bundle);
         liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(this);*/
 
+        Boolean videoExists = intent.getBooleanExtra("videoExists", false);
 
-        liveMessageParentFragment = new LiveMessageParentFragment(VerticalPageActivityPerf.this,
-                VerticalPageActivityPerf.this,
-                photo,
-                usernameChattingWith,
-                userIdChattingWith,
-                youtubeID,
-                youtubeTitle,
-                live);
+        if (!videoExists) {
+
+            liveMessageParentFragment = new LiveMessageParentFragment(VerticalPageActivityPerf.this,
+                    VerticalPageActivityPerf.this,
+                    photo,
+                    usernameChattingWith,
+                    userIdChattingWith,
+                    youtubeID,
+                    youtubeTitle,
+                    live,
+                    loadVideo);
+        } else {
+
+            loadVideo = intent.getStringExtra("loadVideo");
+            liveMessageParentFragment = new LiveMessageParentFragment(VerticalPageActivityPerf.this,
+                    VerticalPageActivityPerf.this,
+                    photo,
+                    usernameChattingWith,
+                    userIdChattingWith,
+                    youtubeID,
+                    youtubeTitle,
+                    live,
+                    loadVideo);
+        }
         liveMessageParentFragment.setArguments(bundle);
         liveMessageParentFragment.setParentActivity(this);
         // liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
@@ -1026,6 +1044,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         liveMessageFragmentPerf.setArguments(bundle);*/
 
         //liveMessageParentFragment = null;
+        loadVideo = "no";
         liveMessageParentFragment = new LiveMessageParentFragment(VerticalPageActivityPerf.this,
                 VerticalPageActivityPerf.this,
                 photo,
@@ -1033,7 +1052,8 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                 userIdChattingWith,
                 youtubeID,
                 youtubeTitle,
-                live);
+                live,
+                loadVideo);
         liveMessageParentFragment.setArguments(bundle);
         liveMessageParentFragment.setParentActivity(this);
 

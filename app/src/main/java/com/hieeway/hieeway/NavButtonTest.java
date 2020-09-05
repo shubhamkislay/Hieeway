@@ -150,6 +150,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public static String USER_PHOTO;
     public static String USER_ID;
     private FragmentManager menuFragmentManager;
+    private int changeAnimation = 0;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -956,7 +957,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 fragmentId = 2;
 
             }
-        }, 500);
+        }, changeAnimation);
 
 
     }
@@ -1037,7 +1038,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 fragmentId = 1;
 
             }
-        }, 500);
+        }, changeAnimation);
 
 
 
@@ -1109,7 +1110,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 fragmentId=3;
 
             }
-        }, 500);
+        }, changeAnimation);
 
 
 
@@ -1183,7 +1184,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 fragmentId = 4;
 
             }
-        }, 500);
+        }, changeAnimation);
 
     }
 
@@ -1831,7 +1832,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                             .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                             .replace(R.id.container_layout, profileFragment).commit();
                 }
-            }, 500);
+            }, changeAnimation);
 
         }
         else
@@ -1846,7 +1847,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                             .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                             .replace(R.id.container_layout, editBioLayoutFragment).commit();
                 }
-            }, 500);
+            }, changeAnimation);
 
         }
 
@@ -1868,7 +1869,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                             .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                             .replace(R.id.container_layout, profileFragment).commit();
                 }
-            }, 500);
+            }, changeAnimation);
 
 
         } else {
@@ -1884,7 +1885,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                             .replace(R.id.container_layout, addFeelingFragment).commit();
 
                 }
-            }, 500);
+            }, changeAnimation);
 
         }
 

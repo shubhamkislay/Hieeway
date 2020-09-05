@@ -321,6 +321,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private boolean pauseVideo;
     private String videoTitle;
     private boolean videoBuffering = false;
+    String loadVideofromUrl;
 
     /**
      *  Live View Model    checkForExistingRequest()
@@ -421,7 +422,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     }*/
     }
 
-    public LiveMessageFragmentPerf(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith, String youtubeID, String youtubeTitle) {
+    public LiveMessageFragmentPerf(LiveMessageEventListener liveMessageEventListener, Activity parentActivity, String photo, String usernameChattingWith, String userIdChattingWith, String youtubeID, String youtubeTitle, String loadVideofromUrl) {
         // Required empty public constructor
         this.liveMessageEventListener = liveMessageEventListener;
         this.parentActivity = parentActivity;
@@ -430,6 +431,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         this.usernameChattingWith = usernameChattingWith;
         this.userChattingWithId = userIdChattingWith;
         this.youtubeTitle = youtubeTitle;
+        this.loadVideofromUrl = loadVideofromUrl;
 
     }
 
@@ -2233,8 +2235,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private void loadVideo(String url, String videoID) {
 
         if (!videoID.equals("default")) {
-            youtube_web_view.stopLoading();
-            youtube_web_view.loadUrl(youtubeUrl);
+            try {
+                youtube_web_view.stopLoading();
+                youtube_web_view.loadUrl(youtubeUrl);
+            } catch (Exception e) {
+
+            }
 
             String loadVideoID = videoID;
 
@@ -3426,6 +3432,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     hashMap.put("messageLive", "");
                     hashMap.put("iConnect", 0);
                     hashMap.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    hashMap.put("loadedVideo", loadVideofromUrl);
 
                     databaseReferenceUser.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -4106,6 +4113,13 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
 
                     receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
+
+                    if (!loadVideofromUrl.equals("no")) {
+                        getVideoIdFromYoutubeUrl(loadVideofromUrl);
+                    }
+
+
                 } else {
                     DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
                             .child(userChattingWithId)
@@ -4115,6 +4129,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     timeStampHashReceiver.put("present", true);
 
                     receiverChatCreateRef.updateChildren(timeStampHashReceiver);
+
 
                 }
 

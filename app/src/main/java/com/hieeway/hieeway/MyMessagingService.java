@@ -997,6 +997,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             intent.putExtra("userid", remoteMessage.getData().get("userId"));
             intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
             intent.putExtra("live", remoteMessage.getData().get("live"));
+            intent.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
             PendingIntent pendingIntent;
             pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,49 +27,59 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.hieeway.hieeway.Adapters.FriendsAdapter;
-import com.hieeway.hieeway.Adapters.MusicPalAdapter;
-import com.hieeway.hieeway.Adapters.PeopleAdapter;
+import com.hieeway.hieeway.Adapters.VideoPalAdapter;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class MusicPalActivity extends AppCompatActivity {
+public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
 
-    public String searchingUsername;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER_ID = "userid";
+    public String searchingUsername;
     TextView username, result_text;
     RecyclerView friend_list_recyclerview;
     Activity activity;
-    MusicPalAdapter musicPalAdapter;
+    VideoPalAdapter videoPalAdapter;
     EditText searchPeople;
     //ImageView //progress_menu_logo;
     ProgressBar progressBar, progressBarTwo; //progress_menu_logo_two;
     TextView logo_title;
-    private List<User> userList;
+    private List<Friend> userList;
     private ValueEventListener valueEventListener;
     private Query query;
     private List<User> userlist;
     private boolean friendAvailable = false;
     private String userID;
+    private ImageView video_thumbnail;
+    private TextView youtube_url;
+    private RelativeLayout youtube_video_view;
+    private String youtube_Url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_music_pal);
+        setContentView(R.layout.activity_youtube_live_video_selection);
+
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         userID = sharedPreferences.getString(USER_ID, "");
@@ -90,6 +101,19 @@ public class MusicPalActivity extends AppCompatActivity {
 
         searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
         logo_title = findViewById(R.id.layout_title);
+        video_thumbnail = findViewById(R.id.video_thumbnail);
+        youtube_url = findViewById(R.id.youtube_url);
+
+
+        youtube_video_view = findViewById(R.id.youtube_video_view);
+
+
+        Bundle extras = getIntent().getExtras();
+        youtube_Url = extras.getString(Intent.EXTRA_TEXT);
+
+        youtube_url.setText(youtube_Url);
+
+        getVideoIdfromUrl(youtube_Url);
 
 
         Window window = this.getWindow();
@@ -164,7 +188,7 @@ public class MusicPalActivity extends AppCompatActivity {
 
                 else {
                     /*userList.clear();
-                    musicPalAdapter.notifyDataSetChanged();
+                    videoPalAdapter.notifyDataSetChanged();
                     result_text.setVisibility(View.VISIBLE);
                     result_text.setText("Add friends from search tab");*/
 
@@ -185,8 +209,8 @@ public class MusicPalActivity extends AppCompatActivity {
             @Override
             public void run() {
                 populateWithFriends();
-                musicPalAdapter = new MusicPalAdapter(MusicPalActivity.this, userList, activity);
-                friend_list_recyclerview.setAdapter(musicPalAdapter);
+                videoPalAdapter = new VideoPalAdapter(YoutubeLiveVideoSelectionActivity.this, userList, activity, youtube_Url);
+                friend_list_recyclerview.setAdapter(videoPalAdapter);
 
             }
         }, 400);
@@ -234,32 +258,10 @@ public class MusicPalActivity extends AppCompatActivity {
                         try {
                             if (friend.getStatus().equals("friends")) {
 
-                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                                        .child(friend.getFriendId());
 
-                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                userList.add(friend);
 
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        // userList.clear();
-                                        User user = dataSnapshot.getValue(User.class);
-                                        userList.add(user);
-                                        try {
-                                            musicPalAdapter.notifyDataSetChanged();
-                                        } catch (Exception e) {
-                                            //
-                                        }
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-
-
-                                // musicPalAdapter.notifyDataSetChanged();
+                                // videoPalAdapter.notifyDataSetChanged();
                             }
                         } catch (Exception e) {
                             //
@@ -271,22 +273,24 @@ public class MusicPalActivity extends AppCompatActivity {
 
                     }
 
+                    videoPalAdapter.notifyDataSetChanged();
+
                     /*peopleAdapter.setList(userlist);*/
                     // if(username.length()>0)
                     //Collections.sort(chatStampsList, Collections.<ChatStamp>reverseOrder());
 
-                    //  musicPalAdapter.notifyDataSetChanged();
+                    //  videoPalAdapter.notifyDataSetChanged();
 
 
                 } else {
                     userList.clear();
-                    musicPalAdapter.notifyDataSetChanged();
+                    videoPalAdapter.notifyDataSetChanged();
                     result_text.setVisibility(View.VISIBLE);
                     result_text.setText("No results found for '" + username + "'");
                     // Toast.makeText(getContext(),"Couldn't find user: "+username,Toast.LENGTH_SHORT).show();
                 }
 
-                // musicPalAdapter.notifyDataSetChanged();
+                // videoPalAdapter.notifyDataSetChanged();
 
 
             }
@@ -325,44 +329,7 @@ public class MusicPalActivity extends AppCompatActivity {
                         try {
                             if (friend.getStatus().equals("friends")) {
 
-                                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                                        .child(friend.getFriendId());
-
-                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-                                                User user = dataSnapshot.getValue(User.class);
-                                                try {
-                                                    if (!userList.contains(user))
-                                                        userList.add(user);
-                                                } catch (Exception e) {
-                                                    //
-                                                }
-
-                                            }
-                                        }).start();
-                                            /*User user = dataSnapshot.getValue(User.class);
-                                            userList.add(user);*/
-
-                                        try {
-                                            musicPalAdapter.notifyDataSetChanged();
-                                        } catch (Exception e) {
-
-                                        }
-
-
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
-
+                                userList.add(friend);
                                 progressBar.setVisibility(View.INVISIBLE);
                                 //progress_menu_logo.setVisibility(View.INVISIBLE);
                                 //progress_menu_logo_two.setVisibility(View.INVISIBLE);
@@ -384,6 +351,11 @@ public class MusicPalActivity extends AppCompatActivity {
                             //progress_menu_logo.setVisibility(View.INVISIBLE);
                             //progress_menu_logo_two.setVisibility(View.INVISIBLE);
                         }
+
+                    }
+                    try {
+                        videoPalAdapter.notifyDataSetChanged();
+                    } catch (Exception e) {
 
                     }
                     if (!friendAvailable) {
@@ -418,5 +390,84 @@ public class MusicPalActivity extends AppCompatActivity {
         });
 
 
+    }
+
+
+    private void setThumnailFromVideoId(String videoID) {
+        TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    Bitmap bitmap = Glide.with(YoutubeLiveVideoSelectionActivity.this)
+                            .asBitmap()
+                            .load("https://img.youtube.com/vi/" + videoID + "/0.jpg")
+                            .submit(512, 512)
+                            .get();
+
+                    bitmapTaskCompletionSource.setResult(bitmap);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+
+            }
+        }).start();
+
+        Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+
+        bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+            @Override
+            public void onComplete(@NonNull Task<Bitmap> task) {
+                if (task.isSuccessful()) {
+                    video_thumbnail.setImageBitmap(task.getResult());
+                    youtube_video_view.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
+
+    }
+
+
+    private void getVideoIdfromUrl(String url) {
+        TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String videoId = "default";
+
+                String regex = "http(?:s)?:\\/\\/(?:m.)?(?:www\\.)?youtu(?:\\.be\\/|be\\.com\\/(?:watch\\?(?:feature=youtu.be\\&)?v=|v\\/|embed\\/|user\\/(?:[\\w#]+\\/)+))([^&#?\\n]+)";
+                Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(url);
+                if (matcher.find()) {
+                    videoId = matcher.group(1);
+                }
+
+                stringTaskCompletionSource.setResult(videoId);
+            }
+        }).start();
+
+
+        Task<String> stringTask = stringTaskCompletionSource.getTask();
+
+        stringTask.addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    setThumnailFromVideoId(task.getResult());
+                }
+            }
+        });
     }
 }

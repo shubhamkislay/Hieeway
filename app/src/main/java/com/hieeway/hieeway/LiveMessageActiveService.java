@@ -3,10 +3,14 @@ package com.hieeway.hieeway;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -51,6 +55,10 @@ public class LiveMessageActiveService extends Service {
     private String photo;
     private String youtubeTitle = null;
     private String youtubeID = "default";
+    private boolean loadedVideo = false;
+    private int i;
+    private boolean serviceStarted;
+    private boolean stop = false;
 
 
     @Nullable
@@ -69,6 +77,9 @@ public class LiveMessageActiveService extends Service {
 
             videoRef.removeEventListener(videoIdListener);
 
+            stop = true;
+            loadedVideo = false;
+
             Intent openIntent = new Intent(this, VerticalPageActivityPerf.class);
             openIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             openIntent.putExtra("username", intent.getStringExtra("username"));
@@ -85,6 +96,9 @@ public class LiveMessageActiveService extends Service {
         } else if (ACTION_STOP_SERVICE.equals(intent.getAction())) {
 
             videoRef.removeEventListener(videoIdListener);
+
+            stop = true;
+            loadedVideo = false;
 
             String userid = intent.getStringExtra("userid");
 
@@ -106,11 +120,16 @@ public class LiveMessageActiveService extends Service {
             username = intent.getStringExtra("username");
             lastYoutubeId = intent.getStringExtra("youtubeID");
             photo = intent.getStringExtra("photo");
+
             if (intent.getExtras() != null) {
                 for (String key : intent.getExtras().keySet()) {
                     if (key.equals("youtubeTitle")) {
                         youtubeTitle = intent.getStringExtra("youtubeTitle");
                         break;
+                    }
+
+                    if (key.equals("loadedVideo")) {
+                        loadedVideo = true;
                     }
 
                 }
@@ -155,6 +174,11 @@ public class LiveMessageActiveService extends Service {
 
             fetchYoutubeVideo();
             checkForStatus();
+
+
+            if (loadedVideo)
+                startRing();
+
         }
 
 
@@ -299,6 +323,30 @@ public class LiveMessageActiveService extends Service {
                     checkForStatus();
             }
         }, 300);
+    }
+
+    private void startRing() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+        i += 1;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(50);
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!stop && i != 15)
+                    startRing();
+                else {
+                    loadedVideo = false;
+                    stopSelf();
+
+                }
+            }
+        }, 400);
     }
 
 
