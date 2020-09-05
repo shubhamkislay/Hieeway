@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -39,6 +40,7 @@ import android.os.Vibrator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.devlomi.record_view.OnBasketAnimationEnd;
 import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
@@ -148,6 +150,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.crypto.Cipher;
 
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
@@ -315,6 +318,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private Button photo_btn, photo_btn_bg;
     private Activity parentActivity;
     private boolean liveViewStarted = false;
+    int i = 0;
 
 
     public EphemeralMessagingFragment(Activity parentActivity) {
@@ -327,6 +331,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_ephemeral_layout_perf, container, false);
+
 
         /**
          * The below code is used to block screenshots
@@ -1596,8 +1601,18 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                             if (task.isSuccessful()) {
                                                                 try {
 
-                                                                    if (!imageLoaded)
-                                                                        Glide.with(parentActivity).load(task.getResult()/*.replace("s96-c", "s384-c")*/)/*.transition(withCrossFade())*//*.apply(new RequestOptions().override(width, height))*/
+                                                                    if (!imageLoaded) {
+                                                                        //Glide.with(parentActivity).clear(profile_pic);
+                                                                        profile_pic.setAlpha(0.0f);
+                                                                        profile_pic.setImageResource(0);
+                                                                        profile_pic.setImageDrawable(null);
+                                                                        profile_pic.setImageResource(android.R.color.transparent);
+
+
+                                                                        Glide.with(parentActivity).load(task.getResult())/*
+                                                                                .apply(RequestOptions.skipMemoryCacheOf(true))
+                                                                                .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))*/
+                                                                                //.replace("s96-c", "s384-c")).transition(withCrossFade()).apply(new RequestOptions().override(width, height))
                                                                                 .listener(new RequestListener<Drawable>() {
                                                                                     @Override
                                                                                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -1610,8 +1625,6 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                                                                         if (imageReady) {
 
-                                                                                            profile_pic.setImageDrawable(null);
-                                                                                            profile_pic.setAlpha(0.0f);
                                                                                             profile_pic.animate().alpha(1.0f).setDuration(750);
                                                                                             imageLoaded = true;
 
@@ -1622,6 +1635,26 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                                                     }
                                                                                 })
                                                                                 .into(profile_pic);
+                                                                    }
+/*
+                                                                    if (imageReady) {
+
+
+                                                                        profile_pic.post(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                profile_pic.setImageBitmap(task.getResult());
+                                                                                profile_pic.animate().alpha(1.0f).setDuration(750);
+
+                                                                                imageLoaded = true;
+                                                                            }
+                                                                        });
+
+
+
+
+                                                                    }*/
+
 
                                                                 } catch (Exception ne) {
                                                                     //
@@ -1634,8 +1667,19 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                 } else {
                                                     try {
                                                         if (!imageLoaded) {
-                                                            profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
-                                                            profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                                            // Toast.makeText(parentActivity, "booleanTaskCompletionSource.setResult(false);", Toast.LENGTH_LONG).show();
+
+                                                            Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                                                                    R.drawable.no_profile);
+                                                            profile_pic.post(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    //profile_pic.setImageBitmap(no_profile);
+                                                                    profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                                                }
+                                                            });
+
+
                                                         }
                                                     } catch (Exception e) {
                                                         //
@@ -1650,8 +1694,18 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     } catch (Exception e) {
                                         try {
                                             if (!imageLoaded) {
-                                                profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
-                                                profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                                // Toast.makeText(parentActivity, "Image Load Excepetion: "+e.toString(), Toast.LENGTH_LONG).show();
+
+                                                Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                                                        R.drawable.no_profile);
+                                                profile_pic.post(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        //profile_pic.setImageBitmap(no_profile);
+                                                        profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                                    }
+                                                });
+
                                             }
                                         } catch (Exception ne) {
                                             //
@@ -1698,15 +1752,31 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             else
             {
                 if (!imageLoaded) {
-                    profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
-                    profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                    //Toast.makeText(parentActivity, "photo.equals(default)", Toast.LENGTH_LONG).show();
+                    Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                            R.drawable.no_profile);
+                    profile_pic.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            //profile_pic.setImageBitmap(no_profile);
+                            profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                        }
+                    });
                 }
             }
         }catch (Exception e)
         {
             if (!imageLoaded) {
-                profile_pic.setImageDrawable(parentActivity.getDrawable(R.drawable.no_profile));
-                profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                // Toast.makeText(parentActivity, "Big Try block Exception"+e.toString(), Toast.LENGTH_LONG).show();
+                Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                        R.drawable.no_profile);
+                profile_pic.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //profile_pic.setImageBitmap(no_profile);
+                        profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                    }
+                });
             }
         }
 
@@ -1955,8 +2025,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         // read_message_back.animate().alpha(1.0f).setDuration(750);
                         //read_message_back
 
-                        if (imageLoaded)
-                            profile_pic.setBlur(4);
+                        try {
+                            if (imageLoaded)
+                                profile_pic.setBlur(4);
+                        } catch (Exception e) {
+
+                        }
 
 
                     }
