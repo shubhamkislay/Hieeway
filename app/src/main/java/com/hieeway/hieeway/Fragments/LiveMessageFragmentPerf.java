@@ -1690,6 +1690,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 if (state == PlayerConstants.PlayerState.PLAYING) {
 
                     //top_bar.setVisibility(View.GONE);
+                    loadVideofromUrl = "yes";
                     if (pauseVideo)
                         mYouTubePlayer.pause();
 
@@ -1712,6 +1713,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     FirebaseDatabase.getInstance().getReference("Video")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(userChattingWithId).removeValue();
+
+                    loadVideofromUrl = "no";
 
                     //Toast.makeText(getContext(), "Video Over", Toast.LENGTH_SHORT).show();
                     //top_bar.setVisibility(View.VISIBLE);

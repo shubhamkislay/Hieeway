@@ -85,8 +85,21 @@ public class LiveMessageActiveService extends Service {
             openIntent.putExtra("username", intent.getStringExtra("username"));
             openIntent.putExtra("userid", intent.getStringExtra("userid"));
             openIntent.putExtra("photo", intent.getStringExtra("photo"));
-            openIntent.putExtra("youtubeID", intent.getStringExtra("youtubeID"));
-            openIntent.putExtra("youtubeTitle", intent.getStringExtra("youtubeTitle"));
+
+            if (intent.getExtras() != null) {
+                for (String key : intent.getExtras().keySet()) {
+                    if (key.equals("youtubeID")) {
+                        openIntent.putExtra("youtubeID", intent.getStringExtra("youtubeID"));
+                    }
+
+                    if (key.equals("youtubeTitle")) {
+                        openIntent.putExtra("youtubeTitle", intent.getStringExtra("youtubeTitle"));
+                    }
+
+                }
+            }
+
+
             openIntent.putExtra("live", "live");
 
             startActivity(openIntent);
@@ -125,7 +138,7 @@ public class LiveMessageActiveService extends Service {
                 for (String key : intent.getExtras().keySet()) {
                     if (key.equals("youtubeTitle")) {
                         youtubeTitle = intent.getStringExtra("youtubeTitle");
-                        break;
+
                     }
 
                     if (key.equals("loadedVideo")) {
@@ -166,6 +179,7 @@ public class LiveMessageActiveService extends Service {
                     .setContentTitle(notifMessage)
                     .setContentText("Starting chatting and watch videos together")
                     .addAction(R.drawable.ic_cancel_white_24dp, "Leave", stopInent)
+                    .addAction(R.drawable.ic_cancel_white_24dp, "Join", openIntent)
                     .setPriority(NotificationCompat.PRIORITY_MIN)
                     .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                     .build();

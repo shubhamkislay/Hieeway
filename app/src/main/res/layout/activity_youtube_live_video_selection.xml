@@ -68,7 +68,7 @@
                             android:id="@+id/layout_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
+
                             android:layout_marginLeft="16dp"
                             android:gravity="center"
                             android:padding="8dp"
@@ -115,7 +115,7 @@
                                 android:layout_alignParentBottom="true"
                                 android:layout_marginLeft="8dp"
                                 android:layout_toRightOf="@id/video_thumbnail_layout"
-                                android:gravity="center_vertical"
+                                android:gravity="center"
                                 android:textColor="#fff"
 
                                 android:textSize="14sp"
