@@ -43,7 +43,7 @@ public class LiveMessageNotificationService extends Service {
     private int i = 0;
     private boolean stop = false;
     private boolean serviceStarted = false;
-    private String loadedVideo;
+    private String loadedVideo = "no";
 
     @Nullable
     @Override
@@ -216,7 +216,7 @@ public class LiveMessageNotificationService extends Service {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!stop && i != 15)
+                if (!stop && i != 25)
                     startRing();
                 else {
 

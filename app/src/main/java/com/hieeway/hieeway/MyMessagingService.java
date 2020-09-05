@@ -1037,6 +1037,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 service.putExtra("username", remoteMessage.getData().get("username"));
                 service.putExtra("userid", remoteMessage.getData().get("userId"));
                 service.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                service.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
                 startService(service);
             }
 
@@ -1057,6 +1058,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             intent.putExtra("userid", remoteMessage.getData().get("userId"));
             intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
             intent.putExtra("live", remoteMessage.getData().get("live"));
+            intent.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
             PendingIntent pendingIntent;
             pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
@@ -1094,6 +1096,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 service.putExtra("username", remoteMessage.getData().get("username"));
                 service.putExtra("userid", remoteMessage.getData().get("userId"));
                 service.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                service.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
                 startService(service);
             }
         }

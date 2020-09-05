@@ -187,7 +187,6 @@ public class LiveMessageActiveService extends Service {
 
     private void fetchYoutubeVideo() {
 
-
         videoIdListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -338,12 +337,11 @@ public class LiveMessageActiveService extends Service {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!stop && i != 15)
+                if (!stop && i != 25)
                     startRing();
                 else {
                     loadedVideo = false;
-                    stopSelf();
-
+                    //stopSelf();
                 }
             }
         }, 400);
