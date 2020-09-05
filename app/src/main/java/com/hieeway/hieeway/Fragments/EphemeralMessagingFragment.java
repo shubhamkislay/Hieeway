@@ -1904,7 +1904,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                 // try{
 
-                                online_ring.animate().alpha(1.0f).setDuration(500);
+                                if (imageLoaded)
+                                    online_ring.animate().alpha(1.0f).setDuration(500);
 
                             }
                             else
@@ -4482,6 +4483,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 boolean connected = snapshot.getValue(Boolean.class);
                 if (connected) {
+
 
                     online_ring.setVisibility(View.VISIBLE);
 
