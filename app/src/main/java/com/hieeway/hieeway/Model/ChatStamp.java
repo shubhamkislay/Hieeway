@@ -20,6 +20,7 @@ public class ChatStamp implements Comparable<ChatStamp>{
     private Boolean present;
     private long localuserstamp;
     private long otheruserstamp;
+    private String activePhoto;
 
 
     public ChatStamp() {
@@ -27,7 +28,7 @@ public class ChatStamp implements Comparable<ChatStamp>{
 
 
     public ChatStamp(String timeStamp, String id, String photo, String username, String seen, Boolean chatPending,
-                     int gemCount, String youtubeUrl, float videoSec, Boolean present, long localuserstamp, long otheruserstamp) {
+                     int gemCount, String youtubeUrl, float videoSec, Boolean present, long localuserstamp, long otheruserstamp, String activePhoto) {
         this.timeStamp = timeStamp;
         this.id = id;
         this.photo = photo;
@@ -40,6 +41,7 @@ public class ChatStamp implements Comparable<ChatStamp>{
         this.present = present;
         this.localuserstamp = localuserstamp;
         this.otheruserstamp = otheruserstamp;
+        this.activePhoto = activePhoto;
 
 
 
@@ -148,6 +150,14 @@ public class ChatStamp implements Comparable<ChatStamp>{
 
     public void setLocaluserstamp(long localuserstamp) {
         this.localuserstamp = localuserstamp;
+    }
+
+    public String getActivePhoto() {
+        return activePhoto;
+    }
+
+    public void setActivePhoto(String activePhoto) {
+        this.activePhoto = activePhoto;
     }
 
     public long getOtheruserstamp() {

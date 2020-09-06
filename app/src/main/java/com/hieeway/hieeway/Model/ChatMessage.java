@@ -23,6 +23,7 @@ public class ChatMessage {
     private String replyMsg;
     private String gotReplyMsg;
     private Boolean showGotReplyMsg;
+    private String activePhoto;
 
 
     private String senderReplyMessage;
@@ -57,7 +58,7 @@ public class ChatMessage {
                        String senderReplyMessage, String messageTextTwo, String messageTextThree,
                        Boolean ifMessageTwo, Boolean ifMessageThree, int textSize, Boolean replyTag, String gotReplyID,
                        Boolean showReplyMsg, Boolean showGotReplyMsg, String replyMsg, String gotReplyMsg, String publicKeyId,
-                       String timeStamp, String audiourl, String videourl, String mediaKey)
+                       String timeStamp, String audiourl, String videourl, String mediaKey, String activePhoto)
     {
 
         this.senderId = senderId;
@@ -79,6 +80,7 @@ public class ChatMessage {
         this.showGotReplyMsg = showGotReplyMsg;
         this.replyMsg = replyMsg;
         this.gotReplyMsg = gotReplyMsg;
+        this.activePhoto = activePhoto;
 
 
         this.textSize = textSize;
@@ -299,5 +301,13 @@ public class ChatMessage {
 
     public void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public String getActivePhoto() {
+        return activePhoto;
+    }
+
+    public void setActivePhoto(String activePhoto) {
+        this.activePhoto = activePhoto;
     }
 }

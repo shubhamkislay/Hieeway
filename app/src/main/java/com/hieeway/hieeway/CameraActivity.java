@@ -16,11 +16,13 @@ public class CameraActivity extends AppCompatActivity {
     public static String usernameChattingWith;
     public static String userphotoUrl;
     public static String currentUserPhoto;
+    public static String currentUserActivePhoto;
     public static String currentUsername;
     public static String otherUserPublicKeyID;
     public static String currentUserPublicKeyID;
     public static String otherUserPublicKey;
     public static String currentUserPublicKey;
+    public static String activePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,10 @@ public class CameraActivity extends AppCompatActivity {
         usernameChattingWith = intent.getStringExtra("username");
         userphotoUrl = intent.getStringExtra("userphoto");
         currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+        currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
         currentUsername = intent.getStringExtra("currentUsername");
         otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+        activePhoto = intent.getStringExtra("activePhoto");
         currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
         otherUserPublicKey = intent.getStringExtra("otherUserPublicKey");
         currentUserPublicKey = intent.getStringExtra("currentUserPublicKey");

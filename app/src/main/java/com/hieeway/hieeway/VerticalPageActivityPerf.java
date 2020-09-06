@@ -127,7 +127,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     private String usernameChattingWith;
     private String loadVideo = "no";
 
-    private String photo;
+    private String photo, activePhoto;
     private DatabaseReference userFriendShipReference;
     private ValueEventListener friendShipValueListener;
     private List<Fragment> fragmentList;
@@ -156,6 +156,8 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         userIDCHATTINGWITH = userIdChattingWith;
 
         photo = intent.getStringExtra("photo");
+        activePhoto = intent.getStringExtra("activePhoto");
+
         //USERPHOTO = photo;
         live = intent.getStringExtra("live");
 
@@ -396,6 +398,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                         revealActivityIntent.putExtra("currentUserPrivateKey", privateKeyText);
                         revealActivityIntent.putExtra("currentUserPublicKeyID", publicKeyId);
                         revealActivityIntent.putExtra("photo", photo);
+                        revealActivityIntent.putExtra("activePhoto", activePhoto);
                         revealActivityIntent.putExtra("username", usernameChattingWith);
 
 
@@ -465,6 +468,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         bundle.putString("usernameChattingWith", usernameChattingWith);
         bundle.putString("userIdChattingWith", intent.getStringExtra("userid"));
         bundle.putString("photo", photo);
+        bundle.putString("activePhoto", activePhoto);
         bundle.putString("currentUserPublicKey", publicKeyText);
         bundle.putString("currentUserPrivateKey", privateKeyText);
         bundle.putString("otherUserPublicKeyID", otherUserPublicKeyID);
@@ -479,6 +483,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         bundleSendMessage.putString("messageID", feededMessageID);
         bundleSendMessage.putString("usernameChattingWith", usernameChattingWith);
         bundleSendMessage.putString("photo", photo);
+        bundleSendMessage.putString("activePhoto", activePhoto);
 
         // set Fragmentclass Arguments
         ephemeralMessagingFragment = new EphemeralMessagingFragment(VerticalPageActivityPerf.this);

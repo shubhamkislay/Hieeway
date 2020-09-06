@@ -25,6 +25,8 @@ public class VideoUploadActivity extends AppCompatActivity {
     private int read;
     private boolean readyToUpload = false;
     private boolean encrpted = false;
+    private String activePhoto;
+    private String currentUserActivePhoto;
 
 
     @Override
@@ -43,6 +45,8 @@ public class VideoUploadActivity extends AppCompatActivity {
         userphotoUrl = intent.getStringExtra("userphotoUrl");
         currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
         otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+        activePhoto = intent.getStringExtra("activePhoto");
+        currentUserActivePhoto = intent.getStringExtra("activePhoto");
         usernameChattingWith = intent.getStringExtra("usernameChattingWith");
         mKey = intent.getStringExtra("mKey");
         send_video_btn = findViewById(R.id.send_video_btn);
@@ -81,6 +85,8 @@ public class VideoUploadActivity extends AppCompatActivity {
         intent1.putExtra("userphotoUrl", userphotoUrl);
         intent1.putExtra("currentUsername", currentUsername);
         intent1.putExtra("currentUserPhoto", currentUserPhoto);
+        intent1.putExtra("activePhoto", activePhoto);
+        intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
         intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
         intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
         intent1.putExtra("mKey", mKey);

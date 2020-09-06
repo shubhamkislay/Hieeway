@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
+    public static final String ACTIVE_PHOTO = "activePhoto";
 
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private MediaController mController;
     RelativeLayout highlights_layout;
     private ImageButton why_hieeway_btn;
+    String activeImage = "default";
 
 
     GoogleApiClient mCredentialsApiClient;
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private ImageView splash_logo, splash_logo_gradient, send_arrow;
     private int arrowAnimDuration = 600;
     String email,  name,  photourl, username;
+    private Boolean active;
     MutedVideoView video_view;
     private MediaPlayer mediaPlayer;
     public static final String MUSIC_BEACON = "musicbeacon";
@@ -178,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private RelativeLayout policy_layout;
     private Button cancel_btn;
     private WebView webView;
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -964,6 +966,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                         email = sharedPreferences.getString(EMAIL,null);
                         name = sharedPreferences.getString(NAME,null);
                         photourl = sharedPreferences.getString(PHOTO_URL,null);
+                        activeImage = sharedPreferences.getString(ACTIVE_PHOTO, null);
                         public_key = sharedPreferences.getString(PUBLIC_KEY,null);
                         publickeyid = sharedPreferences.getString(PUBLIC_KEY_ID,null);
                         device_token = sharedPreferences.getString(DEVICE_TOKEN,null);
@@ -973,7 +976,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                         registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
 
-                        registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,databaseReference, device_token,public_key,publickeyid);
+                        registerUsernameEntryFragment.setUserData(email, name, photourl, activeImage, MainActivity.this, databaseReference, device_token, public_key, publickeyid);
 
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
@@ -1489,12 +1492,16 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
     @Override
-    public void onUsernameListener(String username,String name, String photourl,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid) {
+    public void onUsernameListener(String username, String name, String photourl, String activeImage, final DatabaseReference reference, final String device_token, final String public_key, final String publickeyid) {
 
         this.username = username;
         this.photourl = photourl;
         this.name = name;
+        this.activeImage = activeImage;
 
+
+        if (activeImage.equals("default"))
+            activeImage = photourl;
 
         HashMap<String, Object> registerMap = new HashMap<>();
         registerMap.put("email", email);
@@ -1509,6 +1516,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         registerMap.put(PUBLIC_KEY,public_key);
         registerMap.put("publicKeyId",publickeyid);
         registerMap.put("deleteUser", false);
+        registerMap.put("activePhoto", activeImage);
         registerMap.put("cloud", false);
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
@@ -1649,7 +1657,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                     // get_started.setVisibility(View.VISIBLE);
                     registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
-                    registerUsernameEntryFragment.setUserData(email,name,photourl,MainActivity.this,reference, device_token,public_key,publickeyid);
+                    registerUsernameEntryFragment.setUserData(email, name, photourl, activeImage, MainActivity.this, reference, device_token, public_key, publickeyid);
 
                      animateArrow();
                             getSupportFragmentManager().beginTransaction()
@@ -1680,7 +1688,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     }
 
     @Override
-    public void imageSelect() {
+    public void imageSelect(Boolean active) {
+
+        this.active = active;
 
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
@@ -1759,15 +1769,27 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
                        // progressDialog.dismiss();
+                        if (active) {
+                            registerUsernameEntryFragment.setProgressVisibility(false);
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                        registerUsernameEntryFragment.setProgressVisibility(false);
-                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(ACTIVE_PHOTO, mUri);
+                            editor.apply();
 
-                        editor.putString(PHOTO_URL, mUri);
-                        editor.apply();
 
-                        registerUsernameEntryFragment.setUploadedImage(mUri);
+                            registerUsernameEntryFragment.setUploadActiveImage(mUri);
+                        } else {
+
+                            registerUsernameEntryFragment.setProgressVisibility(false);
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                            editor.putString(PHOTO_URL, mUri);
+                            editor.apply();
+
+                            registerUsernameEntryFragment.setUploadedImage(mUri);
+                        }
 
 
 

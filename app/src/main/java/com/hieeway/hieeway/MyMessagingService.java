@@ -195,6 +195,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+        intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
         intent.putExtra("live", "no");
         intent.putExtra("revealmessage", "yes");
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
@@ -410,6 +411,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+        intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
         intent.putExtra("live", remoteMessage.getData().get("live"));
         intent.putExtra("revealmessage", "no");
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
@@ -619,6 +621,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+        intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
         intent.putExtra("live", remoteMessage.getData().get("live"));
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
         PendingIntent pendingIntent;
@@ -732,7 +735,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "accept");
         }*/
 
-        intent = new Intent(this, VerticalPageActivityPerf.class);
+        /*intent = new Intent(this, VerticalPageActivityPerf.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("username", remoteMessage.getData().get("username"));
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
@@ -740,8 +743,8 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("live", remoteMessage.getData().get("live"));
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
         PendingIntent pendingIntent;
-        pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getActivity(this, id *//* Request code *//*, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);*/
 
         try {
             bitmap = Glide.with(this)
@@ -996,6 +999,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             intent.putExtra("username", remoteMessage.getData().get("username"));
             intent.putExtra("userid", remoteMessage.getData().get("userId"));
             intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+            intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
             intent.putExtra("live", remoteMessage.getData().get("live"));
             intent.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
             PendingIntent pendingIntent;
@@ -1158,20 +1162,21 @@ public class MyMessagingService extends FirebaseMessagingService {
             else
                 id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            /*intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putExtra("username", remoteMessage.getData().get("username"));
             intent.putExtra("userid", remoteMessage.getData().get("userId"));
             intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
             intent.putExtra("live", remoteMessage.getData().get("live"));
+
             PendingIntent pendingIntent;
-            pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+            pendingIntent = PendingIntent.getActivity(this, id *//* Request code *//*, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);*/
 
             notificationManager.createNotificationChannel(notificationChannel);
 
 
-            notificationBuilder =
+            /*notificationBuilder =
                     new NotificationCompat.Builder(context, notificationChannel.getId())
                             .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
                             //.setCustomContentView(collapsedView)
@@ -1183,19 +1188,19 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setColorized(true)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                             //.setAutoCancel(true)
-                            /*.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                            .setSound(defaultSoundUri)*/
+                            *//*.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                            .setSound(defaultSoundUri)*//*
                             .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             //.setOngoing(true)
                             //.setDefaults(Notification.FLAG_INSISTENT|Notification.DEFAULT_VIBRATE)
-                            /*.setStyle(new NotificationCompat.BigTextStyle()
-                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+                            *//*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*//*
 
                             //  .setShowActionsInCompactView(1))
                             //.setMediaSession(MediaSessionCompat.Token))
                             //.setGroup(remoteMessage.getData().get("userId"))
-                            .setContentIntent(pendingIntent);
+                            .setContentIntent(pendingIntent);*/
 
 
             /*if (!MUSIC_PAL_SERVICE_RUNNING
@@ -1220,14 +1225,14 @@ public class MyMessagingService extends FirebaseMessagingService {
             else
                 id = (int) notificationIDHashMap.get(remoteMessage.getData().get("userId") + "live");
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            /*intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             intent.putExtra("username", remoteMessage.getData().get("username"));
             intent.putExtra("userid", remoteMessage.getData().get("userId"));
             intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
             intent.putExtra("live", remoteMessage.getData().get("live"));
             PendingIntent pendingIntent;
-            pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+            pendingIntent = PendingIntent.getActivity(this, id *//* Request code *//*, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             notificationBuilder =
@@ -1248,13 +1253,13 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setPriority(NotificationCompat.PRIORITY_MAX)
                             .setOngoing(true)
                             //.setDefaults(Notification.FLAG_INSISTENT|Notification.DEFAULT_VIBRATE)
-                            /*.setStyle(new NotificationCompat.BigTextStyle()
-                            .setBigContentTitle(remoteMessage.getData().get("label")))*/
+                            *//*.setStyle(new NotificationCompat.BigTextStyle()
+                            .setBigContentTitle(remoteMessage.getData().get("label")))*//*
 
                             //  .setShowActionsInCompactView(1))
                             //.setMediaSession(MediaSessionCompat.Token))
                             //.setGroup(remoteMessage.getData().get("userId"))
-                            .setContentIntent(pendingIntent);
+                            .setContentIntent(pendingIntent);*/
 
 
             if (!MUSIC_PAL_SERVICE_RUNNING || !USER_NAME_MUSIC_SYNC.equals(remoteMessage.getData().get("username"))) {
@@ -1319,6 +1324,7 @@ public class MyMessagingService extends FirebaseMessagingService {
         intent.putExtra("userid", remoteMessage.getData().get("userId"));
         intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
         intent.putExtra("live", remoteMessage.getData().get("live"));
+        intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
 
         intent.putExtra("userValueIntentExtra", userValueIntentExtra);
 
@@ -1703,6 +1709,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
                 intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
                 intent.putExtra("live", remoteMessage.getData().get("live"));
                 intent.putExtra("default", "no");
                 intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
@@ -1751,6 +1758,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
                 intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
                 intent.putExtra("live", remoteMessage.getData().get("live"));
                 intent.putExtra("default", "yes");
                 intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
@@ -1987,6 +1995,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
                 intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
                 intent.putExtra("live", remoteMessage.getData().get("live"));
                 intent.putExtra("default", "no");
                 intent.putExtra("feeling", remoteMessage.getData().get("feeling"));
@@ -2033,6 +2042,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 intent.putExtra("username", remoteMessage.getData().get("username"));
                 intent.putExtra("userid", remoteMessage.getData().get("userId"));
                 intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
+                intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
                 intent.putExtra("live", remoteMessage.getData().get("live"));
                 intent.putExtra("default", "yes");
                 intent.putExtra("feeling", remoteMessage.getData().get("feeling"));

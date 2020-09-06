@@ -14,7 +14,7 @@ import com.hieeway.hieeway.Interface.EditProfileOptionListener;
 
 public class EditProfileDialog extends Dialog {
 
-    RelativeLayout edit_profile_pic;
+    RelativeLayout edit_profile_pic, edit_active_pic;
     RelativeLayout edit_bio;
     TextView title, prof_txt, bio_txt;
     EditProfileOptionListener editProfileOptionListener;
@@ -35,6 +35,7 @@ public class EditProfileDialog extends Dialog {
 
         edit_profile_pic = findViewById(R.id.edit_profile_pic);
         edit_bio = findViewById(R.id.edit_bio);
+        edit_active_pic = findViewById(R.id.edit_active_pic);
 
         title = findViewById(R.id.title);
         prof_txt = findViewById(R.id.profile_txt);
@@ -56,6 +57,14 @@ public class EditProfileDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 editProfileOptionListener.editProfileOption("pic");
+                dismiss();
+            }
+        });
+
+        edit_active_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editProfileOptionListener.editProfileOption("active");
                 dismiss();
             }
         });

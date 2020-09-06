@@ -82,6 +82,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
     public static final int PERMISSION_INSERT_IMAGE = 1001;
     public static final int CAMERA_REQUEST = 1003;
 
+    private String activePhoto;
+    private String currentUserActivePhoto;
 
     private LruCache<String, Bitmap> mMemoryCache;
 
@@ -197,6 +199,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
         currentUsername = intent.getStringExtra("currentUsername");
         otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
         currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
+        activePhoto = intent.getStringExtra("activePhoto");
+        currentUserActivePhoto = intent.getStringExtra("activePhoto");
 
         senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userChattingWithId);
@@ -288,6 +292,8 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
                         intent1.putExtra("userphotoUrl", userphotoUrl);
                         intent1.putExtra("currentUsername", currentUsername);
                         intent1.putExtra("currentUserPhoto", currentUserPhoto);
+                        intent1.putExtra("activePhoto", activePhoto);
+                        intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
                         intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                         intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
                         intent1.putExtra("mKey", mKey);
@@ -499,147 +505,6 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
     }
 
 
-    private void uploadImage()
-    {
-
-        /*final ProgressDialog progressDialog = new ProgressDialog(PhotoEditToolsActivity.this );
-
-        progressDialog.setMessage("Uploading");
-        progressDialog.show();*/
-        if(imageUri!=null)
-        {
-
-            final StorageReference fileReference = storageReference.child(System.currentTimeMillis()+"."+getExtension(imageUri));
-
-            uploadTask = fileReference.putFile(imageUri);
-            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task task) throws Exception {
-
-                    if(!task.isSuccessful())
-                    {
-                        throw task.getException();
-                    }
-
-
-
-
-                    return fileReference.getDownloadUrl();
-                }
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-
-
-                    if(task.isSuccessful())
-                    {
-
-                        Uri downloadUri = task.getResult();
-
-                        String mUri = downloadUri.toString();
-
-
-                        databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                                .child(FirebaseAuth.getInstance()
-                                        .getCurrentUser()
-                                        .getUid())
-                                .child(userChattingWithId);
-
-                        receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
-                                .child(userChattingWithId)
-                                .child(FirebaseAuth.getInstance()
-                                        .getCurrentUser()
-                                        .getUid());
-
-                        final String mKey = databaseReference.push().getKey();
-
-
-                        final HashMap<String,  Object> sendMessageHash = new HashMap<>();
-                        sendMessageHash.put("senderId",FirebaseAuth.getInstance()
-                                .getCurrentUser()
-                                .getUid());
-                        sendMessageHash.put("receiverId",userChattingWithId);
-                        sendMessageHash.put("messageId",mKey);
-                        sendMessageHash.put("messageText","");
-                        sendMessageHash.put("sentStatus","sending");
-                        sendMessageHash.put("seen", "notseen");
-                        sendMessageHash.put("photourl",mUri);
-                        sendMessageHash.put("audiourl", "none");
-                        sendMessageHash.put("videourl", "none");
-                        sendMessageHash.put("gotReplyID","none");
-                        sendMessageHash.put("replyTag", false);
-                        sendMessageHash.put("replyID","none");
-                        sendMessageHash.put("senderReplyMessage","none");
-                        sendMessageHash.put("ifMessageTwo",false);
-                        sendMessageHash.put("messageTextTwo","");
-                        sendMessageHash.put("ifMessageThree",false);
-                        sendMessageHash.put("messageTextThree","");
-                        sendMessageHash.put("showReplyMsg",false);
-                        sendMessageHash.put("replyMsg"," ");
-                        sendMessageHash.put("showGotReplyMsg",false);
-                        sendMessageHash.put("gotReplyMsg"," ");
-                        databaseReference.child(mKey).updateChildren(sendMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                HashMap<String, Object> hashMap = new HashMap<>();
-                                hashMap.put("sentStatus", "sent");
-                                hashMap.put("messageId", mKey);
-
-                                databaseReference.child(mKey).updateChildren(hashMap);
-                            }
-                        });
-                        receiverReference.child(mKey).updateChildren(sendMessageHash);
-
-                        createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
-                       // progressDialog.dismiss();
-
-
-                    }
-                    else
-                    {
-                        Toast.makeText(PhotoEditToolsActivity.this,"Uploading failed" ,Toast.LENGTH_SHORT).show();
-                      //  progressDialog.dismiss();
-                    }
-
-                }
-            });
-
-
-        }
-        else
-        {
-            Toast.makeText(PhotoEditToolsActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
-        }
-
-
-    }
-    public void createChatListItem(final String usernameUserChattingWith,final String userChattingWith_photo,final String currentUserName,final String currentUserPhoto)
-    {
-
-        Long tsLong = System.currentTimeMillis()/1000;
-        final String ts = tsLong.toString();
-
-
-        final HashMap<String, Object> timeStampHash = new HashMap<>();
-        timeStampHash.put("timeStamp", ts);
-        timeStampHash.put("id", userChattingWithId);
-        timeStampHash.put("username", usernameUserChattingWith);
-        timeStampHash.put("photo", userChattingWith_photo);
-        timeStampHash.put("seen", "notseen");
-        timeStampHash.put("chatPending", false);
-        senderChatCreateRef.updateChildren(timeStampHash);
-
-        HashMap<String,Object> timeStampHashReceiver = new HashMap<>();
-
-        timeStampHashReceiver.put("timeStamp", ts);
-        timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        timeStampHashReceiver.put("username", currentUserName);
-        timeStampHashReceiver.put("photo", currentUserPhoto);
-        timeStampHashReceiver.put("seen", "notseen");
-        timeStampHashReceiver.put("chatPending",true);
-        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
-
-    }
 
     private void startCrop(Uri uri) {
 

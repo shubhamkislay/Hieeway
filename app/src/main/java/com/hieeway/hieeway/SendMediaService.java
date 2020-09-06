@@ -81,6 +81,8 @@ public class SendMediaService extends Service {
     private String filename;
     private String currentUserPublicKey;
     private String otherUserPublicKey;
+    private String activePhoto;
+    private String currentUserActivePhoto;
 
     @Override
     public void onCreate() {
@@ -110,6 +112,7 @@ public class SendMediaService extends Service {
 
             timestamp = new Timestamp(System.currentTimeMillis());
 
+
             imageUri = Uri.parse(intent.getStringExtra("imageUri"));
             userChattingWithId = intent.getStringExtra("userChattingWithId");
             usernameChattingWith = intent.getStringExtra("usernameChattingWith");
@@ -118,6 +121,8 @@ public class SendMediaService extends Service {
             currentUserPhoto = intent.getStringExtra("currentUserPhoto");
             otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
             currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
+            activePhoto = intent.getStringExtra("activePhoto");
+            currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
             mKey = intent.getStringExtra("mKey");
             type = intent.getStringExtra("type");
 
@@ -1249,6 +1254,7 @@ public class SendMediaService extends Service {
                     timeStampHash.put("seen", "notseen");
                     timeStampHash.put("chatPending", false);
                     timeStampHash.put("gemCount", 2);
+                    timeStampHash.put("activePhoto", activePhoto);
 
                     timeStampHashReceiver.put("timeStamp", ts);
                     timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -1257,6 +1263,7 @@ public class SendMediaService extends Service {
                     timeStampHashReceiver.put("seen", "notseen");
                     timeStampHashReceiver.put("chatPending", true);
                     timeStampHashReceiver.put("gemCount", 2);
+                    timeStampHash.put("activePhoto", currentUserActivePhoto);
                     senderChatCreateRef.updateChildren(timeStampHash);
                     receiverChatCreateRef.updateChildren(timeStampHashReceiver);
 
@@ -1267,6 +1274,7 @@ public class SendMediaService extends Service {
                     timeStampHash.put("photo", userChattingWith_photo);
                     timeStampHash.put("seen", "notseen");
                     timeStampHash.put("chatPending", false);
+                    timeStampHash.put("activePhoto", activePhoto);
 
                     timeStampHashReceiver.put("timeStamp", ts);
                     timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -1274,6 +1282,7 @@ public class SendMediaService extends Service {
                     timeStampHashReceiver.put("photo", currentUserPhoto);
                     timeStampHashReceiver.put("seen", "notseen");
                     timeStampHashReceiver.put("chatPending", true);
+                    timeStampHash.put("activePhoto", currentUserActivePhoto);
 
                     senderChatCreateRef.updateChildren(timeStampHash);
                     receiverChatCreateRef.updateChildren(timeStampHashReceiver);

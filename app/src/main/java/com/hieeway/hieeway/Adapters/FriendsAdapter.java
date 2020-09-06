@@ -307,6 +307,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                                 intent.putExtra("username", friend.getUsername());
                                 intent.putExtra("userid", friend.getFriendId());
                                 intent.putExtra("photo", friend.getPhoto());
+                                intent.putExtra("activePhoto", friend.getActivePhoto());
                                 intent.putExtra("live", "no");
                                 mContext.startActivity(intent);
                         /*viewHolder.progressBarOne.setVisibility(View.INVISIBLE);

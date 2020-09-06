@@ -112,6 +112,7 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
                                         registerHash.put("feeling", "happy");
                                         registerHash.put("bio", "great life");
                                         registerHash.put("photo", "default");
+                                        registerHash.put("activePhoto", "default");
                                         registerHash.put("phonenumber", "default");
                                         registerHash.put("feelingIcon", "default");
                                         registerHash.put("deleteUser", false);

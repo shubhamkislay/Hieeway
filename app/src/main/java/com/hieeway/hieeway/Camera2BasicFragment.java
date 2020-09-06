@@ -1319,6 +1319,8 @@ public class Camera2BasicFragment extends Fragment
             playVideoIntent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
             playVideoIntent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
             playVideoIntent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+            playVideoIntent.putExtra("activePhoto", CameraActivity.activePhoto);
+            playVideoIntent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
             playVideoIntent.putExtra("videoUri", videoUri.toString());
             playVideoIntent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
             playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
@@ -1366,6 +1368,8 @@ public class Camera2BasicFragment extends Fragment
             intent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
             intent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
             intent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+            intent.putExtra("activePhoto", CameraActivity.activePhoto);
+            intent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
             intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
             intent.putExtra("currentUsername", CameraActivity.currentUsername);
             intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
@@ -1400,6 +1404,8 @@ public class Camera2BasicFragment extends Fragment
             intent.putExtra("userChattingWithId",CameraActivity.userChattingWithId);
             intent.putExtra("usernameChattingWith",CameraActivity.usernameChattingWith);
             intent.putExtra("userphotoUrl",CameraActivity.userphotoUrl);
+            intent.putExtra("activePhoto", CameraActivity.activePhoto);
+            intent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
             intent.putExtra("currentUserPhoto",CameraActivity.currentUserPhoto);
             intent.putExtra("currentUsername",CameraActivity.currentUsername);
             intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);

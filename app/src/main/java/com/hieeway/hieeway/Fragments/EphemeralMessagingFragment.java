@@ -152,6 +152,7 @@ import javax.crypto.Cipher;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
+import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_ACTIVEPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
@@ -283,7 +284,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private int sendTextSize = 34;
     private String currentUsername;
     private TextView top_swipe_text;
-    private String currentUserPhoto;
+    private String currentUserPhoto, currentUserActivePhoto;
 
     private ImageView online_ring;
     private String usernameChattingWith;
@@ -317,6 +318,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private TextView sender_reply_body_title;
     private Button photo_btn, photo_btn_bg;
     private Activity parentActivity;
+    private String activePhoto;
     private boolean liveViewStarted = false;
     int i = 0;
 
@@ -598,7 +600,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         usernameChattingWith = getArguments().getString("usernameChattingWith");
         userIdChattingWith = getArguments().getString("userIdChattingWith");
-         photo = getArguments().getString("photo");
+        photo = getArguments().getString("photo");
+        activePhoto = getArguments().getString("activePhoto");
         otherUserPublicKey = getArguments().getString("otherUserPublicKey");
         otherUserPublicKeyID = getArguments().getString("otherUserPublicKeyID");
         currentUserPublicKey = getArguments().getString("currentUserPublicKey");
@@ -786,13 +789,15 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     Intent intent = new Intent(parentActivity, CameraActivity.class);
 
                 // ephemeralMessageViewModel.createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
-                if (currentUsername != null && currentUserPhoto != null) {
+                    if (currentUsername != null && currentUserPhoto != null && currentUserActivePhoto != null) {
 
                     intent.putExtra("userChattingWithId", userIdChattingWith);
                     intent.putExtra("userphoto", photo);
+                        intent.putExtra("activePhoto", activePhoto);
                     intent.putExtra("username", usernameChattingWith);
                     intent.putExtra("currentUsername", currentUsername);
                     intent.putExtra("currentUserPhoto", currentUserPhoto);
+                        intent.putExtra("currentUserActivePhoto", currentUserActivePhoto);
                     intent.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
                     intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                     intent.putExtra("otherUserPublicKey", otherUserPublicKey);
@@ -1039,6 +1044,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 intent.putExtra("userId", userIdChattingWith);
                 intent.putExtra("currentUsername", currentUsername);
                 intent.putExtra("photourl", photo);
+                intent.putExtra("activePhoto", activePhoto);
                 intent.putExtra("friendStatus", "friends");
 
 
@@ -1503,7 +1509,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         try {
-            if (!photo.equals("default")) {
+            if (!activePhoto.equals("default")) {
 
 
                 FirebaseDatabase.getInstance().getReference("ChatList")
@@ -1584,7 +1590,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                             try {
                                                                 Bitmap bitmap = Glide.with(parentActivity)
                                                                         .asBitmap()
-                                                                        .load(photo.replace("s96-c", "s384-c"))
+                                                                        .load(activePhoto.replace("s96-c", "s384-c"))
                                                                         .submit(width, height)
                                                                         .get();
 
@@ -1817,9 +1823,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                             currentUsername = user.getUsername();
                             currentUserPhoto = user.getPhoto();
+                            currentUserActivePhoto = user.getActivePhoto();
 
                             CURRENT_USERNAME = currentUsername;
                             CURRENT_USERPHOTO = currentUserPhoto;
+                            CURRENT_ACTIVEPHOTO = currentUserActivePhoto;
 
 
 
@@ -2678,7 +2686,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                 ChatListItemCreationModel chatListItemCreationModel = new ChatListItemCreationModel();
                 chatListItemCreationModel.setUsernameUserChattingWith(usernameChattingWith);
                 chatListItemCreationModel.setCurrentUserPhoto(currentUserPhoto);
+        chatListItemCreationModel.setCurrentUserActivePhoto(currentUserActivePhoto);
                 chatListItemCreationModel.setCurrentUserName(currentUsername);
+        chatListItemCreationModel.setUserChattingWith_active_photo(activePhoto);
                 chatListItemCreationModel.setUserChattingWith_photo(photo);
                 chatListItemCreationModel.setSenderChatCreateRef(senderChatCreateRef);
                 chatListItemCreationModel.setReceiverChatCreateRef(receiverChatCreateRef);
@@ -3115,6 +3125,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         intent1.putExtra("currentUserPhoto", currentUserPhoto);
         intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
         intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+        intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
+        intent1.putExtra("activePhoto", activePhoto);
         intent1.putExtra("currentUserPublicKey", currentUserPublicKey);
         intent1.putExtra("otherUserPublicKey", otherUserPublicKey);
         intent1.putExtra("mKey", mKey);
@@ -3255,7 +3267,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     receiverReference.child(mKey).updateChildren(sendReceiverMessageHash);
 
 
-                    createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
+                    createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto, activePhoto, currentUserActivePhoto);
                 }
             }
         });
@@ -3274,7 +3286,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
     }
 
-    private void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto) {
+    private void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto, final String activePhoto, final String currentUserActivePhoto) {
 
         Long tsLong = System.currentTimeMillis() / 1000;
         final String ts = tsLong.toString();
@@ -3287,6 +3299,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         timeStampHash.put("photo", userChattingWith_photo);
         timeStampHash.put("localuserstamp", tsLong);
         timeStampHash.put("seen", "notseen");
+        timeStampHash.put("activePhoto", activePhoto);
         timeStampHash.put("chatPending", false);
         senderChatCreateRef.updateChildren(timeStampHash);
 
@@ -3297,6 +3310,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         timeStampHashReceiver.put("username", currentUserName);
         timeStampHashReceiver.put("photo", currentUserPhoto);
         timeStampHashReceiver.put("otheruserstamp", tsLong);
+        timeStampHashReceiver.put("activePhoto", currentUserActivePhoto);
         timeStampHashReceiver.put("seen", "notseen");
         timeStampHashReceiver.put("chatPending", true);
         receiverChatCreateRef.updateChildren(timeStampHashReceiver);
@@ -4947,6 +4961,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHash.put("id", sendMessageAsyncModel.getUserChattingWithId());
                         timeStampHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
                         timeStampHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
+                        timeStampHash.put("activePhoto", activePhoto);
                         timeStampHash.put("seen", "notseen");
                         timeStampHash.put("localuserstamp", tsLong);
                         timeStampHash.put("chatPending", false);
@@ -4956,6 +4971,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("id", sendMessageAsyncModel.getCurrentID());
                         timeStampHashReceiver.put("username", chatListItemCreationModel.getCurrentUserName());
                         timeStampHashReceiver.put("photo", currentUserPhoto);
+                        timeStampHashReceiver.put("activePhoto", currentUserActivePhoto);
                         timeStampHashReceiver.put("otheruserstamp", tsLong);
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);
@@ -4970,6 +4986,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHash.put("id", sendMessageAsyncModel.getUserChattingWithId());
                         timeStampHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
                         timeStampHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
+                        timeStampHash.put("activePhoto", activePhoto);
                         timeStampHash.put("localuserstamp", tsLong);
                         timeStampHash.put("seen", "notseen");
                         timeStampHash.put("chatPending", false);
@@ -4978,6 +4995,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("id", sendMessageAsyncModel.getCurrentID());
                         timeStampHashReceiver.put("username", chatListItemCreationModel.getCurrentUserName());
                         timeStampHashReceiver.put("photo", currentUserPhoto);
+                        timeStampHashReceiver.put("activePhoto", currentUserActivePhoto);
                         timeStampHashReceiver.put("otheruserstamp", tsLong);
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);

@@ -6,8 +6,10 @@ public class ChatListItemCreationModel {
 
     private String usernameUserChattingWith;
     private String userChattingWith_photo;
+    private String userChattingWith_active_photo;
     private String currentUserName;
     private String currentUserPhoto;
+    private String currentUserActivePhoto;
     private DatabaseReference senderChatCreateRef;
     private DatabaseReference receiverChatCreateRef;
 
@@ -69,5 +71,22 @@ public class ChatListItemCreationModel {
 
     public void setReceiverChatCreateRef(DatabaseReference receiverChatCreateRef) {
         this.receiverChatCreateRef = receiverChatCreateRef;
+    }
+
+    public String getCurrentUserActivePhoto() {
+        return currentUserActivePhoto;
+    }
+
+    public void setCurrentUserActivePhoto(String currentUserActivePhoto) {
+        this.currentUserActivePhoto = currentUserActivePhoto;
+    }
+
+
+    public String getUserChattingWith_active_photo() {
+        return userChattingWith_active_photo;
+    }
+
+    public void setUserChattingWith_active_photo(String userChattingWith_active_photo) {
+        this.userChattingWith_active_photo = userChattingWith_active_photo;
     }
 }

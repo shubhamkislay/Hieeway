@@ -26,6 +26,7 @@ public class User {
     private ImageUri spotifyCover;
     private Boolean cloud;
     private Boolean deleteUser;
+    private String activePhoto;
 
 
 
@@ -34,7 +35,7 @@ public class User {
 
     public User(String email, String name, String phonenumber, String username, String userid, String photo, String token, Boolean online, String publicKey,
                 String publicKeyId, String feeling, String bio, String feelingIcon, Boolean synced,
-                String spotifyId, String spotifySong, String spotifyArtist, ImageUri spotifyCover, Boolean cloud, Boolean deleteUser) {
+                String spotifyId, String spotifySong, String spotifyArtist, ImageUri spotifyCover, Boolean cloud, Boolean deleteUser, String activePhoto) {
         this.email = email;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -53,6 +54,7 @@ public class User {
         this.spotifyArtist = spotifyArtist;
         this.spotifyCover = spotifyCover;
         this.cloud = cloud;
+        this.activePhoto = activePhoto;
     }
 
     public String getEmail() {
@@ -214,6 +216,14 @@ public class User {
 
     public void setCloud(Boolean cloud) {
         this.cloud = cloud;
+    }
+
+    public String getActivePhoto() {
+        return activePhoto;
+    }
+
+    public void setActivePhoto(String activePhoto) {
+        this.activePhoto = activePhoto;
     }
 
     @Override

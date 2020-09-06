@@ -151,6 +151,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public static String USER_ID;
     private FragmentManager menuFragmentManager;
     private int changeAnimation = 0;
+    private Boolean active;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -1189,9 +1190,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     }
 
     @Override
-    public void imageSelect() {
+    public void imageSelect(Boolean active) {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
+
+        this.active = active;
 
         startActivityForResult(intent, PERMISSION_PICK_IMAGE);
     }
@@ -1330,9 +1333,18 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                                 .child(FirebaseAuth.getInstance()
                                         .getCurrentUser()
                                         .getUid());
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put("photo",mUri );
-                        databaseReference.updateChildren(map);
+
+
+                        if (active) {
+                            HashMap<String, Object> map = new HashMap<>();
+                            map.put("activePhoto", mUri);
+                            databaseReference.updateChildren(map);
+                        } else {
+
+                            HashMap<String, Object> map = new HashMap<>();
+                            map.put("photo", mUri);
+                            databaseReference.updateChildren(map);
+                        }
                         //progressDialog.dismiss();
 
 

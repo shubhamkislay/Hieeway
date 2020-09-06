@@ -143,7 +143,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     Boolean blinking = false;
     Button edit_profile_option_btn;
     BottomSheetBehavior bottomSheetBehavior;
-    RelativeLayout edit_profile_pic;
+    RelativeLayout edit_profile_pic, edit_active_pic;
     RelativeLayout edit_bio;
     Boolean bottomSheetDialogVisible = false;
     TextView bottom_dialog_title, prof_txt, bio_txt_dialog;
@@ -364,8 +364,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
 
@@ -401,6 +400,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
 
         edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
+        edit_active_pic = view.findViewById(R.id.edit_active_pic);
         edit_bio = view.findViewById(R.id.edit_bio);
         edit_settings_option_btn = view.findViewById(R.id.edit_settings_option_btn);
 
@@ -466,8 +466,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         username.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
         //change_nio_edittext.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         bio_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        bio_txt_dialog.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        prof_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //bio_txt_dialog.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //prof_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         bottom_dialog_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         song_name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         artist_name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
@@ -476,7 +476,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             @Override
             public void onClick(View v) {
 
-                imageSelectionCropListener.imageSelect();
+                imageSelectionCropListener.imageSelect(false);
             }
         });
         song_name.setSelected(true);
@@ -726,7 +726,17 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             public void onClick(View v) {
                 relay.setVisibility(View.GONE);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                imageSelectionCropListener.imageSelect();
+                imageSelectionCropListener.imageSelect(false);
+                bottomSheetDialogVisible = false;
+            }
+        });
+
+        edit_active_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relay.setVisibility(View.GONE);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                imageSelectionCropListener.imageSelect(true);
                 bottomSheetDialogVisible = false;
             }
         });
@@ -1605,7 +1615,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 break;
 
             case "pic":
-                imageSelectionCropListener.imageSelect();
+                imageSelectionCropListener.imageSelect(false);
+                break;
+
+            case "active":
+                imageSelectionCropListener.imageSelect(true);
                 break;
         }
     }

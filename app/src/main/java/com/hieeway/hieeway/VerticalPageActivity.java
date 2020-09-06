@@ -102,6 +102,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
     public static String OTHER_USER_PUBLIC_KEY = "";
     public static String CURRENT_USERNAME = "";
     public static String CURRENT_USERPHOTO = "";
+    public static String CURRENT_ACTIVEPHOTO = "";
     public static Boolean isWatching = false;
     private String youtubeID = "default";
     private String youtubeTitle = null;

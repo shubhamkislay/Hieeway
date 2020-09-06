@@ -7,13 +7,15 @@ public class Friend {
     private String username;
     private String status;
     private String photo;
+    private String activePhoto;
 
 
-    public Friend(String friendId, String status, String username, String photo) {
+    public Friend(String friendId, String status, String username, String photo, String activePhoto) {
         this.friendId = friendId;
         this.status = status;
         this.username = username;
         this.photo = photo;
+        this.activePhoto = activePhoto;
     }
 
     public Friend() {
@@ -49,5 +51,14 @@ public class Friend {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+
+    public String getActivePhoto() {
+        return activePhoto;
+    }
+
+    public void setActivePhoto(String activePhoto) {
+        this.activePhoto = activePhoto;
     }
 }

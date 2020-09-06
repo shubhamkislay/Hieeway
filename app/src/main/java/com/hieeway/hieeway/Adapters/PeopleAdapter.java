@@ -177,6 +177,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                     intent.putExtra("username", user.getUsername());
                     intent.putExtra("userid", user.getUserid());
                     intent.putExtra("photo", user.getPhoto());
+                    intent.putExtra("activePhoto", user.getActivePhoto());
                     intent.putExtra("live", "no");
 
 
@@ -202,6 +203,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                     intent.putExtra("feeling_txt", user.getFeeling());
                     intent.putExtra("bio_txt", user.getBio());
                     intent.putExtra("userId", user.getUserid());
+                    intent.putExtra("activePhoto", user.getActivePhoto());
                     intent.putExtra("currentUsername", currentUsername);
                     intent.putExtra("currentUserPhoto", userphoto);
                     if (viewHolder.acceptBtn.getVisibility() == View.VISIBLE)
@@ -239,6 +241,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 hashMap.put("status", "requested");
                 hashMap.put("username", user.getUsername());
                 hashMap.put("photo", user.getPhoto());
+                hashMap.put("activePhoto", user.getActivePhoto());
 
                 requestSentReference.updateChildren(hashMap);
 
@@ -254,6 +257,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 receiveHashMap.put("status", "got");
                 receiveHashMap.put("username", currentUsername);
                 receiveHashMap.put("photo", userphoto);
+                receiveHashMap.put("activePhoto", user.getActivePhoto());
 
                 requestReceiveReference.updateChildren(receiveHashMap);
 
@@ -280,6 +284,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 hashMap.put("status", "friends");
                 hashMap.put("username", user.getUsername());
                 hashMap.put("photo", user.getPhoto());
+                hashMap.put("activePhoto", user.getActivePhoto());
 
                 requestSentReference.updateChildren(hashMap);
 
@@ -304,6 +309,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                 receiveHashMap.put("status", "friends");
                 receiveHashMap.put("username", currentUsername);
                 receiveHashMap.put("photo", userphoto);
+                receiveHashMap.put("activePhoto", user.getActivePhoto());
 
                 requestReceiveReference.updateChildren(receiveHashMap);
 

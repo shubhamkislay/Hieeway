@@ -67,6 +67,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     private static final int RC_SIGN_IN = 1;
+    private String activeImage = "default";
     Button progressBackgrounnd, username_found, edit_image;
     ImageSelectionCropListener imageSelectionCropListener;
 
@@ -155,7 +156,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
                 startActivityForResult(intent, PERMISSION_PICK_IMAGE);*/
 
-                imageSelectionCropListener.imageSelect();
+                imageSelectionCropListener.imageSelect(false);
 
 
             }
@@ -288,7 +289,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         intent_change_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                usernameListener.onUsernameListener(username,name,photourl, reference,device_token,public_key,publickeyid);
+                usernameListener.onUsernameListener(username, name, photourl, activeImage, reference, device_token, public_key, publickeyid);
             }
         });
 
@@ -534,11 +535,12 @@ public class RegisterUsernameEntryFragment extends Fragment {
         profile_image.setImageURI(resultUri);
     }
 
-    public void setUserData(String email, String name, String photourl, UsernameListener usernameListener,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid)
+    public void setUserData(String email, String name, String photourl, String activeImage, UsernameListener usernameListener, final DatabaseReference reference, final String device_token, final String public_key, final String publickeyid)
     {
         this.email = email;
         this.name = name;
         this.photourl = photourl;
+        this.activeImage = activeImage;
         this.usernameListener = usernameListener;
         this.reference = reference;
         this.device_token = device_token;
@@ -550,6 +552,12 @@ public class RegisterUsernameEntryFragment extends Fragment {
     {
         this.photourl = photourl;
     }
+
+    public void setUploadActiveImage(String activeImage) {
+        this.activeImage = activeImage;
+    }
+
+
     public void setProgressVisibility(Boolean visibility)
     {
         if(visibility)
