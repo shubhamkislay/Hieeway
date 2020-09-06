@@ -1770,9 +1770,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 /**
                  * Uncomment this to start Music Beam Service
                  */
-                /*Intent intent = new Intent(NavButtonTest.this, MusicBeamService.class);
+                Intent intent = new Intent(NavButtonTest.this, MusicBeamService.class);
                 intent.putExtra("forcestart", true);
-                startService(intent);*/
+                startService(intent);
             }
         } catch (Exception e) {
             //

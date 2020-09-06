@@ -1660,27 +1660,28 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                                     //
                                                                 }
 
+                                                            } else {
+                                                                Glide.with(parentActivity).load(android.R.color.transparent).into(profile_pic);
+
+
                                                             }
 
                                                         }
                                                     });
                                                 } else {
                                                     try {
-                                                        if (!imageLoaded) {
+                                                        // if (!imageLoaded) {
                                                             // Toast.makeText(parentActivity, "booleanTaskCompletionSource.setResult(false);", Toast.LENGTH_LONG).show();
 
-                                                            Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
-                                                                    R.drawable.no_profile);
-                                                            profile_pic.post(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    //profile_pic.setImageBitmap(no_profile);
-                                                                    profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
-                                                                }
-                                                            });
+                                                        // Glide.with(parentActivity).load(android.R.color.transparent).into(profile_pic);
+
+                                                        imageLoaded = false;
+                                                        //imageReady = false;
+
+                                                        Glide.with(parentActivity).clear(profile_pic);
 
 
-                                                        }
+
                                                     } catch (Exception e) {
                                                         //
                                                     }
