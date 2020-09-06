@@ -2232,6 +2232,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
 
 
+        startLiveMessaging();
+
+
+
+
+
         return view;
     }
 
@@ -4168,7 +4174,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     initialiseLiveragment();
                     createLiveMessageDbInstance();
                     try {
-                        closeLiveMessagingLoading.turnOffLoadingScreen();
+                        //closeLiveMessagingLoading.turnOffLoadingScreen();
                     } catch (Exception e) {
                         //
                     }

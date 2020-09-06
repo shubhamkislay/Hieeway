@@ -79,18 +79,19 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
         photo = getArguments().getString("photo");
 
 
-        checking_layout = view.findViewById(R.id.checking_layout);
+        /*checking_layout = view.findViewById(R.id.checking_layout);
         checking_txt = view.findViewById(R.id.checking_txt);
 
-        checking_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        checking_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));*/
 
-        /*bundle = new Bundle();
+        bundle = new Bundle();
         bundle.putString("usernameChattingWith", usernameChattingWith);
         bundle.putString("photo",photo);
-        bundle.putString("userIdChattingWith",userChattingWithId);*/
+        bundle.putString("userIdChattingWith", userChattingWithId);
 
 
         return view;
+
     }
 
     public void setParentActivity(VerticalPageActivityPerf activity) {
@@ -143,6 +144,11 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
         }
     }
 
+    /**
+     * Uncomment below code to show dialog after loading this fragment
+     */
+
+/*
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -165,7 +171,8 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
             liveMessageFragmentPerf.setArguments(bundle);
             liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(activity);
 
-            /*liveMessageFragmentPerf
+            */
+/*liveMessageFragmentPerf
                     .setLiveMessageEventListener(
                             liveMessageEventListener,
                             parentActivity,
@@ -173,14 +180,16 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
                             usernameChattingWith,
                             userIdChattingWith,
                             youtubeID,
-                            youtubeTitle);*/
+                            youtubeTitle);*//*
+
 
 
             menuFragmentManager.beginTransaction()
                     .replace(R.id.framelayout, liveMessageFragmentPerf).commit();
             liveMessageFragmentPerf.showLiveMessageDialog(parentActivity, live, this);
 
-        } else {
+        }
+        else {
             try {
                 liveMessageFragmentPerf.destoryLiveFragment();
             } catch (Exception e) {
@@ -191,11 +200,11 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
                 live = "no";
         }
     }
-
+*/
     @Override
     public void turnOffLoadingScreen() {
         try {
-            checking_layout.setVisibility(View.GONE);
+            //checking_layout.setVisibility(View.GONE);
             //liveMessageFragmentPerf.turnOffRequestDialogVisibility();
         } catch (Exception e) {
             //
@@ -204,7 +213,7 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
 
     public void startLiveMessaging() {
         try {
-            checking_layout.setVisibility(View.GONE);
+            //checking_layout.setVisibility(View.GONE);
             //liveMessageFragmentPerf.turnOffRequestDialogVisibility();
         } catch (Exception e) {
             //
@@ -221,7 +230,8 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
                 usernameChattingWith,
                 userIdChattingWith,
                 youtubeID,
-                youtubeTitle, loadVideo);
+                youtubeTitle,
+                loadVideo);
         liveMessageFragmentPerf.setArguments(bundle);
         liveMessageFragmentPerf.setYoutubeBottomFragmentStateListener(activity);
 

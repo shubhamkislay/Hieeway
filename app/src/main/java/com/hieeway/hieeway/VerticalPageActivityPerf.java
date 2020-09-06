@@ -1,22 +1,28 @@
 package com.hieeway.hieeway;
 
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -41,6 +47,7 @@ import com.hieeway.hieeway.Fragments.LiveMessageFragmentPerf;
 import com.hieeway.hieeway.Fragments.LiveMessageParentFragment;
 import com.hieeway.hieeway.Fragments.SendMessageFragment;
 import com.hieeway.hieeway.Fragments.SendMessageParentFragment;
+import com.hieeway.hieeway.Interface.CameraPermissionListener;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
 import com.hieeway.hieeway.Interface.LiveMessageRequestListener;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
@@ -48,6 +55,12 @@ import com.hieeway.hieeway.Interface.YoutubeBottomFragmentStateListener;
 import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +69,7 @@ import java.util.List;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 
 
-public class VerticalPageActivityPerf extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener, LiveMessageRequestListener {
+public class VerticalPageActivityPerf extends AppCompatActivity implements MessageHighlightListener, LiveMessageEventListener, YoutubeBottomFragmentStateListener, LiveMessageRequestListener, CameraPermissionListener {
 
 
     public static final String VIDEO_CHECK_TAG = "Video Check";
@@ -117,6 +130,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     private String photo;
     private DatabaseReference userFriendShipReference;
     private ValueEventListener friendShipValueListener;
+    private List<Fragment> fragmentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -522,7 +536,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         liveMessageParentFragment.setParentActivity(this);
         // liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
 
-        List<Fragment> fragmentList = new ArrayList<>();
+        fragmentList = new ArrayList<>();
         //fragmentList.add(sendMessageFragment);
         fragmentList.add(sendMessageParentFragment);
         fragmentList.add(ephemeralMessagingFragment);
@@ -595,6 +609,45 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                 pagerAdapter = new VPagerAdapter(fragmentManager, fragmentList);
 
                 viewPager.setAdapter(pagerAdapter);
+
+                if (ContextCompat.checkSelfPermission(VerticalPageActivityPerf.this, Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    try {
+                        //closeLiveMessagingLoading.turnOffLoadingScreen();
+                        CameraRequestDialog cameraRequestDialog = new CameraRequestDialog(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this);
+                        cameraRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        cameraRequestDialog.setCancelable(false);
+                        cameraRequestDialog.setCanceledOnTouchOutside(false);
+
+                        cameraRequestDialog.show();
+
+
+                    } catch (Exception e) {
+                        //Toast.makeText(parentActivity,"Error: "+e.toString(),Toast.LENGTH_LONG).show();
+                        requestAllPermissionsBeforeStart(VerticalPageActivityPerf.this, live);
+                        //closeLiveMessagingLoading.turnOffLoadingScreen();
+                    }
+
+                } else {
+
+                    try {
+
+                        LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, live);
+                        //liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        liveMessageRequestDialog.setCancelable(false);
+                        liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+
+                        liveMessageRequestDialog.show();
+
+
+                    } catch (NullPointerException e) {
+                        //liveMessageEventListener.changeFragment();
+                        viewPager.setCurrentItem(1);
+
+                    }
+                }
 
 
                 /*liveMessageParentFragment
@@ -682,6 +735,51 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                     {
                         //
                     }*/
+
+
+                    if (ContextCompat.checkSelfPermission(VerticalPageActivityPerf.this, Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        try {
+                            //closeLiveMessagingLoading.turnOffLoadingScreen();
+                            CameraRequestDialog cameraRequestDialog = new CameraRequestDialog(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this);
+                            cameraRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            cameraRequestDialog.setCancelable(false);
+                            cameraRequestDialog.setCanceledOnTouchOutside(false);
+
+                            cameraRequestDialog.show();
+
+
+                        } catch (Exception e) {
+                            //Toast.makeText(parentActivity,"Error: "+e.toString(),Toast.LENGTH_LONG).show();
+                            requestAllPermissionsBeforeStart(VerticalPageActivityPerf.this, live);
+                            //closeLiveMessagingLoading.turnOffLoadingScreen();
+                        }
+
+                    } else {
+
+                        try {
+
+                            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, live);
+                            //liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            liveMessageRequestDialog.setCancelable(false);
+                            liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+
+                            liveMessageRequestDialog.show();
+
+
+                        } catch (NullPointerException e) {
+                            //liveMessageEventListener.changeFragment();
+                            viewPager.setCurrentItem(1);
+
+                        }
+                    }
+
+
+
+
+
                     try {
                         sendMessageParentFragment.removeListeners();
                     } catch (Exception e) {
@@ -975,6 +1073,62 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
     }
 
+    private void requestAllPermissionsBeforeStart(final Activity activity, String live) {
+
+
+        Dexter.withActivity(activity)
+                .withPermission(/*Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,*/
+                        Manifest.permission.CAMERA)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        try {
+
+                            LiveMessageRequestDialog liveMessageRequestDialog = new LiveMessageRequestDialog(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, live);
+                            liveMessageRequestDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            liveMessageRequestDialog.setCancelable(false);
+                            liveMessageRequestDialog.setCanceledOnTouchOutside(false);
+
+                            liveMessageRequestDialog.show();
+                        } catch (NullPointerException e) {
+                            if (fragmentList.size() > 1)
+                                viewPager.setCurrentItem(1);
+                            else
+                                finish();
+                        }
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+
+                        if (response.isPermanentlyDenied()) {
+                            Toast.makeText(VerticalPageActivityPerf.this, "Allow camera permission, from the permissions menu to continue", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
+                        } else {
+                            if (fragmentList.size() > 1)
+                                viewPager.setCurrentItem(1);
+                            else
+                                finish();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
 
     @Override
     protected void onResume() {
@@ -1086,5 +1240,10 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     public void stopLiveMessaging() {
         viewPager.setCurrentItem(1);
 
+    }
+
+    @Override
+    public void startPermission() {
+        requestAllPermissionsBeforeStart(VerticalPageActivityPerf.this, live);
     }
 }
