@@ -122,7 +122,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
             viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
 
 
-            checkUserChangeAccountChange(friend.getFriendId(), friend.getPhoto(), viewHolder.user_photo, viewHolder.username);
+            checkUserChangeAccountChange(friend.getFriendId(), friend.getPhoto(), friend.getActivePhoto(), viewHolder.user_photo, viewHolder.username);
 
 
             viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
@@ -402,7 +402,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
     }
 
-    private void checkUserChangeAccountChange(final String userIDChattingWith, final String photo, final ImageView user_photo, final TextView username) {
+    private void checkUserChangeAccountChange(final String userIDChattingWith, final String photo, final String activePhoto, final ImageView user_photo, final TextView username) {
 
 
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -422,6 +422,30 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                         if (dataSnapshot.exists()) {
                             try {
                                 User user = dataSnapshot.getValue(User.class);
+
+
+                                try {
+
+                                    if (!user.getActivePhoto().equals("default") && !user.getActivePhoto().equals(activePhoto)) {
+
+                                        HashMap<String, Object> hashMap = new HashMap<>();
+
+                                        hashMap.put("activePhoto", user.getActivePhoto());
+
+                                        FirebaseDatabase.getInstance().getReference("FriendList")
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(userIDChattingWith)
+                                                .updateChildren(hashMap);
+                                    }
+
+                                } catch (Exception e) {
+                                    //
+                                }
+
+
+
+
+
                                 if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
 
                                     HashMap<String, Object> userPhotoChangehash = new HashMap<>();

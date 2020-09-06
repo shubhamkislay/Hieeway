@@ -1563,11 +1563,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     }
 
     @Override
-    public void onGoogleButtonPressedKeyAvailable(final String email,final  String name,final  String photourl,final DatabaseReference reference,final  String device_token,final String public_key,final String publickeyid) {
+    public void onGoogleButtonPressedKeyAvailable(final String email, final String name, final String activeImage, final String photourl, final DatabaseReference reference, final String device_token, final String public_key, final String publickeyid) {
 
         this.email = email;
         this.name = name;
         this.photourl = photourl;
+        this.activeImage = activeImage;
 
 
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -1611,6 +1612,22 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             editor.putString(PHOTO_URL, user.getPhoto());
                             editor.apply();
                         }
+
+
+                    } catch (Exception e) {
+                        //
+                    }
+
+                    try {
+
+                        if (!user.getActivePhoto().equals("default")) {
+                            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            editor = sharedPreferences.edit();
+                            editor.putString(ACTIVE_PHOTO, user.getActivePhoto());
+                            editor.apply();
+                        }
+
+
                     } catch (Exception e) {
                         //
                     }

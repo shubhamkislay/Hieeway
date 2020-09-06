@@ -16,6 +16,7 @@ import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -150,6 +151,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.crypto.Cipher;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_ACTIVEPHOTO;
@@ -226,6 +228,21 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private SeekBar textSizeseekBar;
     private RelativeLayout equlizer;
     private RelativeLayout equi_one;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PRIVATE_KEY = "privateKey";
+    public static final String PUBLIC_KEY = "publicKey";
+    public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    public static final String ACTIVE_PHOTO = "activePhoto";
+
+    public static final String PHONE = "phone";
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String USERNAME = "username";
+    public static final String FEATURES_SHOWN = "features";
+    public static final String DEVICE_TOKEN = "devicetoken";
+    public final static String HAPPY = "happy";
     /*    username.setText(intent.getStringExtra("username"));
             name.setText(intent.getStringExtra("name"));
             feeling_txt.setText(intent.getStringExtra("feeling_txt"));
@@ -318,7 +335,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private TextView sender_reply_body_title;
     private Button photo_btn, photo_btn_bg;
     private Activity parentActivity;
-    private String activePhoto;
+    private String activePhoto = "default";
     private boolean liveViewStarted = false;
     int i = 0;
 
@@ -334,6 +351,17 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_ephemeral_layout_perf, container, false);
 
+
+        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+
+        currentUsername = sharedPreferences.getString(USERNAME, "default");
+        currentUserPhoto = sharedPreferences.getString(PHOTO_URL, "default");
+        currentUserActivePhoto = sharedPreferences.getString(ACTIVE_PHOTO, "default");
+
+        CURRENT_USERNAME = currentUsername;
+        CURRENT_USERPHOTO = currentUserPhoto;
+        CURRENT_ACTIVEPHOTO = currentUserActivePhoto;
 
         /**
          * The below code is used to block screenshots
@@ -601,7 +629,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         usernameChattingWith = getArguments().getString("usernameChattingWith");
         userIdChattingWith = getArguments().getString("userIdChattingWith");
         photo = getArguments().getString("photo");
-        activePhoto = getArguments().getString("activePhoto");
+        //activePhoto = getArguments().getString("activePhoto");
         otherUserPublicKey = getArguments().getString("otherUserPublicKey");
         otherUserPublicKeyID = getArguments().getString("otherUserPublicKeyID");
         currentUserPublicKey = getArguments().getString("currentUserPublicKey");
@@ -1508,30 +1536,38 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         sendingSound5 = soundPool.load(parentActivity, R.raw.knob, 1);
 
 
-        try {
-            if (!activePhoto.equals("default")) {
+        FirebaseDatabase.getInstance().getReference("Users").child(userIdChattingWith)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            User user = snapshot.getValue(User.class);
+
+                            activePhoto = user.getActivePhoto();
+                            try {
+                                if (!activePhoto.equals("default")) {
 
 
-                FirebaseDatabase.getInstance().getReference("ChatList")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(userIdChattingWith)
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    TaskCompletionSource<Boolean> booleanTaskCompletionSource = new TaskCompletionSource<>();
+                                    FirebaseDatabase.getInstance().getReference("ChatList")
+                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(userIdChattingWith)
+                                            .addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.exists()) {
+                                                        TaskCompletionSource<Boolean> booleanTaskCompletionSource = new TaskCompletionSource<>();
 
 
-                                    ChatStamp chatStamp = snapshot.getValue(ChatStamp.class);
+                                                        ChatStamp chatStamp = snapshot.getValue(ChatStamp.class);
 
 
-                                    try {
+                                                        try {
 
 
-                                        new Thread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Long tsLong = System.currentTimeMillis() / 1000;
+                                                            new Thread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    Long tsLong = System.currentTimeMillis() / 1000;
 
                                                 /*SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
                                                 Date localParsedDate = null;
@@ -1545,7 +1581,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 */
 
 
-                                                try {
+                                                                    try {
 
                                                     /*long localUserTimeStamp = Long.parseLong(chatStamp.getLocaluserstamp());
                                                     long otherUserTimeStamp = Long.parseLong(chatStamp.getOtheruserstamp());*/
@@ -1554,101 +1590,101 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                     /*Timestamp localUsertimestamp = new java.sql.Timestamp(localParsedDate.getTime());
                                                     Timestamp otjerUsertimestamp = new java.sql.Timestamp(remoteParsedDate.getTime());*/
 
-                                                    long localUserDiff = tsLong - chatStamp.getLocaluserstamp();
-                                                    long remoteUserDiff = tsLong - chatStamp.getOtheruserstamp();
+                                                                        long localUserDiff = tsLong - chatStamp.getLocaluserstamp();
+                                                                        long remoteUserDiff = tsLong - chatStamp.getOtheruserstamp();
 
 
-                                                    long localDiffHours = localUserDiff / (60 * 60);
-                                                    long otherDiffHours = remoteUserDiff / (60 * 60);
+                                                                        long localDiffHours = localUserDiff / (60 * 60);
+                                                                        long otherDiffHours = remoteUserDiff / (60 * 60);
 
-                                                    Log.i("localDiffHours", "" + localDiffHours);
-                                                    Log.i("otherDiffHours", "" + otherDiffHours);
-
-
-                                                    if (localDiffHours < 1 && otherDiffHours < 1)
-                                                        booleanTaskCompletionSource.setResult(true);
-                                                    else
-                                                        booleanTaskCompletionSource.setResult(false);
-                                                } catch (Exception e) {
-                                                    booleanTaskCompletionSource.setResult(false);
-                                                }
-                                            }
-                                        }).start();
-
-                                        Task<Boolean> booleanTask = booleanTaskCompletionSource.getTask();
-
-                                        booleanTask.addOnCompleteListener(new OnCompleteListener<Boolean>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Boolean> task) {
-
-                                                if (task.getResult()) {
-                                                    TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
-
-                                                    new Thread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            try {
-                                                                Bitmap bitmap = Glide.with(parentActivity)
-                                                                        .asBitmap()
-                                                                        .load(activePhoto.replace("s96-c", "s384-c"))
-                                                                        .submit(width, height)
-                                                                        .get();
-
-                                                                bitmapTaskCompletionSource.setResult(bitmap);
-                                                            } catch (ExecutionException e) {
-                                                                e.printStackTrace();
-                                                            } catch (InterruptedException e) {
-                                                                e.printStackTrace();
-                                                            }
+                                                                        Log.i("localDiffHours", "" + localDiffHours);
+                                                                        Log.i("otherDiffHours", "" + otherDiffHours);
 
 
-                                                        }
-                                                    }).start();
+                                                                        if (localDiffHours < 1 && otherDiffHours < 1)
+                                                                            booleanTaskCompletionSource.setResult(true);
+                                                                        else
+                                                                            booleanTaskCompletionSource.setResult(false);
+                                                                    } catch (Exception e) {
+                                                                        booleanTaskCompletionSource.setResult(false);
+                                                                    }
+                                                                }
+                                                            }).start();
 
-                                                    Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+                                                            Task<Boolean> booleanTask = booleanTaskCompletionSource.getTask();
 
-                                                    bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Bitmap> task) {
-                                                            if (task.isSuccessful()) {
-                                                                try {
+                                                            booleanTask.addOnCompleteListener(new OnCompleteListener<Boolean>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Boolean> task) {
 
-                                                                    if (!imageLoaded) {
-                                                                        //Glide.with(parentActivity).clear(profile_pic);
-                                                                        profile_pic.setAlpha(0.0f);
-                                                                        profile_pic.setImageResource(0);
-                                                                        profile_pic.setImageDrawable(null);
-                                                                        profile_pic.setImageResource(android.R.color.transparent);
+                                                                    if (task.getResult()) {
+                                                                        TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+                                                                        new Thread(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                try {
+                                                                                    Bitmap bitmap = Glide.with(parentActivity)
+                                                                                            .asBitmap()
+                                                                                            .load(activePhoto.replace("s96-c", "s384-c"))
+                                                                                            .submit(width, height)
+                                                                                            .get();
+
+                                                                                    bitmapTaskCompletionSource.setResult(bitmap);
+                                                                                } catch (ExecutionException e) {
+                                                                                    e.printStackTrace();
+                                                                                } catch (InterruptedException e) {
+                                                                                    e.printStackTrace();
+                                                                                }
 
 
-                                                                        Glide.with(parentActivity).load(task.getResult())/*
+                                                                            }
+                                                                        }).start();
+
+                                                                        Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+
+                                                                        bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Bitmap> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    try {
+
+                                                                                        if (!imageLoaded) {
+                                                                                            //Glide.with(parentActivity).clear(profile_pic);
+                                                                                            profile_pic.setAlpha(0.0f);
+                                                                                            profile_pic.setImageResource(0);
+                                                                                            profile_pic.setImageDrawable(null);
+                                                                                            profile_pic.setImageResource(android.R.color.transparent);
+
+
+                                                                                            Glide.with(parentActivity).load(task.getResult())/*
                                                                                 .apply(RequestOptions.skipMemoryCacheOf(true))
                                                                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))*/
-                                                                                //.replace("s96-c", "s384-c")).transition(withCrossFade()).apply(new RequestOptions().override(width, height))
-                                                                                .listener(new RequestListener<Drawable>() {
-                                                                                    @Override
-                                                                                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                                                                        return false;
-                                                                                    }
+                                                                                                    //.replace("s96-c", "s384-c")).transition(withCrossFade()).apply(new RequestOptions().override(width, height))
+                                                                                                    .listener(new RequestListener<Drawable>() {
+                                                                                                        @Override
+                                                                                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                                                                                            return false;
+                                                                                                        }
 
-                                                                                    @Override
-                                                                                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                                                                                        @Override
+                                                                                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
 
-                                                                                        if (imageReady) {
+                                                                                                            if (imageReady) {
 
-                                                                                            no_profile_pic.setVisibility(View.GONE);
-                                                                                            profile_pic.animate().alpha(1.0f).setDuration(750);
-                                                                                            imageLoaded = true;
+                                                                                                                no_profile_pic.setVisibility(View.GONE);
+                                                                                                                profile_pic.animate().alpha(1.0f).setDuration(750);
+                                                                                                                imageLoaded = true;
 
+                                                                                                            }
+
+
+                                                                                                            return false;
+                                                                                                        }
+                                                                                                    })
+                                                                                                    .into(profile_pic);
                                                                                         }
-
-
-                                                                                        return false;
-                                                                                    }
-                                                                                })
-                                                                                .into(profile_pic);
-                                                                    }
 /*
                                                                     if (imageReady) {
 
@@ -1669,67 +1705,66 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                                     }*/
 
 
-                                                                } catch (Exception ne) {
-                                                                    //
+                                                                                    } catch (Exception ne) {
+                                                                                        //
+                                                                                    }
+
+                                                                                } else {
+                                                                                    Glide.with(parentActivity).load(android.R.color.transparent).into(profile_pic);
+
+
+                                                                                }
+
+                                                                            }
+                                                                        });
+                                                                    } else {
+                                                                        try {
+                                                                            // if (!imageLoaded) {
+                                                                            // Toast.makeText(parentActivity, "booleanTaskCompletionSource.setResult(false);", Toast.LENGTH_LONG).show();
+
+                                                                            // Glide.with(parentActivity).load(android.R.color.transparent).into(profile_pic);
+
+                                                                            imageLoaded = false;
+                                                                            //imageReady = false;
+
+                                                                            Glide.with(parentActivity).clear(profile_pic);
+
+
+                                                                        } catch (Exception e) {
+                                                                            //
+                                                                        }
+                                                                    }
+
+
                                                                 }
-
-                                                            } else {
-                                                                Glide.with(parentActivity).load(android.R.color.transparent).into(profile_pic);
+                                                            });
 
 
+                                                        } catch (Exception e) {
+                                                            try {
+                                                                if (!imageLoaded) {
+                                                                    // Toast.makeText(parentActivity, "Image Load Excepetion: "+e.toString(), Toast.LENGTH_LONG).show();
+
+                                                                    Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                                                                            R.drawable.no_profile);
+                                                                    profile_pic.post(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            //profile_pic.setImageBitmap(no_profile);
+                                                                            profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                                                        }
+                                                                    });
+
+                                                                }
+                                                            } catch (Exception ne) {
+                                                                //
                                                             }
-
                                                         }
-                                                    });
-                                                } else {
-                                                    try {
-                                                        // if (!imageLoaded) {
-                                                            // Toast.makeText(parentActivity, "booleanTaskCompletionSource.setResult(false);", Toast.LENGTH_LONG).show();
-
-                                                        // Glide.with(parentActivity).load(android.R.color.transparent).into(profile_pic);
-
-                                                        imageLoaded = false;
-                                                        //imageReady = false;
-
-                                                        Glide.with(parentActivity).clear(profile_pic);
 
 
-
-                                                    } catch (Exception e) {
-                                                        //
-                                                    }
-                                                }
-
-
-                                            }
-                                        });
-
-
-                                    } catch (Exception e) {
-                                        try {
-                                            if (!imageLoaded) {
-                                                // Toast.makeText(parentActivity, "Image Load Excepetion: "+e.toString(), Toast.LENGTH_LONG).show();
-
-                                                Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
-                                                        R.drawable.no_profile);
-                                                profile_pic.post(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        //profile_pic.setImageBitmap(no_profile);
-                                                        profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
-                                                    }
-                                                });
-
-                                            }
-                                        } catch (Exception ne) {
-                                            //
-                                        }
-                                    }
-
-
-                                    /**
-                                     * Remove the below code before commiting to prod
-                                     */
+                                                        /**
+                                                         * Remove the below code before commiting to prod
+                                                         */
                                     /*try {
                                         Long tsLong = System.currentTimeMillis() / 1000;
 
@@ -1746,53 +1781,58 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                     }*/
 
+                                                    }
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
+
+                                } else {
+                                    if (!imageLoaded) {
+                                        //Toast.makeText(parentActivity, "photo.equals(default)", Toast.LENGTH_LONG).show();
+                                        Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                                                R.drawable.no_profile);
+                                        profile_pic.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //profile_pic.setImageBitmap(no_profile);
+                                                profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                            }
+                                        });
+                                    }
                                 }
-
+                            } catch
+                            (Exception e) {
+                                if (!imageLoaded) {
+                                    // Toast.makeText(parentActivity, "Big Try block Exception"+e.toString(), Toast.LENGTH_LONG).show();
+                                    Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
+                                            R.drawable.no_profile);
+                                    profile_pic.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //profile_pic.setImageBitmap(no_profile);
+                                            profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                                        }
+                                    });
+                                }
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-
-
-
-
-
-
-
-            }
-            else
-            {
-                if (!imageLoaded) {
-                    //Toast.makeText(parentActivity, "photo.equals(default)", Toast.LENGTH_LONG).show();
-                    Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
-                            R.drawable.no_profile);
-                    profile_pic.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            //profile_pic.setImageBitmap(no_profile);
-                            profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
                         }
-                    });
-                }
-            }
-        }catch (Exception e)
-        {
-            if (!imageLoaded) {
-                // Toast.makeText(parentActivity, "Big Try block Exception"+e.toString(), Toast.LENGTH_LONG).show();
-                Bitmap no_profile = BitmapFactory.decodeResource(parentActivity.getResources(),
-                        R.drawable.no_profile);
-                profile_pic.post(new Runnable() {
+
+                    }
+
                     @Override
-                    public void run() {
-                        //profile_pic.setImageBitmap(no_profile);
-                        profile_pic.animate().alpha(alphaValueProfilePic).setDuration(750);
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
-            }
-        }
+
+
 
 
         archive_btn.setOnClickListener(new View.OnClickListener() {
@@ -1807,7 +1847,9 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+
+
+        /*DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -1831,8 +1873,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
 
-                    /* = user.getPublicKey();
-                    otherUserPublicKeyID = user.getPublicKeyId();*/
+                    *//* = user.getPublicKey();
+                    otherUserPublicKeyID = user.getPublicKeyId();*//*
 
                         }
                     }
@@ -1846,7 +1888,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
+        });*/
+
+
+
+
+
 
         EphemeralMessageActivityViewModelFactory ephemeralMessageActivityViewModelFactory = new EphemeralMessageActivityViewModelFactory(userIdChattingWith);
         ephemeralMessageViewModel = ViewModelProviders.of(this, ephemeralMessageActivityViewModelFactory).get(EphemeralMessageViewModel.class);

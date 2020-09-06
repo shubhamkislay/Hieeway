@@ -58,6 +58,7 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
     EditText username, email, password;
     public static final String PHONE = "phone";
     private static final String USERNAME = "username";
+    public static final String ACTIVE_PHOTO = "activePhoto";
 
 
     @Override
@@ -215,6 +216,7 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
         editor.putString(NAME, username);
         editor.putString(EMAIL, email);
         editor.putString(PHOTO_URL, photourl);
+        editor.putString(ACTIVE_PHOTO, photourl);
         editor.putString(DEVICE_TOKEN, device_token);
 
         editor.apply();
@@ -259,6 +261,7 @@ public class RegisterAuthenticateActivity extends AppCompatActivity {
                         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(PHOTO_URL, user.getPhoto());
+                        editor.putString(ACTIVE_PHOTO, user.getActivePhoto());
 
                         try {
                             editor.putString(PHONE, user.getPhonenumber());

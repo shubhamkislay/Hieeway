@@ -66,6 +66,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
     public static final String PHOTO_URL = "photourl";
     public static final String EMAIL = "email";
     public static final String NAME = "name";
+    public static final String ACTIVE_PHOTO = "activePhoto";
     private static final int RC_SIGN_IN = 1;
     private String activeImage = "default";
     Button progressBackgrounnd, username_found, edit_image;

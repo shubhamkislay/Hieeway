@@ -265,7 +265,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
         /**
          * Uncomment the below code to listen to changes in the user profile photos
          */
-        checkUserChangeAccountChange(chatStamp.getId(), chatStamp.getPhoto(), viewHolder.user_photo, viewHolder.username);
+        checkUserChangeAccountChange(chatStamp.getId(), chatStamp.getPhoto(), chatStamp.getActivePhoto(), viewHolder.user_photo, viewHolder.username);
         checkForMessageRequests(chatStamp.getId(), viewHolder.longMsgBtn);
         Log.v("ChatMessageAdapter", "onBindViewHolder called!!!!!!");
 
@@ -564,6 +564,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                             intent.putExtra("userid", chatStamp.getId());
                             intent.putExtra("photo", chatStamp.getPhoto());
                             intent.putExtra("live", "no");
+                            intent.putExtra("activePhoto", chatStamp.getActivePhoto());
                             //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
 
                             mContext.startActivity(intent);
@@ -589,7 +590,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     }
 
-    private void checkUserChangeAccountChange(final String userChattingWith, final String photo, final ImageView user_photo, final TextView username) {
+    private void checkUserChangeAccountChange(final String userChattingWith, final String photo, final String activePhoto, final ImageView user_photo, final TextView username) {
 
 
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
@@ -609,6 +610,26 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                         if (dataSnapshot.exists()) {
                             try {
                                 User user = dataSnapshot.getValue(User.class);
+
+
+                                try {
+
+                                    if (!user.getActivePhoto().equals("default") && !user.getActivePhoto().equals(activePhoto)) {
+
+                                        HashMap<String, Object> hashMap = new HashMap<>();
+
+                                        hashMap.put("activePhoto", user.getActivePhoto());
+
+                                        FirebaseDatabase.getInstance().getReference("ChatList")
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child(userChattingWith)
+                                                .updateChildren(hashMap);
+                                    }
+
+                                } catch (Exception e) {
+                                    //
+                                }
+
                                 if (!user.getPhoto().equals(photo) && !user.getPhoto().equals("default")) {
 
                                     HashMap<String, Object> userPhotoChangehash = new HashMap<>();
@@ -638,6 +659,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                                     }
 
                                 }
+
+
                                 if (user.getPhoto().equals("default")) {
                                     bitmapTaskCompletionSource.setResult(null);
                                 }

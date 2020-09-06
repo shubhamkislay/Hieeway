@@ -61,6 +61,7 @@ public class RegisterEmailEntryFragment extends Fragment {
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
+    public static final String ACTIVE_PHOTO = "activePhoto";
     public static final String EMAIL = "email";
     public static final String NAME = "name";
     public static final String DEVICE_TOKEN = "devicetoken";
@@ -429,6 +430,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         editor.putString(NAME, name);
         editor.putString(EMAIL, email);
         editor.putString(PHOTO_URL, photourl);
+        editor.putString(ACTIVE_PHOTO, photourl);
         editor.putString(DEVICE_TOKEN, device_token);
         editor.putBoolean(MUSIC_BEACON, false);
         editor.putBoolean(SPOTIFY_CONNECT, false);
@@ -458,7 +460,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                googleButtonListener.onGoogleButtonPressedKeyAvailable(email,name,photourl,databaseReference,device_token,publicKey,publicKeyId);
+                googleButtonListener.onGoogleButtonPressedKeyAvailable(email, name, photourl, photourl, databaseReference, device_token, publicKey, publicKeyId);
 
             }
         },500);

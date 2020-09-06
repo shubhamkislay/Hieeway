@@ -148,6 +148,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private int stopPosition;
     private Window window;
     public static String USER_PHOTO;
+    public static final String PHOTO_URL = "photourl";
+    public static final String ACTIVE_PHOTO = "activePhoto";
     public static String USER_ID;
     private FragmentManager menuFragmentManager;
     private int changeAnimation = 0;
@@ -1291,7 +1293,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         progressDialog.setMessage("Uploading photo");
         progressDialog.show();*/
-        profileFragment.setProgressVisibility(true);
+        if (!active)
+            profileFragment.setProgressVisibility(true);
 
         //registerUsernameEntryFragment.setProgressVisibility(true);
 
@@ -1334,40 +1337,52 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                                         .getCurrentUser()
                                         .getUid());
 
+                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+
+
 
                         if (active) {
                             HashMap<String, Object> map = new HashMap<>();
                             map.put("activePhoto", mUri);
                             databaseReference.updateChildren(map);
+
+                            editor.putString(ACTIVE_PHOTO, mUri);
+                            editor.apply();
                         } else {
 
                             HashMap<String, Object> map = new HashMap<>();
                             map.put("photo", mUri);
                             databaseReference.updateChildren(map);
-                        }
-                        //progressDialog.dismiss();
+                            editor.putString(PHOTO_URL, mUri);
+                            editor.apply();
+
+                            //progressDialog.dismiss();
 
 
-                       Glide.with(NavButtonTest.this).load(mUri).into(profileBtnPressed);
-                       Glide.with(NavButtonTest.this).load(mUri).into(profileBtnUnpressed);
-                        try {
-                            bitmap = Glide.with(NavButtonTest.this)
-                                    .asBitmap()
-                                    .load(mUri)
-                                    .submit(50, 50)
-                                    .get();
+                            Glide.with(NavButtonTest.this).load(mUri).into(profileBtnPressed);
+                            Glide.with(NavButtonTest.this).load(mUri).into(profileBtnUnpressed);
+                            try {
+                                bitmap = Glide.with(NavButtonTest.this)
+                                        .asBitmap()
+                                        .load(mUri)
+                                        .submit(50, 50)
+                                        .get();
 
-                            profileFragment.setBitmap(bitmap);
+                                profileFragment.setBitmap(bitmap);
 
-                        } catch (Exception e) {
-                            //
+                            } catch (Exception e) {
+                                //
+                            }
                         }
 
 
 
 
                         // progressDialog.dismiss();
-                        profileFragment.setProgressVisibility(false);
+                        if (!active)
+                            profileFragment.setProgressVisibility(false);
 
                         /*registerUsernameEntryFragment.setProgressVisibility(false);
                         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);

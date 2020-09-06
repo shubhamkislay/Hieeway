@@ -1225,6 +1225,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
                         USER_PHOTO = user.getPhoto();
+
+
                         USER_ID = user.getUserid();
                         USER_NAME = user.getUsername();
                         username.setText(user.getUsername());
@@ -1303,9 +1305,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         try {
 
                             USER_PHOTO = user.getPhoto();
+
                             profilepic = user.getPhoto().replace("s96-c", "s384-c");
                             userPhoto = profilepic;
-                            Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
+                            Glide.with(getContext()).load(user.getActivePhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
                             Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
 
                             bitmap = ((BitmapDrawable) profile_pic_background.getDrawable()).getBitmap();
