@@ -171,7 +171,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private String userFeeling;
     private TextView message_text_dummy, message_text, message_text_two, message_text_three;
     private TextView message_text_sender_dummy, message_text_sender, message_text_two_sender, message_text_three_sender;
-    private BlurImageView profile_pic;
+    private BlurImageView profile_pic, no_profile_pic;
     private int msg_send_size =0, msg_send_two_size=0, msg_send_three_size=0;
     private ProgressBar message_pulse, chain_pulse, message_log_pulse, message_running, message_running_two;
     private float opacity = 0.0f;
@@ -296,7 +296,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private boolean textFieldAnimating = false;
     private boolean firstAnimComplete = false;
     private boolean checkConnectedSatus = false;
-    private ObjectAnimator animatorY, alphaArrow, animateMsg, animateMsgTwo, animatorMsgThree, alphaMsg, alphaMsgTwo, alphaMsgThree, animatePic;
+    private ObjectAnimator animatorY, alphaArrow, animateMsg, animateMsgTwo, animatorMsgThree, alphaMsg, alphaMsgTwo, alphaMsgThree, animatePic, animateNoPic;
     private ObjectAnimator animateReceiveArrowY, receiveArrowAlpha, animateNextMsgHintBody, animateNextMsgHintBodyALpha;
     private AnimatorSet animatorSet;
     private boolean sendButtonPressed = false;
@@ -1273,6 +1273,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         profile_pic = view.findViewById(R.id.profile_pic);
+        no_profile_pic = view.findViewById(R.id.no_profile_pic);
 
 
 
@@ -1281,6 +1282,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         profile_pic.setBlur(0);
+        try {
+            no_profile_pic.setBlur(0);
+        } catch (Exception e) {
+
+        }
 
         message_pulse = view.findViewById(R.id.message_pulse);
         message_log_pulse = view.findViewById(R.id.message_log_pulse);
@@ -1625,6 +1631,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                                                                         if (imageReady) {
 
+                                                                                            no_profile_pic.setVisibility(View.GONE);
                                                                                             profile_pic.animate().alpha(1.0f).setDuration(750);
                                                                                             imageLoaded = true;
 
@@ -1982,6 +1989,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     alphaValueProfilePic = 0.0f;
 
                     profile_pic.setAlpha(0.0f);
+                    no_profile_pic.setAlpha(0.0f);
                     imageReady = false;
                     sendButton.setVisibility(View.VISIBLE);
                     sendButton.setAlpha(1.0f);
@@ -2024,12 +2032,20 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_sender_drawable));
 
                         profile_pic.setAlpha(0.0f);
+                        no_profile_pic.setAlpha(0.0f);
                         // read_message_back.animate().alpha(1.0f).setDuration(750);
                         //read_message_back
 
                         try {
                             if (imageLoaded)
                                 profile_pic.setBlur(4);
+                            else
+                                try {
+                                    no_profile_pic.setBlur(4);
+                                } catch (Exception e) {
+
+                                }
+
                         } catch (Exception e) {
 
                         }
@@ -2121,11 +2137,23 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         message_bar.setBackground(parentActivity.getDrawable(R.drawable.message_identifier_sender_drawable));
 
                         profile_pic.animate().alpha(opacity).setDuration(250);
+                        try {
+                            no_profile_pic.animate().alpha(opacity).setDuration(250);
+                        } catch (Exception e) {
+
+                        }
                        // read_message_back.animate().alpha(1.0f).setDuration(750);
                         //read_message_back
 
                         if (imageLoaded)
                             profile_pic.setBlur(4);
+                        else
+                            try {
+                                no_profile_pic.setBlur(4);
+                            } catch (Exception e) {
+
+                            }
+
 
 
                     }
@@ -2152,10 +2180,23 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
                         profile_pic.animate().alpha(alphaValueProfilePic).setDuration(setAnimationSendingDuration /** 3 + 650*/);
+                        try {
+                            no_profile_pic.animate().alpha(alphaValueProfilePic).setDuration(setAnimationSendingDuration /** 3 + 650*/);
+                        } catch (Exception e) {
+
+                        }
 
 
                         if (imageLoaded)
                             profile_pic.setBlur(0);
+
+                        else
+                            try {
+                                no_profile_pic.setBlur(0);
+                            } catch (Exception e) {
+
+                            }
+
 
 
                         // profile_pic.setBlur(0);
@@ -2800,6 +2841,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         animatePic = ObjectAnimator.ofFloat(profile_pic,"alpha",0.0f,1.0f);
        // animatePic.setDuration(arrowAnimDuration+300);
 
+        animateNoPic = ObjectAnimator.ofFloat(no_profile_pic, "alpha", 0.0f, 1.0f);
+
+
+
 
         //alphaArrow.setDuration(650);
 
@@ -2824,6 +2869,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         profile_pic.setBlur(0);
 
+        try {
+            no_profile_pic.setBlur(0);
+        } catch (Exception e) {
+            //
+        }
+
         animatorSet = new AnimatorSet();
 
         animatorSet.setDuration(arrowAnimDuration);
@@ -2836,6 +2887,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
             @Override
             public void run() {
                 profile_pic.animate().alpha(1.0f).setDuration(arrowAnimDuration/2+250);
+                try {
+                    no_profile_pic.animate().alpha(1.0f).setDuration(arrowAnimDuration / 2 + 250);
+                } catch (Exception e) {
+                    //
+                }
             }
         }, arrowAnimDuration/2);
 
@@ -2853,6 +2909,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                 send_arrow.setAlpha(1.0f);
                 profile_pic.setAlpha(0.0f);
+                try {
+                    no_profile_pic.setAlpha(0.0f);
+                } catch (Exception e) {
+                    //
+                }
                 message_text_sender.setAlpha(0.35f);
                 message_text_two_sender.setAlpha(0.35f);
                 message_text_three_sender.setAlpha(0.35f);
@@ -2947,8 +3008,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         try {
             if(message_text_sender.length()<1
              &&message_text_two_sender.length()<1
-            &&message_text_three_sender.length()<1)
-            profile_pic.setAlpha(1.0f);
+                    && message_text_three_sender.length() < 1) {
+                profile_pic.setAlpha(1.0f);
+                try {
+                    no_profile_pic.setAlpha(1.0f);
+                } catch (Exception e) {
+                    //
+                }
+            }
 
         }catch (Exception e)
         {
@@ -2958,6 +3025,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         {
             if(imageLoaded)
                 profile_pic.setBlur(0);
+            else
+                try {
+                    no_profile_pic.setBlur(0);
+                } catch (Exception e) {
+                    //
+                }
         }catch (Exception e)
         {
 
@@ -3754,6 +3827,11 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         if(imageLoaded)
             profile_pic.setBlur(4);
+        try {
+            no_profile_pic.setBlur(1);
+        } catch (Exception e) {
+            //
+        }
 
         setIsMessageRunning(true);
 
@@ -3771,9 +3849,12 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         )
         {
             animatePic = ObjectAnimator.ofFloat(profile_pic,"alpha",0.0f,0.0f);
+            animateNoPic = ObjectAnimator.ofFloat(no_profile_pic, "alpha", 0.0f, 0.0f);
+
+        } else {
+            animatePic = ObjectAnimator.ofFloat(profile_pic, "alpha", 1.0f, 0.0f);
+            animateNoPic = ObjectAnimator.ofFloat(no_profile_pic, "alpha", 1.0f, 0.0f);
         }
-        else
-            animatePic = ObjectAnimator.ofFloat(profile_pic,"alpha",1.0f,0.0f);
 
 
 
@@ -3792,7 +3873,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         AnimatorSet animatorSetReceivingArrow = new AnimatorSet();
         animatorSetReceivingArrow.setDuration(arrowAnimDuration);
 
-        animatorSetReceivingArrow.playTogether(animateReceiveArrowY,receiveArrowAlpha,animatePic,animateNextMsgHintBody,animateNextMsgHintBodyALpha/*,messageTextAnimator*/);
+        animatorSetReceivingArrow.playTogether(animateReceiveArrowY, receiveArrowAlpha, animatePic, animateNoPic, animateNextMsgHintBody, animateNextMsgHintBodyALpha/*,messageTextAnimator*/);
 
         animatorSetReceivingArrow.start();
         new Handler().postDelayed(new Runnable() {
@@ -4042,8 +4123,19 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                                             if (imageLoaded)
                                                 profile_pic.setBlur(0);
+                                            else
+                                                try {
+                                                    no_profile_pic.setBlur(0);
+                                                } catch (Exception e) {
+                                                    //
+                                                }
 
                                             profile_pic.animate().alpha(alphaValueProfilePic).setDuration(500);
+                                            try {
+                                                no_profile_pic.animate().alpha(alphaValueProfilePic).setDuration(500);
+                                            } catch (Exception e) {
+                                                //
+                                            }
 
                                             enableXtransformation = true;
                                             setMessageHighlight(messageHighlight);
