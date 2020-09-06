@@ -29,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -78,142 +79,159 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_youtube_live_video_selection);
+
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         userID = sharedPreferences.getString(USER_ID, "");
-        userStatusOnDiconnect();
-        username = findViewById(R.id.username);
-        friend_list_recyclerview = findViewById(R.id.friend_list_recyclerview);
-        userlist = new ArrayList<>();
+        try {
+            if (userID.length() < 1) {
+                Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(YoutubeLiveVideoSelectionActivity.this, MainActivity.class));
+                finish();
+            } else {
+                setContentView(R.layout.activity_youtube_live_video_selection);
 
-        activity = this;
+                userStatusOnDiconnect();
+                username = findViewById(R.id.username);
+                friend_list_recyclerview = findViewById(R.id.friend_list_recyclerview);
+                userlist = new ArrayList<>();
 
-        userList = new ArrayList<>();
+                activity = this;
 
-        progressBar = findViewById(R.id.progress);
-        progressBarTwo = findViewById(R.id.progressTwo);
+                userList = new ArrayList<>();
 
-        searchPeople = findViewById(R.id.search_people);
+                progressBar = findViewById(R.id.progress);
+                progressBarTwo = findViewById(R.id.progressTwo);
 
-        searchPeople.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                searchPeople = findViewById(R.id.search_people);
 
-        searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
-        logo_title = findViewById(R.id.layout_title);
-        video_thumbnail = findViewById(R.id.video_thumbnail);
-        youtube_url = findViewById(R.id.youtube_url);
+                searchPeople.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
-
-        youtube_video_view = findViewById(R.id.youtube_video_view);
-
-
-        Bundle extras = getIntent().getExtras();
-        youtube_Url = extras.getString(Intent.EXTRA_TEXT);
-
-        youtube_url.setText(youtube_Url);
-
-        getVideoIdfromUrl(youtube_Url);
+                searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                logo_title = findViewById(R.id.layout_title);
+                video_thumbnail = findViewById(R.id.video_thumbnail);
+                youtube_url = findViewById(R.id.youtube_url);
 
 
-        Window window = this.getWindow();
+                youtube_video_view = findViewById(R.id.youtube_video_view);
+
+
+                Bundle extras = getIntent().getExtras();
+                youtube_Url = extras.getString(Intent.EXTRA_TEXT);
+
+                youtube_url.setText(youtube_Url);
+
+                getVideoIdfromUrl(youtube_Url);
+
+
+                Window window = this.getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_status_color));
+                window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_status_color));
 
-        result_text = findViewById(R.id.search_result_txt);
-        result_text.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                result_text = findViewById(R.id.search_result_txt);
+                result_text.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-        //progress_menu_logo = findViewById(R.id.//progress_menu_logo);
-
-
-        logo_title.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float displayWidth = size.x;
+                //progress_menu_logo = findViewById(R.id.//progress_menu_logo);
 
 
-        int spanCount; // 3 columns
-        int spacing = 0; // 50px
-        boolean includeEdge = true;
+                logo_title.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-        if (displayWidth >= 1920)
-            spanCount = 4;
-
-        else if (displayWidth >= 1080)
-            spanCount = 3;
-
-        else if (displayWidth >= 500)
-            spanCount = 2;
-        else
-            spanCount = 1;
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                float displayWidth = size.x;
 
 
-        LinearLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
+                int spanCount; // 3 columns
+                int spacing = 0; // 50px
+                boolean includeEdge = true;
+
+                if (displayWidth >= 1920)
+                    spanCount = 4;
+
+                else if (displayWidth >= 1080)
+                    spanCount = 3;
+
+                else if (displayWidth >= 500)
+                    spanCount = 2;
+                else
+                    spanCount = 1;
 
 
-        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
-
-        //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        friend_list_recyclerview.setLayoutManager(gridLayoutManager);
-        friend_list_recyclerview.setHasFixedSize(true);
-        friend_list_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
-        friend_list_recyclerview.setItemViewCacheSize(20);
-        friend_list_recyclerview.setDrawingCacheEnabled(true);
-        friend_list_recyclerview.setItemAnimator(new DefaultItemAnimator());
-        friend_list_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-        searchPeople.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                LinearLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
 
 
-                //userList.clear();
-            }
+                gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+                friend_list_recyclerview.setLayoutManager(gridLayoutManager);
+                friend_list_recyclerview.setHasFixedSize(true);
+                friend_list_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-                if (s.length() > 0)
-                    searchFriends(s.toString().toLowerCase());
+                friend_list_recyclerview.setItemViewCacheSize(20);
+                friend_list_recyclerview.setDrawingCacheEnabled(true);
+                friend_list_recyclerview.setItemAnimator(new DefaultItemAnimator());
+                friend_list_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-                else {
+                searchPeople.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+
+                        //userList.clear();
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                        if (s.length() > 0)
+                            searchFriends(s.toString().toLowerCase());
+
+                        else {
                     /*userList.clear();
                     videoPalAdapter.notifyDataSetChanged();
                     result_text.setVisibility(View.VISIBLE);
                     result_text.setText("Add friends from search tab");*/
 
-                    populateWithFriends();
-                }
+                            populateWithFriends();
+                        }
 
 
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+
+                    }
+                });
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        populateWithFriends();
+                        videoPalAdapter = new VideoPalAdapter(YoutubeLiveVideoSelectionActivity.this, userList, activity, youtube_Url);
+                        friend_list_recyclerview.setAdapter(videoPalAdapter);
+
+                    }
+                }, 400);
             }
+        } catch (Exception e) {
+            Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(YoutubeLiveVideoSelectionActivity.this, MainActivity.class));
+            finish();
+        }
 
-            @Override
-            public void afterTextChanged(Editable s) {
 
 
-            }
-        });
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                populateWithFriends();
-                videoPalAdapter = new VideoPalAdapter(YoutubeLiveVideoSelectionActivity.this, userList, activity, youtube_Url);
-                friend_list_recyclerview.setAdapter(videoPalAdapter);
-
-            }
-        }, 400);
 
     }
 

@@ -175,7 +175,7 @@ public class RegisterEmailEntryFragment extends Fragment {
                         greet_text.setText(" ");
                         greet_text.setTextSize(28);
                         greet_text.setCharacterDelay(60);
-                        greet_text.animateText("Welcome to the next generation of messaging.");
+                        greet_text.animateText("Welcome to the next generation of messaging");
                         greet_text.animate();
 
                 new Handler().postDelayed(new Runnable() {
@@ -185,7 +185,7 @@ public class RegisterEmailEntryFragment extends Fragment {
                         greet_text.setText(" ");
                         greet_text.setTextSize(24);
                         greet_text.setCharacterDelay(75);
-                        greet_text.animateText("Let's set up your account!");
+                        greet_text.animateText("Let's set up your account");
                         greet_text.animate();
 
                         new Handler().postDelayed(new Runnable() {

@@ -117,7 +117,7 @@
                                 android:layout_toRightOf="@id/video_thumbnail_layout"
                                 android:gravity="center"
                                 android:textColor="#fff"
-
+                                android:autoLink="web"
                                 android:textSize="14sp"
                                 android:visibility="visible"
                                 tools:text="https://youtube.com/" />

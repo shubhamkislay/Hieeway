@@ -1546,14 +1546,14 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                     long remoteUserDiff = tsLong - chatStamp.getOtheruserstamp();
 
 
-                                                    long localDiffHours = localUserDiff / (60 * 60 * 1000);
-                                                    long otherDiffHours = remoteUserDiff / (60 * 60 * 1000);
+                                                    long localDiffHours = localUserDiff / (60 * 60);
+                                                    long otherDiffHours = remoteUserDiff / (60 * 60);
 
                                                     Log.i("localDiffHours", "" + localDiffHours);
                                                     Log.i("otherDiffHours", "" + otherDiffHours);
 
 
-                                                    if (localDiffHours < 24 && otherDiffHours < 24)
+                                                    if (localDiffHours < 1 && otherDiffHours < 1)
                                                         booleanTaskCompletionSource.setResult(true);
                                                     else
                                                         booleanTaskCompletionSource.setResult(false);
@@ -1717,21 +1717,21 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                     /**
                                      * Remove the below code before commiting to prod
                                      */
-                                    try {
+                                    /*try {
                                         Long tsLong = System.currentTimeMillis() / 1000;
 
                                         long localUserDiff = tsLong - chatStamp.getLocaluserstamp();
                                         long remoteUserDiff = tsLong - chatStamp.getOtheruserstamp();
 
 
-                                        long localDiffHours = localUserDiff / (60 * 60 * 1000);
-                                        long otherDiffHours = remoteUserDiff / (60 * 60 * 1000);
+                                        long localDiffHours = localUserDiff / (60 * 60);
+                                        long otherDiffHours = remoteUserDiff / (60 * 60);
 
-                                        Toast.makeText(parentActivity, "localUserDiff: " + localDiffHours + "\n" + "otherDiffHours: " + otherDiffHours, Toast.LENGTH_LONG).show();
+                                        Toast.makeText(parentActivity, "localDiffHours: " + localDiffHours + "\n" + "localDiffHours: " + otherDiffHours, Toast.LENGTH_LONG).show();
 
                                     } catch (Exception e) {
 
-                                    }
+                                    }*/
 
                                 }
 
