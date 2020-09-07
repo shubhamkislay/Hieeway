@@ -25,11 +25,11 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="left"
             android:textColor="#FFF"
             android:padding="16dp"
             android:text="Edit Profile"
-            android:textSize="22sp" />
+            android:textSize="26sp" />
 
         <RelativeLayout
             android:id="@+id/edit_active_pic"
@@ -42,10 +42,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="8dp"
-                android:text="Change your active chat picture"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="Active Chat Picture"
+                android:textStyle="bold"
                 android:textColor="#fff"
                 android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/active_descrption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/active_txt"
+                android:gravity="left"
+                android:paddingLeft="8dp"
+                android:paddingTop="4dp"
+                android:paddingRight="8dp"
+                android:text="This picture could be only seen by people who you had conversation a with, within the last hour from the current time."
+                android:textColor="#505050"
+                android:textSize="12sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -60,7 +75,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Change your profile picture"
+                android:text="Profile Picture"
+                android:textStyle="bold"
                 android:textColor="#fff"
                 android:textSize="16sp" />
         </RelativeLayout>
@@ -78,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Update your bio"
+                android:text="Bio"
+                android:textStyle="bold"
                 android:textColor="#fff"
                 android:textSize="16sp" />
         </RelativeLayout>
