@@ -45,7 +45,7 @@
                 android:paddingRight="8dp"
                 android:text="Active Chat Picture"
                 android:textStyle="bold"
-                android:textColor="#fff"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp" />
 
             <TextView

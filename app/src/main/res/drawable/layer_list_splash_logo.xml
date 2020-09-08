@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:drawable="@drawable/bottom_sheet_background_drawable" />
+    <item
+        android:bottom="800dp"
+        android:drawable="@drawable/splash_logo"
+        android:left="400dp"
+        android:right="400dp"
+        android:top="800dp" />
+
+</layer-list>

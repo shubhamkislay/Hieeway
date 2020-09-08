@@ -1337,10 +1337,31 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                             profilepic = user.getPhoto().replace("s96-c", "s384-c");
                             userPhoto = profilepic;
-                            Glide.with(getContext()).load(user.getActivePhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
-                            Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
+                            if (!activePhoto.equals("default"))
+                                try {
+                                    Glide.with(getContext()).load(user.getActivePhoto().replace("s96-c", "s384-c")).into(profile_pic_background);
+                                } catch (Exception e) {
 
-                            bitmap = ((BitmapDrawable) profile_pic_background.getDrawable()).getBitmap();
+                                }
+                            if (!userPhoto.equals("default"))
+                                try {
+                                    Glide.with(getContext()).load(user.getPhoto().replace("s96-c", "s384-c")).into(center_dp);
+                                } catch (Exception e) {
+                                    Glide.with(getContext()).load(activity.getDrawable(R.drawable.bottom_sheet_background_drawable)).into(center_dp);
+                                }
+                            else {
+                                try {
+                                    Glide.with(getContext()).load(activity.getDrawable(R.drawable.bottom_sheet_background_drawable)).into(center_dp);
+                                } catch (Exception e) {
+
+                                }
+                            }
+
+                            try {
+                                bitmap = ((BitmapDrawable) profile_pic_background.getDrawable()).getBitmap();
+                            } catch (Exception e) {
+
+                            }
 
 
                             // setPaletteColor();

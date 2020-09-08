@@ -24,14 +24,14 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/profile_pic" />
+                tools:src="@drawable/layer_list_splash_logo" />
 
 
             <RelativeLayout
                 android:id="@+id/overlay_fade"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:alpha="0.5"
+                android:alpha="0.25"
                 android:background="@color/colorBlack"
                 android:visibility="visible"/>
 
@@ -89,7 +89,7 @@
                         android:minWidth="50dp"
                         android:layout_centerHorizontal="true"
                         android:scaleType="centerCrop"
-                        tools:src="@drawable/profile_pic"
+                        tools:src="@drawable/layer_list_splash_logo"
                         android:minHeight="200dp" />
 
                     <ProgressBar
