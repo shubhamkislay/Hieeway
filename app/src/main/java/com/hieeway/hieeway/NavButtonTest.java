@@ -69,6 +69,7 @@ import com.hieeway.hieeway.Fragments.ProfileFragment;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.AnimationArrowListener;
+import com.hieeway.hieeway.Interface.ChangePictureListener;
 import com.hieeway.hieeway.Interface.ChatStampSizeListener;
 import com.hieeway.hieeway.Interface.EditBioFragmentListener;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
@@ -89,7 +90,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
-public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener, AddFeelingFragmentListener {
+public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener, AddFeelingFragmentListener, ChangePictureListener {
 
     private TextView text_home;
     private ImageView homeBtnPressed, homeBtnUnpressed;
@@ -173,7 +174,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         nav_bar = findViewById(R.id.nav_bar);
 
-        profileFragment = new ProfileFragment();
+        profileFragment = new ProfileFragment(this, this);
 
         progressBar = findViewById(R.id.progress);
 
@@ -1295,6 +1296,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         progressDialog.show();*/
         if (!active)
             profileFragment.setProgressVisibility(true);
+        else
+            profileFragment.setActiveProgressVisibility(View.VISIBLE);
 
         //registerUsernameEntryFragment.setProgressVisibility(true);
 
@@ -1383,6 +1386,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                         // progressDialog.dismiss();
                         if (!active)
                             profileFragment.setProgressVisibility(false);
+                        else
+                            profileFragment.setActiveProgressVisibility(View.GONE);
 
                         /*registerUsernameEntryFragment.setProgressVisibility(false);
                         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
@@ -1400,6 +1405,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                         //progressDialog.dismiss();
                        // registerUsernameEntryFragment.setProgressVisibility(false);
                         profileFragment.setProgressVisibility(false);
+                        profileFragment.setActiveProgressVisibility(View.GONE);
                     }
 
                 }
@@ -1915,6 +1921,19 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             }, changeAnimation);
 
         }
+
+    }
+
+    @Override
+    public void changePicture(Boolean active) {
+
+    }
+
+    @Override
+    public void removedPicture(Boolean active) {
+
+        Glide.with(NavButtonTest.this).load(getDrawable(R.drawable.no_profile)).into(profileBtnPressed);
+        Glide.with(NavButtonTest.this).load(getDrawable(R.drawable.no_profile)).into(profileBtnUnpressed);
 
     }
 }

@@ -6,7 +6,6 @@
     android:id="@+id/bottom_sheet_dialog_layout"
     android:layout_margin="4dp"
     android:background="@drawable/bottom_sheet_background_drawable"
-    android:backgroundTint="@color/nav_status_color_accent"
     app:behavior_hideable="false"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="@string/bottom_sheet_behavior"
@@ -58,7 +57,7 @@
                 android:paddingLeft="8dp"
                 android:paddingTop="4dp"
                 android:paddingRight="8dp"
-                android:text="This picture could be only seen by people who you had conversation a with, within the last hour from the current time."
+                android:text="This picture could be only seen by people who you had a conversation with, within the last hour."
                 android:textColor="#505050"
                 android:textSize="12sp" />
         </RelativeLayout>

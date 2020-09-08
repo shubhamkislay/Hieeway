@@ -73,6 +73,7 @@ import com.google.firebase.database.Transaction;
 import com.hieeway.hieeway.FeelingDialog;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
+import com.hieeway.hieeway.Interface.ChangePictureListener;
 import com.hieeway.hieeway.Interface.EditBioFragmentListener;
 import com.hieeway.hieeway.Interface.EditProfileOptionListener;
 import com.hieeway.hieeway.Interface.FeelingListener;
@@ -81,6 +82,7 @@ import com.hieeway.hieeway.MainActivity;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicBeamService;
+import com.hieeway.hieeway.PictureChangeDialog;
 import com.hieeway.hieeway.ProfilePhotoActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SendMediaService;
@@ -114,7 +116,7 @@ import java.util.regex.Pattern;
 
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
-public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener {
+public class ProfileFragment extends Fragment implements FeelingListener, EditProfileOptionListener, ChangePictureListener {
 
     private static final int RC_HINT = 3;
     private SharedViewModel sharedViewModel;
@@ -158,7 +160,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     public static final String MUSIC_BEACON = "musicbeacon";
     public static final String SPOTIFY_CONNECT = "spotifyconnect";
     public static final String VISIBILITY = "visibility";
+    Activity activity;
+    ChangePictureListener changePictureListener;
 
+    ProgressBar upload_active_progress;
     ImageView track_cover;
     ImageView spotify_cover;
 
@@ -199,8 +204,13 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private Boolean musicbeacon = false;
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
+    private String activePhoto;
 
 
+    public ProfileFragment(ChangePictureListener changePictureListener, Activity activity) {
+        this.changePictureListener = changePictureListener;
+        this.activity = activity;
+    }
 
 
 
@@ -237,7 +247,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     public void onResume() {
         super.onResume();
 
-        sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        sharedPreferences = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         visibility = sharedPreferences.getBoolean(VISIBILITY, false);
@@ -349,7 +359,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 }
 
         /*Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
-        getActivity().startService(intent1);*/
+        activity.startService(intent1);*/
             }
         }, 500);
 
@@ -368,7 +378,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         // Inflate the layout for this fragment
 
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Display display = activity.getWindowManager().getDefaultDisplay();
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
@@ -379,6 +389,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         music_layout = view.findViewById(R.id.music_layout);
 
 
+        upload_active_progress = view.findViewById(R.id.upload_active_progress);
+
 
 
 
@@ -387,7 +399,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
         try {
-            window = getActivity().getWindow();
+            window = activity.getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
@@ -437,7 +449,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
 
-        getActivity().getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
+        activity.getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
 
 
         upload_progress = view.findViewById(R.id.upload_progress);
@@ -459,18 +471,18 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         center_dp.getLayoutParams().width = (int) displayHeight / 8;
 
 
-        connect_spotify_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        music_loading_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        feeling_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        username.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
-        //change_nio_edittext.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        bio_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        //bio_txt_dialog.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        //prof_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        bottom_dialog_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        song_name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        artist_name.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-medium.otf"));
+        connect_spotify_text.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        music_loading_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        feeling_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        username.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
+        //change_nio_edittext.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        bio_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //bio_txt_dialog.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        //prof_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        bottom_dialog_title.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        song_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        artist_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
         uploadActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -486,7 +498,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         edit_settings_option_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(), SettingsActivity.class));
+                activity.startActivity(new Intent(getActivity(), SettingsActivity.class));
             }
         });
 
@@ -505,7 +517,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                 PackageManager pm = null;
                 try {
-                    pm = getActivity().getPackageManager();
+                    pm = activity.getPackageManager();
 
                     boolean isSpotifyInstalled;
 
@@ -555,7 +567,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                 try {
                     // mSpotifyAppRemote.getPlayerApi().play(songId);
-                    /*Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                    /*Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
                     if (launchIntent != null) {
                         startActivity(launchIntent);//null pointer check in case package name was not found
                     }*/
@@ -568,7 +580,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 Uri.parse("android-app://" + getContext().getPackageName()));
                         getContext().startActivity(intent);
                     } else {
-                        Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                        Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
                         if (launchIntent != null) {
                             startActivity(launchIntent);//null pointer check in case package name was not found
                         }
@@ -592,7 +604,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 Uri.parse("android-app://" + getContext().getPackageName()));
                         getContext().startActivity(intent);
                     } else {
-                        Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                        Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
                         if (launchIntent != null) {
                             startActivity(launchIntent);//null pointer check in case package name was not found
                         }
@@ -626,7 +638,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                         try {
                             startActivity(new Intent(getActivity(), MainActivity.class));
-                            getActivity().finish();
+                            activity.finish();
                         } catch (Exception e) {
                             Toast.makeText(getContext(), "Logout done! Close app and restart", Toast.LENGTH_SHORT).show();
                         }
@@ -643,10 +655,16 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             @Override
             public void onClick(View v) {
                 if (!bottomSheetDialogVisible) {
-                    Intent intent = new Intent(getActivity(), ProfilePhotoActivity.class);
+                    /*Intent intent = new Intent(getActivity(), ProfilePhotoActivity.class);
                     intent.putExtra("profilepic", profilepic);
 
-                    getActivity().startActivity(intent);
+                    activity.startActivity(intent);*/
+
+                    PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(getActivity(), false, profilepic, ProfileFragment.this, "photo");
+                    pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    pictureChangeDialog.setCancelable(true);
+                    pictureChangeDialog.show();
+
                 }
             }
         });
@@ -697,11 +715,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         try {
             if (bio.length() < 1) {
                 bio_txt.setText("Tell something about yourself");
-                bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
+                bio_txt.setTextColor(activity.getResources().getColor(R.color.darkGrey));
             } else {
                 bio_txt.setText(bio);
                 stripUnderlines(bio_txt);
-                bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+                bio_txt.setTextColor(activity.getResources().getColor(R.color.colorWhite));
             }
         } catch (Exception e) {
             //
@@ -726,7 +744,12 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             public void onClick(View v) {
                 relay.setVisibility(View.GONE);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                imageSelectionCropListener.imageSelect(false);
+                PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(getActivity(), false, profilepic, ProfileFragment.this, "photo");
+                pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                pictureChangeDialog.setCancelable(true);
+
+                pictureChangeDialog.show();
+                //imageSelectionCropListener.imageSelect(false);
                 bottomSheetDialogVisible = false;
             }
         });
@@ -736,7 +759,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             public void onClick(View v) {
                 relay.setVisibility(View.GONE);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                imageSelectionCropListener.imageSelect(true);
+                //imageSelectionCropListener.imageSelect(true);
+                PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(getActivity(), true, activePhoto, ProfileFragment.this, "activePhoto");
+                pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                pictureChangeDialog.setCancelable(true);
+                pictureChangeDialog.show();
                 bottomSheetDialogVisible = false;
             }
         });
@@ -1050,7 +1077,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 songHash.put("spotifyArtist", artistNames);
                                 songHash.put("spotifyCover", track.imageUri);*/
 
-                                //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                                //song_name.setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
 
                                 /*FirebaseDatabase.getInstance()
                                         .getReference("Music")
@@ -1126,7 +1153,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 songHash.put("musicKey", musicKey);
                                 songHash.put("timestamp", timestamp.toString());
 
-                                //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                                //song_name.setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
 
                                 FirebaseDatabase.getInstance().getReference("Music")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -1162,7 +1189,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                             songHash.put("musicKey", musicKey);
                             songHash.put("timestamp", timestamp.toString());
 
-                            //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+                            //song_name.setTextColor(activity.getResources().getColor(R.color.colorPrimaryDark));
 
                             FirebaseDatabase.getInstance().getReference("Music")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -1226,6 +1253,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                         USER_PHOTO = user.getPhoto();
 
+                        activePhoto = user.getActivePhoto();
+
 
                         USER_ID = user.getUserid();
                         USER_NAME = user.getUsername();
@@ -1238,13 +1267,13 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                             // change_nio_edittext.setText(user.getBio());
                             bio_txt.setText(user.getBio());
                             stripUnderlines(bio_txt);
-                            bio_txt.setTextColor(getActivity().getResources().getColor(R.color.colorWhite));
+                            bio_txt.setTextColor(activity.getResources().getColor(R.color.colorWhite));
 
 
                         } catch (Exception e) {
                             //
                             bio_txt.setText("Tell something about yourself");
-                            bio_txt.setTextColor(getActivity().getResources().getColor(R.color.darkGrey));
+                            bio_txt.setTextColor(activity.getResources().getColor(R.color.darkGrey));
                         }
 
                         //  feeling_txt.setText(user.getFeeling());
@@ -1267,32 +1296,32 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                 switch (user.getFeeling()) {
                                     case HAPPY:
                                         feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                                        feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
                                         feeling_txt.setText(HAPPY);
                                         break;
                                     case SAD:
                                         feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                                        feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
                                         feeling_txt.setText(SAD);
                                         break;
                                     case BORED:
                                         feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                                        feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
                                         feeling_txt.setText(BORED);
                                         break;
                                     case ANGRY:
                                         feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                                        feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
                                         feeling_txt.setText(ANGRY);
                                         break;
                                     case "excited":
                                         feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
+                                        feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
                                         feeling_txt.setText(EXCITED);
                                         break;
                                     case CONFUSED:
                                         feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                                        feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
                                         feeling_txt.setText(CONFUSED);
                                         break;
                                 }
@@ -1355,7 +1384,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));*/
 
         try {
-            window = getActivity().getWindow();
+            window = activity.getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
@@ -1425,7 +1454,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         name.setTextColor(currentSwatch.getTitleTextColor());*/
 
                             try {
-                                window = getActivity().getWindow();
+                                window = activity.getWindow();
                                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
@@ -1447,7 +1476,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
 
                         try {
-                            window = getActivity().getWindow();
+                            window = activity.getWindow();
                             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
@@ -1470,7 +1499,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
 
             try {
-                window = getActivity().getWindow();
+                window = activity.getWindow();
                 window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
@@ -1497,7 +1526,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", HAPPY);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(HAPPY);
                 break;
@@ -1505,7 +1534,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", SAD);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(SAD);
                 break;
@@ -1513,7 +1542,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", BORED);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(BORED);
                 break;
@@ -1521,7 +1550,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", ANGRY);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(ANGRY);
                 break;
@@ -1529,7 +1558,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", "excited");
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
+                feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(EXCITED);
                 break;
@@ -1537,7 +1566,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 feelingHash.put("feeling", CONFUSED);
                 feelingHash.put("feelingIcon", "default");
                 feelingReference.updateChildren(feelingHash);
-                feeling_icon.setBackground(getActivity().getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                feeling_icon.setBackground(activity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
                 feeling_icon.setBackgroundTintList(ColorStateList.valueOf(getContext().getResources().getColor(R.color.colorPrimaryDark)));
                 feeling_txt.setText(CONFUSED);
                 break;
@@ -1610,6 +1639,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
     }
 
+
+    public void setActiveProgressVisibility(int visibility) {
+        upload_active_progress.setVisibility(visibility);
+    }
+
     @Override
     public void editProfileOption(String option) {
         switch (option) {
@@ -1640,6 +1674,22 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         textView.setText(s);
     }
 
+    @Override
+    public void changePicture(Boolean active) {
+        imageSelectionCropListener.imageSelect(active);
+    }
+
+    @Override
+    public void removedPicture(Boolean active) {
+
+        if (active) {
+            profile_pic_background.setImageDrawable(activity.getDrawable(R.color.colorBlack));
+
+        } else {
+            changePictureListener.removedPicture(active);
+            center_dp.setImageDrawable(activity.getDrawable(R.drawable.no_profile));
+        }
+    }
 
 
     private class URLSpanNoUnderline extends URLSpan {

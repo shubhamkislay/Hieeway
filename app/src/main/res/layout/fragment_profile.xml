@@ -26,6 +26,7 @@
                 android:scaleType="centerCrop"
                 tools:src="@drawable/profile_pic" />
 
+
             <RelativeLayout
                 android:id="@+id/overlay_fade"
                 android:layout_width="match_parent"
@@ -51,6 +52,16 @@
                 android:layout_gravity="bottom"
                 android:rotation="180"
                 android:background="@drawable/status_bar_fade"/>
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/upload_active_progress"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_above="@id/top_menu"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="36dp"
+                android:visibility="gone"
+                app:SpinKit_Style="Wave" />
 
             <LinearLayout
                 android:id="@+id/center_dp_layout"
