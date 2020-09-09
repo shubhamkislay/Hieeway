@@ -41,6 +41,7 @@ public class SettingsActivity extends AppCompatActivity implements DeleteUserLis
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
     public static final String EMAIL = "email";
+    public static final String FEATURES_SHOWN = "features";
     public static final String NAME = "name";
     public static final String DEVICE_TOKEN = "devicetoken";
     public static final String MUSIC_BEACON = "musicbeacon";
@@ -342,6 +343,11 @@ public class SettingsActivity extends AppCompatActivity implements DeleteUserLis
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editorFeature = sharedPreferences.edit();
+
+        editorFeature.putBoolean(FEATURES_SHOWN, true);
+        editorFeature.apply();
         // finish();
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

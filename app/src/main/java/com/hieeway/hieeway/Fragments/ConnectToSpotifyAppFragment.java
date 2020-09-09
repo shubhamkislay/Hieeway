@@ -49,7 +49,7 @@ public class ConnectToSpotifyAppFragment extends Fragment {
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     final String appPackageName = "com.spotify.music";
     final String referrer = "adjust_campaign=com.hieeway.hieeway&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
-    TextView phone_title, notes, feature_title, feautures_list1, feautures_list2;
+    TextView phone_title, notes, feature_title, feautures_list1, feautures_list2, feautures_list0;
     Button add_number_btn, skip_btn;
     Activity activity;
     Boolean visibility;
@@ -189,6 +189,7 @@ public class ConnectToSpotifyAppFragment extends Fragment {
         feautures_list1 = view.findViewById(R.id.feautures_list1);
         feautures_list2 = view.findViewById(R.id.feautures_list2);
         connect_spotify_layout = view.findViewById(R.id.connect_spotify_layout);
+        feautures_list0 = view.findViewById(R.id.feautures_list0);
 
         add_number_btn = view.findViewById(R.id.add_number_btn);
         skip_btn = view.findViewById(R.id.skip_btn);
@@ -200,6 +201,7 @@ public class ConnectToSpotifyAppFragment extends Fragment {
         feautures_list1.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
         feautures_list2.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
+        feautures_list0.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         add_number_btn.setOnClickListener(new View.OnClickListener() {
             @Override
