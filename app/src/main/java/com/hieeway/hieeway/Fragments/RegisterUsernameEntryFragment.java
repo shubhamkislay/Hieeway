@@ -2,6 +2,8 @@ package com.hieeway.hieeway.Fragments;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -24,10 +26,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
@@ -71,10 +75,15 @@ public class RegisterUsernameEntryFragment extends Fragment {
     private String activeImage = "default";
     Button progressBackgrounnd, username_found, edit_image;
     ImageSelectionCropListener imageSelectionCropListener;
+    Activity parentActivity;
+    Button edit_active_image;
+    ProgressBar active_image_progress;
 
-    public RegisterUsernameEntryFragment() {
+    TextView add_active_chat, add_profile_pic;
+    /*public RegisterUsernameEntryFragment(Activity parentActivity) {
         // Required empty public constructor
-    }
+        this.parentActivity = parentActivity;
+    }*/
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -98,6 +107,12 @@ public class RegisterUsernameEntryFragment extends Fragment {
         progress_upload = view.findViewById(R.id.progress_upload);
 
         profile_image_back = view.findViewById(R.id.profile_image_back);
+        edit_active_image = view.findViewById(R.id.edit_active_image);
+
+        add_active_chat = view.findViewById(R.id.add_active_chat);
+        add_profile_pic = view.findViewById(R.id.add_profile_pic);
+
+        active_image_progress = view.findViewById(R.id.active_image_progress);
 
        // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -105,6 +120,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
 
         profile_image = view.findViewById(R.id.profile_image);
+        active_image_progress = view.findViewById(R.id.active_image_progress);
 
         progressBackgrounnd = view.findViewById(R.id.progress_back);
         progressbar = view.findViewById(R.id.progressbar);
@@ -119,6 +135,11 @@ public class RegisterUsernameEntryFragment extends Fragment {
         username_found = view.findViewById(R.id.username_found);
 
       //  edit_pic_text = view.findViewById(R.id.edit_pic_text);
+
+        add_active_chat.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+        add_profile_pic.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
 
 
         intent_change_btn.setOnTouchListener(new View.OnTouchListener() {
@@ -160,6 +181,27 @@ public class RegisterUsernameEntryFragment extends Fragment {
                 imageSelectionCropListener.imageSelect(false);
 
 
+            }
+        });
+
+        add_active_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSelectionCropListener.imageSelect(true);
+            }
+        });
+
+        add_profile_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSelectionCropListener.imageSelect(false);
+            }
+        });
+
+        edit_active_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageSelectionCropListener.imageSelect(true);
             }
         });
 
@@ -252,7 +294,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
             emailTextView.setText(email);
             nameTextView.setText(name);
-            Glide.with(getActivity()).load(photourl.replace("s96-c", "s384-c")).into(profile_pic_background);
+            Glide.with(getActivity()).load(activeImage.replace("s96-c", "s384-c")).into(profile_pic_background);
             Glide.with(getActivity()).load(photourl.replace("s96-c", "s384-c")).into(profile_image);
 
 /*            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
@@ -283,6 +325,14 @@ public class RegisterUsernameEntryFragment extends Fragment {
 
     public void setImageSelectionCropListener(ImageSelectionCropListener imageSelectionCropListener) {
         this.imageSelectionCropListener = imageSelectionCropListener;
+    }
+
+    public void setActiveImageProgress(int visibility) {
+        active_image_progress.setVisibility(visibility);
+        if (visibility == View.VISIBLE)
+            profile_pic_background.setVisibility(View.INVISIBLE);
+        else
+            profile_pic_background.setVisibility(View.VISIBLE);
     }
 
     private void setUpListener() {
@@ -316,50 +366,44 @@ public class RegisterUsernameEntryFragment extends Fragment {
                     progressBackgrounnd.setVisibility(View.INVISIBLE);
                     progressbar.setVisibility(View.INVISIBLE);
                     enter_btn.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    DatabaseReference findUsernameRef = FirebaseDatabase.getInstance().getReference("Users");
-/*                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("username")
+                } else {
+                    /*Query findUsernameRef = FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).orderByChild("username")
                             .startAt(username)
-                            .endAt(username + "\uf8ff");*/
-                          //  .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            .endAt(username + "\uf8ff");
+                    //  .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                     findUsernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists())
-                            {
-                                int count=0;
-                                for(DataSnapshot snapshot:dataSnapshot.getChildren())
-                                {
+                            if (dataSnapshot.exists()) {
+                                int count = 0;
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     User user = snapshot.getValue(User.class);
-                                    if(user.getUsername().equals(username))
-                                    {
-                                        count+=1;
-                                        Toast.makeText(getContext(),"Username unavailable",Toast.LENGTH_SHORT).show();
+                                    if (user.getUsername().equals(username)) {
+                                        count += 1;
+                                        Toast.makeText(getContext(), "Username unavailable", Toast.LENGTH_SHORT).show();
                                         progressBackgrounnd.setVisibility(View.INVISIBLE);
                                         progressbar.setVisibility(View.INVISIBLE);
                                         enter_btn.setVisibility(View.VISIBLE);
 
                                         break;
-                                       // intent_change_btn.setVisibility(View.VISIBLE);
+                                        // intent_change_btn.setVisibility(View.VISIBLE);
                                     }
 
 
                                 }
-                                if(count==0)
-                                {
-                                   // Toast.makeText(getContext(),"Username available",Toast.LENGTH_SHORT).show();
+                                if (count == 0) {
+                                    // Toast.makeText(getContext(),"Username available",Toast.LENGTH_SHORT).show();
 
-                                     intent_change_btn.setVisibility(View.VISIBLE);
+                                    intent_change_btn.setVisibility(View.VISIBLE);
                                     progressBackgrounnd.setVisibility(View.INVISIBLE);
                                     progressbar.setVisibility(View.INVISIBLE);
                                     username_found.setVisibility(View.VISIBLE);
                                     enter_btn.setVisibility(View.INVISIBLE);
 
                                 }
-                              //  usernameTextView.set
+                                //  usernameTextView.set
 
                             } else {
                                 intent_change_btn.setVisibility(View.VISIBLE);
@@ -377,31 +421,38 @@ public class RegisterUsernameEntryFragment extends Fragment {
                             enter_btn.setVisibility(View.VISIBLE);
 
                         }
-                    });
-                }
+                    });*/
 
-                /*DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-                Query query = rootRef.child("Users").orderByChild("username").equalTo(username);
-                query.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists())
-                        {
-                            Toast.makeText(getContext(),"Username unavailable",Toast.LENGTH_SHORT).show();
-                            progressBackgrounnd.setVisibility(View.INVISIBLE);
-                            progressbar.setVisibility(View.INVISIBLE);
-                            enter_btn.setVisibility(View.VISIBLE);
+
+                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                    Query query = rootRef.child("Users").orderByChild("username").equalTo(username);
+                    query.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                //Toast.makeText(parentActivity, "Username unavailable", Toast.LENGTH_SHORT).show();
+
+                                usernameTextView.setError("Username unavailable");
+                                progressBackgrounnd.setVisibility(View.INVISIBLE);
+                                progressbar.setVisibility(View.INVISIBLE);
+                                enter_btn.setVisibility(View.VISIBLE);
+
+                            } else {
+                                intent_change_btn.setVisibility(View.VISIBLE);
+                                progressBackgrounnd.setVisibility(View.INVISIBLE);
+                                progressbar.setVisibility(View.INVISIBLE);
+                                username_found.setVisibility(View.VISIBLE);
+                                enter_btn.setVisibility(View.INVISIBLE);
+                            }
 
                         }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-                            */
+                        }
+                    });
+                }
 
             }
         });
@@ -528,12 +579,13 @@ public class RegisterUsernameEntryFragment extends Fragment {
         }
 
     }*/
-
-    public void setImageUri(Uri resultUri)
+    public void setImageUri(Uri resultUri, Boolean active)
     {
 
-        profile_pic_background.setImageURI(resultUri);
-        profile_image.setImageURI(resultUri);
+        if (active)
+            profile_pic_background.setImageURI(resultUri);
+        else
+            profile_image.setImageURI(resultUri);
     }
 
     public void setUserData(String email, String name, String photourl, String activeImage, UsernameListener usernameListener, final DatabaseReference reference, final String device_token, final String public_key, final String publickeyid)
@@ -565,7 +617,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         {
             progress_upload.setVisibility(View.VISIBLE);
             profile_image_back.setVisibility(View.VISIBLE);
-            profile_pic_background.setAlpha(0.0f);
+            //profile_pic_background.setAlpha(0.0f);
             intent_change_btn.setAlpha(0.0f);
             intent_change_btn.setEnabled(false);
         }
@@ -573,7 +625,7 @@ public class RegisterUsernameEntryFragment extends Fragment {
         {
             progress_upload.setVisibility(View.INVISIBLE);
             profile_image_back.setVisibility(View.INVISIBLE);
-            profile_pic_background.setAlpha(0.8f);
+            //profile_pic_background.setAlpha(0.8f);
             intent_change_btn.setAlpha(1.0f);
             intent_change_btn.setEnabled(true);
         }

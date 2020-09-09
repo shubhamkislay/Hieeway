@@ -684,13 +684,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                                 Glide.with(mContext).load(task.getResult()).into(user_photo);
                             } else {
-                                user_photo.setImageResource(R.drawable.no_profile);
+                                user_photo.setImageResource(R.drawable.bottom_sheet_background_drawable);
                                 username.setText("User Unavaliable");
                             }
                         } else {
 
 
-                            user_photo.setImageResource(R.drawable.no_profile);
+                            user_photo.setImageResource(R.drawable.bottom_sheet_background_drawable);
 
                             if (task.getException() instanceof NullPointerException) {
                                 username.setText("User Unavaliable");

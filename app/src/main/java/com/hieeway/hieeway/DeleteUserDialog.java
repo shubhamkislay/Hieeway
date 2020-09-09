@@ -3,6 +3,7 @@ package com.hieeway.hieeway;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -92,6 +93,12 @@ public class DeleteUserDialog extends Dialog {
                 live_message_txt.setText("Deleting Account...");
             }
         });
+
+
+        yes_btn.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+        no_btn.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
     }
 
     private void deleteUser() {

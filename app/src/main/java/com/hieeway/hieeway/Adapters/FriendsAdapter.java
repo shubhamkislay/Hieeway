@@ -518,12 +518,12 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                                 }).into(user_photo);
                             } else {
                                 user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                user_photo.setImageResource(R.drawable.no_profile);
+                                user_photo.setImageResource(R.drawable.bottom_sheet_background_drawable);
                             }
 
                         } else {
                             // user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                            user_photo.setImageResource(R.drawable.no_profile);
+                            user_photo.setImageResource(R.drawable.bottom_sheet_background_drawable);
                             username.setText("User Unavailable");
 
                             if (task.getException() instanceof NullPointerException) {

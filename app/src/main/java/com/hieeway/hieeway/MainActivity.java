@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -36,6 +37,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -577,6 +579,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             if (fragment_number == 0) {
                                 get_started.setVisibility(View.VISIBLE);
                                 terms_policy_txt.setVisibility(View.VISIBLE);
+                                highlights_layout.setVisibility(View.GONE);
                             }
 
                             why_hieeway_btn.setVisibility(View.VISIBLE);
@@ -917,70 +920,78 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                     }
                     else
                     {
-                        splash_layout.setVisibility(View.VISIBLE);
+                        if (fragment_number != 2) {
+                            splash_layout.setVisibility(View.VISIBLE);
 
-                        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
-                                + R.raw.hiee_splash);
+                            Toast.makeText(MainActivity.this, "Listener called " + fragment_number, Toast.LENGTH_SHORT).show();
+
+                            Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+                                    + R.raw.hiee_splash);
         /*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
                 + R.raw.high_image_splash_alt);*/
 
-                        // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
-                        video_view.setVideoURI(video);
+                            // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
+                            video_view.setVideoURI(video);
 
-                        video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mp) {
+                            video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
 
-                                mediaPlayer = mp;
-                                mediaPlayer.setVolume(0, 0);
-                                mediaPlayer.start();
-
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        // progressBar.setAlpha(0.25f);
-
-                                        // startSplash();
-
-                                        get_started.setText("Continue with profile setup");
-                                        // animateArrow();
-                                        //   fragment_number = 0;
-                                        startSplash();
-                                        mediaPlayer.pause();
-                                        //stopPosition = view.getCurrentPosition();
-                                    }
-                                }, 1500);
-
-                            }
-                        });
-                        String public_key,publickeyid,device_token;
-
-                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
-
-                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    mediaPlayer = mp;
+                                    mediaPlayer.setVolume(0, 0);
+                                    mediaPlayer.start();
 
 
-                        email = sharedPreferences.getString(EMAIL,null);
-                        name = sharedPreferences.getString(NAME,null);
-                        photourl = sharedPreferences.getString(PHOTO_URL,null);
-                        activeImage = sharedPreferences.getString(ACTIVE_PHOTO, null);
-                        public_key = sharedPreferences.getString(PUBLIC_KEY,null);
-                        publickeyid = sharedPreferences.getString(PUBLIC_KEY_ID,null);
-                        device_token = sharedPreferences.getString(DEVICE_TOKEN,null);
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            // progressBar.setAlpha(0.25f);
+
+                                            // startSplash();
+
+                                            get_started.setText("Continue with profile setup");
+                                            // animateArrow();
+                                            //   fragment_number = 0;
+                                            startSplash();
+                                            try {
+                                                mediaPlayer.pause();
+                                            } catch (Exception e) {
+                                                //
+                                            }
+                                            //stopPosition = view.getCurrentPosition();
+                                        }
+                                    }, 1500);
+
+                                }
+                            });
+                            String public_key,publickeyid,device_token;
+
+                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+
+                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
-                        fragment_number =1;
+                            email = sharedPreferences.getString(EMAIL,null);
+                            name = sharedPreferences.getString(NAME,null);
+                            photourl = sharedPreferences.getString(PHOTO_URL,null);
+                            activeImage = sharedPreferences.getString(ACTIVE_PHOTO, null);
+                            public_key = sharedPreferences.getString(PUBLIC_KEY,null);
+                            publickeyid = sharedPreferences.getString(PUBLIC_KEY_ID,null);
+                            device_token = sharedPreferences.getString(DEVICE_TOKEN,null);
 
-                        registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
 
-                        registerUsernameEntryFragment.setUserData(email, name, photourl, activeImage, MainActivity.this, databaseReference, device_token, public_key, publickeyid);
+                            registerUsernameEntryFragment.setImageSelectionCropListener(MainActivity.this);
 
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                                .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+                            registerUsernameEntryFragment.setUserData(email, name, photourl, activeImage, MainActivity.this, databaseReference, device_token, public_key, publickeyid);
+
+                            getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                    .replace(R.id.framelayout, registerUsernameEntryFragment).commit();
+
+                            fragment_number = 2;
+                        }
                         // get_started.setVisibility(View.VISIBLE);
 
 
@@ -1017,125 +1028,122 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 }
             });*/
 
-            Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
-                    + R.raw.hiee_splash);
+            if (fragment_number == 0) {
+
+
+                Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+                        + R.raw.hiee_splash);
         /*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
                 + R.raw.high_image_splash_alt);*/
 
-            // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
-            video_view.setVideoURI(video);
+                // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
+                video_view.setVideoURI(video);
 
-            video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
+                video_view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mp) {
 
-                    mediaPlayer = mp;
-                    mediaPlayer.setVolume(0, 0);
-                    mediaPlayer.start();
-
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            // progressBar.setAlpha(0.25f);
-
-                            // startSplash();
-
-                            //  get_started.setText("Continue with profile setup");
-                            // animateArrow();
+                        mediaPlayer = mp;
+                        mediaPlayer.setVolume(0, 0);
+                        mediaPlayer.start();
 
 
-                            startSplash();
-                            try {
-                                mediaPlayer.pause();
-                            } catch (Exception e) {
-                                startActivity(new Intent(MainActivity.this, MainActivity.class));
-                                finish();
-                            }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                // progressBar.setAlpha(0.25f);
+
+                                // startSplash();
+
+                                //  get_started.setText("Continue with profile setup");
+                                // animateArrow();
 
 
-                            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                            Boolean featuresShown = sharedPreferences.getBoolean(FEATURES_SHOWN, false);
-                            if (!featuresShown) {
-                                Display display = getWindowManager().getDefaultDisplay();
-                                Point size = new Point();
-                                display.getSize(size);
-                                displayHeight = size.y;
+                                startSplash();
+                                try {
+                                    mediaPlayer.pause();
+                                } catch (Exception e) {
+                                /*startActivity(new Intent(MainActivity.this, MainActivity.class));
+                                finish();*/
 
-                                getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-                                highlights_layout.setAlpha(0.0f);
-                                highlights_layout.setVisibility(View.VISIBLE);
-
-                                //highlights_layout.setTranslationY(displayHeight);
-
-
-                                //highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
-                                highlights_layout.animate().alpha(1.0f).setDuration(1000);
-
-                                new Handler().postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-
-                                        greet_text.animateText("Why Hieeway?");
-                                        greet_text.setCharacterDelay(75);
-                                        greet_text.setTextSize(32);
-                                        greet_text.animate();
-
-
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-
-
-                                                view_flipper.animate().alpha(1.0f).setDuration(500);
-
-
-                                                new Handler().postDelayed(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-
-                                                        viewflip_controls.setVisibility(View.VISIBLE);
-
-                                                    }
-                                                }, 500);
-
-                                            }
-                                        }, 2000);
-                                    }
-                                }, 1500);
-                            } else {
-
-                                if (fragment_number == 0) {
-                                    get_started.setVisibility(View.VISIBLE);
-                                    terms_policy_txt.setVisibility(View.VISIBLE);
                                 }
-                                why_hieeway_btn.setVisibility(View.VISIBLE);
 
+
+                                SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                                Boolean featuresShown = sharedPreferences.getBoolean(FEATURES_SHOWN, false);
+                                if (!featuresShown) {
+                                    Display display = getWindowManager().getDefaultDisplay();
+                                    Point size = new Point();
+                                    display.getSize(size);
+                                    displayHeight = size.y;
+
+                                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                                    highlights_layout.setAlpha(0.0f);
+                                    highlights_layout.setVisibility(View.VISIBLE);
+
+                                    //highlights_layout.setTranslationY(displayHeight);
+
+
+                                    //highlights_layout.animate().translationYBy(-displayHeight).setDuration(1000);
+                                    highlights_layout.animate().alpha(1.0f).setDuration(1000);
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+
+                                            greet_text.animateText("Why Hieeway?");
+                                            greet_text.setCharacterDelay(75);
+                                            greet_text.setTextSize(32);
+                                            greet_text.animate();
+
+
+                                            new Handler().postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+
+
+                                                    view_flipper.animate().alpha(1.0f).setDuration(500);
+
+
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+
+                                                            viewflip_controls.setVisibility(View.VISIBLE);
+
+                                                        }
+                                                    }, 500);
+
+                                                }
+                                            }, 2000);
+                                        }
+                                    }, 1500);
+                                } else {
+
+                                    if (fragment_number == 0) {
+                                        get_started.setVisibility(View.VISIBLE);
+                                        terms_policy_txt.setVisibility(View.VISIBLE);
+                                        highlights_layout.setVisibility(View.GONE);
+                                    }
+                                    why_hieeway_btn.setVisibility(View.VISIBLE);
+
+                                }
+
+
+                                //stopPosition = view.getCurrentPosition();
                             }
+                        }, 1800);
+
+                        splash_layout.setVisibility(View.VISIBLE);
+                        startSplash();
 
 
-
-
-
-
-
-
-
-
-
-                            //stopPosition = view.getCurrentPosition();
-                        }
-                    }, 1800);
-
-                    splash_layout.setVisibility(View.VISIBLE);
-                    startSplash();
-
-
-                }
-            });
+                    }
+                });
+            }
         }
 
 
@@ -1289,7 +1297,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         final Uri resultUri = UCrop.getOutput(data);
         if(resultUri != null)
         {
-            registerUsernameEntryFragment.setImageUri(resultUri);
+            registerUsernameEntryFragment.setImageUri(resultUri, active);
             //Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
 
             if(uploadTask!=null&&uploadTask.isInProgress())
@@ -1500,8 +1508,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         this.activeImage = activeImage;
 
 
-        if (activeImage.equals("default"))
-            activeImage = photourl;
+        /*if (activeImage.equals("default"))
+            activeImage = photourl;*/
 
         HashMap<String, Object> registerMap = new HashMap<>();
         registerMap.put("email", email);
@@ -1534,7 +1542,12 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 /*startActivity(new Intent(MainActivity.this,NavButtonTest.class));
                 finish();*/
 
-                animateArrow();
+                // animateArrow();`
+                View view = getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                         .replace(R.id.framelayout, registerPhoneNumberFragment).commit();
@@ -1625,6 +1638,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                             editor = sharedPreferences.edit();
                             editor.putString(ACTIVE_PHOTO, user.getActivePhoto());
                             editor.apply();
+
+                            //Toast.makeText(MainActivity.this,"Active pic Uri saved again "+user.getActivePhoto(),Toast.LENGTH_LONG).show();
                         }
 
 
@@ -1738,7 +1753,10 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         progressDialog.setMessage("Uploading photo");
         progressDialog.show();*/
 
-        registerUsernameEntryFragment.setProgressVisibility(true);
+        if (!active)
+            registerUsernameEntryFragment.setProgressVisibility(true);
+        else
+            registerUsernameEntryFragment.setActiveImageProgress(View.VISIBLE);
 
         if(imageUri!=null)
         {
@@ -1787,15 +1805,18 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                        // progressDialog.dismiss();
                         if (active) {
-                            registerUsernameEntryFragment.setProgressVisibility(false);
+
                             SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
                             SharedPreferences.Editor editor = sharedPreferences.edit();
 
                             editor.putString(ACTIVE_PHOTO, mUri);
                             editor.apply();
-
-
                             registerUsernameEntryFragment.setUploadActiveImage(mUri);
+                            registerUsernameEntryFragment.setActiveImageProgress(View.INVISIBLE);
+
+
+                            //Toast.makeText(MainActivity.this,"Active pic Uri saved "+mUri,Toast.LENGTH_LONG).show();
+
                         } else {
 
                             registerUsernameEntryFragment.setProgressVisibility(false);
@@ -1979,7 +2000,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
         if (!changeActivity)
             if (fragment_number == 0) {
-                highlights_layout.setVisibility(View.INVISIBLE);
+                highlights_layout.setVisibility(View.GONE);
                 get_started.setVisibility(View.VISIBLE);
                 terms_policy_txt.setVisibility(View.VISIBLE);
                 why_hieeway_btn.setVisibility(View.VISIBLE);
