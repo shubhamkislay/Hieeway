@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.hieeway.hieeway.Interface.PhoneNumberListener;
 import com.hieeway.hieeway.MainActivity;
 import com.hieeway.hieeway.PhoneAuthenticationActivity;
 import com.hieeway.hieeway.R;
@@ -28,10 +29,13 @@ public class RegisterPhoneNumberFragment extends Fragment {
     private final static int FETCH_NUMBER = 3;
     TextView phone_title, notes, feature_title, feautures_list1, feautures_list2;
     Button add_number_btn, skip_btn;
+    PhoneNumberListener phoneNumberListener;
 
 
-    public RegisterPhoneNumberFragment() {
+    public RegisterPhoneNumberFragment(PhoneNumberListener phoneNumberListener) {
         // Required empty public constructor
+
+        this.phoneNumberListener = phoneNumberListener;
     }
 
 
@@ -69,8 +73,10 @@ public class RegisterPhoneNumberFragment extends Fragment {
         skip_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), MainActivity.class));
-                getActivity().finish();
+                /*startActivity(new Intent(getActivity(), MainActivity.class));
+                getActivity().finish();*/
+
+                phoneNumberListener.changeToSpotifyConnectFragment();
             }
         });
 
@@ -84,8 +90,9 @@ public class RegisterPhoneNumberFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FETCH_NUMBER) {
             if (resultCode == RESULT_OK) {
-                startActivity(new Intent(getActivity(), MainActivity.class));
-                getActivity().finish();
+                /*startActivity(new Intent(getActivity(), MainActivity.class));
+                getActivity().finish();*/
+                phoneNumberListener.changeToSpotifyConnectFragment();
             } else {
                 phone_title.setText("Phone number not added");
             }
