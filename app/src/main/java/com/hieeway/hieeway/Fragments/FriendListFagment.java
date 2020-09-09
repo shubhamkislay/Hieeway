@@ -177,7 +177,7 @@ public class FriendListFagment extends Fragment {
                                     progress_menu_logo_two.setVisibility(View.INVISIBLE);
                                 } else {
                                     search_result_txt.setVisibility(View.VISIBLE);
-                                    search_result_txt.setText("No friends");
+                                    search_result_txt.setText("Add friends from the search tab");
                                     progressBar.setVisibility(View.INVISIBLE);
                                     progress_menu_logo.setVisibility(View.INVISIBLE);
                                     progressBarTwo.setVisibility(View.INVISIBLE);

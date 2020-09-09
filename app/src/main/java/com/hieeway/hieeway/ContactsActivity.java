@@ -471,7 +471,7 @@ public class ContactsActivity extends AppCompatActivity implements SyncServiceLi
 
 
                         } else {
-                            Toast.makeText(ContactsActivity.this, "Permxission not given!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ContactsActivity.this, "Permission not given!", Toast.LENGTH_SHORT).show();
                             finish();
                         }
 

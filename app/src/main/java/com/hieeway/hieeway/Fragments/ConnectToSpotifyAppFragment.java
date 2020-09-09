@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
+import com.hieeway.hieeway.Interface.ConnectToSpotifyListener;
 import com.hieeway.hieeway.Interface.PhoneNumberListener;
 import com.hieeway.hieeway.MainActivity;
 import com.hieeway.hieeway.R;
@@ -60,11 +61,13 @@ public class ConnectToSpotifyAppFragment extends Fragment {
     private String songId;
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
+    private ConnectToSpotifyListener connectToSpotifyListener;
 
 
-    public ConnectToSpotifyAppFragment(Activity activity) {
+    public ConnectToSpotifyAppFragment(Activity activity, ConnectToSpotifyListener connectToSpotifyListener) {
         // Required empty public constructor
         this.activity = activity;
+        this.connectToSpotifyListener = connectToSpotifyListener;
     }
 
     @Override
@@ -119,8 +122,10 @@ public class ConnectToSpotifyAppFragment extends Fragment {
                                         spotifyConnected = true;
 
 
-                                        startActivity(new Intent(activity, MainActivity.class));
-                                        activity.finish();
+                                        /*startActivity(new Intent(activity, MainActivity.class));
+                                        activity.finish();*/
+
+                                        connectToSpotifyListener.initilizeAccount();
 
 
                                     }
@@ -248,6 +253,13 @@ public class ConnectToSpotifyAppFragment extends Fragment {
                 } catch (Exception e) {
                     // Toast.makeText(getActivity(), "Cannot fetch package manager", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        skip_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectToSpotifyListener.initilizeAccount();
             }
         });
 

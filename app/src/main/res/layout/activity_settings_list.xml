@@ -505,7 +505,7 @@
                                         android:layout_marginRight="8dp"
                                         android:text="Logging out removes all your messages from your device, and temporarily deactivates your account"
                                         android:textColor="#ACACAC"
-                                        android:textSize="12sp" />
+                                        android:textSize="12dp" />
 
                                 </RelativeLayout>
 
@@ -609,7 +609,7 @@
                     android:layout_height="70dp"
                     android:background="#000"
                     android:gravity="center"
-                    android:text="Hieeway\n Designed and created in India."
+                    android:text="Hieeway\n Designed and created by Shubham Kislay."
                     android:textColor="#A8A8A8"
                     android:textSize="10sp" />
 

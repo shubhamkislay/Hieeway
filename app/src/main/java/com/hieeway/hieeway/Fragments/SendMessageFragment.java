@@ -3,7 +3,9 @@ package com.hieeway.hieeway.Fragments;
 
 import androidx.lifecycle.Observer;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -37,13 +39,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hieeway.hieeway.DeleteUserDialog;
 import com.hieeway.hieeway.Interface.CloseLiveMessagingLoading;
+import com.hieeway.hieeway.Interface.RechargeGemsListener;
+import com.hieeway.hieeway.RecchargeGemsDialog;
 import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.Adapters.SendMessageAdapter;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
 import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +61,7 @@ import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SendMessageFragment extends Fragment {
+public class SendMessageFragment extends Fragment implements RechargeGemsListener {
 
     public RecyclerView recyclerView;
     private String userIdChattingWith, currentUserPrivateKey, currentUserPublicKeyID;
@@ -75,13 +81,15 @@ public class SendMessageFragment extends Fragment {
     public ValueEventListener valueEventListener, receiverMsgListener;
     public TextView bottomTextRelativeLayout;
     public int gemCount = 0;
-    private Button recharge_gems;
+    TextView message_log_empty;
     private int sizeBeforeDeleting;
     private int sizeAfterDataChange;
     public boolean swiped=false;
     String usernameChattingWith;
     String photo;
     Boolean blinked = false;
+    RelativeLayout rechargeGems;
+    private Button revealRequests;
 
     private String messageID = "default";
     private CloseLiveMessagingLoading closeLiveMessagingLoading;
@@ -99,6 +107,7 @@ public class SendMessageFragment extends Fragment {
         recyclerView = view.findViewById(R.id.sent_messages_recycler_view);
 
         bottomTextRelativeLayout = view.findViewById(R.id.bottom_msg);
+        message_log_empty = view.findViewById(R.id.message_log_empty);
 
 
         userIdChattingWith = getArguments().getString("userIdChattingWith");
@@ -108,14 +117,14 @@ public class SendMessageFragment extends Fragment {
         usernameChattingWith = getArguments().getString("usernameChattingWith");
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
         photo = getArguments().getString("photo");
+        rechargeGems = view.findViewById(R.id.relativeLayout7);
 
         toggleButton = view.findViewById(R.id.toggle_msg_highlight);
 
         gemSize = view.findViewById(R.id.gems_size);
 
 
-
-        recharge_gems = view.findViewById(R.id.recharge_gems);
+        revealRequests = view.findViewById(R.id.recharge_gems);
 
 
         notificationIDHashMap.put(userIdChattingWith + "numberrevealrequestaccepted", 1);
@@ -152,6 +161,8 @@ public class SendMessageFragment extends Fragment {
 
 
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        message_log_empty.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
       //  observeLiveChatList(userIdChattingWith);
@@ -247,7 +258,7 @@ public class SendMessageFragment extends Fragment {
 
         // countGems(userIdChattingWith);
 
-        recharge_gems.setOnClickListener(new View.OnClickListener() {
+        revealRequests.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 /*                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
@@ -356,9 +367,107 @@ public class SendMessageFragment extends Fragment {
         // searchChats(userIdChattingWith);
 
 
+        rechargeGems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //rechargeReadGems();
+
+                RecchargeGemsDialog recchargeGemsDialog = new RecchargeGemsDialog(getActivity(), SendMessageFragment.this, userIdChattingWith);
+
+                recchargeGemsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                recchargeGemsDialog.setCancelable(false);
+                recchargeGemsDialog.setCanceledOnTouchOutside(false);
+                recchargeGemsDialog.show();
+            }
+        });
+
+
 
 
         return view;
+    }
+
+
+    private void rechargeReadGems() {
+
+        TaskCompletionSource<Boolean> booleanTaskCompletionSource = new TaskCompletionSource<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userIdChattingWith);
+
+
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
+                                try {
+
+                                    if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                        databaseReference.child(chatMessage.getMessageId()).removeValue();
+
+                                    }
+                                } catch (Exception e) {
+                                    //
+                                }
+
+
+                            }
+
+
+                            booleanTaskCompletionSource.setResult(true);
+
+
+                        } else {
+                            booleanTaskCompletionSource.setResult(true);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }).start();
+
+
+        Task<Boolean> booleanTask = booleanTaskCompletionSource.getTask();
+
+
+        booleanTask.addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if (task.isSuccessful()) {
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendMessagelist.clear();
+                            addListToRecyclerView(sendMessagelist);
+                            DatabaseReference updateGemsRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(userIdChattingWith);
+
+                            HashMap<String, Object> updateHash = new HashMap<>();
+
+                            updateHash.put("gemCount", 2);
+                            updateGemsRef.updateChildren(updateHash);
+                        }
+                    }, 500);
+
+
+                }
+
+            }
+        });
+
+
     }
 
     private void countGems(final String userIdChattingWith) {
@@ -543,6 +652,8 @@ public class SendMessageFragment extends Fragment {
                     if (task.isSuccessful()) {
                         sizeAfterDataChange = sendMessagelist.size();
 
+                        if (sizeAfterDataChange < 1)
+                            message_log_empty.setVisibility(View.VISIBLE);
 
                         try {
                             if (sizeBeforeDeleting <= sizeAfterDataChange) {
@@ -584,6 +695,11 @@ public class SendMessageFragment extends Fragment {
 
     private void addListToRecyclerView(List<ChatMessage> sendMessagelist) {
 
+        if (sendMessagelist.size() < 1)
+            message_log_empty.setVisibility(View.VISIBLE);
+
+        else
+            message_log_empty.setVisibility(View.GONE);
 
         //checking_layout.setVisibility(View.GONE);
         sendMessageAdapter = new SendMessageAdapter(getActivity(), getContext(), sendMessagelist, userIdChattingWith, readMessageList, gemCount, currentUserPrivateKey, currentUserPublicKeyID, messageID);
@@ -675,6 +791,8 @@ public class SendMessageFragment extends Fragment {
 
                     } else {
 
+                        message_log_empty.setVisibility(View.VISIBLE);
+
                     }
                     // listTaskCompletionSource.setResult(messageList);
 
@@ -733,6 +851,8 @@ public class SendMessageFragment extends Fragment {
     {
 
         sendMessagelist = refreshlist;
+
+
         addListToRecyclerView(refreshlist);
         try {
            // bottomTextRelativeLayout.setBackgroundColor(getActivity().getResources().getColor(R.color.colorBlack));
@@ -877,5 +997,27 @@ public class SendMessageFragment extends Fragment {
         }*/
 
 
+    }
+
+    @Override
+    public void rechargeGems() {
+
+        //rechargeReadGems();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sendMessagelist.clear();
+                addListToRecyclerView(sendMessagelist);
+                DatabaseReference updateGemsRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(userIdChattingWith);
+
+                HashMap<String, Object> updateHash = new HashMap<>();
+
+                updateHash.put("gemCount", 2);
+                updateGemsRef.updateChildren(updateHash);
+            }
+        }, 500);
     }
 }

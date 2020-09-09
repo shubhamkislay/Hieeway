@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.hieeway.hieeway.Adapters.PeopleAdapter;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
@@ -102,10 +103,23 @@ public class RequestTrackerActivity extends AppCompatActivity {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot snapshot1) {
                                         User user = snapshot1.getValue(User.class);
-                                        userList.add(user);
-                                        progressBar.setVisibility(View.GONE);
-                                        progressBarTwo.setVisibility(View.GONE);
-                                        peopleAdapter.notifyDataSetChanged();
+
+                                        try {
+                                            if (user.getUserid() != null) {
+                                                userList.add(user);
+                                                progressBar.setVisibility(View.GONE);
+                                                progressBarTwo.setVisibility(View.GONE);
+                                                peopleAdapter.notifyDataSetChanged();
+                                            }
+                                        } catch (Exception e) {
+                                            //
+
+                                            FirebaseDatabase.getInstance().getReference("FriendList")
+                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(friend.getFriendId())
+                                                    .removeValue();
+
+                                        }
 
                                     }
 

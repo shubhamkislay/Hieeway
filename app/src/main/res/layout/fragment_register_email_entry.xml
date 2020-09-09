@@ -10,7 +10,7 @@
     <Button
         android:id="@+id/email_login"
         android:gravity="center"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="top|right"

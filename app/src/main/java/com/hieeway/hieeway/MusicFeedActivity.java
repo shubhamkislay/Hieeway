@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +80,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     private TextView connection_issue_hint;
     private Button connection_error_btn;
     private Boolean connectionSuccessull = false;
+    RelativeLayout no_music_layout;
 
     @Override
     protected void onResume() {
@@ -121,6 +123,8 @@ public class MusicFeedActivity extends AppCompatActivity {
         connection_issue_hint = findViewById(R.id.connection_issue_hint);
 
         connection_error_btn = findViewById(R.id.connecting_error_btn);
+
+        no_music_layout = findViewById(R.id.no_music_layout);
 
 
         connection_error_btn.setOnClickListener(new View.OnClickListener() {
@@ -401,11 +405,6 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                             musicFeedAdapter.notifyDataSetChanged();
                                                                             loading_feed.setVisibility(View.GONE);
 
-                                                                            if (userList.size() > 0)
-                                                                                no_music_txt.setVisibility(View.GONE);
-
-                                                                            else
-                                                                                no_music_txt.setVisibility(View.VISIBLE);
 
                                                                         }
                                                                     }, 500);
@@ -414,6 +413,13 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                                         @Override
                                                                         public void run() {
                                                                             listPopulated = true;
+
+
+                                                                            if (userList.size() > 0)
+                                                                                no_music_layout.setVisibility(View.GONE);
+
+                                                                            else
+                                                                                no_music_layout.setVisibility(View.VISIBLE);
                                                                         }
                                                                     }, 1500);
 
@@ -428,7 +434,8 @@ public class MusicFeedActivity extends AppCompatActivity {
                                                         }
 
 
-
+                                                    } else {
+                                                        no_music_layout.setVisibility(View.VISIBLE);
                                                     }
 
 
@@ -531,6 +538,7 @@ public class MusicFeedActivity extends AppCompatActivity {
 
                         } else {
                             Toast.makeText(MusicFeedActivity.this, "You have no friends to looks for music update\nSearch and add friends from the search tab", Toast.LENGTH_SHORT).show();
+                            finish();
                         }
                     }
 

@@ -78,9 +78,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.hieeway.hieeway.Fragments.ConnectToSpotifyAppFragment;
+import com.hieeway.hieeway.Fragments.FinishingLoginFragment;
 import com.hieeway.hieeway.Fragments.RegisterEmailEntryFragment;
 import com.hieeway.hieeway.Fragments.RegisterPhoneNumberFragment;
 import com.hieeway.hieeway.Fragments.RegisterUsernameEntryFragment;
+import com.hieeway.hieeway.Interface.ConnectToSpotifyListener;
 import com.hieeway.hieeway.Interface.GoogleButtonListener;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
 import com.hieeway.hieeway.Interface.PhoneNumberListener;
@@ -96,7 +98,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener, ImageSelectionCropListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, PhoneNumberListener {
+public class MainActivity extends AppCompatActivity implements GoogleButtonListener, UsernameListener, ImageSelectionCropListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, PhoneNumberListener, ConnectToSpotifyListener {
     private static final int RC_HINT = 3;
 
     //Last commit stated as Profile Fragment is a major migration commit from appcompat to androidX
@@ -157,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     RegisterUsernameEntryFragment registerUsernameEntryFragment;
     RegisterPhoneNumberFragment registerPhoneNumberFragment;
     ConnectToSpotifyAppFragment connectToSpotifyAppFragment;
+    FinishingLoginFragment finishingLoginFragment;
     private GoogleSignInClient mGoogleSignInClient;
     Button change_frag_btn;
     int fragment_number=0;
@@ -208,7 +211,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
         registerPhoneNumberFragment = new RegisterPhoneNumberFragment(this);
-        connectToSpotifyAppFragment = new ConnectToSpotifyAppFragment(this);
+        connectToSpotifyAppFragment = new ConnectToSpotifyAppFragment(this, this);
+        finishingLoginFragment = new FinishingLoginFragment(this);
         policy_layout = findViewById(R.id.policy_layout);
         cancel_btn = findViewById(R.id.cancel_btn);
 
@@ -2040,5 +2044,14 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
                 .replace(R.id.framelayout, connectToSpotifyAppFragment).commit();
 
         fragment_number = 4;
+    }
+
+    @Override
+    public void initilizeAccount() {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                .replace(R.id.framelayout, finishingLoginFragment).commit();
+
+        fragment_number = 5;
     }
 }
