@@ -502,16 +502,22 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                            // viewHolder.progressBar.setVisibility(View.INVISIBLE);
 
+                            if (chatStamp.getPhoto().contains("https://firebasestorage")) {
 
-                            final Matrix matrix = viewHolder.user_photo.getImageMatrix();
-                            final float imageWidth = resource.getIntrinsicWidth();
-                            final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
-                            final float scaleRatio = screenWidth / imageWidth;
-                            // matrix.postScale(scaleRatio, scaleRatio);
-                            matrix.postScale(1, 1);
-                            viewHolder.user_photo.setImageMatrix(matrix);
-                            viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
-                            viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                                final Matrix matrix = viewHolder.user_photo.getImageMatrix();
+                                final float imageWidth = resource.getIntrinsicWidth();
+                                final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                                final float scaleRatio = screenWidth / imageWidth;
+                                // matrix.postScale(scaleRatio, scaleRatio);
+                                matrix.postScale(1, 1);
+                                viewHolder.user_photo.setImageMatrix(matrix);
+                                viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                                viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                            } else {
+                                viewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                                viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                            }
                             return false;
                         }
                             })
@@ -685,7 +691,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                                 Glide.with(mContext).load(task.getResult()).into(user_photo);
                             } else {
                                 user_photo.setImageResource(R.drawable.bottom_sheet_background_drawable);
-                                username.setText("User Unavaliable");
+                                // username.setText("User Unavaliable");
                             }
                         } else {
 

@@ -8,7 +8,7 @@
     <RelativeLayout
 
         android:background="@drawable/nav_btn_back_drawable"
-        android:paddingLeft="24dp"
+        android:paddingLeft="8dp"
         android:alpha="1.0"
         android:paddingRight="16dp"
         android:layout_margin="4dp"

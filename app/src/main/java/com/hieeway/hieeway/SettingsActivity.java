@@ -343,11 +343,11 @@ public class SettingsActivity extends AppCompatActivity implements DeleteUserLis
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        /*SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editorFeature = sharedPreferences.edit();
 
         editorFeature.putBoolean(FEATURES_SHOWN, true);
-        editorFeature.apply();
+        editorFeature.apply();*/
         // finish();
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

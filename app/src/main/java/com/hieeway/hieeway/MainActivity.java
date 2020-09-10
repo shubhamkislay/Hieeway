@@ -1082,6 +1082,9 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
                                 SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
                                 Boolean featuresShown = sharedPreferences.getBoolean(FEATURES_SHOWN, false);
+
+                                // Toast.makeText(MainActivity.this,"Featue show: "+featuresShown,Toast.LENGTH_LONG).show();
+
                                 if (!featuresShown) {
                                     Display display = getWindowManager().getDefaultDisplay();
                                     Point size = new Point();
