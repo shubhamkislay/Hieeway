@@ -132,11 +132,17 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     private DatabaseReference userFriendShipReference;
     private ValueEventListener friendShipValueListener;
     private List<Fragment> fragmentList;
+    public static final String USER_ID = "userid";
+    public String curr_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vertical_page);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        curr_id = sharedPreferences.getString(USER_ID, "");
 
         Intent intent = getIntent();
 
@@ -170,7 +176,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         size = new Point();
         display.getSize(size);
         displayHeight = size.y;
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
 
         privateKeyText = sharedPreferences.getString(PRIVATE_KEY, null);
         publicKeyText = sharedPreferences.getString(PUBLIC_KEY, null);
@@ -821,7 +827,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                         liveMessageParentFragment.setLiveMessageEventListener(VerticalPageActivityPerf.this, VerticalPageActivityPerf.this, photo, usernameChattingWith, userIdChattingWith, youtubeID, youtubeTitle, live);
                       */
                         FirebaseDatabase.getInstance().getReference("Video")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child(curr_id)
                                 .child(userIDCHATTINGWITH)
                                 .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
@@ -832,7 +838,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                                 hashMap.put("present", false);
                                 FirebaseDatabase.getInstance().getReference("ChatList")
                                         .child(userIDCHATTINGWITH)
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(curr_id)
                                         .updateChildren(hashMap);
                             }
                         });
@@ -896,7 +902,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
     private void checkFriendshipStatus() {
         userFriendShipReference = FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH)
                 .child("status");
 
@@ -930,7 +936,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         setOfflineHash.put("online", false);
 
         FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .onDisconnect()
                 .updateChildren(setOfflineHash);
     }
@@ -966,7 +972,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
             if (pageSelected == 2) {
 
                 FirebaseDatabase.getInstance().getReference("Video")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIDCHATTINGWITH)
                         .removeValue();
             }
@@ -1054,7 +1060,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                 hashMap.put("present", false);
                 FirebaseDatabase.getInstance().getReference("ChatList")
                         .child(userIDCHATTINGWITH)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .updateChildren(hashMap);
             } catch (Exception e) {
                 Toast.makeText(VerticalPageActivityPerf.this, "Exception " + e.toString(), Toast.LENGTH_SHORT).show();
@@ -1066,7 +1072,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         try {
             sendMessageFragment.removeListeners();
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child("online");
 
             databaseReference.setValue(false);
@@ -1151,12 +1157,12 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
             hashMap.put("present", true);
             FirebaseDatabase.getInstance().getReference("ChatList")
                     .child(userIDCHATTINGWITH)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .updateChildren(hashMap);
         }
         try {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child("online");
 
             databaseReference.setValue(true);

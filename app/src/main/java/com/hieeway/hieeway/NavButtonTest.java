@@ -151,7 +151,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public static String USER_PHOTO;
     public static final String PHOTO_URL = "photourl";
     public static final String ACTIVE_PHOTO = "activePhoto";
-    public static String USER_ID;
+    public static final String USER_ID = "userid";
+    public String CURR_USER_ID;
+    public String curr_id;
     private FragmentManager menuFragmentManager;
     private int changeAnimation = 0;
     private Boolean active;
@@ -161,6 +163,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_button_test);
+
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        curr_id = sharedPreferences.getString(USER_ID, "");
+
 
         splash_layout = findViewById(R.id.splash_layout);
         video_splash_layout = findViewById(R.id.video_splash_layout);
@@ -300,7 +308,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         setOfflineHash.put("online", false);
 
         FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .onDisconnect()
                 .updateChildren(setOfflineHash);
     }
@@ -712,7 +720,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public void getUserImageIntoNavButton()
     {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(curr_id);
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -743,7 +751,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                     phonenumber = user.getPhonenumber();
 
-                    USER_ID = user.getUserid();
+                    CURR_USER_ID = user.getUserid();
                     USER_NAME = user.getUsername();
                     USER_PHOTO = user.getPhoto();
 
@@ -1763,7 +1771,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         try {
 
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child("online");
 
             databaseReference.setValue(false);
@@ -1781,7 +1789,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         try {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child("online");
 
             databaseReference.setValue(true);

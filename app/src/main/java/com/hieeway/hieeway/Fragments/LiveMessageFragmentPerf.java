@@ -347,6 +347,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private static String STARTED = "started";
     private int nativeYoutubeSync = 0;
     private String notifyoutubeID = STARTED;
+    public String curr_id;
+
 
     /**
      *  Live View Model    checkForExistingRequest()
@@ -457,6 +459,11 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         this.userChattingWithId = userIdChattingWith;
         this.youtubeTitle = youtubeTitle;
         this.loadVideofromUrl = loadVideofromUrl;
+
+
+        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        curr_id = sharedPreferences.getString(USER_ID, "");
 
     }
 
@@ -773,7 +780,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
 
         FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH)
                 .onDisconnect()
                 .removeValue();
@@ -969,14 +976,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 youtubeVideoHash.put(VIDEOSEC_TAG, 0.0);
 
                 FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIDCHATTINGWITH)
                         .updateChildren(youtubeVideoHash);
 
 
                 FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
                         .child(userIDCHATTINGWITH)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .updateChildren(youtubeVideoHash);
 
 
@@ -1299,14 +1306,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                                             FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                                                     .child(userIDCHATTINGWITH)
-                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(curr_id)
                                                     .updateChildren(youtubeVideoHash).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     //  mYouTubePlayer.seekTo(0);
 
                                             /*FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                    .child(curr_id)
                                                     .child(userIDCHATTINGWITH)
                                                     .updateChildren(youtubeVideoHash);*/
                                                 }
@@ -1373,22 +1380,22 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             }
         };
         urlRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH)
                 .child(YOUTUBEID_TAG);
 
         presenceRef = FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH)
                 .child(USER_PRESENT_TAG);
 
 
         seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH);
 
         seekNativeRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH);
         //.child(VIDEOSEC_TAG);
 
@@ -1610,7 +1617,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                         FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
                                 .child(userIDCHATTINGWITH)
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child(curr_id)
                                 .updateChildren(diHash);
 
                     }
@@ -1624,10 +1631,10 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                     DatabaseReference updatePresenceRef = FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
                             .child(userIDCHATTINGWITH)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            .child(curr_id);
 
       /*  DatabaseReference updatePresenceRefUser = FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIDCHATTINGWITH);
 
 
@@ -1726,7 +1733,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
 
                     FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(curr_id)
                             .child(userChattingWithId).removeValue();
 
                     loadVideofromUrl = NO;
@@ -2377,14 +2384,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     youtubeVideoHash.put(VIDEOTITLE_TAG, youtubeTitle);
 
                     FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(curr_id)
                             .child(userIDCHATTINGWITH)
                             .updateChildren(youtubeVideoHash);
 
 
                     FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                             .child(userIDCHATTINGWITH)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(curr_id)
                             .updateChildren(youtubeVideoHash);
 
 
@@ -2448,7 +2455,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                             Toast.makeText(parentActivity, "Video Duration: " + nativeYoutubePlayer.getDurationMillis()
                                     + "\nCurrent Time: " + nativeYoutubePlayer.getCurrentTimeMillis(), Toast.LENGTH_SHORT).show();
                             FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(curr_id)
                                     .child(userChattingWithId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -2501,14 +2508,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                 FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                         .child(userIDCHATTINGWITH)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .updateChildren(youtubeVideoHash);
                 //   }
 
                 localUserChanged = true;
 
                 /*FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIDCHATTINGWITH)
                         .updateChildren(youtubeVideoHash);*/
 
@@ -2855,7 +2862,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                      liveMessageHash.put(MESSAGE_LIVE_TAG,encryptedString);
                      FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
                              .child(userChattingWithId)
-                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).updateChildren(liveMessageHash);*/
+                             .child(curr_id).updateChildren(liveMessageHash);*/
 
                     stringTaskCompletionSource.setResult(encryptedString);
                 } catch (Exception e) {
@@ -3418,18 +3425,18 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 public void run() {
 
                     databaseReferenceUser = FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(curr_id)
                             .child(userIDCHATTINGWITH);
 
                     databaseReferenceUserChattingWith = FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
                             .child(userIDCHATTINGWITH)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            .child(curr_id);
 
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put(MESSAGE_KEY_TAG, EMPTY_STRING);
                     hashMap.put(MESSAGE_LIVE_TAG, EMPTY_STRING);
                     hashMap.put(iCONNECT_TAG, 0);
-                    hashMap.put(SENDER_ID_TAG, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    hashMap.put(SENDER_ID_TAG, curr_id);
                     hashMap.put(LOADED_VIDEO_TAG, loadVideofromUrl);
 
                     databaseReferenceUser.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -3553,12 +3560,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         /// leaveChannel();
 
         databaseReferenceUser = FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userChattingWithId);
 
         databaseReferenceUserChattingWith = FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
                 .child(userChattingWithId)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(curr_id);
 
         HashMap<String, Object> hashMap = new HashMap<>();
 
@@ -3588,12 +3595,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
 
             databaseReferenceUser = FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child(userChattingWithId);
 
             databaseReferenceUserChattingWith = FirebaseDatabase.getInstance().getReference(LIVE_MESSAGE)
                     .child(userChattingWithId)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    .child(curr_id);
 
             HashMap<String, Object> hashMap = new HashMap<>();
             String messageKey = databaseReferenceUser.push().getKey();
@@ -3601,7 +3608,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             hashMap.put(MESSAGE_KEY_TAG, messageKey);
             hashMap.put(MESSAGE_LIVE_TAG, EMPTY_STRING);
             hashMap.put(iCONNECT_TAG, 0);
-            // hashMap.put(SENDER_ID_TAG,FirebaseAuth.getInstance().getCurrentUser().getUid());
+            // hashMap.put(SENDER_ID_TAG,curr_id);
 
             databaseReferenceUserChattingWith.updateChildren(hashMap);
             databaseReferenceUser.updateChildren(hashMap);
@@ -4070,12 +4077,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             public void run() {
                 if (notifyoutubeID == null || notifyoutubeID.equals(STARTED) || notifyoutubeID.equals(defaultVideoID)) {
                     DatabaseReference senderChatCreateRef = FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(curr_id)
                             .child(userChattingWithId);
 
                     DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
                             .child(userChattingWithId)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            .child(curr_id);
 
                     Long tsLong = System.currentTimeMillis() / 1000;
                     final String ts = tsLong.toString();
@@ -4084,7 +4091,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
                     String userid, username, userphoto;
-                    userid = sharedPreferences.getString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    userid = sharedPreferences.getString(USER_ID, curr_id);
                     username = sharedPreferences.getString(USERNAME, EMPTY_STRING);
                     userphoto = sharedPreferences.getString(PHOTO_URL, defaultVideoID);
 
@@ -4123,7 +4130,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 } else {
                     DatabaseReference receiverChatCreateRef = FirebaseDatabase.getInstance().getReference(CHATLIST_TAG)
                             .child(userChattingWithId)
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            .child(curr_id);
 
                     HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
                     timeStampHashReceiver.put(USER_PRESENT_TAG, true);
@@ -4134,7 +4141,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 }
 
                 FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userChattingWithId)
                         .onDisconnect()
                         .removeValue();
@@ -4203,7 +4210,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         /*else
         {
             FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child(userIDCHATTINGWITH)
                     .removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
