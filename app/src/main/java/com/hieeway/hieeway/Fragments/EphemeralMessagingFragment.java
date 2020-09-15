@@ -293,7 +293,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
     private EphemeralMessageViewModel ephemeralMessageViewModel;
 
-    private SendMessageFragment sendMessageFragment;
+
     private Boolean isMessageRunning = false;
     private Window window;
     private Boolean threadPending;
@@ -337,11 +337,18 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
     private String activePhoto = "default";
     private boolean liveViewStarted = false;
     int i = 0;
+    public String curr_id;
 
+
+    public EphemeralMessagingFragment() {
+    }
 
     public EphemeralMessagingFragment(Activity parentActivity) {
         // Required empty public constructor
         this.parentActivity = parentActivity;
+        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        curr_id = sharedPreferences.getString(USER_ID, "");
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -402,7 +409,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
         button_exterior = view.findViewById(R.id.button_exterior);
 
-        sendMessageFragment = new SendMessageFragment();
+
 
         online_ring = view.findViewById(R.id.online_ring);
 
@@ -744,23 +751,22 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         photosNotification = view.findViewById(R.id.photo_notification);
 
         sendderUsersRef = FirebaseDatabase.getInstance().getReference("Messages")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIdChattingWith);
-
 
 
         receiverUsersRef = FirebaseDatabase.getInstance().getReference("Messages")
                 .child(userIdChattingWith)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(curr_id);
 
 
         senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIdChattingWith);
 
         receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(userIdChattingWith)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(curr_id);
 
 
 
@@ -1548,7 +1554,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
                                     FirebaseDatabase.getInstance().getReference("ChatList")
-                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                            .child(curr_id)
                                             .child(userIdChattingWith)
                                             .addValueEventListener(new ValueEventListener() {
                                                 @Override
@@ -1849,7 +1855,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
 
         /*DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(curr_id);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -2735,28 +2741,26 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         chatListItemCreationModel.setCurrentUserActivePhoto(currentUserActivePhoto);
                 chatListItemCreationModel.setCurrentUserName(currentUsername);
         chatListItemCreationModel.setUserChattingWith_active_photo(activePhoto);
-                chatListItemCreationModel.setUserChattingWith_photo(photo);
-                chatListItemCreationModel.setSenderChatCreateRef(senderChatCreateRef);
-                chatListItemCreationModel.setReceiverChatCreateRef(receiverChatCreateRef);
+        chatListItemCreationModel.setUserChattingWith_photo(photo);
+        chatListItemCreationModel.setSenderChatCreateRef(senderChatCreateRef);
+        chatListItemCreationModel.setReceiverChatCreateRef(receiverChatCreateRef);
 
 
-                SendMessageAsyncModel sendMessageAsyncModel = new SendMessageAsyncModel();
-                sendMessageAsyncModel.setChatMessageSenderCopy(chatMessageCompound.getChatMessageSenderCopy());
-                sendMessageAsyncModel.setChatMessageReceiverCopy(chatMessageCompound.getChatMessageReceiverCopy());
-                sendMessageAsyncModel.setSenderReference(sendderUsersRef);
-                sendMessageAsyncModel.setReceiverReference(receiverUsersRef);
-                sendMessageAsyncModel.setUserChattingWithId(userIdChattingWith);
-                sendMessageAsyncModel.setCurrentID(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                sendMessageAsyncModel.setChatListItemCreationModel(chatListItemCreationModel);
+        SendMessageAsyncModel sendMessageAsyncModel = new SendMessageAsyncModel();
+        sendMessageAsyncModel.setChatMessageSenderCopy(chatMessageCompound.getChatMessageSenderCopy());
+        sendMessageAsyncModel.setChatMessageReceiverCopy(chatMessageCompound.getChatMessageReceiverCopy());
+        sendMessageAsyncModel.setSenderReference(sendderUsersRef);
+        sendMessageAsyncModel.setReceiverReference(receiverUsersRef);
+        sendMessageAsyncModel.setUserChattingWithId(userIdChattingWith);
+        sendMessageAsyncModel.setCurrentID(curr_id);
+        sendMessageAsyncModel.setChatListItemCreationModel(chatListItemCreationModel);
 
-                SendMessageAsyncTask sendMessageAsyncTask = new SendMessageAsyncTask();
+        SendMessageAsyncTask sendMessageAsyncTask = new SendMessageAsyncTask();
 
-                sendMessageAsyncTask.execute(sendMessageAsyncModel);
-
-
+        sendMessageAsyncTask.execute(sendMessageAsyncModel);
 
 
-              //  lastMessageID = "none";
+        //  lastMessageID = "none";
 
 
                 /*ephemeralMessageViewModel.sendMessage(chatMessageNew);
@@ -3352,7 +3356,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
 
         timeStampHashReceiver.put("timeStamp", ts);
-        timeStampHashReceiver.put("id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        timeStampHashReceiver.put("id", curr_id);
         timeStampHashReceiver.put("username", currentUserName);
         timeStampHashReceiver.put("photo", currentUserPhoto);
         timeStampHashReceiver.put("otheruserstamp", tsLong);
@@ -3393,7 +3397,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                         messageList.add(chatMessage);
                                 } else
                                     photoMessageList.add(chatMessage);
-                            } else if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            } else if (chatMessage.getSenderId().equals(curr_id)) {
 
                                 try {
 
@@ -4645,7 +4649,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                    // updateUserPresence(false);
 /*                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(curr_id)
                             .child("online");
 
                     databaseReference.setValue(true);
@@ -4969,10 +4973,10 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
             DatabaseReference reportReceiverReference = FirebaseDatabase.getInstance().getReference("Reports")
                     .child(userIdChattingWith)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    .child(curr_id);
 
             DatabaseReference reportSenderReference = FirebaseDatabase.getInstance().getReference("Reports")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child(userIdChattingWith);
 
             reportReceiverReference.child(messageKey).updateChildren(sendMessageHash);

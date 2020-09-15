@@ -258,10 +258,7 @@ public class BitmapUtils {
             return thumb;
 
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

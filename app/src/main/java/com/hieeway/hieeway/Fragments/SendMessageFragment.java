@@ -2,7 +2,10 @@ package com.hieeway.hieeway.Fragments;
 
 
 import androidx.lifecycle.Observer;
+
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
@@ -55,6 +58,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 
 
@@ -84,19 +88,27 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
     TextView message_log_empty;
     private int sizeBeforeDeleting;
     private int sizeAfterDataChange;
-    public boolean swiped=false;
+    public static final String USER_ID = "userid";
     String usernameChattingWith;
     String photo;
     Boolean blinked = false;
     RelativeLayout rechargeGems;
     private Button revealRequests;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public boolean swiped = false;
+    public String curr_id;
 
     private String messageID = "default";
     private CloseLiveMessagingLoading closeLiveMessagingLoading;
     private String activePhoto;
+    private Activity parentActivity;
 
-    public SendMessageFragment() {
+    public SendMessageFragment(Activity parentActivity) {
         // Required empty public constructor
+        this.parentActivity = parentActivity;
+        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        curr_id = sharedPreferences.getString(USER_ID, "");
     }
 
     @Override
@@ -266,7 +278,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
             @Override
             public void onClick(View v) {
 /*                final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIdChattingWith);
 
 
@@ -281,7 +293,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                                 ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
                                 try {
 
-                                    if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    if (chatMessage.getSenderId().equals(curr_id)) {
                                         databaseReference.child(chatMessage.getMessageId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
@@ -302,7 +314,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                             }
 
                             final DatabaseReference updateGemsRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(curr_id)
                                     .child(userIdChattingWith);
 
                             HashMap<String,Object> updateHash = new HashMap<>();
@@ -331,7 +343,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
 
 
                 DatabaseReference updateGemsRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIdChattingWith);
 
                 HashMap<String,Object> updateHash = new HashMap<>();
@@ -400,7 +412,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
             @Override
             public void run() {
                 final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIdChattingWith);
 
 
@@ -413,7 +425,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                                 ChatMessage chatMessage = snapshot.getValue(ChatMessage.class);
                                 try {
 
-                                    if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    if (chatMessage.getSenderId().equals(curr_id)) {
                                         databaseReference.child(chatMessage.getMessageId()).removeValue();
 
                                     }
@@ -456,7 +468,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                             sendMessagelist.clear();
                             addListToRecyclerView(sendMessagelist);
                             DatabaseReference updateGemsRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(curr_id)
                                     .child(userIdChattingWith);
 
                             HashMap<String, Object> updateHash = new HashMap<>();
@@ -478,7 +490,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
     private void countGems(final String userIdChattingWith) {
 
         DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIdChattingWith);
 
 
@@ -518,17 +530,17 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
     public void deleteMessage(final ChatMessage chatMessage, final Boolean deleteForAll) {
 
         DatabaseReference deleteMessageSenderRef = FirebaseDatabase.getInstance().getReference("Messages")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIdChattingWith)
                 .child(chatMessage.getMessageId());
 
         DatabaseReference reportReceiverReference = FirebaseDatabase.getInstance().getReference("Reports")
                 .child(userIdChattingWith)
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(chatMessage.getMessageId());
 
         DatabaseReference reportSenderReference = FirebaseDatabase.getInstance().getReference("Reports")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(curr_id)
                 .child(userIdChattingWith)
                 .child(chatMessage.getMessageId());
 
@@ -574,7 +586,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
         if (deleteForAll) {
             final DatabaseReference deleteMessageReceiverRef = FirebaseDatabase.getInstance().getReference("Messages")
                     .child(userIdChattingWith)
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child(chatMessage.getMessageId());
 
             deleteMessageReceiverRef.addValueEventListener(new ValueEventListener() {
@@ -617,7 +629,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                         sendingMessageList.clear();
                         for (ChatMessage chatMessage : messageList) {
 
-                            if (chatMessage.getSenderId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            if (chatMessage.getSenderId().equals(curr_id)) {
 
                                 if (currentUserPublicKeyID.equals(chatMessage.getPublicKeyID())) {
                                     sendMessagelist.add(chatMessage);
@@ -751,7 +763,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
 
             this.userIdChattingWith = userIdChattingWith;
             databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child(curr_id)
                     .child(userIdChattingWith);
 
 
@@ -893,7 +905,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                                                     if (chatMessage.getSentStatus().equals("sending")) {
                                                         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                                                                 .child("Messages")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                                .child(curr_id)
                                                                 .child(userIdChattingWith)
                                                                 .child(chatMessage.getMessageId());
                                                         HashMap<String, Object> hashMap = new HashMap<>();
@@ -1015,7 +1027,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
                 sendMessagelist.clear();
                 addListToRecyclerView(sendMessagelist);
                 DatabaseReference updateGemsRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child(curr_id)
                         .child(userIdChattingWith);
 
                 HashMap<String, Object> updateHash = new HashMap<>();

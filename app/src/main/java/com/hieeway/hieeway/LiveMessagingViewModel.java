@@ -221,9 +221,13 @@ public class LiveMessagingViewModel extends ViewModel {
                 if(dataSnapshot.exists()) {
 
 
-                    LiveMessage readMessage = dataSnapshot.getValue(LiveMessage.class);
-                    liveMessage.delete(0, liveMessage.length());
-                    liveMessage.append(readMessage.getMessageLive());
+                    try {
+                        LiveMessage readMessage = dataSnapshot.getValue(LiveMessage.class);
+                        liveMessage.delete(0, liveMessage.length());
+                        liveMessage.append(readMessage != null ? readMessage.getMessageLive() : null);
+                    } catch (Exception e) {
+                        //
+                    }
 
 
                     setValue(liveMessage);

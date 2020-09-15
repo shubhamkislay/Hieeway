@@ -1,6 +1,7 @@
 package com.hieeway.hieeway.Fragments;
 
 
+import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -35,9 +36,11 @@ public class SendMessageParentFragment extends Fragment implements CloseLiveMess
     private FragmentManager menuFragmentManager;
     private RelativeLayout checking_layout;
     private TextView checking_txt;
+    private Activity parentActivity;
 
-    public SendMessageParentFragment() {
+    public SendMessageParentFragment(Activity parentActivity) {
         // Required empty public constructor
+        this.parentActivity = parentActivity;
     }
 
 
@@ -100,7 +103,7 @@ public class SendMessageParentFragment extends Fragment implements CloseLiveMess
             //bundleSendMessage.putString("userIdChattingWith", userIdChattingWith);
             bundleSendMessage.putString("photo", photo);
 
-            sendMessageFragment = new SendMessageFragment();
+            sendMessageFragment = new SendMessageFragment(parentActivity);
             sendMessageFragment.setMessageHighlightListener(activity);
             sendMessageFragment.setCloseLiveMessagingLoadingListener(this);
             sendMessageFragment.setArguments(bundleSendMessage);

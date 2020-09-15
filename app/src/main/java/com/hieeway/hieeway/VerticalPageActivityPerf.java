@@ -504,7 +504,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         sendMessageFragment.setArguments(bundleSendMessage);*/
 
 
-        SendMessageParentFragment sendMessageParentFragment = new SendMessageParentFragment();
+        SendMessageParentFragment sendMessageParentFragment = new SendMessageParentFragment(VerticalPageActivityPerf.this);
         sendMessageParentFragment.setParentActivity(this);
         sendMessageParentFragment.setArguments(bundleSendMessage);
         sendMessageParentFragment.setUserId(intent.getStringExtra("userid"));
