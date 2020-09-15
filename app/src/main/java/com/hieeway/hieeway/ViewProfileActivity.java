@@ -60,6 +60,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String SPOTIFY_CONNECT = "spotifyconnect";
 
+
     public static final String USERNAME = "username";
     ImageView profile_pic_background, center_dp;
     TextView username, name, feeling_icon, feeling_txt, bio_txt, emoji_icon;
@@ -99,6 +100,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private RelativeLayout connect_spotify_layout;
     private TextView connect_spotify_text;
     private String currentUserPhoto;
+    private String activePhoto;
     private Boolean spotifyconnect;
     private boolean subscribed = true;
 
@@ -170,6 +172,9 @@ public class ViewProfileActivity extends AppCompatActivity {
         userId = intent.getStringExtra("userId");
         currentUsername = intent.getStringExtra("currentUsername");
 
+
+        activePhoto = intent.getStringExtra("activePhoto");
+
         currentUserPhoto = intent.getStringExtra("currentUserPhoto");
 
         usernameText = intent.getStringExtra("username");
@@ -195,11 +200,12 @@ public class ViewProfileActivity extends AppCompatActivity {
         start_chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ViewProfileActivity.this, VerticalPageActivity.class);
+                Intent intent = new Intent(ViewProfileActivity.this, VerticalPageActivityPerf.class);
                 intent.putExtra("username", usernameText);
                 intent.putExtra("userid", userId);
                 intent.putExtra("photo", photourl);
                 intent.putExtra("live", "no");
+                intent.putExtra("activePhoto", activePhoto);
                 //   intent.putExtra("otherUserPublicKey",chatStamp.getPublicKey());
 
                 startActivity(intent);

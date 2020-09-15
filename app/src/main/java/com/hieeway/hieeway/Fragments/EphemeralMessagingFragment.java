@@ -154,9 +154,9 @@ import javax.crypto.Cipher;
 import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
-import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_ACTIVEPHOTO;
-import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERNAME;
-import static com.hieeway.hieeway.VerticalPageActivity.CURRENT_USERPHOTO;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.CURRENT_ACTIVEPHOTO;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.CURRENT_USERNAME;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.CURRENT_USERPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
 import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
 

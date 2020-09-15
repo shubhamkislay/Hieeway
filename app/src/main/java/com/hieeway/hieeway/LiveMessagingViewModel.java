@@ -58,7 +58,7 @@ public class LiveMessagingViewModel extends ViewModel {
 
     List<ChatMessage> messageList = new ArrayList();
 
-    String liveMessage;
+    private StringBuffer liveMessage = new StringBuffer();
 
 
 
@@ -177,23 +177,12 @@ public class LiveMessagingViewModel extends ViewModel {
     }
 
 
+    public LiveData<StringBuffer> getLiveMessage() {
+        return messageLiveData;
+    }
 
 
-
-
-
-
-
-
-
-
-
-    public LiveData<String> getLiveMessage(){ return messageLiveData;}
-
-
-
-    public class MessageLiveData extends LiveData<String>
-    {
+    public class MessageLiveData extends LiveData<StringBuffer> {
 
         private final Query query;
         private ChatMessageAdapter chatMessageAdapter;
@@ -233,7 +222,9 @@ public class LiveMessagingViewModel extends ViewModel {
 
 
                     LiveMessage readMessage = dataSnapshot.getValue(LiveMessage.class);
-                    liveMessage = readMessage.getMessageLive();
+                    liveMessage.delete(0, liveMessage.length());
+                    liveMessage.append(readMessage.getMessageLive());
+
 
                     setValue(liveMessage);
                 }
@@ -265,37 +256,7 @@ public class LiveMessagingViewModel extends ViewModel {
 
     }
 
-    public void createChatListItem(final String usernameUserChattingWith,final String userChattingWith_photo,final String currentUserName,final String currentUserPhoto)
-    {
 
-        Long tsLong = System.currentTimeMillis()/1000;
-        final String ts = tsLong.toString();
-
-
-        final HashMap<String, Object> timeStampHash = new HashMap<>();
-        timeStampHash.put("timeStamp", ts);
-        timeStampHash.put("id", userChattingWithId);
-        timeStampHash.put("username", usernameUserChattingWith);
-        timeStampHash.put("photo", userChattingWith_photo);
-        timeStampHash.put("seen", "notseen");
-        timeStampHash.put("chatPending", false);
-        senderChatCreateRef.updateChildren(timeStampHash);
-
-        HashMap<String,Object> timeStampHashReceiver = new HashMap<>();
-
-        timeStampHashReceiver.put("timeStamp", ts);
-        timeStampHashReceiver.put("id", currentUser);
-        timeStampHashReceiver.put("username", currentUserName);
-        timeStampHashReceiver.put("photo", currentUserPhoto);
-        timeStampHashReceiver.put("seen", "notseen");
-        timeStampHashReceiver.put("chatPending",true);
-        receiverChatCreateRef.updateChildren(timeStampHashReceiver);
-
-
-
-
-
-    }
 
 
 

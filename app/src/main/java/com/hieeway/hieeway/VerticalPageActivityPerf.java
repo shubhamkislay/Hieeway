@@ -77,6 +77,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     public static final String PRIVATE_KEY = "privateKey";
     public static final String PUBLIC_KEY = "publicKey";
     public static final String PUBLIC_KEY_ID = "publicKeyID";
+    public static String CURRENT_ACTIVEPHOTO = "";
     final static String HAPPY = "happy";
     final static String BORED = "bored";
     final static String EXCITED = "excited";

@@ -38,7 +38,7 @@ import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.VerticalPageActivity;
+import com.hieeway.hieeway.VerticalPageActivityPerf;
 import com.hieeway.hieeway.ViewProfileActivity;
 
 import java.util.HashMap;
@@ -173,7 +173,7 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
             public void onClick(View v) {
 
                 if (viewHolder.friendsBtn.getVisibility() == View.VISIBLE) {
-                    Intent intent = new Intent(mContext, VerticalPageActivity.class);
+                    Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
                     intent.putExtra("username", user.getUsername());
                     intent.putExtra("userid", user.getUserid());
                     intent.putExtra("photo", user.getPhoto());
