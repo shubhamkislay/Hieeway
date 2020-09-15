@@ -24,7 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.VerticalPageActivity;
+
+import com.hieeway.hieeway.VerticalPageActivityPerf;
 
 import java.security.Key;
 import java.security.KeyFactory;
@@ -54,10 +55,10 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
     Button acceptBtn, rejectBtn;
     private String username;
     private String photo;
+    private String activePhoto;
 
 
-    public RevealRequestsAdapter(List<ChatMessage> chatMessageList, Context context, String currentUserPrivateKey, String currentUserPublicKeyID, String userIdChattingWith, String username, String photo)
-    {
+    public RevealRequestsAdapter(List<ChatMessage> chatMessageList, Context context, String currentUserPrivateKey, String currentUserPublicKeyID, String userIdChattingWith, String username, String photo, String activePhoto) {
         this.chatMessageList = chatMessageList;
         this.context = context;
         this.currentUserPrivateKey = currentUserPrivateKey;
@@ -65,6 +66,7 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
         this.userIdChattingWith = userIdChattingWith;
         this.username = username;
         this.photo = photo;
+        this.activePhoto = activePhoto;
     }
 
     @NonNull
@@ -237,12 +239,13 @@ public class RevealRequestsAdapter extends RecyclerView.Adapter<RevealRequestsAd
         messageBody.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, VerticalPageActivity.class);
+                Intent intent = new Intent(context, VerticalPageActivityPerf.class);
                 intent.putExtra("revealmessage", "yes");
                 intent.putExtra("messageID", chatMessage.getMessageId());
                 intent.putExtra("userid", userIdChattingWith);
                 intent.putExtra("username", username);
                 intent.putExtra("photo", photo);
+                intent.putExtra("activePhoto", activePhoto);
                 intent.putExtra("live", "no");
 
                 context.startActivity(intent);

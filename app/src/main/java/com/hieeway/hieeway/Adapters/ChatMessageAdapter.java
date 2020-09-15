@@ -85,7 +85,7 @@ import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.RevealReplyActivity;
 import com.hieeway.hieeway.SpotifyActivity;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
-import com.hieeway.hieeway.VerticalPageActivity;
+
 import com.hieeway.hieeway.VerticalPageActivityPerf;
 import com.hieeway.hieeway.WebViewActivity;
 

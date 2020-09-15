@@ -40,7 +40,6 @@ import com.hieeway.hieeway.Interface.LiveMessageEventListener;
 import com.hieeway.hieeway.Interface.MessageHighlightListener;
 import com.hieeway.hieeway.Interface.YoutubeBottomFragmentStateListener;
 import com.hieeway.hieeway.Model.ChatMessage;
-import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 
 import java.util.ArrayList;

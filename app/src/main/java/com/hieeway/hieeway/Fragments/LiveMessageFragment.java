@@ -1921,6 +1921,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         };
 
+/*
 
         LiveMessagingViewModelFactory liveMessagingViewModelFactory = new LiveMessagingViewModelFactory(userIDCHATTINGWITH);
         liveMessagingViewModel = ViewModelProviders.of(this, liveMessagingViewModelFactory).get(LiveMessagingViewModel.class);
@@ -1937,7 +1938,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                         confirmShowOtherUserTypingAnimation = false;
 
 
-                        /*receiving = true;
+                        */
+/*receiving = true;
 
 
                         new Handler().postDelayed(new Runnable() {
@@ -1951,7 +1953,8 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                             }
                         }, 500);
 
-                        receiverTextView.setText(s);*/
+                        receiverTextView.setText(s);*//*
+
 
                     } else {
 
@@ -1969,6 +1972,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             }
         });
+*/
 
         /*receiverTextView.addTextChangedListener(new TextWatcher() {
             @Override

@@ -78,12 +78,8 @@ import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SettingsActivity;
 import com.hieeway.hieeway.SharedViewModel;
-import com.hieeway.hieeway.SlideButtonTestActivity;
 import com.hieeway.hieeway.UserPicViewModel;
-import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
-import com.hieeway.hieeway.VideoCallTestActivity;
-import com.hieeway.hieeway.WebViewActivity;
-import com.hieeway.hieeway.YoutubeTestActivity;
+
 
 import java.util.ArrayList;
 import java.util.Collections;

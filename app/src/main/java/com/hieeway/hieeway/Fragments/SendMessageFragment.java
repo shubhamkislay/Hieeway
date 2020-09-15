@@ -93,6 +93,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
 
     private String messageID = "default";
     private CloseLiveMessagingLoading closeLiveMessagingLoading;
+    private String activePhoto;
 
     public SendMessageFragment() {
         // Required empty public constructor
@@ -117,6 +118,9 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
         usernameChattingWith = getArguments().getString("usernameChattingWith");
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
         photo = getArguments().getString("photo");
+
+        activePhoto = getArguments().getString("activePhoto");
+
         rechargeGems = view.findViewById(R.id.relativeLayout7);
 
         toggleButton = view.findViewById(R.id.toggle_msg_highlight);
@@ -345,6 +349,7 @@ public class SendMessageFragment extends Fragment implements RechargeGemsListene
           intent.putExtra("currentUserPublicKeyID",currentUserPublicKeyID);
                 intent.putExtra("photo", photo);
                 intent.putExtra("username", usernameChattingWith);
+                intent.putExtra("activePhoto", activePhoto);
 
 
 

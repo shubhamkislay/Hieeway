@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:elevation="0dp"
     android:background="@color/backgroundColorTheme"
-    tools:context=".VerticalPageActivity">
+    tools:context=".VerticalPageActivityPerf">
 
     <com.jgabrielfreitas.core.BlurImageView
         android:id="@+id/profile_pic"

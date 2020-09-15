@@ -12,12 +12,12 @@ import android.widget.TextView;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.FeelingListener;
 
-import static com.hieeway.hieeway.VerticalPageActivity.ANGRY;
-import static com.hieeway.hieeway.VerticalPageActivity.BORED;
-import static com.hieeway.hieeway.VerticalPageActivity.CONFUSED;
-import static com.hieeway.hieeway.VerticalPageActivity.EXCITED;
-import static com.hieeway.hieeway.VerticalPageActivity.HAPPY;
-import static com.hieeway.hieeway.VerticalPageActivity.SAD;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.ANGRY;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.BORED;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.CONFUSED;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.EXCITED;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.HAPPY;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.SAD;
 
 
 public class FeelingDialog extends Dialog {

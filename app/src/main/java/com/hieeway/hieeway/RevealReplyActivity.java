@@ -35,6 +35,7 @@ public class RevealReplyActivity extends AppCompatActivity {
     String currentUserPublicKeyID;
     String usernameChattingWith;
     String photo;
+    String activePhoto;
 
 
     @Override
@@ -50,6 +51,7 @@ public class RevealReplyActivity extends AppCompatActivity {
         currentUserPublicKeyID = getIntent().getStringExtra("currentUserPublicKeyID");
         usernameChattingWith = getIntent().getStringExtra("username");
         photo = getIntent().getStringExtra("photo");
+        activePhoto = getIntent().getStringExtra("activePhoto");
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
@@ -86,7 +88,7 @@ public class RevealReplyActivity extends AppCompatActivity {
 
                     }
                     if(chatMessageList.size()>=newChatList.size()) {
-                        revealRequestsAdapter = new RevealRequestsAdapter(chatMessageList, RevealReplyActivity.this, currentUserPrivateKey, currentUserPublicKeyID, userIdChattingWith, usernameChattingWith, photo);
+                        revealRequestsAdapter = new RevealRequestsAdapter(chatMessageList, RevealReplyActivity.this, currentUserPrivateKey, currentUserPublicKeyID, userIdChattingWith, usernameChattingWith, photo, activePhoto);
                         recyclerView.setAdapter(revealRequestsAdapter);
                         newChatList = chatMessageList;
                     }

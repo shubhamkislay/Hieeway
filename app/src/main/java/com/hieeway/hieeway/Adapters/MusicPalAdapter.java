@@ -43,7 +43,7 @@ import com.hieeway.hieeway.Model.Pal;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicPalService;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.VerticalPageActivity;
+
 
 import java.util.HashMap;
 import java.util.List;

@@ -126,7 +126,7 @@ import com.hieeway.hieeway.SendMediaService;
 import com.hieeway.hieeway.TypeWriter;
 import com.hieeway.hieeway.UserPicViewModel;
 import com.hieeway.hieeway.UserPicViewModelFactory;
-import com.hieeway.hieeway.VerticalPageActivity;
+
 import com.hieeway.hieeway.VideoPlayActivity;
 import com.hieeway.hieeway.ViewProfileActivity;
 
@@ -157,8 +157,7 @@ import static com.hieeway.hieeway.MyApplication.notificationIDHashMap;
 import static com.hieeway.hieeway.VerticalPageActivityPerf.CURRENT_ACTIVEPHOTO;
 import static com.hieeway.hieeway.VerticalPageActivityPerf.CURRENT_USERNAME;
 import static com.hieeway.hieeway.VerticalPageActivityPerf.CURRENT_USERPHOTO;
-import static com.hieeway.hieeway.VerticalPageActivity.userIDCHATTINGWITH;
-import static com.hieeway.hieeway.VerticalPageActivity.userNameChattingWith;
+
 
 /**
  * A simple {@link Fragment} subclass.

@@ -1042,6 +1042,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 service.putExtra("userid", remoteMessage.getData().get("userId"));
                 service.putExtra("photo", remoteMessage.getData().get("userPhoto"));
                 service.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
+                service.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
                 startService(service);
             }
 
@@ -1063,6 +1064,7 @@ public class MyMessagingService extends FirebaseMessagingService {
             intent.putExtra("photo", remoteMessage.getData().get("userPhoto"));
             intent.putExtra("live", remoteMessage.getData().get("live"));
             intent.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
+            intent.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
             PendingIntent pendingIntent;
             pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
@@ -1101,6 +1103,7 @@ public class MyMessagingService extends FirebaseMessagingService {
                 service.putExtra("userid", remoteMessage.getData().get("userId"));
                 service.putExtra("photo", remoteMessage.getData().get("userPhoto"));
                 service.putExtra("loadedVideo", remoteMessage.getData().get("loadedVideo"));
+                service.putExtra("activePhoto", remoteMessage.getData().get("activePhoto"));
                 startService(service);
             }
         }

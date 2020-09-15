@@ -48,6 +48,7 @@ public class LiveMessageNotificationService extends Service {
     private boolean stop = false;
     private boolean serviceStarted = false;
     private String loadedVideo = "no";
+    private String activePhoto;
 
     @Nullable
     @Override
@@ -73,6 +74,7 @@ public class LiveMessageNotificationService extends Service {
             startLiveActiveServiceIntent.putExtra("userid", intent.getStringExtra("userid"));
             startLiveActiveServiceIntent.putExtra("youtubeID", "default");
             startLiveActiveServiceIntent.putExtra("photo", intent.getStringExtra("photo"));
+            startLiveActiveServiceIntent.putExtra("activePhoto", intent.getStringExtra("activePhoto"));
 
             startService(startLiveActiveServiceIntent);
 
@@ -86,6 +88,7 @@ public class LiveMessageNotificationService extends Service {
             openIntent.putExtra("username", intent.getStringExtra("username"));
             openIntent.putExtra("userid", intent.getStringExtra("userid"));
             openIntent.putExtra("photo", intent.getStringExtra("photo"));
+            openIntent.putExtra("activePhoto", intent.getStringExtra("activePhoto"));
             openIntent.putExtra("live", "live");
 
             startActivity(openIntent);
@@ -99,12 +102,15 @@ public class LiveMessageNotificationService extends Service {
             userid = intent.getStringExtra("userid");
             photo = intent.getStringExtra("photo");
             loadedVideo = intent.getStringExtra("loadedVideo");
+            activePhoto = intent.getStringExtra("activePhoto");
+
 
             //loadedVideo
             stopSelfIntent = new Intent(LiveMessageNotificationService.this, LiveMessageNotificationService.class);
             stopSelfIntent.putExtra("username", username);
             stopSelfIntent.putExtra("userid", userid);
             stopSelfIntent.putExtra("photo", photo);
+            stopSelfIntent.putExtra("activePhoto", activePhoto);
 
             stopSelfIntent.setAction(ACTION_STOP_SERVICE);
             pIntentlogin = PendingIntent.getService(LiveMessageNotificationService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -130,6 +136,7 @@ public class LiveMessageNotificationService extends Service {
         openProfileIntent.putExtra("username", username);
         openProfileIntent.putExtra("userid", userid);
         openProfileIntent.putExtra("photo", photo);
+        openProfileIntent.putExtra("activePhoto", activePhoto);
 
         openProfileIntent.setAction(OPEN_PROFILE);
         openProfile = PendingIntent.getService(LiveMessageNotificationService.this, 0, openProfileIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -209,6 +216,7 @@ public class LiveMessageNotificationService extends Service {
                                 startLiveActiveServiceIntent.putExtra("youtubeID", "default");
                                 startLiveActiveServiceIntent.putExtra("photo", photo);
                                 startLiveActiveServiceIntent.putExtra("loadedVideo", "yes");
+                                startLiveActiveServiceIntent.putExtra("activePhoto", activePhoto);
 
                                 startService(startLiveActiveServiceIntent);
                             }
@@ -248,6 +256,8 @@ public class LiveMessageNotificationService extends Service {
                         startLiveActiveServiceIntent.putExtra("userid", userid);
                         startLiveActiveServiceIntent.putExtra("youtubeID", "default");
                         startLiveActiveServiceIntent.putExtra("photo", photo);
+                        startLiveActiveServiceIntent.putExtra("activePhoto", activePhoto);
+
 
                         startService(startLiveActiveServiceIntent);
                     }
