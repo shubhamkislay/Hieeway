@@ -15,10 +15,14 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -135,70 +139,88 @@ public class LiveMessageNotificationService extends Service {
 
         RemoteViews collapsedView = new RemoteViews(getPackageName(), R.layout.live_message_request_notification);
 
-        Bitmap imageBitmap = null;
+
+        TaskCompletionSource<Bitmap> taskCompletionSource = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Bitmap imageBitmap = null;
+                    imageBitmap = Glide.with(LiveMessageNotificationService.this)
+                            .asBitmap()
+                            .load(photo)
+                            .submit(512, 512)
+                            .get();
 
 
-        try {
-            imageBitmap = Glide.with(LiveMessageNotificationService.this)
-                    .asBitmap()
-                    .load(photo)
-                    .submit(512, 512)
-                    .get();
-
-            collapsedView.setImageViewBitmap(R.id.logo, imageBitmap);
+                    taskCompletionSource.setResult(imageBitmap);
 
 
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        collapsedView.setTextViewText(R.id.notification_message_collapsed, "Live Message Request");
-        collapsedView.setTextViewText(R.id.username, username + " wants to live chat");
-
-
-        collapsedView.setOnClickPendingIntent(R.id.ignore_live, pIntentlogin);
-        collapsedView.setOnClickPendingIntent(R.id.accept_live, openProfile);
-
-
-        Notification notification = new NotificationCompat.Builder(LiveMessageNotificationService.this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                .setCustomContentView(collapsedView)
-                .setCustomBigContentView(collapsedView)
-                .setAutoCancel(true)
-                /*.setContentTitle("Live Message Request")
-                .setContentText(username+" wants to live chat")
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
-                .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)*/
-                .build();
-
-        if (isWatching == null || !isWatching) {
-
-
-            if (loadedVideo.equals("no")) {
-                startForeground(notificationId, notification);
-                startRing();
-            } else {
-                if (!serviceStarted) {
-                    Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
-                    startLiveActiveServiceIntent.putExtra("username", username);
-                    startLiveActiveServiceIntent.putExtra("userid", userid);
-                    startLiveActiveServiceIntent.putExtra("youtubeID", "default");
-                    startLiveActiveServiceIntent.putExtra("photo", photo);
-                    startLiveActiveServiceIntent.putExtra("loadedVideo", "yes");
-
-                    startService(startLiveActiveServiceIntent);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                stopSelf();
+
             }
+        }).start();
+
+        Task<Bitmap> bitmapTask = taskCompletionSource.getTask();
+
+        bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+            @Override
+            public void onComplete(@NonNull Task<Bitmap> task) {
+
+                if (task.isSuccessful()) {
+                    collapsedView.setImageViewBitmap(R.id.logo, task.getResult());
+                    collapsedView.setTextViewText(R.id.notification_message_collapsed, "Live Message Request");
+                    collapsedView.setTextViewText(R.id.username, username + " wants to live chat");
 
 
-        }
+                    collapsedView.setOnClickPendingIntent(R.id.ignore_live, pIntentlogin);
+                    collapsedView.setOnClickPendingIntent(R.id.accept_live, openProfile);
 
+
+                    Notification notification = new NotificationCompat.Builder(LiveMessageNotificationService.this, CHANNEL_1_ID)
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            .setCustomContentView(collapsedView)
+                            .setCustomBigContentView(collapsedView)
+                            .setAutoCancel(true)
+                            /*.setContentTitle("Live Message Request")
+                            .setContentText(username+" wants to live chat")
+                            .setPriority(NotificationCompat.PRIORITY_MAX)
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
+                            .addAction(R.drawable.spotify_white_icon, "Open in Spotify", openSpotify)*/
+                            .build();
+
+                    if (isWatching == null || !isWatching) {
+
+
+                        if (loadedVideo.equals("no")) {
+                            startForeground(notificationId, notification);
+                            startRing();
+                        } else {
+                            if (!serviceStarted) {
+                                Intent startLiveActiveServiceIntent = new Intent(LiveMessageNotificationService.this, LiveMessageActiveService.class);
+                                startLiveActiveServiceIntent.putExtra("username", username);
+                                startLiveActiveServiceIntent.putExtra("userid", userid);
+                                startLiveActiveServiceIntent.putExtra("youtubeID", "default");
+                                startLiveActiveServiceIntent.putExtra("photo", photo);
+                                startLiveActiveServiceIntent.putExtra("loadedVideo", "yes");
+
+                                startService(startLiveActiveServiceIntent);
+                            }
+                            stopSelf();
+                        }
+
+
+                    }
+                }
+
+            }
+        });
 
 
     }
