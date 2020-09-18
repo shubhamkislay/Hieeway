@@ -251,26 +251,27 @@ public class SyncService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (phone.getCount() > 0) {
+                try {
+                    if (phone.getCount() > 0) {
 
-                    String number = "", name = "";
-                    while (phone.moveToNext()) {
-                        number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        number = number.replace(" ", "");
-                        number = number.replace("-", "");
-                        number = number.replace("(", "");
-                        number = number.replace(")", "");
+                        String number = "", name = "";
+                        while (phone.moveToNext()) {
+                            number = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            name = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                            number = number.replace(" ", "");
+                            number = number.replace("-", "");
+                            number = number.replace("(", "");
+                            number = number.replace(")", "");
 
-                        if (!String.valueOf(number.charAt(0)).equals("+")) {
-                            if (String.valueOf(number.charAt(0)).equals("0"))
-                                number = number.substring(1);
-                            number = getCountryIso() + number;
+                            if (!String.valueOf(number.charAt(0)).equals("+")) {
+                                if (String.valueOf(number.charAt(0)).equals("0"))
+                                    number = number.substring(1);
+                                number = getCountryIso() + number;
 
-                        }
+                            }
 
-                        Log.v("Contact", "name: " + name + " number: " + number);
-                        getUserDetails(number, name, phone.moveToNext());
+                            Log.v("Contact", "name: " + name + " number: " + number);
+                            getUserDetails(number, name, phone.moveToNext());
 
                                 /*if(!phone.moveToNext()) {
                                     new Handler().postDelayed(new Runnable() {
@@ -281,14 +282,17 @@ public class SyncService extends Service {
                                         }
                                     },5000);*/
 
-                        // }
+                            // }
 
+                        }
+                        getUserDetails(number, name, false);
+
+                    } else {
+                        CONTACT_SERVICE_RUNNUNG = false;
+                        stopSelf();
                     }
-                    getUserDetails(number, name, false);
-
-                } else {
-                    CONTACT_SERVICE_RUNNUNG = false;
-                    stopSelf();
+                } catch (Exception e) {
+                    //
                 }
 
             }

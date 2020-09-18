@@ -2,6 +2,7 @@ package com.hieeway.hieeway.Fragments;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -117,6 +118,10 @@ public class LiveMessageParentFragment extends Fragment implements CloseLiveMess
 
         liveMessageFragmentPerf.closeBottomSheet();
 
+    }
+
+    public void onParentFragmentActivityResult(int requestCode, int resultCode, Intent intent) {
+        liveMessageFragmentPerf.onFragmentActivityResult(requestCode, resultCode, intent);
     }
 
     public void showLiveMessageDialog(Activity activity, String live) {

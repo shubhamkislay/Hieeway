@@ -31,6 +31,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -93,11 +95,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.SpotifySearchAdapter;
 import com.hieeway.hieeway.CameraRequestDialog;
 import com.hieeway.hieeway.CustomUiController;
+import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.CameraPermissionListener;
 import com.hieeway.hieeway.Interface.CloseLiveMessagingLoading;
 import com.hieeway.hieeway.LiveMessageActiveService;
+import com.hieeway.hieeway.Model.SpotiySearchItem;
 import com.hieeway.hieeway.Model.YoutubeSync;
 import com.hieeway.hieeway.VerticalPageActivityPerf;
 import com.karumi.dexter.Dexter;
@@ -126,11 +131,20 @@ import com.hieeway.hieeway.Model.LiveMessage;
 import com.hieeway.hieeway.Model.VideoItem;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.YouTubeConfig;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -141,6 +155,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -175,6 +190,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     public static final String NAME = "name";
     public static final String USERNAME = "username";
     private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
+    public static final String SPOTIFY_TOKEN = "spotify_token";
     // public String userIdChattingWith;
     public String usernameChattingWith;
     public TextView message_live_with;
@@ -209,10 +225,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener, youtUrlEventListener, seekNativeValueEventListener;
-    ListView video_listView;
-    EditText search_video_edittext;
-    //YouTubePlayerView youtube_player_view;
-    Button search_video_btn;
+    private static final int REQUEST_CODE = 1338;
+    private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     RelativeLayout current_user_blinker, other_user_blinker;
     SlideToActView slideToActView;
     RelativeLayout complete_icon;
@@ -261,6 +275,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private String videoDuration;
     private boolean videoDurationReady = false;
     private ArrayAdapter<VideoItem> adapter;
+    private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     private int time_Iterator = 0;
     private static final String regex = "http(?:s)?:\\/\\/(?:m.)?(?:www\\.)?youtu(?:\\.be\\/|be\\.com\\/(?:watch\\?(?:feature=youtu.be\\&)?v=|v\\/|embed\\/|user\\/(?:[\\w#]+\\/)+))([^&#?\\n]+)";
     private static final String cipherInstancePadding = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
@@ -345,9 +360,20 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private static String yoututbeHomeURL = "https://youtube.com/";
     private static String youtubeID = "default";
     private static String STARTED = "started";
+    private static String spotifyToken;
+    RecyclerView video_listView;
+    //EditText search_video_edittext;
+    //YouTubePlayerView youtube_player_view;
+    Button search_video_btn;
+    private SpotifySearchAdapter spotifySearchAdapter;
     private int nativeYoutubeSync = 0;
     private String notifyoutubeID = STARTED;
     public String curr_id;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Button spotify_btn;
+    private EditText search_video_edittext;
+    private List<SpotiySearchItem> spotiySearchItemList;
 
 
     /**
@@ -473,6 +499,10 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        spotifyToken = sharedPreferences.getString(SPOTIFY_TOKEN, "default");
 
         View view = inflater.inflate(R.layout.live_fragment_layout_pref, container, false);
 
@@ -483,12 +513,14 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             //
         }
 
+
         //parentActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
 
         // userIdChattingWith = getArguments().getString("userIdChattingWith");
 
 
+        spotiySearchItemList = new ArrayList<>();
         camera_access_btn = view.findViewById(R.id.camera_access_btn);
         camera_access_layout = view.findViewById(R.id.camera_access_layout);
         request_camera_message = view.findViewById(R.id.request_camera_message);
@@ -513,6 +545,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         complete_icon = view.findViewById(R.id.complete_icon);
         parent_layout = view.findViewById(R.id.parent_layout);
         bottom_bar_back = view.findViewById(R.id.bottom_bar_back);
+        spotify_btn = view.findViewById(R.id.spotify_btn);
 
         bottom_bar_back_top = view.findViewById(R.id.bottom_bar_back_top);
 
@@ -530,6 +563,9 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         senderTextView = view.findViewById(R.id.sender_message);
         backBtn = view.findViewById(R.id.back_button);
         video_listView = view.findViewById(R.id.video_listView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setStackFromEnd(false);
+        video_listView.setLayoutManager(linearLayoutManager);
         //top_bar = view.findViewById(R.id.top_bar);
         youtube_button = view.findViewById(R.id.youtube_btn);
         firstPersonVideo = view.findViewById(R.id.first_person_video);
@@ -567,7 +603,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         });
 
 
-        ////bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
 
         //bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_webview_dialog_layout);
 
@@ -579,6 +615,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         webSettings.setUseWideViewPort(true);
         webSettings.setLoadWithOverviewMode(true);
 
+        spotify_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                connectToSpotify();
+            }
+        });
         //youtube_web_view.setBackgroundColor(parentActivity.getResources().getColor(R.color.colorBlack));
 
 
@@ -880,10 +922,16 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         search_video_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchOnYoutube(search_video_edittext.getText().toString());
+                //searchOnYoutube(search_video_edittext.getText().toString());
                 //onUrlPasted(search_video_edittext.getText().toString());
+                bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 video_search_progress.setVisibility(View.VISIBLE);
                 time_Iterator = 0;
+
+
+                findSpotifySong(search_video_edittext.getText().toString());
+
             }
         });
 
@@ -899,10 +947,10 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_open);
                 youtube_web_view.setAnimation(animation);
                 messageBox.clearFocus();
-                search_video_edittext.requestFocus();
-                search_video_edittext.setCursorVisible(true);
+                //search_video_edittext.requestFocus();
+                //search_video_edittext.setCursorVisible(true);
 
-                bottomSheetVisible = true;
+                //bottomSheetVisible = true;
                 if (isKeyboardOpen) {
                     // youtube_layout.setVisibility(View.GONE);
                 }
@@ -990,7 +1038,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 Rect outRect = new Rect();
 
                 //Native UI youtube search using data api
-                //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+                bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
                 */
 /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
@@ -1874,9 +1922,9 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
 
-        //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
+        bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 1 / 10;
 
-        /*bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_DRAGGING) {
@@ -1896,13 +1944,18 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             @Override
             public void onSlide(View bottomSheet, float slideOffset) {
             }
-        });*/
+        });
 
         search_video_edittext.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    searchOnYoutube(v.getText().toString());
+                    // searchOnYoutube(v.getText().toString());
+
+                    findSpotifySong(search_video_edittext.getText().toString());
+
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
                     //onUrlPasted(v.getText().toString());
                     video_search_progress.setVisibility(View.VISIBLE);
                     time_Iterator = 0;
@@ -2290,9 +2343,9 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             youtube_web_view.setVisibility(View.GONE);
 
 
-            search_video_edittext.clearFocus();
-            messageBox.requestFocus();
-            messageBox.setCursorVisible(true);
+            //search_video_edittext.clearFocus();
+            /*messageBox.requestFocus();
+            messageBox.setCursorVisible(true);*/
 
             bottomSheetVisible = false;
 
@@ -2300,6 +2353,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
+
                     youtubeBottomFragmentStateListener.setDrag(false);
                 }
             }, 0);
@@ -2413,11 +2467,202 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
     }
 
+
+    private void connectToSpotify() {
+
+        if (sharedPreferences.getString(SPOTIFY_TOKEN, "default").equals("default")) {
+
+            AuthenticationRequest.Builder builder =
+                    new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+            builder.setScopes(new String[]{"streaming"});
+            AuthenticationRequest request = builder.build();
+
+            AuthenticationClient.openLoginActivity(parentActivity, REQUEST_CODE, request);
+        } else {
+            //Toast.makeText(parentActivity,"Connected to Spotify",Toast.LENGTH_SHORT).show();
+            youtubeBottomFragmentStateListener.setDrag(true);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+
+
+    }
+
+    public void getResponseFromHttpUrl(URL url) throws IOException {
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.addRequestProperty("Accept", "application/json");
+        connection.addRequestProperty("Content-Type", "application/json");
+        connection.addRequestProperty("Authorization", "Bearer " + spotifyToken);
+
+
+        TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    InputStream in = connection.getInputStream();
+
+                    Scanner scanner = new Scanner(in);
+                    scanner.useDelimiter("\\A");
+
+                    boolean hasInput = scanner.hasNext();
+                    if (hasInput) {
+
+                        stringTaskCompletionSource.setResult(scanner.next());
+                    } else {
+                        stringTaskCompletionSource.setResult(null);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    stringTaskCompletionSource.setResult(null);
+                } finally {
+                    connection.disconnect();
+
+                }
+            }
+        }).start();
+
+        Task<String> stringTask = stringTaskCompletionSource.getTask();
+
+        stringTask.addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    // Toast.makeText(parentActivity,"Response: "+task.getResult(),Toast.LENGTH_SHORT).show();
+                    getSongFromJSON(task.getResult());
+                }
+            }
+        });
+
+
+    }
+
+    public void getSongFromJSON(String jasonString) {
+        JSONObject jsonRootObject = null;
+        try {
+            jsonRootObject = new JSONObject(jasonString);
+            JSONObject tracksObject = jsonRootObject.getJSONObject("tracks");
+            JSONArray jsonArray = tracksObject.optJSONArray("items");
+
+            spotiySearchItemList.clear();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String trackId = jsonObject.optString("id").toString();
+
+                JSONArray jsonArtistObject = jsonObject.optJSONArray("artists");
+                String artist = jsonArtistObject.getJSONObject(0).optString("name");
+
+                String songName = jsonObject.optString("name").toString();
+                String uri = jsonObject.optString("uri").toString();
+
+                JSONObject jsonAlbumObject = jsonObject.getJSONObject("album");
+
+                JSONArray jsonImageObject = jsonAlbumObject.optJSONArray("images");
+                String imageUrl = jsonImageObject.getJSONObject(0).getString("url");
+
+                /*Toast.makeText(parentActivity, "Track id: "+trackId
+                        +"\nArtist: "+artist+"\nSong: "+songName+"\nImage: "+imageUrl, Toast.LENGTH_LONG).show();*/
+
+                SpotiySearchItem spotiySearchItem = new SpotiySearchItem();
+                spotiySearchItem.setArtistName(artist);
+                spotiySearchItem.setImageUrl(imageUrl);
+                spotiySearchItem.setSongName(songName);
+                spotiySearchItem.setTrackId(uri);
+
+                spotiySearchItemList.add(spotiySearchItem);
+
+
+            }
+
+
+            spotifySearchAdapter = new SpotifySearchAdapter(spotiySearchItemList, parentActivity, SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(), photo, userChattingWithId, usernameChattingWith);
+            video_listView.setAdapter(spotifySearchAdapter);
+            video_search_progress.setVisibility(View.GONE);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            Toast.makeText(parentActivity, "Connecting to spotify", Toast.LENGTH_LONG).show();
+            AuthenticationRequest.Builder builder =
+                    new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+            builder.setScopes(new String[]{"streaming"});
+            AuthenticationRequest request = builder.build();
+
+            AuthenticationClient.openLoginActivity(parentActivity, REQUEST_CODE, request);
+
+        }
+
+
+    }
+
+
+    public void findSpotifySong(String songName) {
+        String filteredSongName = songName.replaceAll(" ", "%20");
+        String stringUrl = "https://api.spotify.com/v1/search?q=" + filteredSongName + "&type=track&limit=5";
+
+        URL url = null;
+        try {
+            url = new URL(stringUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (url != null) {
+                getResponseFromHttpUrl(url);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void onFragmentActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        // Check if result comes from the correct activity
+        //if (requestCode == REQUEST_CODE) {
+        AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+
+        switch (response.getType()) {
+            // Response was successful and contains auth token
+            case TOKEN:
+                // Handle successful response
+
+                editor.putString(SPOTIFY_TOKEN, response.getAccessToken());
+                editor.apply();
+                spotifyToken = response.getAccessToken();
+                Toast.makeText(parentActivity, "Connected to Spotify: " + response.getAccessToken(), Toast.LENGTH_SHORT).show();
+                youtubeBottomFragmentStateListener.setDrag(true);
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                break;
+
+            // Auth flow returned an error
+            case ERROR:
+                // Handle error response
+                Toast.makeText(parentActivity, "Error " + response.getError(), Toast.LENGTH_SHORT).show();
+                break;
+
+            // Most likely auth flow was cancelled
+            default:
+                // Handle other cases
+                Toast.makeText(parentActivity, "Error " + response.getType().toString(), Toast.LENGTH_SHORT).show();
+        }
+        // }
+    }
+
     private void setPlayBackListener() {
         nativeYoutubePlayer.setPlaybackEventListener(new com.google.android.youtube.player.YouTubePlayer.PlaybackEventListener() {
             @Override
             public void onPlaying() {
-
 
 
                 new Handler().postDelayed(new Runnable() {
@@ -3126,7 +3371,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         };
 
         try {
-            video_listView.setAdapter(adapter);
+            // video_listView.setAdapter(adapter);
         } catch (NullPointerException e) {
             //
         }
@@ -3166,7 +3411,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         };
 
         try {
-            video_listView.setAdapter(adapter);
+            // video_listView.setAdapter(adapter);
         } catch (NullPointerException e) {
             //
         }
@@ -3242,32 +3487,31 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
     public void setBottomSheetBehavior(MotionEvent event) {
         try {
-            /*if (//bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
-            youtube_web_view.getVisibility() == View.VISIBLE) {
+            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
 
                 messageBox.clearFocus();
                 search_video_edittext.requestFocus();
                 search_video_edittext.setCursorVisible(true);
 
                 Rect outRect = new Rect();
-                //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+                bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
 
-               // bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+                // bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
 
                 if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                    //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
-                   Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.youtube_webview_close);
+                   /*Animation animation = AnimationUtils.loadAnimation(getContext(),R.anim.youtube_webview_close);
                 youtube_web_view.setAnimation(animation);
                 new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 youtube_web_view.setVisibility(View.GONE);
             }
-        }, 750);
+        }, 750);*/
                     search_video_edittext.clearFocus();
-                    messageBox.requestFocus();
-                    messageBox.setCursorVisible(true);
+                  /*  messageBox.requestFocus();
+                    messageBox.setCursorVisible(true);*/
                     bottomSheetVisible = false;
 
                     if (videoStarted)
@@ -3281,7 +3525,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     }, 750);
 
                 }
-            }*/
+            }
         } catch (Exception e) {
             //
         }
@@ -3290,7 +3534,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
     public void closeBottomSheet() {
         youtubeBottomFragmentStateListener.setDrag(false);
-        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
         if (youtube_web_view.getVisibility() == View.VISIBLE) {
             Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_close);
@@ -3306,7 +3550,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 }
             }, 350);
         }
-        search_video_edittext.clearFocus();
+        //search_video_edittext.clearFocus();
         messageBox.requestFocus();
         messageBox.setCursorVisible(true);
 

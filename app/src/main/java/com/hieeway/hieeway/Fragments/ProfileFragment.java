@@ -107,6 +107,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.hieeway.hieeway.NavButtonTest.USER_ID;
 import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
 import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
+import static com.hieeway.hieeway.NavButtonTest.CURR_USER_ID;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -152,6 +153,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     RelativeLayout bottom_sheet_dialog_layout;
     RelativeLayout relay;
     private String profilepic;
+    public static final String SPOTIFY_TOKEN = "spotify_token";
     private static final int REQUEST_CODE = 1337;
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
@@ -990,7 +992,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         return view;
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+    public void onFragmentActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
         // Check if result comes from the correct activity
@@ -1001,13 +1003,16 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
+
+                    editor.putString(SPOTIFY_TOKEN, response.getAccessToken());
+                    editor.apply();
                     connect_spotify.setVisibility(View.GONE);
                     connect_spotify_layout.setVisibility(View.GONE);
 
                     spotify_icon.setVisibility(View.VISIBLE);
                     music_layout.setVisibility(View.VISIBLE);
                     music_loading_layout.setVisibility(View.GONE);
-                    //Toast.makeText(getActivity(), "Connected to spotify :D", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Connected to spotify :D", Toast.LENGTH_SHORT).show();
                     spotifyConnected = true;
                     break;
 
@@ -1256,7 +1261,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         activePhoto = user.getActivePhoto();
 
 
-                        USER_ID = user.getUserid();
+                        CURR_USER_ID = user.getUserid();
                         USER_NAME = user.getUsername();
                         username.setText(user.getUsername());
                         name.setText(user.getName());

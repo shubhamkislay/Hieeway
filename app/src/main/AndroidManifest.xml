@@ -92,7 +92,8 @@
             android:theme="@style/AppTheme"></activity> <!-- android:screenOrientation="portrait" -->
         <activity
             android:name=".NavButtonTestActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="MissingClass" />
         <activity
             android:name=".RequestTrackerActivity"
             android:screenOrientation="portrait" />
@@ -101,10 +102,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".EphermeralPhotoActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="MissingClass" />
         <activity
             android:name=".ephemeral_photo_activity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="MissingClass" />
+
         <activity
             android:name=".VerticalPageActivity"
             android:screenOrientation="portrait"
@@ -140,7 +144,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".LogActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"

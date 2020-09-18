@@ -469,7 +469,7 @@ public class VerticalPageActivity extends AppCompatActivity implements MessageHi
         ephemeralMessagingFragment.setArguments(bundle);
 
 
-        sendMessageFragment = new SendMessageFragment();
+        sendMessageFragment = new SendMessageFragment(VerticalPageActivity.this);
 
         sendMessageFragment.setMessageHighlightListener(this);
         sendMessageFragment.setArguments(bundleSendMessage);

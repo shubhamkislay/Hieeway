@@ -37,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.hieeway.hieeway.Interface.GoogleButtonListener;
-import com.hieeway.hieeway.LoginActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.RegisterAuthenticateActivity;
 import com.hieeway.hieeway.TypeWriter;

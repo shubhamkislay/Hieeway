@@ -152,7 +152,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public static final String PHOTO_URL = "photourl";
     public static final String ACTIVE_PHOTO = "activePhoto";
     public static final String USER_ID = "userid";
-    public String CURR_USER_ID;
+    public static String CURR_USER_ID;
     public String curr_id;
     private FragmentManager menuFragmentManager;
     private int changeAnimation = 0;
@@ -1447,6 +1447,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
+        profileFragment.onFragmentActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
 
 

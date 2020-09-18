@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_sheet_dialog_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="0dp"
+    android:background="@drawable/bottom_sheet_background_drawable"
+    android:backgroundTint="@color/darkButtonBackground"
+    android:padding="4dp"
+
+    android:visibility="visible"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="0dp"
+
+    app:layout_behavior="@string/bottom_sheet_behavior">
+
+    <RelativeLayout
+        android:id="@+id/search_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/message_box_drawable"
+        android:backgroundTint="#0C0C0C">
+
+        <Button
+            android:id="@+id/search_video_btn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/ic_search_black_24dp"
+            android:backgroundTint="#1DB954" />
+
+        <EditText
+            android:id="@+id/search_video_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/search_video_btn"
+            android:background="@android:color/transparent"
+            android:hint="search songs on Spotify"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColorHint="#313131" />
+    </RelativeLayout>
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_layout"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="16dp"
+
+            android:gravity="center"
+            android:text="Click on share button on the youtube app and press copy link"
+            android:textColor="#3A3A3A"
+            android:textSize="10sp"
+            android:visibility="gone" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/video_search_progress"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:rotation="180" />
+
+        <ProgressBar
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_centerInParent="true" />
+
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/video_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/search_layout"
+        android:layout_marginTop="12dp"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:visibility="visible"
+        tools:listitem="@layout/spotify_search_video_item" />
+
+
+</RelativeLayout>

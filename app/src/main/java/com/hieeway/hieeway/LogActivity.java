@@ -37,7 +37,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 
-public class LoginActivity extends AppCompatActivity {
+public class LogActivity extends AppCompatActivity {
 
     private static final int RC_SIGN_IN = 1;
     EditText email, password;
@@ -204,7 +204,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 databaseReference.updateChildren(hashMap);
 
-                                                startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
+                                                startActivity(new Intent(LogActivity.this, NavButtonTest.class));
                                                 /*progressBarOne.setVisibility(View.GONE);
                                                 progressBarTwo.setVisibility(View.GONE);*/
                                                 finish();
@@ -218,14 +218,14 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     });
 
-                            Toast.makeText(LoginActivity.this,name+" "+surname+", your login is Successful",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LogActivity.this, name + " " + surname + ", your login is Successful", Toast.LENGTH_SHORT).show();
                         } else {
                             // If sign in fails, display a message to the user.
                             /*Log.w(TAG, "signInWithCredential:failure", task.getException());
                            // Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             updateUI(null);*/
 
-                            Toast.makeText(LoginActivity.this,"Login failed",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LogActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
                         }
 
                         // ...
@@ -243,7 +243,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(TextUtils.isEmpty(emailStr)||TextUtils.isEmpty(passwordStr))
         {
-            Toast.makeText(LoginActivity.this, "All field are required!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LogActivity.this, "All field are required!", Toast.LENGTH_SHORT).show();
         }
         else
         {
@@ -292,7 +292,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                             databaseReference.updateChildren(hashMap);
 
-                                            startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
+                                            startActivity(new Intent(LogActivity.this, NavButtonTest.class));
                                                 /*progressBarOne.setVisibility(View.GONE);
                                                 progressBarTwo.setVisibility(View.GONE);*/
                                             finish();
@@ -318,7 +318,7 @@ public class LoginActivity extends AppCompatActivity {
                         progressBarTwo.setVisibility(View.GONE);
 
 
-                        Toast.makeText(LoginActivity.this,  task.getException().toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(LogActivity.this, task.getException().toString(), Toast.LENGTH_LONG).show();
 
                     }
 
@@ -409,7 +409,7 @@ public class LoginActivity extends AppCompatActivity {
 
         databaseReference.updateChildren(hashMap);
 
-        startActivity(new Intent(LoginActivity.this,NavButtonTest.class));
+        startActivity(new Intent(LogActivity.this, NavButtonTest.class));
                                                 /*progressBarOne.setVisibility(View.GONE);
                                                 progressBarTwo.setVisibility(View.GONE);*/
         finish();
