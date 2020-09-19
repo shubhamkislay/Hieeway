@@ -1013,6 +1013,27 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
         super.onStop();
         if (pageSelected == 2) {
 
+            try {
+
+                Log.v(VIDEO_CHECK_TAG, "onPause calling destoryLiveFragment");
+                /**
+                 * Uncomment below commented block
+                 */
+                //liveMessageFragmentPerf.destoryLiveFragment();
+
+                liveMessageParentFragment.destoryLiveFragment();
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("present", false);
+                FirebaseDatabase.getInstance().getReference("ChatList")
+                        .child(userIDCHATTINGWITH)
+                        .child(curr_id)
+                        .updateChildren(hashMap);
+            } catch (Exception e) {
+                Toast.makeText(VerticalPageActivityPerf.this, "Exception " + e.toString(), Toast.LENGTH_SHORT).show();
+                Log.v(VIDEO_CHECK_TAG, "onPause Parent Error" + e.toString());
+            }
+
             if (!backPressed) {
                 Toast.makeText(VerticalPageActivityPerf.this, "onStopCalled", Toast.LENGTH_SHORT).show();
                 Intent startLiveActiveServiceIntent = new Intent(VerticalPageActivityPerf.this, LiveMessageActiveService.class);
@@ -1056,13 +1077,16 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
 
         if (pageSelected == 2) {
 
+/*
 
             try {
 
                 Log.v(VIDEO_CHECK_TAG, "onPause calling destoryLiveFragment");
-                /**
-                 * Uncomment below commented block
-                 */
+                */
+/**
+ * Uncomment below commented block
+ *//*
+
                 //liveMessageFragmentPerf.destoryLiveFragment();
 
                 liveMessageParentFragment.destoryLiveFragment();
@@ -1078,6 +1102,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
                 Log.v(VIDEO_CHECK_TAG, "onPause Parent Error" + e.toString());
             }
 
+*/
 
         }
         try {

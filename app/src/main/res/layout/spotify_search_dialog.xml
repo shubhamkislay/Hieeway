@@ -46,7 +46,7 @@
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:singleLine="true"
-            android:textColorHint="#313131" />
+            android:textColorHint="#959595" />
     </RelativeLayout>
 
     <RelativeLayout

@@ -101,6 +101,8 @@ import com.hieeway.hieeway.CustomUiController;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.CameraPermissionListener;
 import com.hieeway.hieeway.Interface.CloseLiveMessagingLoading;
+import com.hieeway.hieeway.Interface.FiltersListFragmentListener;
+import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
 import com.hieeway.hieeway.LiveMessageActiveService;
 import com.hieeway.hieeway.Model.SpotiySearchItem;
 import com.hieeway.hieeway.Model.YoutubeSync;
@@ -177,7 +179,7 @@ import static com.hieeway.hieeway.VerticalPageActivityPerf.userNameChattingWith;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequestListener, CameraPermissionListener {
+public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequestListener, CameraPermissionListener, SpotifySongSelectedListener {
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
@@ -930,7 +932,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 time_Iterator = 0;
 
 
-                findSpotifySong(search_video_edittext.getText().toString());
+                if (search_video_edittext.getText().toString().length() > 0)
+                    findSpotifySong(search_video_edittext.getText().toString());
 
             }
         });
@@ -1952,7 +1955,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     // searchOnYoutube(v.getText().toString());
 
-                    findSpotifySong(search_video_edittext.getText().toString());
+                    if (search_video_edittext.getText().toString().length() > 0)
+                        findSpotifySong(search_video_edittext.getText().toString());
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 3 / 7;
@@ -2478,6 +2482,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             builder.setScopes(new String[]{"streaming"});
             AuthenticationRequest request = builder.build();
 
+            Toast.makeText(parentActivity, "Connecting to Spotify...", Toast.LENGTH_LONG).show();
+
             AuthenticationClient.openLoginActivity(parentActivity, REQUEST_CODE, request);
         } else {
             //Toast.makeText(parentActivity,"Connected to Spotify",Toast.LENGTH_SHORT).show();
@@ -2580,7 +2586,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             }
 
 
-            spotifySearchAdapter = new SpotifySearchAdapter(spotiySearchItemList, parentActivity, SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(), photo, userChattingWithId, usernameChattingWith);
+            spotifySearchAdapter = new SpotifySearchAdapter(spotiySearchItemList, parentActivity, SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(), photo, userChattingWithId, usernameChattingWith, LiveMessageFragmentPerf.this);
             video_listView.setAdapter(spotifySearchAdapter);
             video_search_progress.setVisibility(View.GONE);
 
@@ -2605,7 +2611,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
     public void findSpotifySong(String songName) {
         String filteredSongName = songName.replaceAll(" ", "%20");
-        String stringUrl = "https://api.spotify.com/v1/search?q=" + filteredSongName + "&type=track&limit=5";
+        String stringUrl = "https://api.spotify.com/v1/search?q=" + filteredSongName + "&type=track";//&limit=5
 
         URL url = null;
         try {
@@ -2642,6 +2648,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 Toast.makeText(parentActivity, "Connected to Spotify: " + response.getAccessToken(), Toast.LENGTH_SHORT).show();
                 youtubeBottomFragmentStateListener.setDrag(true);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                if (search_video_edittext.getText().toString().length() > 0)
+                    findSpotifySong(search_video_edittext.getText().toString());
 
                 break;
 
@@ -2649,11 +2657,13 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             case ERROR:
                 // Handle error response
                 Toast.makeText(parentActivity, "Error " + response.getError(), Toast.LENGTH_SHORT).show();
+                video_search_progress.setVisibility(View.GONE);
                 break;
 
             // Most likely auth flow was cancelled
             default:
                 // Handle other cases
+                video_search_progress.setVisibility(View.GONE);
                 Toast.makeText(parentActivity, "Error " + response.getType().toString(), Toast.LENGTH_SHORT).show();
         }
         // }
@@ -3522,7 +3532,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         public void run() {
                             youtubeBottomFragmentStateListener.setDrag(false);
                         }
-                    }, 750);
+                    }, 0);
 
                 }
             }
@@ -4201,19 +4211,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     public void onPause() {
         super.onPause();
         //Log.v(VIDEO_CHECK_TAG,"onPause"+ " called");
+        //Toast.makeText(parentActivity,"onPauseCalled",Toast.LENGTH_SHORT).show();
 
         // leaveChannel();
         // destoryLiveFragment();
 
-        try {
-            askHandler.removeCallbacks(askRunnable);
-            singleSeekRef.removeEventListener(singleYoutubeListener);
-        } catch (Exception e) {
 
-            // Log.v(VIDEO_CHECK_TAG,"Error in onPause"+ e.toString());
-        }
-
-        liveChatInitialised = false;
 
     }
 
@@ -4259,7 +4262,17 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     @Override
     public void onStop() {
         super.onStop();
-        //Toast.makeText(parentActivity,"onStopCalled",Toast.LENGTH_SHORT).show();
+        // Toast.makeText(parentActivity,"onStopCalled",Toast.LENGTH_SHORT).show();
+
+        try {
+            askHandler.removeCallbacks(askRunnable);
+            singleSeekRef.removeEventListener(singleYoutubeListener);
+        } catch (Exception e) {
+
+            // Log.v(VIDEO_CHECK_TAG,"Error in onPause"+ e.toString());
+        }
+
+        liveChatInitialised = false;
     }
 
     @Override
@@ -4491,5 +4504,12 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     public void startPermission() {
 
         requestAllPermissionsBeforeStart(parentActivity, live);
+    }
+
+    @Override
+    public void onSongSelected() {
+
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        youtubeBottomFragmentStateListener.setDrag(false);
     }
 }

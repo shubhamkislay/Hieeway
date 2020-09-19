@@ -35,6 +35,7 @@ import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.error.SpotifyAppRemoteException;
 import com.spotify.protocol.types.Artist;
 import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
@@ -131,7 +132,6 @@ public class MusicBeamService extends Service {
 
                 }
 
-
                 SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
                         new Connector.ConnectionListener() {
 
@@ -179,6 +179,7 @@ public class MusicBeamService extends Service {
                                 // Something went wrong when attempting to connect! Handle errors here
                             }
                         });
+
             } else {
                 stopSelfIntent = new Intent(MusicBeamService.this, MusicBeamService.class);
 

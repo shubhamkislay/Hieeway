@@ -55,6 +55,7 @@ import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 public class MusicPalService extends Service {
 
     public static boolean MUSIC_PAL_SERVICE_RUNNING = false;
+    public static String MUSIC_PAL_ID = "default";
     public static String USER_NAME_MUSIC_SYNC = "";
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
@@ -95,6 +96,7 @@ public class MusicPalService extends Service {
             //manager.cancel(NOTIFCATION_ID);
 
             MUSIC_PAL_SERVICE_RUNNING = false;
+            MUSIC_PAL_ID = "default";
             USER_NAME_MUSIC_SYNC = "";
 
             try {
@@ -138,12 +140,12 @@ public class MusicPalService extends Service {
             sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         } else {
 
-
             if (musicChangeListener != null)
                 databaseReference.removeEventListener(musicChangeListener);
 
-
             MUSIC_PAL_SERVICE_RUNNING = true;
+
+            MUSIC_PAL_ID = username;
 
             notificationId = MyApplication.NotificationID.getID();
 
@@ -162,9 +164,7 @@ public class MusicPalService extends Service {
 
             //This is optional if you have more than one buttons and want to differentiate between two
 
-
             pIntentlogin = PendingIntent.getService(MusicPalService.this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
 
             Notification notification = new NotificationCompat.Builder(MusicPalService.this, CHANNEL_3_ID)
                     .setContentTitle("Connecting with spotify")
@@ -174,10 +174,7 @@ public class MusicPalService extends Service {
                     .setAutoCancel(true)
                     .build();
 
-
             startForeground(notificationId, notification);
-
-
 
             ConnectionParams connectionParams =
                     new ConnectionParams.Builder(CLIENT_ID)
@@ -526,6 +523,7 @@ public class MusicPalService extends Service {
 
                             } else if (pal.getConnection().equals("disconnect")) {
                                 MUSIC_PAL_SERVICE_RUNNING = false;
+                                MUSIC_PAL_ID = "default";
                                 USER_NAME_MUSIC_SYNC = "";
 
                                 try {
@@ -596,6 +594,7 @@ public class MusicPalService extends Service {
                     if (!connected) {
 
                         MUSIC_PAL_SERVICE_RUNNING = false;
+                        MUSIC_PAL_ID = "default";
                         USER_NAME_MUSIC_SYNC = "";
 
                         if (musicChangeListener != null)

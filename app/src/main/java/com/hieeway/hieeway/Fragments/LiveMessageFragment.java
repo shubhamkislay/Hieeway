@@ -204,6 +204,7 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
     private RelativeLayout bottom_bar_back, bottom_bar_back_top;
     Button youtube_button;
     YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener;
+
     ValueEventListener valueEventListener, seekValueEventListener, presentEventListener;
     ListView video_listView;
     EditText search_video_edittext;
@@ -683,14 +684,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
-
-
-
-
-
-
-
-
         /*if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
             WebSettingsCompat.setForceDark(youtube_web_view.getSettings(), WebSettingsCompat.FORCE_DARK_ON);
         }
@@ -882,7 +875,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
         //youtube_web_view.setWebChromeClient(new WebChromeClient());
         youtube_web_view.setWebViewClient(webViewClient);
-
 
         youtube_web_view.loadUrl("https://youtube.com/");
 
@@ -1168,7 +1160,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         });
 
-
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1176,8 +1167,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                 getActivity().finish();
             }
         });
-
-
 
         valueEventListener = new ValueEventListener() {
             @Override
@@ -1716,7 +1705,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
             }
         };
 
-
         video_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -1750,7 +1738,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             }
         });
-
 
         slideToActView.setOnSlideCompleteListener(new SlideToActView.OnSlideCompleteListener() {
             @Override
@@ -1807,9 +1794,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
 
             }
         });
-
-
-
 
         //bottom_sheet_dialog_layout.getLayoutParams().height = (int) displayHeight * 2 / 5;
 
@@ -1883,8 +1867,6 @@ public class LiveMessageFragment extends Fragment implements LiveMessageRequestL
                     }
 
                 });*/
-
-
 
         /*senderTextView.setAlpha(0);
         receiverTextView.setAlpha(0);*/
