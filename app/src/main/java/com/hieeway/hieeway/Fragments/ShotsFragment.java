@@ -178,7 +178,7 @@ public class ShotsFragment extends Fragment {
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    chats.animate().scaleX(1.25f).scaleY(1.25f).setDuration(0);
+                    chats.animate().scaleX(1.5f).scaleY(1.5f).setDuration(0);
                 } else if (event.getAction() == MotionEvent.ACTION_UP) {
                     chats.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
                 } else {

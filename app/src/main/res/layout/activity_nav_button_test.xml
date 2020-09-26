@@ -17,7 +17,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:fitsSystemWindows="true"
-        android:layout_marginBottom="0dp"
         android:background="@android:color/transparent"
         android:layout_above="@id/nav_bar"
         android:foregroundGravity="center" />
@@ -33,71 +32,7 @@
     </RelativeLayout>
 
 
-    <RelativeLayout
-        android:id="@+id/video_splash_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="visible"
-        android:background="#000">
 
-        <RelativeLayout
-            android:id="@+id/app_logo"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_centerInParent="true"
-            android:alpha="0.0"
-            android:background="@drawable/splash_logo"
-            android:paddingBottom="500dp" />
-
-
-        <com.hieeway.hieeway.Utils.MutedVideoView
-            android:id="@+id/videoView"
-            android:layout_centerHorizontal="true"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="25dp" />
-
-        <RelativeLayout
-            android:id="@+id/progress"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_above="@id/master_head"
-
-            android:layout_centerHorizontal="true"
-            android:alpha="0.0">
-
-            <ProgressBar
-
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerInParent="true"
-                android:alpha="1.0"
-                android:rotation="180"
-                android:visibility="visible" />
-
-            <ProgressBar
-
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_centerInParent="true"
-                android:alpha="1.0"
-                android:visibility="visible" />
-        </RelativeLayout>
-
-
-        <TextView
-            android:id="@+id/master_head"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:background="#000"
-            android:gravity="center"
-            android:paddingBottom="12dp"
-            android:text="Hieeway Inc.\n Designed and created by Shubham Kislay"
-            android:textColor="#A8A8A8"
-            android:textSize="10sp" />
-
-    </RelativeLayout>
 
     <ImageView
         android:id="@+id/send_arrow"
@@ -500,6 +435,73 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+        android:id="@+id/video_splash_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/app_logo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:alpha="0.0"
+            android:background="@drawable/splash_logo"
+            android:paddingBottom="500dp" />
+
+
+        <RelativeLayout
+            android:id="@+id/progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_above="@id/master_head"
+
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0">
+
+            <ProgressBar
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:rotation="180"
+                android:visibility="visible" />
+
+            <ProgressBar
+
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/master_head"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:background="#000"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:paddingBottom="12dp"
+            android:text="Hieeway Inc.\n Designed and created by Shubham Kislay"
+            android:textColor="#A8A8A8"
+            android:textSize="10sp" />
+
+
+        <com.hieeway.hieeway.Utils.MutedVideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp" />
+
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/send_arrow_splash"

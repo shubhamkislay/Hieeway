@@ -29,11 +29,13 @@
             <RelativeLayout
 
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
+                android:layout_height="100dp"
+                android:layout_gravity="top"
+                android:layout_marginTop="-4dp"
                 android:layout_above="@id/bottom_panel"
                 android:alpha="1.0"
                 android:background="@drawable/status_bar_fade"
-                android:backgroundTint="@color/nav_status_color"
+                android:backgroundTint="@color/nav_title_background_accent_color"
                 android:visibility="visible" />
 
             <RelativeLayout

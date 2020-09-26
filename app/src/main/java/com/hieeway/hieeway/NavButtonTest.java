@@ -2157,7 +2157,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     text_feed.setText("Feed");
 
                     menuFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                            .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                             .replace(R.id.container_layout, shotsFragment).commit();
                 }
             }, changeAnimation);
@@ -2175,7 +2175,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
 
                     menuFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
                             .replace(R.id.container_layout, chatsFragment).commit();
 
                 }
