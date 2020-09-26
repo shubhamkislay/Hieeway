@@ -28,15 +28,15 @@
             />
 
 
-        <RelativeLayout
+            <RelativeLayout
 
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:visibility="visible"
-            android:alpha="1.0"
-            android:layout_above="@id/bottom_panel"
-            android:background="@drawable/status_bar_fade"
-            android:backgroundTint="@color/nav_status_color" />
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:visibility="visible"
+                android:alpha="1.0"
+                android:layout_above="@id/bottom_panel"
+                android:background="@drawable/status_bar_fade"
+                android:backgroundTint="@color/nav_status_color" />
 
             <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -171,16 +171,42 @@
                         android:layout_alignParentBottom="true"
                         android:layout_height="60dp">
 
-                    <LinearLayout
+                        <ImageButton
+                            android:id="@+id/spotify_status"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginRight="12dp"
+                            android:background="@drawable/nav_btn_back_drawable"
+                            android:padding="12dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_feed" />
 
-                        android:id="@+id/search_bar_lay"
-                        android:orientation="horizontal"
-                        android:layout_centerVertical="true"
-                        android:layout_alignParentRight="true"
-                        android:padding="8dp"
-                        android:layout_margin="8dp"
-                        android:animateLayoutChanges="true"
-                        android:background="@drawable/nav_btn_back_drawable"
+                        <ImageButton
+                            android:id="@+id/spotify_status_back"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="-2dp"
+                            android:layout_toLeftOf="@id/search_bar_lay"
+                            android:background="@drawable/gradient_faded_music_back"
+                            android:padding="6dp"
+
+                            android:scaleType="centerInside"
+                            android:visibility="gone" />
+
+                        <LinearLayout
+
+                            android:id="@+id/search_bar_lay"
+                            android:orientation="horizontal"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@id/spotify_status"
+                            android:padding="8dp"
+                            android:layout_margin="8dp"
+                            android:animateLayoutChanges="true"
+                            android:background="@drawable/nav_btn_back_drawable"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
@@ -215,31 +241,6 @@
                             android:backgroundTint="@color/nav_btn_background_color" />
 
                     </LinearLayout>
-
-                        <ImageButton
-                            android:id="@+id/spotify_status_back"
-                            android:layout_width="46dp"
-                            android:layout_height="46dp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="-2dp"
-                            android:layout_toLeftOf="@id/search_bar_lay"
-                            android:background="@drawable/gradient_faded_music_back"
-                            android:padding="6dp"
-
-                            android:scaleType="centerInside"
-                            android:visibility="gone" />
-
-                        <ImageButton
-                            android:id="@+id/spotify_status"
-                            android:layout_width="42dp"
-                            android:layout_height="42dp"
-                            android:layout_centerVertical="true"
-                            android:layout_toLeftOf="@id/search_bar_lay"
-                            android:background="@drawable/nav_btn_back_drawable"
-                            android:padding="8dp"
-                            android:scaleType="centerInside"
-                            android:src="@drawable/headphone" />
 
 
                     </RelativeLayout>

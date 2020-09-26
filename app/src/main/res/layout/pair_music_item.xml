@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+
+        android:id="@+id/prof_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="4dp"
+        android:alpha="1.0"
+        android:background="@drawable/nav_btn_back_drawable"
+        android:padding="4dp">
+
+
+        <RelativeLayout
+            android:id="@+id/profile_pic_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                style="@style/SpinKitView.Large.Wave"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="#fff"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progressTwo"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerInParent="true"
+                android:indeterminateTint="#fff"
+                android:rotation="180"
+                android:visibility="gone" />
+
+            <com.hieeway.hieeway.CustomCircularView
+                android:id="@+id/user_photo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:padding="16dp"
+
+                android:scaleType="centerInside"
+                android:src="@drawable/spotify_icon_rgb_green"
+                android:transitionName="imageTransition" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/prof_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text='Listen'
+        android:textColor="#fff"
+        android:textSize="14dp"
+        android:transitionName="nameTransition" />
+
+</RelativeLayout>

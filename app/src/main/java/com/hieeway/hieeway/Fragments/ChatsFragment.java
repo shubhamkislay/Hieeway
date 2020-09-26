@@ -1,6 +1,7 @@
 package com.hieeway.hieeway.Fragments;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 
 import androidx.core.content.ContextCompat;
@@ -69,6 +70,7 @@ import com.hieeway.hieeway.ChatsFragmentViewModel;
 import com.hieeway.hieeway.EphemeralMessageViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
 import com.hieeway.hieeway.Interface.AnimationArrowListener;
+import com.hieeway.hieeway.Interface.ChatFragmentOpenListener;
 import com.hieeway.hieeway.Interface.ChatStampSizeListener;
 import com.hieeway.hieeway.Interface.DeleteOptionsListener;
 import com.hieeway.hieeway.Model.ChatStamp;
@@ -163,6 +165,11 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private List<ChatStamp> resettedList = new ArrayList<>();
     private AnimationDrawable animationDrawableTop;
     private boolean blinking = false;
+    private ChatFragmentOpenListener chatFragmentOpenListener;
+
+    public ChatsFragment(Activity activity) {
+        this.chatFragmentOpenListener = (ChatFragmentOpenListener) activity;
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -224,7 +231,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                                             public void run() {
                                                 try {
 
-                                                    animationArrowListener.playArrowAnimation();
+                                                    //animationArrowListener.playArrowAnimation();
                                                     notLoaded = true;
 
 
@@ -247,7 +254,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
 
                 }
             }
-        }, 350);
+        }, 500);
     }
 
     @Override
@@ -453,7 +460,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                 //spotify_status_back.setVisibility(View.GONE);
 
 
-                if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
+                /*if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
                     startActivity(new Intent(getActivity(), MusicFeedActivity.class));
 
                 else {
@@ -463,11 +470,30 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         Toast.makeText(getActivity(), "Turn on Spotify Connection and Music Beacon", Toast.LENGTH_LONG).show();
 
                     startActivity(new Intent(getActivity(), SettingsActivity.class));
-                }
+                }*/
+
+                chatFragmentOpenListener.setChatFragmentStatus(false);
                 //startActivity(new Intent(getActivity(), YoutubeTestActivity.class));
 
                 //throw new RuntimeException("Test Crash");
 
+            }
+        });
+
+
+        spotify_status.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    spotify_status.animate().scaleX(1.25f).scaleY(1.25f).setDuration(0);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    spotify_status.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                } else {
+                    spotify_status.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                }
+                return false;
             }
         });
 
@@ -655,7 +681,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                             public void run() {
                                 try {
 
-                                    animationArrowListener.playArrowAnimation();
+                                    // animationArrowListener.playArrowAnimation();
 
                                 } catch (Exception e) {
 
@@ -1110,7 +1136,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         /**
          * Uncomment
          */
-        populateMusicList();
+        //populateMusicList();
     }
 
     @Override

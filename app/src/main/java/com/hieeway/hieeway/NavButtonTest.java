@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -20,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.palette.graphics.Palette;
@@ -66,10 +64,12 @@ import com.hieeway.hieeway.Fragments.EditBioLayoutFragment;
 import com.hieeway.hieeway.Fragments.FriendListFagment;
 import com.hieeway.hieeway.Fragments.PeopleFragment;
 import com.hieeway.hieeway.Fragments.ProfileFragment;
+import com.hieeway.hieeway.Fragments.ShotsFragment;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChangePictureListener;
+import com.hieeway.hieeway.Interface.ChatFragmentOpenListener;
 import com.hieeway.hieeway.Interface.ChatStampSizeListener;
 import com.hieeway.hieeway.Interface.EditBioFragmentListener;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
@@ -82,7 +82,6 @@ import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -90,7 +89,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN;
 
-public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener, AddFeelingFragmentListener, ChangePictureListener {
+public class NavButtonTest extends AppCompatActivity implements ChatStampSizeListener, AnimationArrowListener, ImageSelectionCropListener, EditBioFragmentListener, AddFeelingFragmentListener, ChangePictureListener, ChatFragmentOpenListener {
 
     private TextView text_home;
     private ImageView homeBtnPressed, homeBtnUnpressed;
@@ -157,6 +156,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private FragmentManager menuFragmentManager;
     private int changeAnimation = 0;
     private Boolean active;
+    private RelativeLayout feed_button_layout;
+    private TextView text_feed;
+    private ImageView feed_button_pressed;
+    private ImageView feed_button_unpressed;
+    private ShotsFragment shotsFragment;
+    private Boolean chatFragmentActive = false;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -362,6 +367,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         text_profile = findViewById(R.id.text_profile);
 
+        text_feed = (TextView) findViewById(R.id.text_feed);
+        feed_button_pressed = (ImageView) findViewById(R.id.feed_button_pressed);
+        feed_button_unpressed = (ImageView) findViewById(R.id.feed_button_unpressed);
+
 
 
 /*        profileBtnPressed = findViewById(R.id.profile_button_pressed);
@@ -371,21 +380,25 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         friends_button_layout = findViewById(R.id.relativeLayout);
         people_button_layout = findViewById(R.id.relativeLayout2);
         profile_button_layout = findViewById(R.id.relativeLayout3);
+        feed_button_layout = findViewById(R.id.feed_button_layout);
 
 
         try {
-           // text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            // text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
             text_friends.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
             text_search.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
             text_profile.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        }catch (Exception e)
-        {
+            text_feed.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+        } catch (Exception e) {
             //
         }
 
 
-        chatsFragment = new ChatsFragment();
+        chatsFragment = new ChatsFragment(NavButtonTest.this);
         chatsFragment.setAnimationArrowListener(NavButtonTest.this);
+
+        shotsFragment = new ShotsFragment(NavButtonTest.this);
 
 
         peopleFragment = new PeopleFragment();
@@ -395,7 +408,6 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         bundle.putString("phonenumber", phonenumber);
 
 
-
         friendListFagment = new FriendListFagment();
         friendListFagment.setArguments(bundle);
 
@@ -403,15 +415,17 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         addFeelingFragment = new AddFeelingFragment();
 
+        /*menuFragmentManager.beginTransaction()
+                .replace(R.id.container_layout, chatsFragment).commit();*/
+
         menuFragmentManager.beginTransaction()
-                .replace(R.id.container_layout, chatsFragment).commit();
+                .replace(R.id.container_layout, shotsFragment).commit();
 
         homeBtnPressed.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
-                {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     home_button_layout.animate().scaleX(buttonSizeAlpha).scaleY(buttonSizeAlpha).setDuration(0);
                 }
                 else if(event.getAction() == MotionEvent.ACTION_UP)
@@ -434,13 +448,40 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 {
                     home_button_layout.animate().scaleX(buttonSizeAlpha).scaleY(buttonSizeAlpha).setDuration(0);
                 }
-                else if(event.getAction() == MotionEvent.ACTION_UP)
-                {
+                else if(event.getAction() == MotionEvent.ACTION_UP) {
+                    home_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                } else {
                     home_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
                 }
-                else
-                {
-                    home_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                return false;
+            }
+        });
+
+        feed_button_pressed.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    feed_button_layout.animate().scaleX(buttonSizeAlpha).scaleY(buttonSizeAlpha).setDuration(0);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    feed_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                } else {
+                    feed_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                }
+                return false;
+            }
+        });
+
+        feed_button_layout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    feed_button_layout.animate().scaleX(buttonSizeAlpha).scaleY(buttonSizeAlpha).setDuration(0);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    feed_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                } else {
+                    feed_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
                 }
                 return false;
             }
@@ -459,7 +500,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 deactivateFriendsBNtn();
                 deactivateSearchBtn();
                 deactivateProfileBtn();
-                animateBottomNavMenuText(text_home,homeBtnPressed);
+                deactivateFeedBtn();
+                animateBottomNavMenuText(text_home, homeBtnPressed);
 
             }
         });
@@ -474,7 +516,34 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 deactivateFriendsBNtn();
                 deactivateSearchBtn();
                 deactivateProfileBtn();
-                animateBottomNavMenuText(text_home,homeBtnPressed);
+                deactivateFeedBtn();
+                animateBottomNavMenuText(text_home, homeBtnPressed);
+            }
+        });
+
+        feed_button_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activateFeedBtn();
+                //deactivateHomeBtn();
+                deactivateFriendsBNtn();
+                deactivateSearchBtn();
+                deactivateProfileBtn();
+                animateBottomNavMenuText(text_home, feed_button_pressed);
+
+            }
+        });
+
+
+        feed_button_pressed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activateFeedBtn();
+                //deactivateHomeBtn();
+                deactivateFriendsBNtn();
+                deactivateSearchBtn();
+                deactivateProfileBtn();
+                animateBottomNavMenuText(text_feed, feed_button_pressed);
             }
         });
 
@@ -482,11 +551,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
-                {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     friends_button_layout.animate().scaleX(buttonSizeAlpha).scaleY(buttonSizeAlpha).setDuration(0);
-                }
-                else if(event.getAction() == MotionEvent.ACTION_UP)
+                } else if (event.getAction() == MotionEvent.ACTION_UP)
                 {
                     friends_button_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
                 }
@@ -530,6 +597,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateFriendsBtn();
                 deactivateHomeBtn();
                 deactivateSearchBtn();
+                deactivateFeedBtn();
                 deactivateProfileBtn();
                 animateBottomNavMenuText(text_friends,friendsBtnUnpressed);
 
@@ -543,6 +611,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateFriendsBtn();
                 deactivateHomeBtn();
                 deactivateSearchBtn();
+                deactivateFeedBtn();
                 deactivateProfileBtn();
                 animateBottomNavMenuText(text_friends,friendsBtnUnpressed);
             }
@@ -600,6 +669,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateSearchBtn();
                 deactivateHomeBtn();
                 deactivateFriendsBNtn();
+                deactivateFeedBtn();
                 deactivateProfileBtn();
                 animateBottomNavMenuText(text_search,searchBtnUnpressed);
             }
@@ -613,6 +683,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateSearchBtn();
                 deactivateHomeBtn();
                 deactivateFriendsBNtn();
+                deactivateFeedBtn();
                 deactivateProfileBtn();
                 animateBottomNavMenuText(text_search,searchBtnUnpressed);
             }
@@ -683,6 +754,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateProfileBtn();
                 deactivateSearchBtn();
                 deactivateHomeBtn();
+                deactivateFeedBtn();
                 deactivateFriendsBNtn();
                 animateBottomNavMenuText(text_profile,profileBtnPressed);
 
@@ -697,6 +769,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateProfileBtn();
                 deactivateSearchBtn();
                 deactivateHomeBtn();
+                deactivateFeedBtn();
                 deactivateFriendsBNtn();
                 animateBottomNavMenuText(text_profile,profileBtnPressed);
             }
@@ -708,6 +781,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 activateProfileBtn();
                 deactivateSearchBtn();
                 deactivateHomeBtn();
+                deactivateFeedBtn();
                 deactivateFriendsBNtn();
                 animateBottomNavMenuText(text_profile,profileBtnPressed);
             }
@@ -948,12 +1022,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (fragmentId > 2) {
+                if (fragmentId > 3) {
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, friendListFagment)
-                            .remove(chatsFragment)
+                            .remove(shotsFragment)
                             .remove(peopleFragment)
                             .remove(profileFragment).commit();
                 } else {
@@ -961,12 +1035,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
                             .replace(R.id.container_layout, friendListFagment)
-                            .remove(chatsFragment)
+                            .remove(shotsFragment)
                             .remove(peopleFragment)
                             .remove(profileFragment).commit();
                 }
 
-                fragmentId = 2;
+                fragmentId = 3;
 
             }
         }, changeAnimation);
@@ -1040,14 +1114,25 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                menuFragmentManager.beginTransaction()
-                        .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                        .replace(R.id.container_layout, chatsFragment)
-                        .remove(friendListFagment)
-                        .remove(peopleFragment)
-                        .remove(profileFragment).commit();
+                if (fragmentId > 2) {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                            .replace(R.id.container_layout, chatsFragment)
+                            .remove(shotsFragment)
+                            .remove(friendListFagment)
+                            .remove(peopleFragment)
+                            .remove(profileFragment).commit();
+                } else {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                            .replace(R.id.container_layout, chatsFragment)
+                            .remove(shotsFragment)
+                            .remove(friendListFagment)
+                            .remove(peopleFragment)
+                            .remove(profileFragment).commit();
+                }
 
-                fragmentId = 1;
+                fragmentId = 2;
 
             }
         }, changeAnimation);
@@ -1108,18 +1193,20 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(fragmentId>3) {
+                if (fragmentId > 4) {
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                            .replace(R.id.container_layout, peopleFragment).commit();
+                            .replace(R.id.container_layout, peopleFragment)
+                            .remove(shotsFragment).commit();
                 } else {
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
-                            .replace(R.id.container_layout, peopleFragment).commit();
+                            .replace(R.id.container_layout, peopleFragment)
+                            .remove(shotsFragment).commit();
                 }
-                fragmentId=3;
+                fragmentId = 4;
 
             }
         }, changeAnimation);
@@ -1149,8 +1236,105 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
     }
 
-    public void activateProfileBtn()
-    {
+    public void activateFeedBtn() {
+        /*searchBtnUnpressed.setVisibility(View.GONE);
+        searchBtnPressed.setVisibility(View.VISIBLE);
+        text_search.setVisibility(View.VISIBLE);*/
+
+
+        feed_button_pressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
+        feed_button_pressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_active_size);
+        feed_button_pressed.setColorFilter(null);
+
+        feed_button_pressed.setAlpha(1.0f);
+
+        //searchBtnPressed.setBackgroundTintList(null);
+        feed_button_pressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
+
+        // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
+
+        feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+
+        // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+        text_feed.setVisibility(View.VISIBLE);
+
+/*        menuFragmentManager.beginTransaction()
+                 .setCustomAnimations(R.anim.enter_right_to_left,R.anim.exit_right_to_left)
+                .replace(R.id.container_layout, peopleFragment).commit();*/
+
+        /*new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(fragmentId>3) {
+
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                            .replace(R.id.container_layout, peopleFragment).commit();
+                } else {
+
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
+                            .replace(R.id.container_layout, peopleFragment).commit();
+                }
+                fragmentId=3;
+
+            }
+        }, changeAnimation);*/
+
+        if (!chatFragmentActive) {
+
+            menuFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                    .replace(R.id.container_layout, shotsFragment)
+                    .remove(friendListFagment)
+                    .remove(peopleFragment)
+                    .remove(profileFragment).commit();
+        } else {
+            menuFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                    .replace(R.id.container_layout, chatsFragment)
+                    .remove(friendListFagment)
+                    .remove(peopleFragment)
+                    .remove(profileFragment).commit();
+
+        }
+
+        fragmentId = 1;
+
+
+    }
+
+    public void deactivateFeedBtn() {
+/*        searchBtnUnpressed.setVisibility(View.VISIBLE);
+        searchBtnPressed.setVisibility(View.GONE);
+        text_search.setVisibility(View.GONE);*/
+
+        // chatFragmentActive = false;
+
+        feed_button_pressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
+        feed_button_pressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
+        //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
+        if (!chatFragmentActive) {
+            feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
+
+            text_feed.setText("Feed");
+
+        }
+        feed_button_pressed.setAlpha(0.85f);
+
+        feed_button_layout.setBackgroundTintList(null);
+
+        //people_button_layout.setBackground(getDrawable(R.drawable.message_box_drawable));
+
+
+        feed_button_pressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
+        text_feed.setVisibility(View.GONE);
+
+
+    }
+
+    public void activateProfileBtn() {
         profileBtnUnpressed.setVisibility(View.GONE);
         profileBtnPressed.setVisibility(View.VISIBLE);
 
@@ -1192,8 +1376,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                 menuFragmentManager.beginTransaction()
                         .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
-                        .replace(R.id.container_layout, profileFragment).commit();
-                fragmentId = 4;
+                        .replace(R.id.container_layout, profileFragment)
+                        .remove(shotsFragment).commit();
+                fragmentId = 5;
 
             }
         }, changeAnimation);
@@ -1825,10 +2010,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
     @Override
     public void onBackPressed() {
-        if (fragmentId == 1)
-            super.onBackPressed();
-        else {
-            activateHomeBtn();
+        if (fragmentId == 1) {
+
+            if (!chatFragmentActive)
+                super.onBackPressed();
+            else
+                setChatFragmentStatus(false);
+        } else {
+            activateFeedBtn();
+            deactivateHomeBtn();
             deactivateFriendsBNtn();
             deactivateSearchBtn();
             deactivateProfileBtn();
@@ -1944,5 +2134,52 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         Glide.with(NavButtonTest.this).load(getDrawable(R.drawable.no_profile)).into(profileBtnPressed);
         Glide.with(NavButtonTest.this).load(getDrawable(R.drawable.no_profile)).into(profileBtnUnpressed);
 
+    }
+
+    @Override
+    public void setChatFragmentStatus(Boolean active) {
+
+
+        chatFragmentActive = active;
+        if (!active) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    feed_button_pressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
+
+                    // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
+
+                    feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+
+                    feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
+
+                    text_feed.setText("Feed");
+
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                            .replace(R.id.container_layout, shotsFragment).commit();
+                }
+            }, changeAnimation);
+        } else {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    feed_button_pressed.setBackgroundResource(R.drawable.nav_hieeway_send_btn);
+                    text_feed.setText("Chats");
+                    //feed_button_pressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+
+                    feed_button_pressed.setBackgroundTintList(null);
+
+
+                    feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                            .replace(R.id.container_layout, chatsFragment).commit();
+
+                }
+            }, changeAnimation);
+        }
     }
 }
