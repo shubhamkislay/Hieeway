@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
@@ -25,11 +26,12 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
-import com.hieeway.hieeway.FriendListFragmentViewModel;
+import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
+import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
 import com.hieeway.hieeway.Interface.FiltersListFragmentListener;
 import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.zomato.photofilters.utils.ThumbnailItem;
 
 import java.util.ArrayList;
@@ -42,25 +44,25 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     private static final int CREATE_GROUP_ITEM = 0;
     private static final int START_MUSIC_ITEM = 2;
     private static final int START_VIDEO_ITEM = 1;
-    private List<Friend> friendList;
-    private List<Friend> refreshedList;
+    private List<MyGroup> myGroupList;
+    private List<MyGroup> refreshedList;
     private Context context;
     private int selectedIndex = 0;
 
 
-    public GroupsAdapter(List<Friend> friendList, Context context) {
-        this.friendList = friendList;
+    public GroupsAdapter(List<MyGroup> myGroupList, Context context) {
+        this.myGroupList = myGroupList;
 
         this.context = context;
 
         refreshedList = new ArrayList<>();
-        Friend friend1 = new Friend();
-        Friend friend2 = new Friend();
-        Friend friend3 = new Friend();
+        MyGroup friend1 = new MyGroup();
+        MyGroup friend2 = new MyGroup();
+        MyGroup friend3 = new MyGroup();
         refreshedList.add(friend1);
         refreshedList.add(friend2);
         refreshedList.add(friend3);
-        refreshedList.addAll(friendList);
+        refreshedList.addAll(myGroupList);
 
     }
 
@@ -96,24 +98,34 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int position) {
 
         if (myViewHolder.getAdapterPosition() > 2) {
-            Friend friend = refreshedList.get(myViewHolder.getAdapterPosition());
-            Glide.with(context).load(friend.getPhoto()).addListener(new RequestListener<Drawable>() {
+            MyGroup myGroup = refreshedList.get(myViewHolder.getAdapterPosition());
+            if (!myGroup.getIcon().equals("default"))
+                Glide.with(context).load(myGroup.getIcon()).addListener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                        myViewHolder.one.setVisibility(View.GONE);
+                        myViewHolder.two.setVisibility(View.GONE);
+
+                        return false;
+                    }
+                }).into(myViewHolder.prof_pic);
+            else
+                Glide.with(context).load(context.getDrawable(R.drawable.no_profile)).into(myViewHolder.prof_pic);
+
+            myViewHolder.username.setText(myGroup.getGroupName());
+
+            myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    return false;
+                public void onClick(View v) {
+                    Toast.makeText(context, "Opening Group chat...", Toast.LENGTH_SHORT).show();
                 }
-
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                    myViewHolder.one.setVisibility(View.GONE);
-                    myViewHolder.two.setVisibility(View.GONE);
-
-                    return false;
-                }
-            }).into(myViewHolder.prof_pic);
-            myViewHolder.username.setText(friend.getUsername());
-
+            });
 
         } else {
             if (myViewHolder.getAdapterPosition() == 0) {
@@ -150,24 +162,24 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
     }
 
-    public void updateList(List<Friend> newListChatStamp) {
+    public void updateList(List<MyGroup> newListChatStamp) {
 
 
-        FriendListDiffUtilCallback chatStampListDiffUtilCallback = new FriendListDiffUtilCallback(this.friendList, newListChatStamp);
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(chatStampListDiffUtilCallback);
+        MyGroupListDiffUtilCallBack myGroupListDiffUtilCallBack = new MyGroupListDiffUtilCallBack(this.myGroupList, newListChatStamp);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(myGroupListDiffUtilCallBack);
 
-        friendList.clear();
-        friendList.addAll(newListChatStamp);
+        myGroupList.clear();
+        myGroupList.addAll(newListChatStamp);
 
 
         refreshedList.clear();
-        Friend friend1 = new Friend();
-        Friend friend2 = new Friend();
-        Friend friend3 = new Friend();
+        MyGroup friend1 = new MyGroup();
+        MyGroup friend2 = new MyGroup();
+        MyGroup friend3 = new MyGroup();
         refreshedList.add(friend1);
         refreshedList.add(friend2);
         refreshedList.add(friend3);
-        refreshedList.addAll(friendList);
+        refreshedList.addAll(myGroupList);
 
 
         diffResult.dispatchUpdatesTo(this);

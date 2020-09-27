@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -29,6 +31,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.GroupsAdapter;
 import com.hieeway.hieeway.ChatParentActivity;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
@@ -37,11 +44,15 @@ import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatFragmentOpenListener;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.FriendListValues;
+import com.hieeway.hieeway.Model.Groups;
+import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.R;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class ShotsFragment extends Fragment {
@@ -49,19 +60,24 @@ public class ShotsFragment extends Fragment {
     private RecyclerView feeds_recyclerview, groups_recyclerview;
     private TextView feed_title, shots_title, groups_title;
     private Activity parentActivity;
-    private List<Friend> userList;
+    public static final String SHARED_PREFS = "sharedPrefs";
     private FriendListFragmentViewModel friendListFragmentViewModel;
     private GroupsAdapter groupsAdapter;
     private ImageButton chats;
+    public static final String USER_ID = "userid";
+    private List<MyGroup> userList;
     private ChatFragmentOpenListener chatFragmentOpenListener;
+    private List<MyGroup> myGroupList;
 
 
     private AnimationArrowListener animationArrowListener;
+    private String userID;
 
     public ShotsFragment(Activity activity) {
         this.animationArrowListener = (AnimationArrowListener) activity;
         parentActivity = activity;
         this.chatFragmentOpenListener = (ChatFragmentOpenListener) activity;
+        myGroupList = new ArrayList<>();
     }
 
 
@@ -78,6 +94,10 @@ public class ShotsFragment extends Fragment {
         shots_title = view.findViewById(R.id.shots_title);
         groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
         chats = view.findViewById(R.id.chats);
+
+        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        userID = sharedPreferences.getString(USER_ID, "");
 
         userList = new ArrayList<>();
 
@@ -216,17 +236,20 @@ public class ShotsFragment extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                friendListFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(FriendListFragmentViewModel.class);
+
+                /*friendListFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(FriendListFragmentViewModel.class);
                 friendListFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<FriendListValues>() {
                     @Override
                     public void onChanged(@Nullable final FriendListValues friendListValues) {
-                        userList = friendListValues.getFriendList();
+                        //userList = friendListValues.getFriendList();
                         groupsAdapter.updateList(userList);
                         groups_recyclerview.scrollToPosition(0);
                         playArrowAnimation();
 
                     }
-                });
+                });*/
+
+                populateGroups();
             }
         }, 350);
 
@@ -248,5 +271,33 @@ public class ShotsFragment extends Fragment {
                 }
             }
         }, 1000);
+    }
+
+    private void populateGroups() {
+        myGroupList.clear();
+        DatabaseReference myGroupRefs = FirebaseDatabase.getInstance().getReference("MyGroup")
+                .child(userID);
+        myGroupRefs.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        MyGroup myGroup = dataSnapshot.getValue(MyGroup.class);
+                        myGroupList.add(myGroup);
+                    }
+
+                    userList = myGroupList;
+                    groupsAdapter.updateList(userList);
+                    groups_recyclerview.scrollToPosition(0);
+                    playArrowAnimation();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }
