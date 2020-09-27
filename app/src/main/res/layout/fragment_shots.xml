@@ -35,7 +35,7 @@
                 android:layout_above="@id/bottom_panel"
                 android:alpha="1.0"
                 android:background="@drawable/status_bar_fade"
-                android:backgroundTint="@color/nav_title_background_accent_color"
+                android:backgroundTint="@color/colorBlack"
                 android:visibility="visible" />
 
             <RelativeLayout

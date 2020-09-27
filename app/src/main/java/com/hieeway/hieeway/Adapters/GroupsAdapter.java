@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.Interface.FiltersListFragmentListener;
@@ -111,6 +113,18 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                 }
             }).into(myViewHolder.prof_pic);
             myViewHolder.username.setText(friend.getUsername());
+
+
+        } else {
+            if (myViewHolder.getAdapterPosition() == 0) {
+                myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        context.startActivity(new Intent(context, AddGroupDetailsActivity.class));
+                    }
+                });
+
+            }
         }
 
 

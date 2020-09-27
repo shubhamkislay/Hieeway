@@ -46,7 +46,7 @@
                 android:id="@+id/user_photo"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:padding="16dp"
+
 
                 android:scaleType="centerInside"
                 android:src="@drawable/spotify_icon_rgb_green"

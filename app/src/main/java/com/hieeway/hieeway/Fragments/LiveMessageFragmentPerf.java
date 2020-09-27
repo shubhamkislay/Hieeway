@@ -119,7 +119,9 @@ import com.ncorti.slidetoact.SlideToActView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.PlayerUiController;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBar;
 import com.hieeway.hieeway.Interface.LiveMessageEventListener;
 import com.hieeway.hieeway.Interface.LiveMessageRequestListener;
@@ -376,6 +378,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private Button spotify_btn;
     private EditText search_video_edittext;
     private List<SpotiySearchItem> spotiySearchItemList;
+    private PlayerUiController playerUiController;
 
 
     /**
@@ -530,6 +533,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         messageBox = view.findViewById(R.id.message_box);
         youtube_layout = view.findViewById(R.id.youtube_layout);
         youtube_player_view = view.findViewById(R.id.youtube_player_view);
+        playerUiController = youtube_player_view.getPlayerUiController();
+
         live_video_control_btn_lay = view.findViewById(R.id.live_video_control_btn_lay);
         connecting_text = view.findViewById(R.id.connecting_text);
         connecting_text_lay = view.findViewById(R.id.connecting_text_lay);
@@ -2429,6 +2434,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                     try {
                         youtubeTitle = task.getResult().getSnippet().getTitle();
+                        playerUiController.setVideoTitle(youtubeTitle);
+
                         if (youtubeTitle == null) {
                             youtubeTitle = " ";
                         }

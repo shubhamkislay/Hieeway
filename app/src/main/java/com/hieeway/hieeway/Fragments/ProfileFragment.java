@@ -209,8 +209,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private String activePhoto;
 
 
-    public ProfileFragment(ChangePictureListener changePictureListener, Activity activity) {
-        this.changePictureListener = changePictureListener;
+    public ProfileFragment(Activity activity) {
+        this.changePictureListener = (ChangePictureListener) activity;
         this.activity = activity;
     }
 
@@ -1702,6 +1702,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
     @Override
     public void changePicture(Boolean active) {
+
         imageSelectionCropListener.imageSelect(active);
     }
 
@@ -1710,7 +1711,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         if (active) {
             profile_pic_background.setImageDrawable(activity.getDrawable(R.color.colorBlack));
-
         } else {
             changePictureListener.removedPicture(active);
             center_dp.setImageDrawable(activity.getDrawable(R.drawable.no_profile));

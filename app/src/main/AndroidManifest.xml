@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_hieeway_circle"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ChatParentActivity"></activity>
+        <activity android:name=".AddGroupDetailsActivity" />
+        <activity android:name=".CreateGroupActivity" />
+        <activity android:name=".ChatParentActivity" />
         <activity android:name=".YoutubeLiveVideoSelectionActivity">
             <intent-filter android:label="Watch Together">
                 <action android:name="android.intent.action.SEND" />
@@ -35,7 +37,7 @@
         <activity android:name=".SlideButtonTestActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".WebViewActivity" />
-        <activity android:name=".MusicPalActivity"></activity>
+        <activity android:name=".MusicPalActivity" />
         <activity
             android:name=".MusicFeedActivity"
             android:theme="@style/MusicFeed" />
@@ -163,15 +165,14 @@
         <service android:name=".MusicBeamService" />
         <service android:name=".MusicPalService" />
         <service android:name=".LiveMessageNotificationService" />
-
         <service android:name=".MusicSyncNotification" />
         <service android:name=".LiveMessageActiveService" />
     </application>
+
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
-
     <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -183,9 +184,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    tools:context="com.hieeway.hieeway.AddGroupDetailsActivity">
+
+    <Button
+        android:id="@+id/create_group_btn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/nav_title_background_accent_color"
+        android:text="Add friends"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+    <EditText
+        android:id="@+id/group_name"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/message_box_drawable"
+        android:gravity="center"
+        android:hint="Enter Group name"
+        android:padding="16dp"
+        android:textColorHint="#808080"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_group_icon" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_one"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/group_icon"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        app:layout_constraintTop_toTopOf="@id/group_icon" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar_two"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:rotation="180"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/group_icon"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        app:layout_constraintTop_toTopOf="@id/group_icon" />
+
+    <TextView
+        android:id="@+id/page_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:text="Group Details"
+        android:textColor="#fff"
+        android:textSize="32dp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/add_group_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Add group icon"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/group_icon" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/group_icon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/no_profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

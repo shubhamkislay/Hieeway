@@ -154,7 +154,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public static String CURR_USER_ID;
     public String curr_id;
     private FragmentManager menuFragmentManager;
-    private int changeAnimation = 0;
+    private int changeAnimation = 350;
     private Boolean active;
     private RelativeLayout feed_button_layout;
     private TextView text_feed;
@@ -187,7 +187,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         nav_bar = findViewById(R.id.nav_bar);
 
-        profileFragment = new ProfileFragment(this, this);
+        profileFragment = new ProfileFragment(this);
 
         progressBar = findViewById(R.id.progress);
 
@@ -1027,17 +1027,19 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, friendListFagment)
-                            .remove(shotsFragment)
+                            /*.remove(shotsFragment)
                             .remove(peopleFragment)
-                            .remove(profileFragment).commit();
+                            .remove(profileFragment)*/
+                            .commit();
                 } else {
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
                             .replace(R.id.container_layout, friendListFagment)
-                            .remove(shotsFragment)
+                            /*.remove(shotsFragment)
                             .remove(peopleFragment)
-                            .remove(profileFragment).commit();
+                            .remove(profileFragment)*/
+                            .commit();
                 }
 
                 fragmentId = 3;
@@ -1118,18 +1120,20 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, chatsFragment)
-                            .remove(shotsFragment)
+                            /*.remove(shotsFragment)
                             .remove(friendListFagment)
                             .remove(peopleFragment)
-                            .remove(profileFragment).commit();
+                            .remove(profileFragment)*/
+                            .commit();
                 } else {
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
                             .replace(R.id.container_layout, chatsFragment)
-                            .remove(shotsFragment)
+                            /*.remove(shotsFragment)
                             .remove(friendListFagment)
                             .remove(peopleFragment)
-                            .remove(profileFragment).commit();
+                            .remove(profileFragment)*/
+                            .commit();
                 }
 
                 fragmentId = 2;
@@ -1198,13 +1202,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, peopleFragment)
-                            .remove(shotsFragment).commit();
+                            //.remove(shotsFragment)
+                            .commit();
                 } else {
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
                             .replace(R.id.container_layout, peopleFragment)
-                            .remove(shotsFragment).commit();
+                            //.remove(shotsFragment)
+                            .commit();
                 }
                 fragmentId = 4;
 
@@ -1281,25 +1287,32 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             }
         }, changeAnimation);*/
 
-        if (!chatFragmentActive) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!chatFragmentActive) {
 
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                    .replace(R.id.container_layout, shotsFragment)
-                    .remove(friendListFagment)
-                    .remove(peopleFragment)
-                    .remove(profileFragment).commit();
-        } else {
-            menuFragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
-                    .replace(R.id.container_layout, chatsFragment)
-                    .remove(friendListFagment)
-                    .remove(peopleFragment)
-                    .remove(profileFragment).commit();
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                            .replace(R.id.container_layout, shotsFragment)
+                            /*.remove(friendListFagment)
+                            .remove(peopleFragment)
+                            .remove(profileFragment)*/
+                            .commit();
+                } else {
+                    menuFragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
+                            .replace(R.id.container_layout, chatsFragment)
+                            /*.remove(friendListFagment)
+                            .remove(peopleFragment)
+                            .remove(profileFragment)*/
+                            .commit();
 
-        }
+                }
 
-        fragmentId = 1;
+                fragmentId = 1;
+            }
+        }, changeAnimation);
 
 
     }
@@ -1377,7 +1390,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 menuFragmentManager.beginTransaction()
                         .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_right_to_left)
                         .replace(R.id.container_layout, profileFragment)
-                        .remove(shotsFragment).commit();
+                        //.remove(shotsFragment)
+                        .commit();
                 fragmentId = 5;
 
             }

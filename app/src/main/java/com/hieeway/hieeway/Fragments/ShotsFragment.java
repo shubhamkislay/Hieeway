@@ -12,11 +12,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -55,10 +58,10 @@ public class ShotsFragment extends Fragment {
 
     private AnimationArrowListener animationArrowListener;
 
-    public ShotsFragment(Activity animationArrowListener) {
-        this.animationArrowListener = (AnimationArrowListener) animationArrowListener;
-        parentActivity = animationArrowListener;
-        this.chatFragmentOpenListener = (ChatFragmentOpenListener) animationArrowListener;
+    public ShotsFragment(Activity activity) {
+        this.animationArrowListener = (AnimationArrowListener) activity;
+        parentActivity = activity;
+        this.chatFragmentOpenListener = (ChatFragmentOpenListener) activity;
     }
 
 
@@ -97,6 +100,27 @@ public class ShotsFragment extends Fragment {
         } catch (Exception e) {
             //
         }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Window window = Objects.requireNonNull(getActivity()).getWindow();
+
+// clear FLAG_TRANSLUCENT_STATUS flag:
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+// add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+// finally change the color
+                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
+                } catch (Exception e) {
+                    //
+                }
+
+            }
+        }, 0);
 
         // Toast.makeText(getContext(),"Height: "+displayHeight,Toast.LENGTH_LONG).show();
 
@@ -164,7 +188,7 @@ public class ShotsFragment extends Fragment {
         }
 
 
-        groups_recyclerview.setItemViewCacheSize(2);
+        groups_recyclerview.setItemViewCacheSize(20);
         groups_recyclerview.setDrawingCacheEnabled(true);
         groups_recyclerview.setItemAnimator(new DefaultItemAnimator());
         groups_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
