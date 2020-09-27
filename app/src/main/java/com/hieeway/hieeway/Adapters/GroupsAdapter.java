@@ -55,14 +55,14 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         this.context = context;
 
-        refreshedList = new ArrayList<>();
-        MyGroup friend1 = new MyGroup();
+        //refreshedList = new ArrayList<>();
+        /*MyGroup friend1 = new MyGroup();
         MyGroup friend2 = new MyGroup();
         MyGroup friend3 = new MyGroup();
         refreshedList.add(friend1);
         refreshedList.add(friend2);
         refreshedList.add(friend3);
-        refreshedList.addAll(myGroupList);
+        refreshedList.addAll(myGroupList);*/
 
     }
 
@@ -98,7 +98,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int position) {
 
         if (myViewHolder.getAdapterPosition() > 2) {
-            MyGroup myGroup = refreshedList.get(myViewHolder.getAdapterPosition());
+            MyGroup myGroup = myGroupList.get(myViewHolder.getAdapterPosition());
             if (!myGroup.getIcon().equals("default"))
                 Glide.with(context).load(myGroup.getIcon()).addListener(new RequestListener<Drawable>() {
                     @Override
@@ -144,7 +144,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
     @Override
     public int getItemCount() {
-        return refreshedList.size();
+        return myGroupList.size();
     }
 
     @Override
@@ -172,14 +172,14 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         myGroupList.addAll(newListChatStamp);
 
 
-        refreshedList.clear();
+/*        refreshedList.clear();
         MyGroup friend1 = new MyGroup();
         MyGroup friend2 = new MyGroup();
         MyGroup friend3 = new MyGroup();
         refreshedList.add(friend1);
         refreshedList.add(friend2);
         refreshedList.add(friend3);
-        refreshedList.addAll(myGroupList);
+        refreshedList.addAll(myGroupList);*/
 
 
         diffResult.dispatchUpdatesTo(this);

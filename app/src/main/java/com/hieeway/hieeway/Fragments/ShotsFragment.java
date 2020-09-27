@@ -77,7 +77,7 @@ public class ShotsFragment extends Fragment {
         this.animationArrowListener = (AnimationArrowListener) activity;
         parentActivity = activity;
         this.chatFragmentOpenListener = (ChatFragmentOpenListener) activity;
-        myGroupList = new ArrayList<>();
+
     }
 
 
@@ -99,7 +99,15 @@ public class ShotsFragment extends Fragment {
 
         userID = sharedPreferences.getString(USER_ID, "");
 
+
         userList = new ArrayList<>();
+        userList.clear();
+        MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
+        MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
+        MyGroup friend3 = new MyGroup("ijk", "xyz", "abc");
+        userList.add(friend1);
+        userList.add(friend2);
+        userList.add(friend3);
 
         groupsAdapter = new GroupsAdapter(userList, getActivity());
 
@@ -233,25 +241,7 @@ public class ShotsFragment extends Fragment {
         });
 
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
 
-                /*friendListFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(FriendListFragmentViewModel.class);
-                friendListFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<FriendListValues>() {
-                    @Override
-                    public void onChanged(@Nullable final FriendListValues friendListValues) {
-                        //userList = friendListValues.getFriendList();
-                        groupsAdapter.updateList(userList);
-                        groups_recyclerview.scrollToPosition(0);
-                        playArrowAnimation();
-
-                    }
-                });*/
-
-                populateGroups();
-            }
-        }, 350);
 
 
         return view;
@@ -274,7 +264,16 @@ public class ShotsFragment extends Fragment {
     }
 
     private void populateGroups() {
+        myGroupList = new ArrayList<>();
         myGroupList.clear();
+
+        MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
+        MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
+        MyGroup friend3 = new MyGroup("ijk", "xyz", "abc");
+        myGroupList.add(friend1);
+        myGroupList.add(friend2);
+        myGroupList.add(friend3);
+
         DatabaseReference myGroupRefs = FirebaseDatabase.getInstance().getReference("MyGroup")
                 .child(userID);
         myGroupRefs.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -286,12 +285,14 @@ public class ShotsFragment extends Fragment {
                         myGroupList.add(myGroup);
                     }
 
-                    userList = myGroupList;
-                    groupsAdapter.updateList(userList);
+                    //userList = myGroupList;
+                    groupsAdapter.updateList(myGroupList);
                     groups_recyclerview.scrollToPosition(0);
-                    playArrowAnimation();
+
 
                 }
+
+                playArrowAnimation();
             }
 
             @Override
@@ -299,5 +300,29 @@ public class ShotsFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                /*friendListFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(FriendListFragmentViewModel.class);
+                friendListFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<FriendListValues>() {
+                    @Override
+                    public void onChanged(@Nullable final FriendListValues friendListValues) {
+                        //userList = friendListValues.getFriendList();
+                        groupsAdapter.updateList(userList);
+                        groups_recyclerview.scrollToPosition(0);
+                        playArrowAnimation();
+
+                    }
+                });*/
+
+                populateGroups();
+            }
+        }, 350);
     }
 }

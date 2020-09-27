@@ -115,7 +115,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     }
 
     private void checkDetails() {
-        if (group_name.getText().toString().length() > 3 && group_name.getText().toString().length() < 16) {
+        if (group_name.getText().toString().length() > 2 && group_name.getText().toString().length() < 31) {
 
             Intent intent = new Intent(AddGroupDetailsActivity.this, CreateGroupActivity.class);
             intent.putExtra("icon", profilepic);
@@ -123,7 +123,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
             intent.putExtra("groupName", group_name.getText().toString());
             startActivity(intent);
         } else {
-            group_name.setError("Group name should be 4-15 characters");
+            group_name.setError("Group name should be 3-30 characters");
         }
     }
 

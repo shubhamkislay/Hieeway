@@ -51,13 +51,16 @@
 
     <TextView
         android:id="@+id/username"
-        android:layout_width="wrap_content"
+        android:layout_width="72dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/prof_layout"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"
         android:textColor="#fff"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
         android:textSize="14dp"
         android:transitionName="nameTransition"
         tools:text='sky' />

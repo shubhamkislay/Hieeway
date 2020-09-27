@@ -8,6 +8,12 @@ public class MyGroup {
     public MyGroup() {
     }
 
+    public MyGroup(String groupID, String icon, String groupName) {
+        this.groupID = groupID;
+        this.icon = icon;
+        this.groupName = groupName;
+    }
+
     public String getGroupID() {
         return groupID;
     }
