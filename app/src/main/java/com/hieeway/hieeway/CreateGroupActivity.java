@@ -50,6 +50,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER_ID = "userid";
+    public static final String USERNAME = "username";
+    public static final String PHOTO_URL = "photourl";
     public String searchingUsername;
     TextView username, result_text;
     RecyclerView friend_list_recyclerview;
@@ -73,6 +75,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
     private Button create_group_btn;
     private String groupName, groupID, icon;
     private List<Friend> groupMembers;
+    private String currentUsername, currentPhoto;
 
 
     @Override
@@ -90,6 +93,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
 
 
         userID = sharedPreferences.getString(USER_ID, "");
+        currentUsername = sharedPreferences.getString(USERNAME, "");
+        currentPhoto = sharedPreferences.getString(PHOTO_URL, "default");
         //try {
 
 
@@ -269,6 +274,9 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
         HashMap<String, Object> userMap = new HashMap<>();
 
         userMap.put("id", userID);
+        userMap.put("username", currentUsername);
+        userMap.put("photo", currentPhoto);
+
 
         userRef.child(userRef.push().getKey())
                 .updateChildren(userMap);
@@ -282,6 +290,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             HashMap<String, Object> hashMap = new HashMap<>();
 
             hashMap.put("id", friend.getFriendId());
+            hashMap.put("username", friend.getUsername());
+            hashMap.put("photo", friend.getFriendId());
 
             memRef.child(memRef.push().getKey())
                     .updateChildren(hashMap);

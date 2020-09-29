@@ -1257,6 +1257,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         //searchBtnPressed.setBackgroundTintList(null);
         feed_button_pressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
 
+
         // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
         feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
@@ -1292,6 +1293,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             public void run() {
                 if (!chatFragmentActive) {
 
+                    // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.shotFragmentThemecolor)));
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, shotsFragment)
@@ -1300,7 +1302,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                             .remove(profileFragment)*/
                             .commit();
                 } else {
+
+                    // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
                     menuFragmentManager.beginTransaction()
+
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, chatsFragment)
                             /*.remove(friendListFagment)
@@ -1327,6 +1332,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         feed_button_pressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         feed_button_pressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
+        nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
 
         if (!chatFragmentActive) {
             feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
@@ -1702,7 +1709,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_btn_background_accent_color)));
+                // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_btn_background_accent_color)));
             }
         }, 100);
 
@@ -1855,8 +1862,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         appLogoAnimation(true);
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_status_color_accent));
-        animatorY = ObjectAnimator.ofFloat(send_arrow,"translationY",-displayHeight -(displayHeight)/3);
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.colorBlack));
+        animatorY = ObjectAnimator.ofFloat(send_arrow, "translationY", -displayHeight - (displayHeight) / 3);
         animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 
 

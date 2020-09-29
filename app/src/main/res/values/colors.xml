@@ -18,6 +18,8 @@
     <color name="gradientEnd">#09bbf5</color>
     <color name="gradientStart">#00eac6</color>
 
+    <color name="shotFragmentThemecolor">#101010</color>
+
 
     <color name="gradientStartDark">#acb6e5</color>
     <color name="gradientEndDark">#86fde8</color>

@@ -32,10 +32,13 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_group_icon" />
 
-    <ProgressBar
+    <com.github.ybq.android.spinkit.SpinKitView
         android:id="@+id/progress_bar_one"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="75dp"
+        style="@style/SpinKitView.Large.Wave"
+        android:rotation="90"
+        app:SpinKit_Color="@color/white"
+        android:layout_height="75dp"
         android:elevation="20dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/group_icon"
@@ -43,17 +46,6 @@
         app:layout_constraintRight_toRightOf="@id/group_icon"
         app:layout_constraintTop_toTopOf="@id/group_icon" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar_two"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:rotation="180"
-        android:elevation="20dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/group_icon"
-        app:layout_constraintLeft_toLeftOf="@id/group_icon"
-        app:layout_constraintRight_toRightOf="@id/group_icon"
-        app:layout_constraintTop_toTopOf="@id/group_icon" />
 
     <TextView
         android:id="@+id/page_title"

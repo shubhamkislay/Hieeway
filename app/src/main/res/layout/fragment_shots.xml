@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+    android:background="#121212"
     tools:context=".Fragments.ChatsFragment">
 
     <RelativeLayout
@@ -34,8 +34,7 @@
                 android:layout_marginTop="-4dp"
                 android:layout_above="@id/bottom_panel"
                 android:alpha="1.0"
-                android:background="@drawable/status_bar_fade"
-                android:backgroundTint="@color/colorBlack"
+                android:background="#121212"
                 android:visibility="visible" />
 
             <RelativeLayout
@@ -50,6 +49,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/shotsfragmentshotscontainer"
+                android:backgroundTint="@color/darkButtonBackground_accent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <TextView
@@ -57,10 +59,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="16dp"
                     android:gravity="left"
                     android:text="Shots"
-                    android:textColor="#fff"
                     android:textSize="20sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -71,6 +72,7 @@
                     android:layout_height="match_parent"
                     android:layout_below="@id/shots_title"
                     android:layout_marginTop="8dp"
+
                     android:fitsSystemWindows="true"
                     android:foregroundGravity="center"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -82,11 +84,11 @@
             <RelativeLayout
 
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
+                android:layout_height="20dp"
                 android:layout_gravity="bottom"
                 android:alpha="1.0"
                 android:background="@drawable/status_bar_fade"
-                android:backgroundTint="@color/nav_btn_background_accent_color"
+                android:backgroundTint="@color/colorBlack"
                 android:rotation="180"
                 android:visibility="visible" />
 
@@ -149,37 +151,48 @@
                             android:scaleType="centerInside"
                             android:src="@drawable/nav_hieeway_send_btn" />
 
-                        <TextView
-                            android:id="@+id/groups_title"
-                            android:layout_width="match_parent"
+
+                        <RelativeLayout
                             android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_below="@id/feed_title"
-                            android:layout_marginLeft="12dp"
-                            android:layout_marginTop="16dp"
-                            android:gravity="left"
-                            android:text="Groups"
-                            android:textColor="#fff"
-                            android:textSize="20sp" />
+                            android:layout_marginTop="12dp"
+
+                            android:padding="4dp">
+
+                            <TextView
+                                android:id="@+id/groups_title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="12dp"
+                                android:layout_marginTop="4dp"
+                                android:gravity="left"
+                                android:text="Groups"
+                                android:textSize="20sp" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/groups_recyclerview"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/groups_title"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:orientation="horizontal" />
+
+                        </RelativeLayout>
 
                         <TextView
                             android:id="@+id/feed_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="12dp"
-                            android:gravity="center"
-                            android:text="Hieeway"
-                            android:textColor="#fff"
-                            android:textSize="32sp" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/groups_recyclerview"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/groups_title"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:orientation="horizontal" />
+                            android:layout_centerHorizontal="true"
+
+                            android:layout_marginTop="12dp"
+                            android:layout_marginRight="12dp"
+                            android:gravity="left"
+                            android:textColor="#fff"
+                            android:text="Hieeway"
+                            android:textSize="24sp" />
 
 
                     </RelativeLayout>

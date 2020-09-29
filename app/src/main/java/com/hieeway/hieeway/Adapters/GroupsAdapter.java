@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
+import com.hieeway.hieeway.GroupChatActivity;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
 import com.hieeway.hieeway.Interface.FiltersListFragmentListener;
@@ -123,7 +124,14 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
             myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(context, "Opening Group chat...", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "Opening Group chat...", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(context, GroupChatActivity.class);
+                    intent.putExtra("groupID", myGroup.getGroupID());
+                    intent.putExtra("groupName", myGroup.getGroupName());
+                    intent.putExtra("icon", myGroup.getIcon());
+
+                    context.startActivity(intent);
                 }
             });
 

@@ -46,7 +46,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
 
     private static final int PERMISSION_PICK_IMAGE = 1000;
     TextView page_title, add_group_icon;
-    ProgressBar progress_bar_one, progress_bar_two;
+    ProgressBar progress_bar_one;
     Button create_group_btn;
     EditText group_name;
     CircleImageView group_icon;
@@ -67,7 +67,6 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
         page_title = findViewById(R.id.page_title);
         add_group_icon = findViewById(R.id.add_group_icon);
         progress_bar_one = findViewById(R.id.progress_bar_one);
-        progress_bar_two = findViewById(R.id.progress_bar_two);
         create_group_btn = findViewById(R.id.create_group_btn);
         group_name = findViewById(R.id.group_name);
         group_icon = findViewById(R.id.group_icon);
@@ -147,7 +146,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     private void uploadImage(Uri imageUri) {
 
         progress_bar_one.setVisibility(View.VISIBLE);
-        progress_bar_two.setVisibility(View.VISIBLE);
+
         /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this );
 
         progressDialog.setMessage("Uploading photo");
@@ -195,7 +194,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
                         groupRef.updateChildren(map);
 
                         progress_bar_one.setVisibility(View.GONE);
-                        progress_bar_two.setVisibility(View.GONE);
+
 
                         //progressDialog.dismiss();
 
@@ -220,7 +219,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
                         //progressDialog.dismiss();
                         // registerUsernameEntryFragment.setProgressVisibility(false);
                         progress_bar_one.setVisibility(View.GONE);
-                        progress_bar_two.setVisibility(View.GONE);
+
                     }
 
                 }
@@ -230,7 +229,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
         } else {
             Toast.makeText(AddGroupDetailsActivity.this, "No Image selected", Toast.LENGTH_SHORT).show();
             progress_bar_one.setVisibility(View.GONE);
-            progress_bar_two.setVisibility(View.GONE);
+
         }
 
 

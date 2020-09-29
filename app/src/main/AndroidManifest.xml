@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_hieeway_circle"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".GroupChatActivity"></activity>
         <activity android:name=".AddGroupDetailsActivity" />
         <activity android:name=".CreateGroupActivity" />
         <activity android:name=".ChatParentActivity" />
