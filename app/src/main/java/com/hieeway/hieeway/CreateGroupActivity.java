@@ -309,8 +309,13 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
 
         }
 
-        Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
-        finish();
+        //Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(CreateGroupActivity.this, GroupChatActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("groupName", groupName);
+        intent.putExtra("icon", icon);
+        startActivity(intent);
     }
 
     private void userStatusOnDiconnect() {

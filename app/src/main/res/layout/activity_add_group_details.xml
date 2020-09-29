@@ -36,7 +36,7 @@
         android:id="@+id/progress_bar_one"
         android:layout_width="75dp"
         style="@style/SpinKitView.Large.Wave"
-        android:rotation="90"
+        android:rotation="-90"
         app:SpinKit_Color="@color/white"
         android:layout_height="75dp"
         android:elevation="20dp"

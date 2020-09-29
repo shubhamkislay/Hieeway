@@ -146,6 +146,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     private void uploadImage(Uri imageUri) {
 
         progress_bar_one.setVisibility(View.VISIBLE);
+        group_icon.setImageDrawable(getDrawable(R.drawable.dark_drawable));
 
         /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this );
 

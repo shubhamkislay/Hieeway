@@ -765,7 +765,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 deactivateHomeBtn();
                 deactivateFeedBtn();
                 deactivateFriendsBNtn();
-                animateBottomNavMenuText(text_profile,profileBtnPressed);
+                animateBottomNavMenuText(text_profile, profileBtnUnpressed);
 
             }
         });
@@ -780,7 +780,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 deactivateHomeBtn();
                 deactivateFeedBtn();
                 deactivateFriendsBNtn();
-                animateBottomNavMenuText(text_profile,profileBtnPressed);
+                animateBottomNavMenuText(text_profile, profileBtnUnpressed);
             }
         });
 
@@ -792,7 +792,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 deactivateHomeBtn();
                 deactivateFeedBtn();
                 deactivateFriendsBNtn();
-                animateBottomNavMenuText(text_profile,profileBtnPressed);
+                animateBottomNavMenuText(text_profile, profileBtnUnpressed);
             }
         });
 
@@ -1364,8 +1364,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     }
 
     public void activateProfileBtn() {
-        profileBtnUnpressed.setVisibility(View.GONE);
-        profileBtnPressed.setVisibility(View.VISIBLE);
+        profileBtnUnpressed.setVisibility(View.VISIBLE);
+        //profileBtnPressed.setVisibility(View.VISIBLE);
 
         profileBtnUnpressed.setAlpha(1.0f);
 
@@ -1377,7 +1377,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         }, 100);*/
 
 
-        profileBtnPressed.setAlpha(1.0f);
+        //profileBtnPressed.setAlpha(1.0f);
 
         //profile_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
@@ -1714,7 +1714,6 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public void deactivateProfileBtn()
     {
         profileBtnUnpressed.setVisibility(View.VISIBLE);
-        profileBtnPressed.setVisibility(View.GONE);
         profileBtnUnpressed.setAlpha(0.15f);
 
         new Handler().postDelayed(new Runnable() {
