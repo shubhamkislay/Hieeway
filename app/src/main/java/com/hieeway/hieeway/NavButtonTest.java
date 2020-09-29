@@ -1091,7 +1091,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         friendsBtnUnpressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
 
-        friendsBtnUnpressed.setAlpha(0.2f);
+        friendsBtnUnpressed.setAlpha(0.15f);
 
         friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
@@ -1164,7 +1164,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         homeBtnPressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
-        homeBtnPressed.setAlpha(0.2f);
+        homeBtnPressed.setAlpha(0.15f);
 
         homeBtnPressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
@@ -1240,7 +1240,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         searchBtnUnpressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
-        searchBtnUnpressed.setAlpha(0.2f);
+        searchBtnUnpressed.setAlpha(0.15f);
 
         people_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
@@ -1350,7 +1350,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             text_feed.setText("Feed");
 
         }
-        feed_button_pressed.setAlpha(0.2f);
+        feed_button_pressed.setAlpha(0.15f);
 
         feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
@@ -1715,7 +1715,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     {
         profileBtnUnpressed.setVisibility(View.VISIBLE);
         profileBtnPressed.setVisibility(View.GONE);
-        profileBtnUnpressed.setAlpha(0.2f);
+        profileBtnUnpressed.setAlpha(0.15f);
 
         new Handler().postDelayed(new Runnable() {
             @Override

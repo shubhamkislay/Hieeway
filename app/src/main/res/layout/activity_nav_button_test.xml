@@ -46,6 +46,91 @@
         android:alpha="0.0"
         android:backgroundTint="@color/colorPrimaryDark"
         android:src="@drawable/hiewaylogomessagebackfresh" />
+    <RelativeLayout
+        android:id="@+id/video_splash_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/app_logo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:alpha="0.0"
+            android:background="@drawable/splash_logo"
+            android:paddingBottom="500dp" />
+
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/master_head"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@android:color/transparent"
+            android:elevation="20dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="48dp"
+            android:paddingRight="100dp"
+            android:text="Hieeway"
+            android:textColor="#fff"
+            android:textSize="48sp" />
+
+
+        <RelativeLayout
+            android:id="@+id/progress"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_above="@id/master_head"
+
+            android:layout_centerHorizontal="true"
+            android:alpha="0.0">
+
+            <ProgressBar
+
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:rotation="180"
+                android:visibility="visible" />
+
+            <ProgressBar
+
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/master_head"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:background="#000"
+            app:elevation="100dp"
+            android:gravity="center"
+            android:paddingBottom="12dp"
+            android:text="Hieeway Inc.\n Designed and created by Shubham Kislay"
+            android:textColor="#A8A8A8"
+            android:textSize="10sp" />
+
+
+        <com.hieeway.hieeway.Utils.MutedVideoView
+            android:id="@+id/videoView"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp" />
+
+    </RelativeLayout>
 
     <RelativeLayout
 
@@ -121,112 +206,27 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/video_splash_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000"
-        android:visibility="visible">
-
-        <RelativeLayout
-            android:id="@+id/app_logo"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_centerInParent="true"
-            android:alpha="0.0"
-            android:background="@drawable/splash_logo"
-            android:paddingBottom="500dp" />
-
-        <TextView
-            android:id="@+id/app_title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/master_head"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@android:color/transparent"
-            android:elevation="10dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:padding="48dp"
-            android:paddingRight="100dp"
-            android:text="Hieeway"
-            android:textColor="#fff"
-            android:textSize="48sp" />
-
-
-        <RelativeLayout
-            android:id="@+id/progress"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_above="@id/master_head"
-
-            android:layout_centerHorizontal="true"
-            android:alpha="0.0">
-
-            <ProgressBar
-
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_centerInParent="true"
-                android:alpha="1.0"
-                android:rotation="180"
-                android:visibility="visible" />
-
-            <ProgressBar
-
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_centerInParent="true"
-                android:alpha="1.0"
-                android:visibility="visible" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/master_head"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:background="#000"
-            android:elevation="20dp"
-            android:gravity="center"
-            android:paddingBottom="12dp"
-            android:text="Hieeway Inc.\n Designed and created by Shubham Kislay"
-            android:textColor="#A8A8A8"
-            android:textSize="10sp" />
-
-
-        <com.hieeway.hieeway.Utils.MutedVideoView
-            android:id="@+id/videoView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp" />
-
-    </RelativeLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav_bar"
-        android:alpha="1.0"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:background="@color/darkButtonBackground"
         android:layout_alignParentBottom="true"
+        android:alpha="1.0"
         android:animateLayoutChanges="true"
+        android:background="@color/darkButtonBackground"
         android:orientation="horizontal"
         android:padding="4dp">
 
         <RelativeLayout
-            android:visibility="visible"
             android:id="@+id/feed_button_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@drawable/nav_btn_back_drawable"
             android:backgroundTint="@color/nav_darktheme_btn_active"
-
             android:padding="12dp"
+
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
 
@@ -266,6 +266,7 @@
                     android:gravity="center_vertical"
                     android:paddingRight="4dp"
                     android:text="Feed"
+                    android:textColor="#fff"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:visibility="visible" />
@@ -321,10 +322,11 @@
                     android:layout_marginLeft="8dp"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center_vertical"
-                    android:text="Chats"
-                    android:textSize="16sp"
-
                     android:paddingRight="4dp"
+                    android:text="Chats"
+                    android:textColor="#fff"
+
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -334,17 +336,17 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:visibility="visible"
             android:id="@+id/relativeLayout"
-
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp"
             android:background="@drawable/nav_btn_back_drawable"
             android:backgroundTint="@color/darkButtonBackground"
-
             android:padding="12dp"
+
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/relativeLayout2"
             app:layout_constraintStart_toEndOf="@+id/feed_button_layout"
@@ -373,9 +375,9 @@
                     android:layout_width="@dimen/nav_button_inactive_size"
                     android:layout_height="@dimen/nav_button_inactive_size"
                     android:layout_centerInParent="true"
+                    android:alpha="0.15"
                     android:background="@drawable/ic_people_black_24dp"
                     android:backgroundTint="@color/white"
-                    android:alpha="0.2"
                     android:visibility="visible" />
 
                 <TextView
@@ -385,10 +387,11 @@
                     android:layout_marginLeft="8dp"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center_vertical"
-                    android:text="Friends"
-                    android:textSize="16sp"
-
                     android:paddingRight="4dp"
+                    android:text="Friends"
+
+                    android:textColor="#fff"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -433,9 +436,9 @@
                     android:layout_width="@dimen/nav_button_inactive_size"
                     android:layout_height="@dimen/nav_button_inactive_size"
                     android:layout_centerInParent="true"
+                    android:alpha="0.15"
                     android:background="@drawable/ic_search_black_24dp"
                     android:backgroundTint="@color/white"
-                    android:alpha="0.2"
                     android:visibility="visible" />
 
 
@@ -449,6 +452,7 @@
                     android:gravity="center_vertical"
                     android:paddingRight="4dp"
                     android:text="Search"
+                    android:textColor="#fff"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
@@ -477,14 +481,6 @@
                 android:animateLayoutChanges="true"
                 android:orientation="horizontal">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_button_pressed"
-                    android:layout_width="@dimen/nav_button_prof_active_size"
-                    android:layout_height="@dimen/nav_button_prof_active_size"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/no_profile"
-                    android:visibility="gone" />
-
                 <TextView
                     android:id="@+id/text_profile"
                     android:layout_width="match_parent"
@@ -492,23 +488,31 @@
                     android:layout_marginLeft="16dp"
                     android:fontFamily="sans-serif-thin"
                     android:gravity="center_vertical"
-
                     android:paddingRight="4dp"
                     android:text="Profile"
+                    android:textColor="#fff"
 
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_button_pressed"
+                    android:layout_width="@dimen/nav_button_prof_active_size"
+                    android:layout_height="@dimen/nav_button_prof_active_size"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    tools:src="@drawable/no_profile" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
 
                     android:id="@+id/profile_button_unpressed"
                     android:layout_width="@dimen/nav_button_prof_inactive_size"
                     android:layout_height="@dimen/nav_button_prof_inactive_size"
-                    android:alpha="0.2"
+                    android:alpha="0.15"
                     android:scaleType="centerCrop"
-                    tools:src="@drawable/no_profile"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    tools:src="@drawable/no_profile" />
 
             </LinearLayout>
 
@@ -517,6 +521,7 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <ImageView
         android:id="@+id/send_arrow_splash"
