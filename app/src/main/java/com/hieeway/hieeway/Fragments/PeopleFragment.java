@@ -92,7 +92,7 @@ public class PeopleFragment extends Fragment {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_status_color));
+        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
 
         result_text = view.findViewById(R.id.result_text);
         result_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));

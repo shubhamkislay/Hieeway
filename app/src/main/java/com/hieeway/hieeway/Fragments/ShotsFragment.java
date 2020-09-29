@@ -142,7 +142,7 @@ public class ShotsFragment extends Fragment {
                     window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
+                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
                 } catch (Exception e) {
                     //
                 }

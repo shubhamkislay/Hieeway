@@ -48,7 +48,6 @@
                 android:layout_height="64dp"
                 android:padding="16dp"
                 android:scaleType="centerCrop"
-
                 android:src="@drawable/ic_baseline_group_add_24"
                 android:transitionName="imageTransition" />
         </RelativeLayout>
@@ -65,7 +64,7 @@
         android:layout_marginBottom="2dp"
         android:gravity="center"
         android:padding="2dp"
-        android:text='Create'
+        android:text='New Group'
         android:textColor="#FFFFFF"
         android:textSize="14dp"
         android:transitionName="nameTransition" />

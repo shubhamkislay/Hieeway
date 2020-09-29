@@ -3,46 +3,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+    android:background="@color/background_theme"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.FriendListFagment">
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:background="@color/background_theme"
         android:layout_height="match_parent">
 
     <!-- TODO: Update blank fragment layout -->
         <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:backgroundTint="@color/darkButtonBackground"
+                android:alpha="1.0"
+                android:layout_above="@id/bottom_panel"
+                android:background="@drawable/status_bar_fade"
+                android:visibility="gone" />
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:visibility="visible"
+                android:alpha="1.0"
+                android:layout_gravity="bottom"
+                android:rotation="180"
+                android:background="@drawable/status_bar_fade"
+                android:backgroundTint="@color/darkButtonBackground" />
 
             <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/friend_list_recyclerview"
-                android:layout_marginTop="8dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+                android:id="@+id/friend_list_recyclerview"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/shotsfragmentshotscontainer"
+                android:backgroundTint="@color/darkButtonBackground"
+                android:paddingLeft="4dp"
+                android:paddingTop="8dp"
+                android:paddingRight="4dp"
+                app:elevation="10dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:visibility="visible"
-            android:alpha="1.0"
-            android:layout_above="@id/bottom_panel"
-            android:background="@drawable/status_bar_fade"
-            android:backgroundTint="@color/nav_status_color" />
 
             <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-                android:backgroundTint="@android:color/transparent"
-            android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:backgroundTint="@color/background_theme"
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|enterAlways">
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/background_theme"
+                    app:layout_scrollFlags="scroll|enterAlways">
 
 
 
@@ -53,8 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_gravity="center_vertical"
                 android:padding="4dp"
-                android:background="@drawable/rounded_bottom_corner_drawable"
-                android:backgroundTint="@color/nav_title_background_accent_color"
+                android:background="@android:color/transparent"
                 android:layout_height="wrap_content">
 
                 <TextView
@@ -146,8 +165,8 @@
                         android:layout_marginLeft="16dp"
                         android:text="Friends"
                         android:src="@drawable/app_title_logo"
-                        android:textColor="@color/textThemeColor"
                         android:layout_centerVertical="true"
+                        android:textColor="#fff"
                         android:gravity="center"
                         android:textSize="28dp"
                         android:layout_width="wrap_content"
@@ -267,31 +286,6 @@
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="57dp"
-            android:visibility="visible"
-            android:alpha="1.0"
-            android:layout_gravity="bottom"
-            android:rotation="180"
-            android:background="@drawable/status_bar_fade"
-            android:backgroundTint="@color/nav_btn_background_accent_color" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

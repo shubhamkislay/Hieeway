@@ -64,6 +64,7 @@
 
     <color name="nav_button_inactive">#C4C4C4</color>
 
+    <color name="background_theme">#0E0E0E</color>
 
 
     <color name="nav_background_color">#0F0F0F</color>
@@ -86,6 +87,9 @@
 
     <color name="offbackgroundtheme">#111111</color>
 
+
+    <color name="darkbackground">#171717</color>
+    <color name="nav_darktheme_btn_active">#1E1E1E</color>
 
 
     <color name="red_active">#f44336</color>

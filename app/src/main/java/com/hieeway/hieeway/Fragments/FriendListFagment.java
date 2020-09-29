@@ -254,7 +254,7 @@ public class FriendListFagment extends Fragment {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_status_color));
+        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
 
 
         // search_btn_layout = view.findViewById(R.id.search_bar_layout_friends);

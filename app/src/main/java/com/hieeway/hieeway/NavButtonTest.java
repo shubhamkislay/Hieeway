@@ -157,7 +157,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private int changeAnimation = 350;
     private Boolean active;
     private RelativeLayout feed_button_layout;
-    private TextView text_feed;
+    private TextView text_feed, app_title;
     private ImageView feed_button_pressed;
     private ImageView feed_button_unpressed;
     private ShotsFragment shotsFragment;
@@ -176,6 +176,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         splash_layout = findViewById(R.id.splash_layout);
+        app_title = findViewById(R.id.app_title);
         video_splash_layout = findViewById(R.id.video_splash_layout);
         background_screen = findViewById(R.id.background_screen);
 
@@ -198,6 +199,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         nav_parent_layout = findViewById(R.id.nav_parent_layout);
 
         master_head.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-medium.otf"));
+        app_title.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -227,7 +229,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.background_theme));
 
 
 
@@ -249,7 +251,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         view.setVideoURI(video);
 
 
-        view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        /**
+         * Original code.. which shows a splash screen
+         */
+        /*view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
 
@@ -287,11 +292,15 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 animateArrow();
 
 
-                /*if(videoPlayBack)
-                view.start();*/
+                *//*if(videoPlayBack)
+                view.start();*//*
 
             }
-        });
+        });*/
+
+        startSplash();
+        view.setVisibility(View.GONE);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
         //initiateNavActivity();
@@ -1013,7 +1022,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         friendsBtnUnpressed.setAlpha(1.0f);
 
-        friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+        friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
        // friendsBtnUnpressed.setBackground(getDrawable(R.drawable.ic_friends_active));
 
@@ -1082,9 +1091,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         friendsBtnUnpressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
 
-        friendsBtnUnpressed.setAlpha(0.85f);
+        friendsBtnUnpressed.setAlpha(0.2f);
 
-        friends_button_layout.setBackgroundTintList(null);
+        friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
       //  friendsBtnUnpressed.setBackground(getDrawable(R.drawable.ic_friends_active));
         text_friends.setVisibility(View.GONE);
@@ -1108,7 +1117,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         //home_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
 
-        home_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+        home_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
         text_home.setVisibility(View.VISIBLE);
 
@@ -1155,7 +1164,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         homeBtnPressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
-        homeBtnPressed.setAlpha(0.85f);
+        homeBtnPressed.setAlpha(0.2f);
 
         homeBtnPressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.white)));
 
@@ -1185,7 +1194,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
        // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
-        people_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+        people_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
         // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         text_search.setVisibility(View.VISIBLE);
@@ -1231,9 +1240,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         searchBtnUnpressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
-        searchBtnUnpressed.setAlpha(0.85f);
+        searchBtnUnpressed.setAlpha(0.2f);
 
-        people_button_layout.setBackgroundTintList(null);
+        people_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
         //people_button_layout.setBackground(getDrawable(R.drawable.message_box_drawable));
 
@@ -1260,7 +1269,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
-        feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+        feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
         // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
         text_feed.setVisibility(View.VISIBLE);
@@ -1333,7 +1342,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         feed_button_pressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_inactive_size);
         //homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
-        nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
+        //nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
 
         if (!chatFragmentActive) {
             feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
@@ -1341,9 +1350,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             text_feed.setText("Feed");
 
         }
-        feed_button_pressed.setAlpha(0.85f);
+        feed_button_pressed.setAlpha(0.2f);
 
-        feed_button_layout.setBackgroundTintList(null);
+        feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
         //people_button_layout.setBackground(getDrawable(R.drawable.message_box_drawable));
 
@@ -1357,6 +1366,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     public void activateProfileBtn() {
         profileBtnUnpressed.setVisibility(View.GONE);
         profileBtnPressed.setVisibility(View.VISIBLE);
+
+        profileBtnUnpressed.setAlpha(1.0f);
 
         /*new Handler().postDelayed(new Runnable() {
             @Override
@@ -1372,7 +1383,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         text_profile.setVisibility(View.VISIBLE);
 
-        profile_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+        profile_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
 /*        profileBtnPressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
         profileBtnPressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_active_size);
@@ -1704,7 +1715,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     {
         profileBtnUnpressed.setVisibility(View.VISIBLE);
         profileBtnPressed.setVisibility(View.GONE);
-        profileBtnUnpressed.setAlpha(0.85f);
+        profileBtnUnpressed.setAlpha(0.2f);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -1713,10 +1724,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             }
         }, 100);
 
-       // profile_button_layout.setBackground(getDrawable(R.drawable.message_box_drawable));
-       // profileBtnUnpressed
+        // profile_button_layout.setBackground(getDrawable(R.drawable.message_box_drawable));
+        // profileBtnUnpressed
 
-        profile_button_layout.setBackgroundTintList(null);
+
+        profile_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground)));
 
         text_profile.setVisibility(View.GONE);
     }
@@ -1862,7 +1874,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         appLogoAnimation(true);
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.colorBlack));
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
         animatorY = ObjectAnimator.ofFloat(send_arrow, "translationY", -displayHeight - (displayHeight) / 3);
         animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 
@@ -1883,7 +1895,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         AnimatorSet visibleAnimate =  new AnimatorSet();
 
-        visibleAnimate.setDuration(arrowAnimDuration * 5);
+        visibleAnimate.setDuration(arrowAnimDuration * 5 / 2);
 
 
 
@@ -1932,7 +1944,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 typeWriter.animate().alpha(0.0f).setDuration(arrowAnimDuration);
                 // splash_logo_gradient.animate().alpha(0.0f).setDuration(750);
 
-                master_head.setVisibility(View.GONE);
+        master_head.setVisibility(View.GONE);
+        app_title.setVisibility(View.GONE);
 
                 animatorSet.playTogether(animatorY,alphaArrow/*, animateTextLogo*/,alphaBackgroundScreen/*,alphaMasterHead*//*,alphaNavBar, alphaFrameLayout*/);
                 animatorSet.start();
@@ -2057,14 +2070,25 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         // animateArrow();
         //view.seekTo(stopPosition);
-        progressBar.setAlpha(0.0f);
+
+        /**
+         * original code below
+         */
+        /*progressBar.setAlpha(0.0f);
 
         try {
             if (mediaPlayer != null)
                 mediaPlayer.start();
         } catch (Exception e) {
 
-        }
+        }*/
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animateArrow();
+            }
+        }, 200);
     }
 
 
@@ -2171,11 +2195,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                     // people_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
-                    feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+                    feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
                     feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
 
+
                     text_feed.setText("Feed");
+
+                    //animateBottomNavMenuText(text_feed,feed_button_pressed);
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
@@ -2192,8 +2219,10 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                     feed_button_pressed.setBackgroundTintList(null);
 
+                    //animateBottomNavMenuText(text_feed,feed_button_pressed);
 
-                    feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.darkButtonBackground_accent)));
+
+                    feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)

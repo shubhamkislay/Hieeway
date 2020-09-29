@@ -121,321 +121,6 @@
 
     </RelativeLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/nav_bar"
-        android:alpha="1.0"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@color/nav_btn_background_accent_color"
-        android:layout_alignParentBottom="true"
-        android:animateLayoutChanges="true"
-        android:orientation="horizontal"
-        android:padding="4dp">
-
-        <RelativeLayout
-            android:visibility="visible"
-            android:id="@+id/feed_button_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/nav_btn_back_drawable"
-            android:backgroundTint="@color/darkButtonBackground_accent"
-
-            android:padding="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/feed_button_pressed"
-                    android:layout_width="@dimen/nav_button_active_size"
-                    android:layout_height="@dimen/nav_button_active_size"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_feed"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/feed_button_unpressed"
-                    android:layout_width="@dimen/nav_button_inactive_size"
-                    android:layout_height="@dimen/nav_button_inactive_size"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_feed"
-                    android:backgroundTint="@color/white"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/text_feed"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical"
-                    android:paddingRight="4dp"
-                    android:text="Feed"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/home_button_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/nav_btn_back_drawable"
-            android:padding="12dp"
-
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/relativeLayout"
-            app:layout_constraintStart_toEndOf="@id/feed_button_layout"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/home_button_pressed"
-                    android:layout_width="@dimen/nav_button_active_size"
-                    android:layout_height="@dimen/nav_button_active_size"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/nav_hieeway_send_btn"
-                    android:backgroundTint="#CDCDCD"
-                    android:visibility="visible" />
-
-                <ImageView
-                    android:id="@+id/home_button_unpressed"
-                    android:layout_width="@dimen/nav_button_inactive_size"
-                    android:layout_height="@dimen/nav_button_inactive_size"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/nav_hieeway_send_btn"
-                    android:backgroundTint="@color/white"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/text_home"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical"
-                    android:text="Chats"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-
-                    android:paddingRight="4dp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:visibility="visible"
-            android:id="@+id/relativeLayout"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/nav_btn_back_drawable"
-
-            android:padding="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/relativeLayout2"
-            app:layout_constraintStart_toEndOf="@+id/feed_button_layout"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/friends_button_pressed"
-                    android:layout_width="@dimen/nav_button_active_size"
-                    android:layout_height="@dimen/nav_button_active_size"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/ic_people_black_24dp"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:visibility="gone" />
-
-
-
-                <ImageView
-                    android:id="@+id/friends_button_unpressed"
-                    android:layout_width="@dimen/nav_button_inactive_size"
-                    android:layout_height="@dimen/nav_button_inactive_size"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/ic_people_black_24dp"
-                    android:backgroundTint="@color/white"
-                    android:alpha="0.85"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/text_friends"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical"
-                    android:text="Friends"
-                    android:textColor="#fff"
-                    android:textSize="16sp"
-
-                    android:paddingRight="4dp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/nav_btn_back_drawable"
-            android:padding="12dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/relativeLayout3"
-            app:layout_constraintStart_toEndOf="@+id/relativeLayout"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/search_button_pressed"
-                    android:layout_width="@dimen/nav_button_active_size"
-                    android:layout_height="@dimen/nav_button_active_size"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/ic_search_black_24dp"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:visibility="gone" />
-
-
-                <ImageView
-                    android:id="@+id/search_button_unpressed"
-                    android:layout_width="@dimen/nav_button_inactive_size"
-                    android:layout_height="@dimen/nav_button_inactive_size"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/ic_search_black_24dp"
-                    android:backgroundTint="@color/white"
-                    android:alpha="0.85"
-                    android:visibility="visible" />
-
-
-
-                <TextView
-                    android:id="@+id/text_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical"
-                    android:paddingRight="4dp"
-                    android:text="Search"
-                    android:textColor="#fff"
-
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/relativeLayout3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/nav_btn_back_drawable"
-            android:padding="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="horizontal">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile_button_pressed"
-                    android:layout_width="@dimen/nav_button_prof_active_size"
-                    android:layout_height="@dimen/nav_button_prof_active_size"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/no_profile"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/text_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="16dp"
-                    android:fontFamily="sans-serif-thin"
-                    android:gravity="center_vertical"
-
-                    android:paddingRight="4dp"
-                    android:text="Profile"
-                    android:textColor="#fff"
-
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-
-                    android:id="@+id/profile_button_unpressed"
-                    android:layout_width="@dimen/nav_button_prof_inactive_size"
-                    android:layout_height="@dimen/nav_button_prof_inactive_size"
-                    android:alpha="0.85"
-                    android:scaleType="centerCrop"
-                    tools:src="@drawable/no_profile"
-                    android:visibility="visible" />
-
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <RelativeLayout
         android:id="@+id/video_splash_layout"
         android:layout_width="match_parent"
@@ -451,6 +136,24 @@
             android:alpha="0.0"
             android:background="@drawable/splash_logo"
             android:paddingBottom="500dp" />
+
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/master_head"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@android:color/transparent"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:padding="48dp"
+            android:paddingRight="100dp"
+            android:text="Hieeway"
+            android:textColor="#fff"
+            android:textSize="48sp" />
 
 
         <RelativeLayout
@@ -502,6 +205,318 @@
             android:layout_marginTop="25dp" />
 
     </RelativeLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nav_bar"
+        android:alpha="1.0"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/darkButtonBackground"
+        android:layout_alignParentBottom="true"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/feed_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="@color/nav_darktheme_btn_active"
+
+            android:padding="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/feed_button_pressed"
+                    android:layout_width="@dimen/nav_button_active_size"
+                    android:layout_height="@dimen/nav_button_active_size"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/ic_feed"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/feed_button_unpressed"
+                    android:layout_width="@dimen/nav_button_inactive_size"
+                    android:layout_height="@dimen/nav_button_inactive_size"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/ic_feed"
+                    android:backgroundTint="@color/white"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/text_feed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:text="Feed"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/home_button_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/nav_btn_back_drawable"
+            android:padding="12dp"
+
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/relativeLayout"
+            app:layout_constraintStart_toEndOf="@id/feed_button_layout"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/home_button_pressed"
+                    android:layout_width="@dimen/nav_button_active_size"
+                    android:layout_height="@dimen/nav_button_active_size"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/nav_hieeway_send_btn"
+                    android:backgroundTint="@color/nav_darktheme_btn_active"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/home_button_unpressed"
+                    android:layout_width="@dimen/nav_button_inactive_size"
+                    android:layout_height="@dimen/nav_button_inactive_size"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/nav_hieeway_send_btn"
+                    android:backgroundTint="@color/white"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/text_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical"
+                    android:text="Chats"
+                    android:textSize="16sp"
+
+                    android:paddingRight="4dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/relativeLayout"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="@color/darkButtonBackground"
+
+            android:padding="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/relativeLayout2"
+            app:layout_constraintStart_toEndOf="@+id/feed_button_layout"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/friends_button_pressed"
+                    android:layout_width="@dimen/nav_button_active_size"
+                    android:layout_height="@dimen/nav_button_active_size"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_people_black_24dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:visibility="gone" />
+
+
+
+                <ImageView
+                    android:id="@+id/friends_button_unpressed"
+                    android:layout_width="@dimen/nav_button_inactive_size"
+                    android:layout_height="@dimen/nav_button_inactive_size"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_people_black_24dp"
+                    android:backgroundTint="@color/white"
+                    android:alpha="0.2"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/text_friends"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical"
+                    android:text="Friends"
+                    android:textSize="16sp"
+
+                    android:paddingRight="4dp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="@color/darkButtonBackground"
+            android:padding="12dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/relativeLayout3"
+            app:layout_constraintStart_toEndOf="@+id/relativeLayout"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/search_button_pressed"
+                    android:layout_width="@dimen/nav_button_active_size"
+                    android:layout_height="@dimen/nav_button_active_size"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_search_black_24dp"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:visibility="gone" />
+
+
+                <ImageView
+                    android:id="@+id/search_button_unpressed"
+                    android:layout_width="@dimen/nav_button_inactive_size"
+                    android:layout_height="@dimen/nav_button_inactive_size"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_search_black_24dp"
+                    android:backgroundTint="@color/white"
+                    android:alpha="0.2"
+                    android:visibility="visible" />
+
+
+
+                <TextView
+                    android:id="@+id/text_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="8dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical"
+                    android:paddingRight="4dp"
+                    android:text="Search"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/nav_btn_back_drawable"
+            android:backgroundTint="@color/darkButtonBackground"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="horizontal">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_button_pressed"
+                    android:layout_width="@dimen/nav_button_prof_active_size"
+                    android:layout_height="@dimen/nav_button_prof_active_size"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/no_profile"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/text_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="16dp"
+                    android:fontFamily="sans-serif-thin"
+                    android:gravity="center_vertical"
+
+                    android:paddingRight="4dp"
+                    android:text="Profile"
+
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+
+                    android:id="@+id/profile_button_unpressed"
+                    android:layout_width="@dimen/nav_button_prof_inactive_size"
+                    android:layout_height="@dimen/nav_button_prof_inactive_size"
+                    android:alpha="0.2"
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/no_profile"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/send_arrow_splash"

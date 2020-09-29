@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+    android:background="@color/background_theme"
 
     tools:context=".Fragments.PeopleFragment">
 
@@ -22,8 +22,11 @@
                 android:id="@+id/peoplerecycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/shotsfragmentshotscontainer"
                 android:clipToPadding="false"
+                android:backgroundTint="@color/darkButtonBackground"
+                android:paddingTop="8dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/people_contacts" />
 
@@ -39,11 +42,14 @@
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent">
+                android:background="@color/background_theme"
+                app:elevation="0dp">
 
                 <com.google.android.material.appbar.CollapsingToolbarLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/background_theme"
+                    app:elevation="0dp"
                     app:layout_scrollFlags="scroll|enterAlways">
 
 
@@ -51,8 +57,7 @@
                         android:id="@+id/top_bar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_bottom_corner_drawable"
-                        android:backgroundTint="@color/nav_title_background_accent_color"
+                        android:background="@color/background_theme"
                         android:padding="4dp"
                         app:layout_collapseMode="parallax">
 
@@ -63,9 +68,9 @@
                             android:layout_alignParentTop="true"
                             android:layout_marginLeft="16dp"
                             android:gravity="center"
+                            android:textColor="#fff"
                             android:src="@drawable/app_title_logo"
                             android:text="Search People"
-                            android:textColor="@color/textThemeColor"
                             android:textSize="28sp"
                             android:visibility="visible" />
                         <RelativeLayout
