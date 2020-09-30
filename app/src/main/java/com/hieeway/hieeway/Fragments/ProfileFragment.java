@@ -208,6 +208,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private SharedPreferences sharedPreferences;
     private String activePhoto;
 
+    public ProfileFragment() {
+
+    }
 
     public ProfileFragment(Activity activity) {
         this.changePictureListener = (ChangePictureListener) activity;

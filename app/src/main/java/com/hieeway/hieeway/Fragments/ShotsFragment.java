@@ -73,6 +73,10 @@ public class ShotsFragment extends Fragment {
     private AnimationArrowListener animationArrowListener;
     private String userID;
 
+    public ShotsFragment() {
+
+    }
+
     public ShotsFragment(Activity activity) {
         this.animationArrowListener = (AnimationArrowListener) activity;
         parentActivity = activity;

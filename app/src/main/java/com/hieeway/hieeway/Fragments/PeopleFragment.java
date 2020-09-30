@@ -55,9 +55,12 @@ public class PeopleFragment extends Fragment {
     EditText searchPeople;
     ImageView progress_menu_logo;
     public String searchingUsername;
-    ProgressBar progressBar,progressBarTwo;
+    ProgressBar progressBar, progressBarTwo;
     private List<User> userlist;
     TextView logo_title;
+
+    public PeopleFragment() {
+    }
 
 
     @Override

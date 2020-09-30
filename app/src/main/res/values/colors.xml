@@ -58,7 +58,7 @@
 
     <color name="darkGrey">#1F1F1F</color>
 
-    <color name="darkButtonBackground">#161616</color>
+
 
     <color name="lightPrimary">#3FAA01</color>
 
@@ -89,7 +89,8 @@
 
 
     <color name="darkbackground">#171717</color>
-    <color name="nav_darktheme_btn_active">#1E1E1E</color>
+    <color name="nav_darktheme_btn_active">#131313</color>
+    <color name="darkButtonBackground">#0E0E0E</color>
 
 
     <color name="red_active">#f44336</color>

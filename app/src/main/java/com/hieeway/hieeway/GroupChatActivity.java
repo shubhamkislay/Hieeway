@@ -1,15 +1,21 @@
 package com.hieeway.hieeway;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,17 +30,30 @@ import com.devlomi.record_view.OnBasketAnimationEnd;
 import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.RecordButton;
 import com.devlomi.record_view.RecordView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.GroupMessageAdapter;
+import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
+import com.hieeway.hieeway.Model.GroupMessage;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class GroupChatActivity extends AppCompatActivity {
+public class GroupChatActivity extends AppCompatActivity implements ScrollRecyclerViewListener {
 
     private RelativeLayout bin;
     private ImageView disablerecord_button;
@@ -50,17 +69,29 @@ public class GroupChatActivity extends AppCompatActivity {
     private Button camera_background;
     private EditText message_box;
     private Button camera;
+    public static final String SHARED_PREFS = "sharedPrefs";
     private boolean isDisablerecord_button = false;
     private Button send_button;
     private String groupID, groupNameTxt, iconUrl;
     private CircleImageView icon;
     private TextView groupName;
+    public static final String USER_ID = "userid";
+    public static final String PHOTO_URL = "photourl";
+    private RecyclerView message_recycler_View;
+    private ValueEventListener valueEventListener;
+    private List<GroupMessage> groupMessageList;
+    private DatabaseReference groupMessageRef;
+    private GroupMessageAdapter groupMessageAdapter;
+    private String userID;
+    private String userPhoto;
+    private boolean updated = false;
+    private Boolean scrollRecyclerView = true;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_chat);
+        setContentView(R.layout.activity_group_chats);
 
         recordView = (RecordView) findViewById(R.id.record_view);
         recordButton = (RecordButton) findViewById(R.id.record_button);
@@ -68,6 +99,7 @@ public class GroupChatActivity extends AppCompatActivity {
         message_box = findViewById(R.id.message_box);
         send_button = findViewById(R.id.send_button);
         disablerecord_button = (ImageView) findViewById(R.id.disablerecord_button);
+        message_recycler_View = (RecyclerView) findViewById(R.id.message_recycler_View);
 
         equlizer = findViewById(R.id.equlizer);
         equi_one = findViewById(R.id.equi_one);
@@ -75,10 +107,16 @@ public class GroupChatActivity extends AppCompatActivity {
         equi_three = findViewById(R.id.equi_three);
         equi_four = findViewById(R.id.equi_four);
         equi_five = findViewById(R.id.equi_five);
+        groupMessageList = new ArrayList<>();
 
 
         icon = findViewById(R.id.group_icon);
         groupName = findViewById(R.id.group_name);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        userID = sharedPreferences.getString(USER_ID, "");
+        userPhoto = sharedPreferences.getString(PHOTO_URL, "default");
 
 
         Intent intent = getIntent();
@@ -86,9 +124,23 @@ public class GroupChatActivity extends AppCompatActivity {
         groupNameTxt = intent.getStringExtra("groupName");
         iconUrl = intent.getStringExtra("icon");
 
+        groupMessageRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                .child(groupID);
+
 
         Glide.with(this).load(iconUrl).into(icon);
         groupName.setText(groupNameTxt);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+
+        message_recycler_View.setLayoutManager(linearLayoutManager);
+        message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
+
+        groupMessageList.clear();
+        groupMessageAdapter = new GroupMessageAdapter(this, groupMessageList, userID, this);
+
+        message_recycler_View.setAdapter(groupMessageAdapter);
 
 
         try {
@@ -122,7 +174,7 @@ public class GroupChatActivity extends AppCompatActivity {
         camera = findViewById(R.id.camera);
 
         //recordButton.setListenForRecord(false);
-        if (ContextCompat.checkSelfPermission(GroupChatActivity.this, android.Manifest.permission.RECORD_AUDIO)
+        /*if (ContextCompat.checkSelfPermission(GroupChatActivity.this, android.Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             disablerecord_button.setVisibility(View.VISIBLE);
             isDisablerecord_button = true;
@@ -132,7 +184,7 @@ public class GroupChatActivity extends AppCompatActivity {
             disablerecord_button.setVisibility(View.GONE);
             isDisablerecord_button = true;
             recordButton.setVisibility(View.VISIBLE);
-        }
+        }*/
 
         disablerecord_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,6 +203,42 @@ public class GroupChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 sendMessage();
             }
+        });
+
+        send_button.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                    // viewHolder.user_photo.setAlpha(0.4f);
+
+                    send_button.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                    send_button.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
+
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    send_button.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+
+                    //         viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
+
+                    send_button.animate().scaleX(0.85f).scaleY(0.85f).setDuration(0);
+
+
+                } else {
+                    // viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+
+                    send_button.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+                    send_button.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                }
+
+                return false;
+            }
+
         });
 
         camera.setOnClickListener(new View.OnClickListener() {
@@ -225,9 +313,115 @@ public class GroupChatActivity extends AppCompatActivity {
         //IMPORTANT
         recordButton.setRecordView(recordView);
 
+
+        populateMessages();
+
+        message_recycler_View.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (bottom < oldBottom) {
+                    message_recycler_View.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                message_recycler_View.smoothScrollToPosition(groupMessageList.size() - 1);
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }, 100);
+                }
+            }
+        });
+
+    }
+
+    private void populateMessages() {
+
+
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists()) {
+                    int messages = 0;
+                    groupMessageList.clear();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        GroupMessage groupMessage = dataSnapshot.getValue(GroupMessage.class);
+
+                        //Toast.makeText(GroupChatActivity.this,"Added: " +groupMessage.getMessageText(),Toast.LENGTH_SHORT).show();
+                        groupMessageList.add(groupMessage);
+                        messages += 1;
+                    }
+
+
+                    Toast.makeText(GroupChatActivity.this, "Total Messages: " + groupMessageList.size() + "\n Counted: " + messages, Toast.LENGTH_SHORT).show();
+                    groupMessageAdapter.updateList(groupMessageList);
+                    if (scrollRecyclerView)
+                        message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
+                   /* groupMessageAdapter = new GroupMessageAdapter(GroupChatActivity.this,groupMessageList,userID);
+                    message_recycler_View.setAdapter(groupMessageAdapter);
+                    message_recycler_View.scrollToPosition(groupMessageList.size() - 1);*/
+
+                   /*if(updated)
+                    groupMessageAdapter.updateList(groupMessageList);
+                   else
+                   {
+                       groupMessageAdapter = new GroupMessageAdapter(GroupChatActivity.this,groupMessageList,userID);
+                       message_recycler_View.setAdapter(groupMessageAdapter);
+                       updated = true;
+                   }*/
+
+                    //message_recycler_View.scrollToPosition(0);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        groupMessageRef.addValueEventListener(valueEventListener);
+
+
     }
 
     private void sendMessage() {
+
+
+        if (message_box.getText().toString().length() > 0) {
+            String message = message_box.getText().toString();
+            DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                    .child(groupID);
+
+
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+            String messageId = groupMessageSendRef.push().getKey();
+
+
+            HashMap<String, Object> groupMessageHash = new HashMap<>();
+            groupMessageHash.put("messageText", message);
+            groupMessageHash.put("senderId", userID);
+            groupMessageHash.put("messageId", messageId);
+            groupMessageHash.put("timeStamp", timestamp.toString());
+            groupMessageHash.put("photo", userPhoto);
+            groupMessageHash.put("sentStatus", "sending");
+
+            groupMessageSendRef.child(messageId).updateChildren(groupMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    HashMap<String, Object> groupMessageUpdateHash = new HashMap<>();
+                    groupMessageUpdateHash.put("sentStatus", "sent");
+                    groupMessageSendRef.child(messageId).updateChildren(groupMessageUpdateHash);
+
+                }
+            });
+
+            message_box.setText("");
+        }
+
     }
 
     private void requestAudioPermisson() {
@@ -277,5 +471,21 @@ public class GroupChatActivity extends AppCompatActivity {
                         // Toast.makeText(parentActivity, "Permission Denied!", Toast.LENGTH_SHORT).show();
                     }
                 }).check();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            groupMessageRef.removeEventListener(valueEventListener);
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    @Override
+    public void scrollViewToLastItem(Boolean scrollRecyclerView) {
+        this.scrollRecyclerView = scrollRecyclerView;
     }
 }

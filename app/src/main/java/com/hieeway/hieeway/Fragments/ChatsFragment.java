@@ -167,6 +167,9 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private boolean blinking = false;
     private ChatFragmentOpenListener chatFragmentOpenListener;
 
+    public ChatsFragment() {
+    }
+
     public ChatsFragment(Activity activity) {
         this.chatFragmentOpenListener = (ChatFragmentOpenListener) activity;
     }
@@ -707,95 +710,6 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
         });
 
     }
-
-    private void resetChatList() {
-
-
-                FirebaseDatabase.getInstance().getReference("ChatList")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                                resetChatListThread(dataSnapshot);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-    }
-
-    private void resetChatListThread(DataSnapshot dataSnapshot) {
-
-        TaskCompletionSource<List<ChatStamp>> reseltThreadListSource = new TaskCompletionSource<>();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (dataSnapshot.exists()) {
-                    chatStampsList.clear();
-                        /*new Thread(new Runnable() {
-                            @Override
-                            public void run() {*/
-
-                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-
-                        ChatStamp chatStamp = dataSnapshot1.getValue(ChatStamp.class);
-                        //if(!user.getUserid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-
-                        try {
-                            if (!chatStamp.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                                chatStampsList.add(chatStamp);
-
-                        } catch (Exception e) {
-
-                        }
-
-
-                        //chatStampsList.add(chatStamp);
-
-                    }
-
-                    /*peopleAdapter.setList(userlist);*/
-                    // if(username.length()>0)
-                    Collections.sort(chatStampsList, Collections.<ChatStamp>reverseOrder());
-
-
-                    reseltThreadListSource.setResult(chatStampsList);
-
-                } else {
-                    reseltThreadListSource.setException(new NullPointerException());
-                }
-            }
-        }).start();
-
-
-        Task<List<ChatStamp>> listTask = reseltThreadListSource.getTask();
-
-        listTask.addOnCompleteListener(new OnCompleteListener<List<ChatStamp>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<ChatStamp>> task) {
-                if (task.isSuccessful()) {
-                    chatMessageAdapter = new ChatMessageAdapter(getContext(), task.getResult(), activity/*,ChatsFragment.this*/);
-                    chats_recyclerview.setAdapter(chatMessageAdapter);
-                    chatMessageAdapter.notifyDataSetChanged();
-                } else {
-                    //Toast.makeText(getContext(), "Result Error", Toast.LENGTH_SHORT).show();
-                    chatMessageAdapter = new ChatMessageAdapter(getContext(), chatStampsList, activity/*,ChatsFragment.this*/);
-                    chats_recyclerview.setAdapter(chatMessageAdapter);
-                    chatMessageAdapter.notifyDataSetChanged();
-                }
-
-
-            }
-        });
-
-
-    }
-
 
 
     private void populateMusicList() {

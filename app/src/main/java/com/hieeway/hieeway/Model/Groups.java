@@ -6,7 +6,6 @@ public class Groups {
     private String groupID;
     private String icon;
     private String groupName;
-    private List<String> membersList;
 
     public Groups() {
     }
@@ -35,11 +34,4 @@ public class Groups {
         this.groupName = groupName;
     }
 
-    public List<String> getMembersList() {
-        return membersList;
-    }
-
-    public void setMembersList(List<String> membersList) {
-        this.membersList = membersList;
-    }
 }
