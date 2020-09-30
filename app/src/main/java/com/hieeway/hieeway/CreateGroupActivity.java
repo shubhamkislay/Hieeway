@@ -267,9 +267,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
         myGroup.updateChildren(groupHash);
 
 
-        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Groups")
-                .child(groupID)
-                .child("members");
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("GroupMembers")
+                .child(groupID);
 
         HashMap<String, Object> userMap = new HashMap<>();
 
@@ -283,15 +282,16 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
 
         int friends = 1;
         for (Friend friend : groupMembers) {
-            DatabaseReference memRef = FirebaseDatabase.getInstance().getReference("Groups")
-                    .child(groupID)
-                    .child("members");
+            DatabaseReference memRef = FirebaseDatabase.getInstance().getReference("GroupMembers")
+                    .child(groupID);
 
             HashMap<String, Object> hashMap = new HashMap<>();
 
             hashMap.put("id", friend.getFriendId());
             hashMap.put("username", friend.getUsername());
             hashMap.put("photo", friend.getFriendId());
+            hashMap.put("activePhoto", friend.getActivePhoto());
+            hashMap.put("live", "no");
 
             memRef.child(memRef.push().getKey())
                     .updateChildren(hashMap);
