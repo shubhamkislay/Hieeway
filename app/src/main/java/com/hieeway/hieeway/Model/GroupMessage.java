@@ -7,6 +7,7 @@ public class GroupMessage {
     private String sentStatus;
     private String timeStamp;
     private String photo;
+    private String username;
 
     public GroupMessage() {
     }
@@ -53,6 +54,14 @@ public class GroupMessage {
 
     public String getPhoto() {
         return photo;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPhoto(String photo) {

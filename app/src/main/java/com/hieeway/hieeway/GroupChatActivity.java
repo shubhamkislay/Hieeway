@@ -77,6 +77,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private TextView groupName;
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
+    public static final String USERNAME = "username";
     private RecyclerView message_recycler_View;
     private ValueEventListener valueEventListener;
     private List<GroupMessage> groupMessageList;
@@ -84,6 +85,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private GroupMessageAdapter groupMessageAdapter;
     private String userID;
     private String userPhoto;
+    private String currentUsername;
     private boolean updated = false;
     private Boolean scrollRecyclerView = true;
 
@@ -117,6 +119,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         userID = sharedPreferences.getString(USER_ID, "");
         userPhoto = sharedPreferences.getString(PHOTO_URL, "default");
+        currentUsername = sharedPreferences.getString(PHOTO_URL, "default");
 
 
         Intent intent = getIntent();
@@ -408,6 +411,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             groupMessageHash.put("timeStamp", timestamp.toString());
             groupMessageHash.put("photo", userPhoto);
             groupMessageHash.put("sentStatus", "sending");
+            groupMessageHash.put("username", currentUsername);
 
             groupMessageSendRef.child(messageId).updateChildren(groupMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

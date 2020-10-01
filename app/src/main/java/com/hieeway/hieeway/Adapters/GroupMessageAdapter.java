@@ -1,11 +1,16 @@
 package com.hieeway.hieeway.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +18,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
@@ -46,12 +52,14 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
     private Context context;
     private List<GroupMessage> groupMessageList = new ArrayList<>();
     private ScrollRecyclerViewListener scrollRecyclerViewListener;
+    private Activity activity;
 
     public GroupMessageAdapter(Context context, List<GroupMessage> groupMessageList, String currentUserId, ScrollRecyclerViewListener scrollRecyclerViewListener) {
         this.context = context;
         this.groupMessageList.addAll(groupMessageList);
         this.userID = currentUserId;
         this.scrollRecyclerViewListener = scrollRecyclerViewListener;
+        this.activity = (Activity) context;
     }
 
 
@@ -62,12 +70,33 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         if (viewType == MESSAGE_SENDING) {
 
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_sending_layout, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().height = (int) height;
+            user_photo.getLayoutParams().width = (int) height/2;*/
+
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
         } else if (viewType == MESSAGE_SENT) {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_sent_layout, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().height = (int) height;
+            user_photo.getLayoutParams().width = (int) height/2;*/
+
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_receive_layout, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
         }
     }
@@ -80,11 +109,22 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
         holder.message_view.setText(groupMessage.getMessageText());
 
-        /*RequestOptions requestOptions = new RequestOptions();
+        if (groupMessage.getSenderId().equals(userID))
+            holder.username.setVisibility(View.GONE);
+        else
+            holder.username.setText(groupMessage.getUsername());
+
+        RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
         requestOptions.centerCrop();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
 
-        Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);*/
+
+        if (!groupMessage.getPhoto().equals("default"))
+            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);
+        else
+            Glide.with(context).load(activity.getDrawable(R.drawable.no_profile)).apply(requestOptions).into(holder.user_photo);
+
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
@@ -102,6 +142,9 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
             holder.timestamp.setText("" + simpleDateFormat.format(timestamp));
 
+            //holder.timestamp.setText(""+height);
+
+
             //sendMessageViewHolder.timestamp.setText("" + ago);
 
         } catch (Exception e) { //this generic but you can control another types of exception
@@ -110,14 +153,14 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
         }
 
-        if (holder.getAdapterPosition() == groupMessageList.size() - 1)
+        /*if (holder.getAdapterPosition() == groupMessageList.size() - 1)
             holder.user_photo.setVisibility(View.VISIBLE);
         else {
             if (!groupMessageList.get(holder.getAdapterPosition()).getSenderId().equals(groupMessageList.get(holder.getAdapterPosition() + 1).getSenderId()))
                 holder.user_photo.setVisibility(View.VISIBLE);
             else
                 holder.user_photo.setVisibility(View.GONE);
-        }
+        }*/
 
     }
 
@@ -166,12 +209,19 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         if (holder.getAdapterPosition() == groupMessageList.size() - 1)
             scrollRecyclerViewListener.scrollViewToLastItem(true);
 
-        GroupMessage groupMessage = groupMessageList.get(holder.getAdapterPosition());
+        /*GroupMessage groupMessage = groupMessageList.get(holder.getAdapterPosition());
+        int height = holder.message_view.getHeight();
+
+        holder.user_photo.getLayoutParams().height = (int) height;
+        holder.user_photo.getLayoutParams().width = (int) height/2;
+
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
         requestOptions.centerCrop();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
 
-        Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);
+
+        Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);*/
 
 
     }
@@ -179,8 +229,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
     public class GroupMessageViewHolder extends RecyclerView.ViewHolder {
 
         TextView message_view;
-        CustomImageView user_photo;
-        TextView timestamp;
+        ImageView user_photo;
+        TextView timestamp, username;
 
 
         public GroupMessageViewHolder(@NonNull View itemView) {
@@ -188,6 +238,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             message_view = itemView.findViewById(R.id.message_view);
             user_photo = itemView.findViewById(R.id.user_photo);
             timestamp = itemView.findViewById(R.id.timestamp);
+            username = itemView.findViewById(R.id.username);
 
         }
     }
