@@ -72,6 +72,7 @@ public class ShotsFragment extends Fragment {
 
     private AnimationArrowListener animationArrowListener;
     private String userID;
+    private boolean alreadyScrolled = false;
 
     public ShotsFragment() {
 
@@ -291,7 +292,10 @@ public class ShotsFragment extends Fragment {
 
                     //userList = myGroupList;
                     groupsAdapter.updateList(myGroupList);
-                    groups_recyclerview.scrollToPosition(0);
+                    if (!alreadyScrolled) {
+                        groups_recyclerview.scrollToPosition(0);
+                        alreadyScrolled = true;
+                    }
 
 
                 }
@@ -324,6 +328,7 @@ public class ShotsFragment extends Fragment {
 
                     }
                 });*/
+
 
                 populateGroups();
             }

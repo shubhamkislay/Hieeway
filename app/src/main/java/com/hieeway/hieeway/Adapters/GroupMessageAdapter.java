@@ -80,11 +80,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
         holder.message_view.setText(groupMessage.getMessageText());
 
-        RequestOptions requestOptions = new RequestOptions();
+        /*RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
         requestOptions.centerCrop();
 
-        Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);
+        Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);*/
 
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
@@ -165,6 +165,15 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         super.onViewAttachedToWindow(holder);
         if (holder.getAdapterPosition() == groupMessageList.size() - 1)
             scrollRecyclerViewListener.scrollViewToLastItem(true);
+
+        GroupMessage groupMessage = groupMessageList.get(holder.getAdapterPosition());
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
+        requestOptions.centerCrop();
+
+        Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);
+
+
     }
 
     public class GroupMessageViewHolder extends RecyclerView.ViewHolder {
