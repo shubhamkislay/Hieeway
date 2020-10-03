@@ -47,6 +47,7 @@
                     android:layout_alignParentRight="true"
                     android:background="@drawable/layer_message_box_drawable_white"
                     android:paddingTop="4dp"
+                    android:paddingLeft="2dp"
                     android:paddingRight="8dp"
                     android:paddingBottom="4dp">
 

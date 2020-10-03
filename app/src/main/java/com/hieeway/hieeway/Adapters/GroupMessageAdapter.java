@@ -107,82 +107,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
         }
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull GroupMessageViewHolder holder, int position) {
-
-
-        GroupMessage groupMessage = groupMessageList.get(holder.getAdapterPosition());
-
-        holder.message_view.setText(groupMessage.getMessageText());
-
-        if (groupMessage.getSenderId().equals(userID))
-            holder.username.setVisibility(View.GONE);
-        else
-            holder.username.setText(groupMessage.getUsername());
-
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
-        requestOptions.centerCrop();
-        requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-
-
-        if (!groupMessage.getPhoto().equals("default"))
-            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).addListener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    return false;
-                }
-
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                    int height = holder.user_photo.getHeight();
-                    if (height > 100)
-                        holder.user_photo.getLayoutParams().width = (int) height / 2;
-
-                    return false;
-                }
-            }).into(holder.user_photo);
-        else
-            Glide.with(context).load(activity.getDrawable(R.drawable.no_profile)).apply(requestOptions).into(holder.user_photo);
-
-
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-            Date parsedDate = dateFormat.parse(groupMessage.getTimeStamp());
-
-
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
-
-            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
-            String ago = prettyTime.format(parsedDate);
-            // S is the millisecond
-            // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");/*  dd MMM YYYY*/
-
-
-            holder.timestamp.setText("" + simpleDateFormat.format(timestamp));
-
-            //holder.timestamp.setText(""+height);
-
-
-            //sendMessageViewHolder.timestamp.setText("" + ago);
-
-        } catch (Exception e) { //this generic but you can control another types of exception
-            // look the origin of excption
-            holder.timestamp.setVisibility(View.INVISIBLE);
-
-        }
-
-        /*if (holder.getAdapterPosition() == groupMessageList.size() - 1)
-            holder.user_photo.setVisibility(View.VISIBLE);
-        else {
-            if (!groupMessageList.get(holder.getAdapterPosition()).getSenderId().equals(groupMessageList.get(holder.getAdapterPosition() + 1).getSenderId()))
-                holder.user_photo.setVisibility(View.VISIBLE);
-            else
-                holder.user_photo.setVisibility(View.GONE);
-        }*/
-
+    public static float pxFromDp(final Context context, final float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 
     @Override
@@ -262,5 +188,104 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             username = itemView.findViewById(R.id.username);
 
         }
+    }
+
+    public static float dpFromPx(final Context context, final float px) {
+        return px / context.getResources().getDisplayMetrics().density;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull GroupMessageViewHolder holder, int position) {
+
+
+        GroupMessage groupMessage = groupMessageList.get(holder.getAdapterPosition());
+
+        holder.message_view.setText(groupMessage.getMessageText());
+
+        if (groupMessage.getSenderId().equals(userID))
+            holder.username.setVisibility(View.GONE);
+        else
+            holder.username.setText(groupMessage.getUsername());
+
+        RequestOptions requestOptions = new RequestOptions();
+        //requestOptions.override(100, 100);
+        requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
+        //requestOptions.circleCrop();
+        //requestOptions.centerCrop();
+        //requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+
+
+        if (!groupMessage.getPhoto().equals("default"))
+            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).addListener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                    int height = holder.message_view.getHeight();
+                    holder.user_photo.getLayoutParams().width = (int) height / 2;
+
+                    holder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                    /*
+                    if (height > pxFromDp(context,100) ) {
+                        if((float)height / 2 < pxFromDp(context,340) )
+                            holder.user_photo.getLayoutParams().width = (int) height / 2;
+                        else
+                        {
+                            holder.user_photo.getLayoutParams().width = (int) pxFromDp(context,340)  / 2;
+                        }
+
+
+                    }
+
+*/
+
+                    return false;
+                }
+            }).into(holder.user_photo);
+        else
+            Glide.with(context).load(activity.getDrawable(R.drawable.no_profile)).apply(requestOptions).into(holder.user_photo);
+
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(groupMessage.getTimeStamp());
+
+
+            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+
+            PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+            String ago = prettyTime.format(parsedDate);
+            // S is the millisecond
+            // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");/*  dd MMM YYYY*/
+
+
+            holder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+
+            //holder.timestamp.setText(""+height);
+
+
+            //sendMessageViewHolder.timestamp.setText("" + ago);
+
+        } catch (Exception e) { //this generic but you can control another types of exception
+            // look the origin of excption
+            holder.timestamp.setVisibility(View.INVISIBLE);
+
+        }
+
+        /*if (holder.getAdapterPosition() == groupMessageList.size() - 1)
+            holder.user_photo.setVisibility(View.VISIBLE);
+        else {
+            if (!groupMessageList.get(holder.getAdapterPosition()).getSenderId().equals(groupMessageList.get(holder.getAdapterPosition() + 1).getSenderId()))
+                holder.user_photo.setVisibility(View.VISIBLE);
+            else
+                holder.user_photo.setVisibility(View.GONE);
+        }*/
+
     }
 }

@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -254,7 +255,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         /**
          * Original code.. which shows a splash screen
          */
-        /*view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
 
@@ -269,10 +270,14 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                         // progressBar.setAlpha(0.25f);
 
-                        startSplash();
+                        // startSplash();
 
-                        mediaPlayer.pause();
-                        stopPosition = view.getCurrentPosition();
+                        try {
+                            // mediaPlayer.pause();
+                            stopPosition = view.getCurrentPosition();
+                        } catch (Exception e) {
+                            //
+                        }
                     }
                 }, 1500);
 
@@ -280,26 +285,26 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         });
 
 
-        view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        /*view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
 
                 // app_logo.animate().alpha(1.0f).setDuration(500);
                 // appLogoAnimation(false);
-                view.setVisibility(View.GONE);
+                //view.setVisibility(View.GONE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 // startSplash();
                 animateArrow();
 
 
-                *//*if(videoPlayBack)
-                view.start();*//*
+                if(videoPlayBack)
+                    view.start();
 
             }
         });*/
 
         startSplash();
-        view.setVisibility(View.GONE);
+        //view.setVisibility(View.GONE);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
@@ -2041,6 +2046,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
     }
 
+
     @Override
     public void onBackPressed() {
         if (fragmentId == 1) {
@@ -2073,9 +2079,9 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         /**
          * original code below
          */
-        /*progressBar.setAlpha(0.0f);
+        //progressBar.setAlpha(0.0f);
 
-        try {
+        /*try {
             if (mediaPlayer != null)
                 mediaPlayer.start();
         } catch (Exception e) {

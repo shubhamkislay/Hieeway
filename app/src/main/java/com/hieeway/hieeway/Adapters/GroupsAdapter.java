@@ -21,8 +21,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
@@ -100,8 +103,16 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         if (myViewHolder.getAdapterPosition() > 2) {
             MyGroup myGroup = myGroupList.get(myViewHolder.getAdapterPosition());
-            if (!myGroup.getIcon().equals("default"))
-                Glide.with(context).load(myGroup.getIcon()).addListener(new RequestListener<Drawable>() {
+            if (!myGroup.getIcon().equals("default")) {
+
+                RequestOptions requestOptions = new RequestOptions();
+                requestOptions.override(100, 100);
+                requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
+                requestOptions.circleCrop();
+                requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);   //If your images are always same
+                requestOptions.format(DecodeFormat.PREFER_RGB_565);
+
+                Glide.with(context).load(myGroup.getIcon()).apply(requestOptions).addListener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                         return false;
@@ -116,6 +127,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                         return false;
                     }
                 }).into(myViewHolder.prof_pic);
+            }
             else
                 Glide.with(context).load(context.getDrawable(R.drawable.no_profile)).into(myViewHolder.prof_pic);
 
