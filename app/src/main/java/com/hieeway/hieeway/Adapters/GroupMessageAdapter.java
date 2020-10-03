@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
@@ -121,7 +127,22 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
 
         if (!groupMessage.getPhoto().equals("default"))
-            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(holder.user_photo);
+            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).addListener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                    int height = holder.user_photo.getHeight();
+                    if (height > 100)
+                        holder.user_photo.getLayoutParams().width = (int) height / 2;
+
+                    return false;
+                }
+            }).into(holder.user_photo);
         else
             Glide.with(context).load(activity.getDrawable(R.drawable.no_profile)).apply(requestOptions).into(holder.user_photo);
 

@@ -358,7 +358,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     }
 
 
-                    Toast.makeText(GroupChatActivity.this, "Total Messages: " + groupMessageList.size() + "\n Counted: " + messages, Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(GroupChatActivity.this, "Total Messages: " + groupMessageList.size() + "\n Counted: " + messages, Toast.LENGTH_SHORT).show();
                     groupMessageAdapter.updateList(groupMessageList);
                     if (scrollRecyclerView)
                         message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
