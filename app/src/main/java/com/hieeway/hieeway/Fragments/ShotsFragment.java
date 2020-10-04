@@ -73,6 +73,7 @@ public class ShotsFragment extends Fragment {
     private AnimationArrowListener animationArrowListener;
     private String userID;
     private boolean alreadyScrolled = false;
+    private SharedPreferences sharedPreferences;
 
     public ShotsFragment() {
 
@@ -100,7 +101,7 @@ public class ShotsFragment extends Fragment {
         groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
         chats = view.findViewById(R.id.chats);
 
-        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         userID = sharedPreferences.getString(USER_ID, "");
 

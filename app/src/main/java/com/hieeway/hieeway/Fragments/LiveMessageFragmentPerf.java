@@ -2593,7 +2593,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             }
 
 
-            spotifySearchAdapter = new SpotifySearchAdapter(spotiySearchItemList, parentActivity, SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(), photo, userChattingWithId, usernameChattingWith, LiveMessageFragmentPerf.this);
+            spotifySearchAdapter = new SpotifySearchAdapter(spotiySearchItemList, parentActivity, SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(), photo, userChattingWithId, usernameChattingWith, LiveMessageFragmentPerf.this, "single");
             video_listView.setAdapter(spotifySearchAdapter);
             video_search_progress.setVisibility(View.GONE);
 

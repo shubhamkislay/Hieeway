@@ -109,6 +109,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                 requestOptions.override(100, 100);
                 requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
                 requestOptions.circleCrop();
+                requestOptions.dontTransform();
                 requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);   //If your images are always same
                 requestOptions.format(DecodeFormat.PREFER_RGB_565);
 
@@ -127,10 +128,11 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                         return false;
                     }
                 }).into(myViewHolder.prof_pic);
-            }
-            else
+            } else {
                 Glide.with(context).load(context.getDrawable(R.drawable.no_profile)).into(myViewHolder.prof_pic);
-
+                myViewHolder.one.setVisibility(View.GONE);
+                myViewHolder.two.setVisibility(View.GONE);
+            }
             myViewHolder.username.setText(myGroup.getGroupName());
 
             myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {

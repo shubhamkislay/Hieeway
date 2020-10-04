@@ -45,9 +45,10 @@ public class SpotifySearchAdapter extends RecyclerView.Adapter<SpotifySearchAdap
     private String useridchattingwith;
     private String username;
     private SpotifySongSelectedListener spotifySongSelectedListener;
+    private String type;
 
 
-    public SpotifySearchAdapter(List<SpotiySearchItem> thumbnailItems, Context context, SpotifyAppRemote spotifyAppRemote, String userPhoto, String useridchattingwith, String username, SpotifySongSelectedListener spotifySongSelectedListener) {
+    public SpotifySearchAdapter(List<SpotiySearchItem> thumbnailItems, Context context, SpotifyAppRemote spotifyAppRemote, String userPhoto, String useridchattingwith, String username, SpotifySongSelectedListener spotifySongSelectedListener, String type) {
         this.thumbnailItems = thumbnailItems;
         this.context = context;
         this.spotifyAppRemote = spotifyAppRemote;
@@ -55,6 +56,7 @@ public class SpotifySearchAdapter extends RecyclerView.Adapter<SpotifySearchAdap
         this.useridchattingwith = useridchattingwith;
         this.username = username;
         this.spotifySongSelectedListener = spotifySongSelectedListener;
+        this.type = type;
 
     }
 
@@ -183,55 +185,64 @@ public class SpotifySearchAdapter extends RecyclerView.Adapter<SpotifySearchAdap
 
 
     private void playSong(SpotiySearchItem thumbnailItem) {
-        if (MUSIC_PAL_SERVICE_RUNNING) {
+
+        if (type.equals("single")) {
+            if (MUSIC_PAL_SERVICE_RUNNING) {
 
 
-            try {
-                if (USER_NAME_MUSIC_SYNC.equals(username))
-                    try {
-                        spotifyAppRemote.getPlayerApi().play(thumbnailItem.getTrackId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
-                            @Override
-                            public void onResult(Empty empty) {
-                                spotifySongSelectedListener.onSongSelected();
-                                Toast.makeText(context, "Playing \"" + thumbnailItem.getSongName() + "\"", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                try {
+                    if (USER_NAME_MUSIC_SYNC.equals(username))
+                        try {
+                            spotifyAppRemote.getPlayerApi().play(thumbnailItem.getTrackId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
+                                @Override
+                                public void onResult(Empty empty) {
+                                    spotifySongSelectedListener.onSongSelected();
+                                    Toast.makeText(context, "Playing \"" + thumbnailItem.getSongName() + "\"", Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
-                    } catch (Exception e) {
-                        Toast.makeText(context, "Cannot play this song", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(context, "Cannot play this song", Toast.LENGTH_SHORT).show();
 
+                        }
+                    else {
+                        Toast.makeText(context, "Cannot play, since you are connected to " + USER_NAME_MUSIC_SYNC, Toast.LENGTH_LONG).show();
                     }
-                else {
+                } catch (Exception e) {
                     Toast.makeText(context, "Cannot play, since you are connected to " + USER_NAME_MUSIC_SYNC, Toast.LENGTH_LONG).show();
                 }
-            } catch (Exception e) {
-                Toast.makeText(context, "Cannot play, since you are connected to " + USER_NAME_MUSIC_SYNC, Toast.LENGTH_LONG).show();
+            } else {
+
+                Intent musicPalService = new Intent(context, MusicPalService.class);
+
+                musicPalService.putExtra("otherUserId", useridchattingwith);
+                musicPalService.putExtra("username", username);
+                musicPalService.putExtra("userPhoto", userPhoto);
+
+                context.startService(musicPalService);
+
+                Toast.makeText(context, "Activating music sharing...", Toast.LENGTH_LONG).show();
+
+                try {
+                    spotifyAppRemote.getPlayerApi().play(thumbnailItem.getTrackId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
+                        @Override
+                        public void onResult(Empty empty) {
+                            spotifySongSelectedListener.onSongSelected();
+                            Toast.makeText(context, "Playing \"" + thumbnailItem.getSongName() + "\"", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                } catch (Exception e) {
+                    Toast.makeText(context, "Cannot play this song. Check if you have spotify app installed and logged in, into your phone", Toast.LENGTH_SHORT).show();
+
+                }
             }
         } else {
-
-            Intent musicPalService = new Intent(context, MusicPalService.class);
-
-            musicPalService.putExtra("otherUserId", useridchattingwith);
-            musicPalService.putExtra("username", username);
-            musicPalService.putExtra("userPhoto", userPhoto);
-
-            context.startService(musicPalService);
-
-            Toast.makeText(context, "Activating music sharing...", Toast.LENGTH_LONG).show();
-
-            try {
-                spotifyAppRemote.getPlayerApi().play(thumbnailItem.getTrackId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
-                    @Override
-                    public void onResult(Empty empty) {
-                        spotifySongSelectedListener.onSongSelected();
-                        Toast.makeText(context, "Playing \"" + thumbnailItem.getSongName() + "\"", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            } catch (Exception e) {
-                Toast.makeText(context, "Cannot play this song. Check if you have spotify app installed and logged in, into your phone", Toast.LENGTH_SHORT).show();
-
-            }
+            playSongOnGroup();
         }
+    }
+
+    private void playSongOnGroup() {
+        spotifySongSelectedListener.onSongSelected();
     }
 }

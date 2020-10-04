@@ -487,5 +487,15 @@
         app:slide_to_cancel_margin_right="10dp"
         app:slide_to_cancel_text="Slide To Cancel" />
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="20dp">
+
+        <include
+            layout="@layout/spotify_search_dialog"
+            android:visibility="visible" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </RelativeLayout>
