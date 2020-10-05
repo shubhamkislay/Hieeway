@@ -126,6 +126,7 @@
 
         <Button
 
+            android:id="@+id/back_btn"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:layout_margin="24dp"

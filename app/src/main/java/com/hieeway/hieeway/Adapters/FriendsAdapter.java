@@ -37,6 +37,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -245,7 +247,8 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                     //  Bitmap bitmap = getBitmapFromURL(chatStamp.getPhoto());
 
                     RequestOptions requestOptions = new RequestOptions();
-                    requestOptions.placeholder(R.color.darkButtonBackground);
+                    requestOptions.placeholder(R.color.darkGrey);
+                    requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
                     //requestOptions.centerCrop();
                     // requestOptions.override(200, 400);
 

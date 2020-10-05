@@ -54,6 +54,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
@@ -487,25 +489,28 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.placeholder(R.color.darkGrey);
+                requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+                requestOptions.format(DecodeFormat.PREFER_RGB_565);
+                requestOptions.placeholder(mContext.getDrawable(R.drawable.no_profile));
                 //requestOptions.centerCrop();
 
                 try {
                     Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto().replace("s96-c", "s384-c"))
                             .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            return false;
-                        }
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    return false;
+                                }
 
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
-                           // viewHolder.progressBar.setVisibility(View.INVISIBLE);
+                                    // viewHolder.progressBar.setVisibility(View.INVISIBLE);
 
-                            if (chatStamp.getPhoto().contains("https://firebasestorage")) {
+                                    if (chatStamp.getPhoto().contains("https://firebasestorage")) {
 
-                                final Matrix matrix = viewHolder.user_photo.getImageMatrix();
-                                final float imageWidth = resource.getIntrinsicWidth();
+                                        final Matrix matrix = viewHolder.user_photo.getImageMatrix();
+                                        final float imageWidth = resource.getIntrinsicWidth();
                                 final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
                                 final float scaleRatio = screenWidth / imageWidth;
                                 // matrix.postScale(scaleRatio, scaleRatio);

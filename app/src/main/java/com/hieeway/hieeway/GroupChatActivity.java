@@ -49,6 +49,7 @@ import com.hieeway.hieeway.Adapters.SpotifySearchAdapter;
 import com.hieeway.hieeway.Fragments.LiveMessageFragmentPerf;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
+import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
 import com.hieeway.hieeway.Model.GroupMessage;
 import com.hieeway.hieeway.Model.SpotiySearchItem;
@@ -133,6 +134,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private int displayHeight;
     private Display display;
     private Point size;
+    private Button back_btn;
+
     private boolean bottomSheetVisible = false;
 
     @Override
@@ -148,11 +151,13 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         camera_background = findViewById(R.id.camera_background);
         message_box = findViewById(R.id.message_box);
 
+
         send_button = findViewById(R.id.send_button);
         disablerecord_button = (ImageView) findViewById(R.id.disablerecord_button);
         message_recycler_View = (RecyclerView) findViewById(R.id.message_recycler_View);
 
         search_video_btn = findViewById(R.id.search_video_btn);
+        back_btn = findViewById(R.id.back_btn);
 
         equlizer = findViewById(R.id.equlizer);
         equi_one = findViewById(R.id.equi_one);
@@ -194,7 +199,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 .child(groupID);
 
 
-        Glide.with(this).load(iconUrl).into(icon);
+        if (!iconUrl.equals("default"))
+            Glide.with(this).load(iconUrl).into(icon);
+        else
+            Glide.with(this).load(getDrawable(R.drawable.no_profile)).into(icon);
         groupName.setText(groupNameTxt);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -252,6 +260,16 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 connectToSpotify();
             }
         });
+
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
         //recordButton.setListenForRecord(false);
         /*if (ContextCompat.checkSelfPermission(GroupChatActivity.this, android.Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -849,4 +867,5 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             super.onBackPressed();
 
     }
+
 }

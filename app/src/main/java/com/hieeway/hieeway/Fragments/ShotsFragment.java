@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,8 +42,10 @@ import com.hieeway.hieeway.Adapters.GroupsAdapter;
 import com.hieeway.hieeway.ChatParentActivity;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
+import com.hieeway.hieeway.GroupChatActivity;
 import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatFragmentOpenListener;
+import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.FriendListValues;
 import com.hieeway.hieeway.Model.Groups;
@@ -55,7 +59,7 @@ import java.util.Objects;
 import static android.content.Context.MODE_PRIVATE;
 
 
-public class ShotsFragment extends Fragment {
+public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener {
 
     private RecyclerView feeds_recyclerview, groups_recyclerview;
     private TextView feed_title, shots_title, groups_title;
@@ -74,6 +78,7 @@ public class ShotsFragment extends Fragment {
     private String userID;
     private boolean alreadyScrolled = false;
     private SharedPreferences sharedPreferences;
+    private Button see_all_btn;
 
     public ShotsFragment() {
 
@@ -100,6 +105,7 @@ public class ShotsFragment extends Fragment {
         shots_title = view.findViewById(R.id.shots_title);
         groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
         chats = view.findViewById(R.id.chats);
+        see_all_btn = view.findViewById(R.id.see_all_btn);
 
         sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
@@ -115,7 +121,7 @@ public class ShotsFragment extends Fragment {
         userList.add(friend2);
         userList.add(friend3);
 
-        groupsAdapter = new GroupsAdapter(userList, getActivity());
+        groupsAdapter = new GroupsAdapter(userList, getActivity(), this);
 
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -246,8 +252,13 @@ public class ShotsFragment extends Fragment {
             }
         });
 
+        see_all_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-
+                Toast.makeText(getActivity(), "Opening groups", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         return view;
@@ -334,5 +345,10 @@ public class ShotsFragment extends Fragment {
                 populateGroups();
             }
         }, 350);
+    }
+
+    @Override
+    public void seeAllBtnVisibility(int visibility) {
+        see_all_btn.setVisibility(visibility);
     }
 }

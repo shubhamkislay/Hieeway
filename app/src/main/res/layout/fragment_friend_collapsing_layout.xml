@@ -27,16 +27,7 @@
                 android:background="@drawable/status_bar_fade"
                 android:visibility="gone" />
 
-            <RelativeLayout
 
-                android:layout_width="match_parent"
-                android:layout_height="57dp"
-                android:visibility="visible"
-                android:alpha="1.0"
-                android:layout_gravity="bottom"
-                android:rotation="180"
-                android:background="@drawable/status_bar_fade"
-                android:backgroundTint="@color/darkButtonBackground" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/friend_list_recyclerview"
@@ -50,6 +41,17 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:layout_gravity="bottom"
+                android:alpha="1.0"
+                android:background="@drawable/status_bar_fade"
+                android:backgroundTint="@color/darkButtonBackground"
+                android:rotation="180"
+                android:visibility="visible" />
 
 
             <com.google.android.material.appbar.AppBarLayout

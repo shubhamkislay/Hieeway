@@ -30,6 +30,7 @@ import com.bumptech.glide.request.target.Target;
 import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.GroupChatActivity;
+import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
 import com.hieeway.hieeway.Interface.FiltersListFragmentListener;
@@ -52,12 +53,16 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     private List<MyGroup> refreshedList;
     private Context context;
     private int selectedIndex = 0;
+    private Boolean seeAllBtn = false;
+    private SeeAllGroupItemsListener seeAllGroupItemsListener;
+    private int currentViewCount = 0;
 
 
-    public GroupsAdapter(List<MyGroup> myGroupList, Context context) {
+    public GroupsAdapter(List<MyGroup> myGroupList, Context context, SeeAllGroupItemsListener seeAllGroupItemsListener) {
         this.myGroupList = myGroupList;
 
         this.context = context;
+        this.seeAllGroupItemsListener = seeAllGroupItemsListener;
 
         //refreshedList = new ArrayList<>();
         /*MyGroup friend1 = new MyGroup();
@@ -67,6 +72,17 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         refreshedList.add(friend2);
         refreshedList.add(friend3);
         refreshedList.addAll(myGroupList);*/
+
+        /*MyGroup seeAllItem = new MyGroup();
+
+        seeAllItem.setGroupID("123");
+        seeAllItem.setGroupName("234");
+        seeAllItem.setIcon("345");
+
+        if(myGroupList.size()>3&&myGroupList.size()<7)
+            myGroupList.add(seeAllItem);
+        else if(myGroupList.size()>=7)
+            myGroupList.add(6,seeAllItem);*/
 
     }
 
@@ -103,13 +119,14 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         if (myViewHolder.getAdapterPosition() > 2) {
             MyGroup myGroup = myGroupList.get(myViewHolder.getAdapterPosition());
+
+
             if (!myGroup.getIcon().equals("default")) {
 
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.override(100, 100);
                 requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
                 requestOptions.circleCrop();
-                requestOptions.dontTransform();
                 requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);   //If your images are always same
                 requestOptions.format(DecodeFormat.PREFER_RGB_565);
 
@@ -166,6 +183,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
     @Override
     public int getItemCount() {
+
+        /*if(myGroupList.size()>3&&myGroupList.size()<7)
+            return myGroupList.size();
+        else if(myGroupList.size()>=7)
+            return 7;
+        else*/
         return myGroupList.size();
     }
 
@@ -205,6 +228,32 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
 
         diffResult.dispatchUpdatesTo(this);
+
+
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull MyViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+
+        if (holder.getAdapterPosition() == 2)
+            if (seeAllBtn) {
+                seeAllGroupItemsListener.seeAllBtnVisibility(View.GONE);
+                seeAllBtn = false;
+            }
+
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(@NonNull MyViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+
+
+        if (holder.getAdapterPosition() == 2)
+            if (!seeAllBtn) {
+                seeAllGroupItemsListener.seeAllBtnVisibility(View.VISIBLE);
+                seeAllBtn = true;
+            }
 
 
     }
