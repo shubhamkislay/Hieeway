@@ -194,7 +194,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         userID = sharedPreferences.getString(USER_ID, "");
         userPhoto = sharedPreferences.getString(PHOTO_URL, "default");
-        currentUsername = sharedPreferences.getString(PHOTO_URL, "default");
+        currentUsername = sharedPreferences.getString(USERNAME, "");
         spotifyToken = sharedPreferences.getString(SPOTIFY_TOKEN, "default");
 
 

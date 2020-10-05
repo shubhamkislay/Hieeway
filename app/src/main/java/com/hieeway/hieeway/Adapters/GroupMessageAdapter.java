@@ -60,6 +60,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -320,8 +322,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     @Override
                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
-                        int height = groupSongViewHolder.view_container_layout.getHeight();
-                        groupSongViewHolder.user_photo.getLayoutParams().width = (int) height / 2;
+                        /*int height = groupSongViewHolder.view_container_layout.getHeight();
+                        groupSongViewHolder.user_photo.getLayoutParams().width = (int) height / 2;*/
                         groupSongViewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
                         return false;
@@ -462,7 +464,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public class GroupSongViewHolder extends RecyclerView.ViewHolder {
 
         TextView message_view;
-        ImageView user_photo;
+        CustomImageView user_photo;
         TextView timestamp, username;
         TextView song_name, artist_name;
         ImageView song_art;
