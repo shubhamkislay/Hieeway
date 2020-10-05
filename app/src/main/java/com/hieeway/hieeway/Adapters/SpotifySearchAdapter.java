@@ -196,7 +196,7 @@ public class SpotifySearchAdapter extends RecyclerView.Adapter<SpotifySearchAdap
                             spotifyAppRemote.getPlayerApi().play(thumbnailItem.getTrackId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
                                 @Override
                                 public void onResult(Empty empty) {
-                                    spotifySongSelectedListener.onSongSelected();
+                                    spotifySongSelectedListener.onSongSelected(thumbnailItem);
                                     Toast.makeText(context, "Playing \"" + thumbnailItem.getSongName() + "\"", Toast.LENGTH_SHORT).show();
                                 }
                             });
@@ -227,7 +227,7 @@ public class SpotifySearchAdapter extends RecyclerView.Adapter<SpotifySearchAdap
                     spotifyAppRemote.getPlayerApi().play(thumbnailItem.getTrackId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
                         @Override
                         public void onResult(Empty empty) {
-                            spotifySongSelectedListener.onSongSelected();
+                            spotifySongSelectedListener.onSongSelected(thumbnailItem);
                             Toast.makeText(context, "Playing \"" + thumbnailItem.getSongName() + "\"", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -238,11 +238,11 @@ public class SpotifySearchAdapter extends RecyclerView.Adapter<SpotifySearchAdap
                 }
             }
         } else {
-            playSongOnGroup();
+            playSongOnGroup(thumbnailItem);
         }
     }
 
-    private void playSongOnGroup() {
-        spotifySongSelectedListener.onSongSelected();
+    private void playSongOnGroup(SpotiySearchItem thumbnailItem) {
+        spotifySongSelectedListener.onSongSelected(thumbnailItem);
     }
 }

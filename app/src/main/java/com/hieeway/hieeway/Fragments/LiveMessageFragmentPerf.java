@@ -4514,7 +4514,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     }
 
     @Override
-    public void onSongSelected() {
+    public void onSongSelected(SpotiySearchItem thumbnailItem) {
 
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         youtubeBottomFragmentStateListener.setDrag(false);

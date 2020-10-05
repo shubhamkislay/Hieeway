@@ -1,5 +1,6 @@
 package com.hieeway.hieeway.Adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -116,6 +118,22 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int position) {
+
+        myViewHolder.prof_pic.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    myViewHolder.prof_pic.animate().scaleX(0.9f).scaleY(0.9f).setDuration(0);
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    myViewHolder.prof_pic.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                } else {
+                    myViewHolder.prof_pic.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                }
+                return false;
+            }
+        });
 
         if (myViewHolder.getAdapterPosition() > 2) {
             MyGroup myGroup = myGroupList.get(myViewHolder.getAdapterPosition());

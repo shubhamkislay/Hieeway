@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_gravity="right"
+    android:padding="1.5dp">
+
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1.5dp"
+        android:layout_marginBottom="1.5dp">
+
+
+        <RelativeLayout
+            android:id="@+id/relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent">
+
+            <Button
+                android:id="@+id/message_identifier"
+                android:layout_width="8dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="0dp"
+                android:background="@drawable/message_bar_ticker"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/view_container_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/layer_message_box_drawable_white"
+                    android:paddingLeft="2dp"
+                    android:paddingTop="4dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="4dp">
+
+
+                    <ImageView
+                        android:id="@+id/user_photo"
+                        android:layout_width="50dp"
+                        android:layout_height="0dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginBottom="0dp"
+                        android:alpha="0.35"
+                        android:scaleType="centerCrop"
+
+                        android:transitionName="imageTransitionnot"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:src="@drawable/profile_pic" />
+
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/side_fade_back"
+                        android:backgroundTint="#000"
+                        android:rotation="180"
+                        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+                        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+                        app:layout_constraintRight_toRightOf="@id/user_photo"
+                        app:layout_constraintTop_toTopOf="@id/user_photo" />
+
+
+                    <RelativeLayout
+
+                        android:id="@+id/music_body"
+                        android:layout_width="match_parent"
+                        android:layout_height="154dp"
+                        android:layout_marginTop="-16dp"
+                        android:padding="4dp"
+                        android:visibility="visible"
+                        app:layout_constraintTop_toBottomOf="@id/username"
+                        tools:layout_editor_absoluteX="2dp">
+
+                        <ImageView
+                            android:id="@+id/song_art"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/no_profile"
+                            android:visibility="gone" />
+
+                        <RelativeLayout
+                            android:id="@+id/loading_music"
+                            android:layout_width="match_parent"
+                            android:layout_height="75dp"
+                            android:layout_centerInParent="true"
+                            android:visibility="visible">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/spinkit_wave"
+                                android:gravity="center"
+                                android:text="Fetching Music..."
+                                android:textColor="#575757"
+                                android:textSize="12sp" />
+
+                            <com.github.ybq.android.spinkit.SpinKitView
+                                android:id="@+id/spinkit_wave"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true"
+                                app:SpinKit_Style="Wave" />
+
+                        </RelativeLayout>
+
+                        <RelativeLayout
+
+                            android:id="@+id/open_spotify_lay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_toRightOf="@id/song_art"
+                            android:background="@drawable/message_box_drawable"
+                            android:backgroundTint="@color/darkbackground"
+                            android:paddingLeft="8dp"
+                            android:paddingTop="8dp"
+                            android:paddingRight="16dp"
+                            android:paddingBottom="8dp"
+                            android:visibility="gone">
+
+                            <RelativeLayout
+                                android:id="@+id/spotify_icon"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/spotify_white_icon" />
+
+                            <TextView
+                                android:id="@+id/open_spotify_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="8dp"
+                                android:layout_toRightOf="@id/spotify_icon"
+                                android:text="Open in Spotify"
+                                android:textColor="#fff"
+                                android:textSize="12sp" />
+
+                        </RelativeLayout>
+
+                        <TextView
+                            android:id="@+id/artist_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/song_name"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_toRightOf="@id/song_art"
+                            android:textColor="#777777"
+                            android:textSize="14sp"
+                            android:visibility="gone"
+                            tools:text="Song Name" />
+
+                        <TextView
+                            android:id="@+id/song_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_toRightOf="@id/song_art"
+                            android:maxLines="3"
+                            android:textColor="#fff"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:text="Song Name" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/timestamp"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/message_view"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:alpha="0.85"
+                        android:gravity="right"
+                        android:textSize="@dimen/timestampsize"
+                        app:layout_constraintBottom_toBottomOf="@id/music_body"
+
+                        app:layout_constraintRight_toRightOf="parent"
+                        tools:text="00:00" />
+
+
+                    <TextView
+
+                        android:id="@+id/message_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_toLeftOf="@id/user_photo"
+                        android:background="@drawable/layer_message_box_drawable_white"
+                        android:fontFamily="sans-serif"
+                        android:gravity="left"
+                        android:paddingLeft="32dp"
+                        android:paddingTop="24dp"
+                        android:paddingRight="24dp"
+                        android:paddingBottom="24dp"
+
+                        android:textColor="#fff"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="" />
+
+
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="wrap_content"
+
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/message_view"
+                        android:layout_alignParentRight="true"
+                        android:layout_margin="2dp"
+                        android:gravity="center"
+                        android:textSize="@dimen/timestampsize"
+                        android:visibility="gone"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/message_view"
+                        tools:text="username" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/reply_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/layer_replied_message_box"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="You replied to a message"
+                android:textAllCaps="false"
+                android:textColor="@color/replyTagColor"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/got_reply_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/layer_got_reply_message_box"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="You got a reply for this message"
+                android:textColor="@color/replyTagColor"
+                android:textSize="10sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

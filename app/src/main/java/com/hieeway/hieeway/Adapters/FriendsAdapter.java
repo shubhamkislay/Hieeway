@@ -248,7 +248,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
                     RequestOptions requestOptions = new RequestOptions();
                     requestOptions.placeholder(R.color.darkGrey);
-                    requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+                    //requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
                     //requestOptions.centerCrop();
                     // requestOptions.override(200, 400);
 

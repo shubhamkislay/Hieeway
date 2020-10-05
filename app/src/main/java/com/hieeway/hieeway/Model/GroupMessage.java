@@ -8,6 +8,8 @@ public class GroupMessage {
     private String timeStamp;
     private String photo;
     private String username;
+    private String type;
+    private String mediaID;
 
     public GroupMessage() {
     }
@@ -66,5 +68,21 @@ public class GroupMessage {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getMediaID() {
+        return mediaID;
+    }
+
+    public void setMediaID(String mediaID) {
+        this.mediaID = mediaID;
     }
 }

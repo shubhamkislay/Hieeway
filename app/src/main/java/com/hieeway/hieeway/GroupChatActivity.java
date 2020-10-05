@@ -39,6 +39,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -52,12 +53,14 @@ import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
 import com.hieeway.hieeway.Model.GroupMessage;
+import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.SpotiySearchItem;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -78,6 +81,10 @@ import java.util.List;
 import java.util.Scanner;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.hieeway.hieeway.NavButtonTest.USER_ID;
+import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
+import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 
 public class GroupChatActivity extends AppCompatActivity implements ScrollRecyclerViewListener, SpotifySongSelectedListener {
 
@@ -135,6 +142,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private Display display;
     private Point size;
     private Button back_btn;
+    private SpotifyAppRemote appRemote;
 
     private boolean bottomSheetVisible = false;
 
@@ -212,7 +220,13 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
 
         groupMessageList.clear();
-        groupMessageAdapter = new GroupMessageAdapter(this, groupMessageList, userID, this);
+        groupMessageAdapter = new GroupMessageAdapter(
+                this,
+                groupMessageList,
+                userID,
+                this,
+                groupID,
+                SpotifyRemoteHelper.getInstance().getSpotifyAppRemote());
 
         message_recycler_View.setAdapter(groupMessageAdapter);
 
@@ -770,6 +784,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             groupMessageHash.put("photo", userPhoto);
             groupMessageHash.put("sentStatus", "sending");
             groupMessageHash.put("username", currentUsername);
+            groupMessageHash.put("type", "text");
+            //groupMessageHash.put("mediaID", "none");
+
 
             groupMessageSendRef.child(messageId).updateChildren(groupMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -852,9 +869,62 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     }
 
     @Override
-    public void onSongSelected() {
+    public void onSongSelected(SpotiySearchItem thumbnailItem) {
         bottomSheetVisible = false;
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+
+        DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                .child(groupID);
+
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        String messageId = groupMessageSendRef.push().getKey();
+
+        DatabaseReference musicSendRef = FirebaseDatabase.getInstance().getReference("MusicMessage")
+                .child(groupID);
+
+        String musicKey = musicSendRef.push().getKey();
+
+
+        HashMap<String, Object> songHash = new HashMap<>();
+        songHash.put("spotifyId", thumbnailItem.getTrackId());
+        songHash.put("spotifySong", thumbnailItem.getSongName());
+        songHash.put("spotifyArtist", thumbnailItem.getArtistName());
+        songHash.put("spotifyCover", thumbnailItem.getImageUrl());
+        //songHash.put("username", USER_NAME);
+        //songHash.put("userId", USER_ID);
+        //songHash.put("userPhoto", USER_PHOTO);
+        //songHash.put("musicKey", musicKey);
+        // songHash.put("timestamp", timestamp.toString());
+
+        musicSendRef.child(musicKey).updateChildren(songHash);
+
+        //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+
+        HashMap<String, Object> groupMessageHash = new HashMap<>();
+        groupMessageHash.put("messageText", "");
+        groupMessageHash.put("senderId", userID);
+        groupMessageHash.put("messageId", messageId);
+        groupMessageHash.put("timeStamp", timestamp.toString());
+        groupMessageHash.put("photo", userPhoto);
+        groupMessageHash.put("sentStatus", "sending");
+        groupMessageHash.put("username", currentUsername);
+        groupMessageHash.put("type", "song");
+        groupMessageHash.put("mediaID", musicKey);
+
+
+        groupMessageSendRef.child(messageId).updateChildren(groupMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                HashMap<String, Object> groupMessageUpdateHash = new HashMap<>();
+                groupMessageUpdateHash.put("sentStatus", "sent");
+                groupMessageSendRef.child(messageId).updateChildren(groupMessageUpdateHash);
+
+            }
+        });
     }
 
     @Override
