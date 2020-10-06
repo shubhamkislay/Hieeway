@@ -236,7 +236,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     RelativeLayout complete_icon;
     Boolean videoLive = false;
     //RelativeLayout bottom_sheet_webview_dialog_layout;
-    WebView bottom_sheet_webview_dialog_layout;
+
     WebView youtube_web_view;
     LinearLayout remoteViewlayout;
     private IRtcEngineEventHandler mRtcEventHandler;
@@ -593,7 +593,6 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         sync_video_txt = view.findViewById(R.id.sync_video_txt);
         sync_video_layout = view.findViewById(R.id.sync_video_layout);
         youtube_web_view = view.findViewById(R.id.youtube_web_view);
-        bottom_sheet_webview_dialog_layout = youtube_web_view;
 
 
         video_seekbar = view.findViewById(R.id.video_seekbar);
@@ -3462,8 +3461,6 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
     }
 
-
-
     private void checkDurationResult() {
         if (videoDurationReady) {
             /*searchResults.clear();
@@ -3496,7 +3493,6 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
 
     }
-
 
     public void setYoutubeBottomFragmentStateListener(YoutubeBottomFragmentStateListener youtubeBottomFragmentStateListener) {
         this.youtubeBottomFragmentStateListener = youtubeBottomFragmentStateListener;
@@ -3881,7 +3877,6 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
         //   key = liveMessage.getMessageKey();
 
-
     }
 
     private void setupIRtcEngineEventHandler() {
@@ -4133,6 +4128,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
                 VideoEncoderConfiguration.STANDARD_BITRATE,
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
+
         setupLocalVideo();
     }
 

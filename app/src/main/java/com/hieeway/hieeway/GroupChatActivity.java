@@ -14,14 +14,24 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,6 +49,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -55,11 +72,16 @@ import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
 import com.hieeway.hieeway.Model.GroupMessage;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.SpotiySearchItem;
+import com.hieeway.hieeway.Model.YoutubeSync;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -79,12 +101,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.hieeway.hieeway.NavButtonTest.USER_ID;
 import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
 import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
+import static com.hieeway.hieeway.VerticalPageActivityPerf.userIDCHATTINGWITH;
 
 public class GroupChatActivity extends AppCompatActivity implements ScrollRecyclerViewListener, SpotifySongSelectedListener {
 
@@ -108,10 +133,15 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private String groupID, groupNameTxt, iconUrl;
     private CircleImageView icon;
     private TextView groupName;
+    private static final String YOUTUBEID_TAG = "youtubeID";
+    private static final String VIDEOSEC_TAG = "videoSec";
+    private static final String VIDEOTITLE_TAG = "videoTitle";
+    private static final String NO = "no";
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
     public static final String USERNAME = "username";
     public static final String SPOTIFY_TOKEN = "spotify_token";
+    private static final String VIDEO_NODE = "GroupVideo";
     private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
     private RecyclerView message_recycler_View;
     private ValueEventListener valueEventListener;
@@ -143,8 +173,38 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private Point size;
     private Button back_btn;
     private SpotifyAppRemote appRemote;
+    private static final String defaultVideoID = "default";
+    private static final String regex = "http(?:s)?:\\/\\/(?:m.)?(?:www\\.)?youtu(?:\\.be\\/|be\\.com\\/(?:watch\\?(?:feature=youtu.be\\&)?v=|v\\/|embed\\/|user\\/(?:[\\w#]+\\/)+))([^&#?\\n]+)";
+    private static final String cipherInstancePadding = "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING";
+    private static String youtubeUrl = "https://youtube.com/";
+    private static String yoututbeHomeURL = "https://youtube.com/";
+    private static String youtubeID = "default";
+    String loadVideofromUrl;
+    Button youtube_button;
+    WebView youtube_web_view;
+    RelativeLayout youtube_layout;
+    com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer mYouTubePlayer;
+    private YouTube.Videos.List videoQuery;
+    private YouTube youtube;
+    private TextView sync_video_txt;
+    private RelativeLayout sync_video_layout;
+    private String videoID = "kJQP7kiw5Fk";
+    private YouTubePlayerView youtube_player_view;
 
     private boolean bottomSheetVisible = false;
+    private AbstractYouTubePlayerListener abstractYouTubePlayerListener;
+    private boolean videoLoaded = false;
+    private String youtubeTitle = "";
+    private CustomUiController customUiController = null;
+    private float youtubeVideoSec = 0;
+    private float youtubeSynSec = 0;
+    private boolean playerInitialised = false;
+    private boolean loadWhenInitialised;
+    private String videoTitle = "";
+    private boolean videoStarted;
+    private boolean pauseVideo;
+    private ValueEventListener seekValueEventListener;
+    private DatabaseReference seekRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +218,20 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         recordButton = (RecordButton) findViewById(R.id.record_button);
         camera_background = findViewById(R.id.camera_background);
         message_box = findViewById(R.id.message_box);
+        youtube_button = findViewById(R.id.youtube_btn);
+        youtube_web_view = findViewById(R.id.youtube_web_view);
+        sync_video_txt = findViewById(R.id.sync_video_txt);
+        sync_video_layout = findViewById(R.id.sync_video_layout);
+        youtube_player_view = findViewById(R.id.youtube_player_view);
+        youtube_layout = findViewById(R.id.youtube_layout);
+
+        youtube_web_view.getSettings().setJavaScriptEnabled(true);
+
+        WebSettings webSettings = youtube_web_view.getSettings();
+        webSettings.setPluginState(WebSettings.PluginState.ON);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
 
 
         send_button = findViewById(R.id.send_button);
@@ -197,6 +271,12 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         currentUsername = sharedPreferences.getString(USERNAME, "");
         spotifyToken = sharedPreferences.getString(SPOTIFY_TOKEN, "default");
 
+        youtube = new YouTube.Builder(new NetHttpTransport(),
+                JacksonFactory.getDefaultInstance(), new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest hr) throws IOException {
+            }
+        }).setApplicationName(GroupChatActivity.this.getString(R.string.app_name)).build();
 
         Intent intent = getIntent();
         groupID = intent.getStringExtra("groupID");
@@ -283,6 +363,17 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             }
         });
 
+        youtube_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                youtube_web_view.setVisibility(View.VISIBLE);
+                Animation animation = AnimationUtils.loadAnimation(GroupChatActivity.this, R.anim.youtube_webview_open);
+                youtube_web_view.setAnimation(animation);
+                message_box.clearFocus();
+
+            }
+        });
+
 
         //recordButton.setListenForRecord(false);
         /*if (ContextCompat.checkSelfPermission(GroupChatActivity.this, android.Manifest.permission.RECORD_AUDIO)
@@ -351,6 +442,113 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             }
 
         });
+
+        final View customUiView = youtube_player_view.inflateCustomPlayerUi(R.layout.youtube_player_custom_view);
+
+
+        abstractYouTubePlayerListener = new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer youTubePlayer) {
+                super.onReady(youTubePlayer);
+
+                mYouTubePlayer = youTubePlayer;
+                customUiController = new CustomUiController(customUiView, mYouTubePlayer, GroupChatActivity.this, youtubeID, youtubeTitle);
+
+                //mYouTubePlayer.addListener(customUiController);
+                playerInitialised = true;
+
+                if (loadWhenInitialised) {
+                    mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
+                    mYouTubePlayer.play();
+
+                    try {
+                        customUiController.setVideo_title(videoTitle);
+                    } catch (Exception e) {
+
+                    }
+
+                }
+
+
+                // mYouTubePlayer.addListener(youtube_player_seekbar);
+
+                //seekRef.addValueEventListener(seekValueEventListener);
+
+            }
+
+            @Override
+            public void onStateChange(com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer youTubePlayer, PlayerConstants.PlayerState state) {
+                super.onStateChange(youTubePlayer, state);
+                mYouTubePlayer = youTubePlayer;
+
+                if (state == PlayerConstants.PlayerState.PLAYING) {
+
+                    //top_bar.setVisibility(View.GONE);
+                    loadVideofromUrl = "yes";
+                    if (pauseVideo)
+                        mYouTubePlayer.pause();
+
+
+                    if (customUiController != null) {
+                        customUiController.autoUpdateControlView();
+                        customUiController.setYoutube_player_seekbarVisibility(true);
+                        youtube_player_view.setVisibility(View.VISIBLE);
+                        sync_video_layout.setVisibility(View.INVISIBLE);
+                        customUiController.setBufferingProgress(View.GONE);
+                        customUiController.setPlayPauseBtn(View.VISIBLE);
+                    } else {
+                        // Toast.makeText(getContext(), "customUiController is null", Toast.LENGTH_SHORT).show();
+                    }
+                    videoStarted = true;
+                }
+                if (state == PlayerConstants.PlayerState.ENDED) {
+
+
+                    FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                            .child(groupID).removeValue();
+
+                    loadVideofromUrl = NO;
+
+                    //Toast.makeText(getContext(), "Video Over", Toast.LENGTH_SHORT).show();
+                    //top_bar.setVisibility(View.VISIBLE);
+
+                    youtube_layout.setVisibility(View.GONE);
+                    youtube_player_view.setVisibility(View.GONE);
+                    videoStarted = false;
+                }
+
+
+                if (state == PlayerConstants.PlayerState.BUFFERING) {
+
+                    customUiController.setBufferingProgress(View.VISIBLE);
+                    customUiController.setPlayPauseBtn(View.GONE);
+
+
+                }
+
+                if (state == PlayerConstants.PlayerState.PAUSED) {
+
+                    customUiController.setBufferingProgress(View.GONE);
+                    customUiController.setPlayPauseBtn(View.VISIBLE);
+
+                }
+
+
+            }
+
+            @Override
+            public void onCurrentSecond(YouTubePlayer youTubePlayer, float second) {
+                //Toast.makeText(parentActivity,"Time: "+second,Toast.LENGTH_SHORT).show();
+
+                youtubeVideoSec = second;
+            }
+
+            @Override
+            public void onError(YouTubePlayer youTubePlayer, PlayerConstants.PlayerError error) {
+                //Toast.makeText(getContext(),"Error: "+error.toString(),Toast.LENGTH_SHORT).show();
+
+            }
+        };
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -459,6 +657,38 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             }
         });
 
+        final WebViewClient webViewClient = new WebViewClient() {
+
+
+            @Override
+            public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+                // Toast.makeText(parentActivity, EMPTY_STRING + url, Toast.LENGTH_SHORT).show();
+
+                videoID = defaultVideoID;
+                if (!url.equals(yoututbeHomeURL))
+                    getVideoIdFromYoutubeUrl(url);
+
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }
+        };
+
+        //youtube_web_view.setWebChromeClient(new WebChromeClient());
+        youtube_web_view.setWebViewClient(webViewClient);
+
+
+        youtube_web_view.loadUrl(yoututbeHomeURL);
+
         //ListenForRecord must be false ,otherwise onClick will not be called
         recordButton.setOnRecordClickListener(new OnRecordClickListener() {
             @Override
@@ -487,6 +717,111 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         //IMPORTANT
         recordButton.setRecordView(recordView);
 
+        seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                .child(groupID);
+
+        seekValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //  if (initialiseActivity) {
+                    try {
+                        YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
+
+                        try {
+                            videoTitle = youtubeSync.getVideoTitle();
+
+                        } catch (Exception e) {
+                            //
+                            videoTitle = " ";
+                        }
+
+
+                        try {
+
+                            customUiController.setYoutube_player_seekbarVisibility(false);
+                            customUiController.setVideo_title(videoTitle);
+                        } catch (Exception e) {
+
+                            // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        //youtube_player_view.setVisibility(View.VISIBLE);
+
+                        try {
+
+                            if (!youtubeSync.getYoutubeID().equals(defaultVideoID)) {
+                                youtubeID = youtubeSync.getYoutubeID();
+                                youtubeSynSec = youtubeSync.getVideoSec();
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+                        loadWhenInitialised = false;
+
+                        mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
+                        mYouTubePlayer.play();
+                        sync_video_layout.setVisibility(View.VISIBLE);
+                        youtube_player_view.setVisibility(View.VISIBLE);
+                        youtube_layout.setVisibility(View.VISIBLE);
+                        // seekRef.removeValue();
+                    } catch (Exception e) {
+                        //  Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_LONG).show();
+
+                        loadWhenInitialised = true;
+                        sync_video_layout.setVisibility(View.VISIBLE);
+                        youtube_player_view.setVisibility(View.VISIBLE);
+                        youtube_layout.setVisibility(View.VISIBLE);
+
+                            /*youtube_layout.setVisibility(View.GONE);
+                            //youtube_player_view.setVisibility(View.VISIBLE);
+
+                            sync_video_layout.setVisibility(View.GONE);*/
+
+                    }
+                    //     }
+                    //   initialiseActivity = true;
+                } else {
+                    /*if(youtubeTitle!=null)
+                    {
+
+                        try {
+                            try {
+
+                                customUiController.setYoutube_player_seekbarVisibility(false);
+                            } catch (Exception e) {
+
+                                // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                            youtubeID = notifyoutubeID;
+                            mYouTubePlayer.loadVideo(notifyoutubeID, youtubeSynSec);
+                            mYouTubePlayer.play();
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.INVISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+                        }
+                        catch (Exception e)
+                        {
+                            loadWhenInitialised = true;
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.INVISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+
+                        }
+                    }*/
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
 
         populateMessages();
 
@@ -507,6 +842,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 }
             }
         });
+
+
+        youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
 
     }
 
@@ -761,6 +1099,179 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
     }
 
+    public void getVideoIdFromYoutubeUrl(String url) {
+
+
+        TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                String videoId = defaultVideoID;
+                Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(url);
+                if (matcher.find()) {
+                    videoId = matcher.group(1);
+                }
+
+                stringTaskCompletionSource.setResult(videoId);
+            }
+        }).start();
+
+
+        Task<String> stringTask = stringTaskCompletionSource.getTask();
+
+        stringTask.addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (task.isSuccessful()) {
+                    videoID = task.getResult();
+
+                    loadVideo(url, videoID);
+                }
+
+            }
+        });
+
+
+    }
+
+    private void loadVideo(String url, String videoID) {
+
+        if (!videoID.equals(defaultVideoID)) {
+            try {
+                youtube_web_view.stopLoading();
+                youtube_web_view.loadUrl(youtubeUrl);
+            } catch (Exception e) {
+
+            }
+
+            String loadVideoID = videoID;
+
+            videoLoaded = true;
+
+            Rect outRect = new Rect();
+
+            //Native UI youtube search using data api
+            //bottom_sheet_dialog_layout.getGlobalVisibleRect(outRect);
+
+
+                    /*bottom_sheet_webview_dialog_layout.getGlobalVisibleRect(outRect);
+
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);*/
+
+            youtube_web_view.setVisibility(View.GONE);
+
+
+            //search_video_edittext.clearFocus();
+            /*messageBox.requestFocus();
+            messageBox.setCursorVisible(true);*/
+
+            bottomSheetVisible = false;
+
+
+            //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
+            //         "text/html", "utf-8", EMPTY_STRING);
+
+
+            // Toast.makeText(parentActivity, "VideoID: " + videoID, Toast.LENGTH_SHORT).show();
+
+            // Toast.makeText(parentActivity, "Video ID: " + videoID, Toast.LENGTH_SHORT);
+
+            //  String snippet = retrieveVideoJSON(videoID,"snippet",API_KEY);
+
+            try {
+
+                videoQuery = youtube.videos().list("snippet");
+                videoQuery.setKey(API_KEY);
+                //query.setRequestHeaders( )
+                videoQuery.setMaxResults((long) 1);
+
+
+                videoQuery.setFields("items(snippet/title)");
+            } catch (IOException e) {
+                Log.d("YC", "Could not initialize: " + e);
+            }
+
+            //youtubeID = videoID;
+            videoQuery.setId(videoID);
+
+            sync_video_layout.setAlpha(1.0f);
+            sync_video_layout.setVisibility(View.VISIBLE);
+            youtube_layout.setVisibility(View.VISIBLE);
+            //youtube_api_player_view.setVisibility(View.VISIBLE);
+            youtube_player_view.setVisibility(View.VISIBLE);
+
+
+            TaskCompletionSource<Video> videoTaskCompletionSource = new TaskCompletionSource<>();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    VideoListResponse videoListResponse = null;
+                    try {
+                        videoListResponse = videoQuery.execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        List<Video> videoResults = videoListResponse.getItems();
+                        Video video = videoResults.get(0);
+
+                        videoTaskCompletionSource.setResult(video);
+                    } catch (Exception e) {
+                        videoTaskCompletionSource.setException(e);
+                    }
+
+                }
+            }).start();
+
+            Task<Video> videoTask = videoTaskCompletionSource.getTask();
+
+
+            videoTask.addOnCompleteListener(new OnCompleteListener<Video>() {
+                @Override
+                public void onComplete(@NonNull Task<Video> task) {
+
+
+                    try {
+                        youtubeTitle = task.getResult().getSnippet().getTitle();
+                        if (youtubeTitle == null) {
+                            youtubeTitle = " ";
+                        }
+                    } catch (Exception e) {
+                        youtubeTitle = " ";
+                    }
+
+                    HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                    youtubeVideoHash.put(YOUTUBEID_TAG, loadVideoID);
+                    youtubeVideoHash.put(VIDEOSEC_TAG, 0.0f);
+                    youtubeVideoHash.put(VIDEOTITLE_TAG, youtubeTitle);
+
+                    FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                            .child(groupID)
+                            .updateChildren(youtubeVideoHash);
+
+
+                }
+            });
+
+
+        }
+        youtubeUrl = url;
+
+
+        /**
+         * Show message dialog code added
+         */
+
+
+        // startLiveMessaging();
+
+
+    }
+
 
     private void sendMessage() {
 
@@ -938,4 +1449,15 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        seekRef.addValueEventListener(seekValueEventListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        seekRef.removeEventListener(seekValueEventListener);
+    }
 }

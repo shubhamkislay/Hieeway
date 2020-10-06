@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#070707"
+    android:background="@color/colorBlack"
     tools:context="com.hieeway.hieeway.GroupChatActivity">
 
     <ImageButton
@@ -49,7 +49,7 @@
             <RelativeLayout
                 android:id="@+id/sync_video_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="250dp"
                 android:layout_alignParentTop="true"
                 android:background="#000"
                 android:visibility="gone">
@@ -93,7 +93,10 @@
                 android:layout_marginRight="2dp"
                 android:background="@drawable/live_youtube_back"
                 android:hardwareAccelerated="true"
-                android:padding="4dp"
+                android:paddingLeft="4dp"
+                android:paddingTop="4dp"
+                android:paddingRight="4dp"
+                android:paddingBottom="4dp"
                 android:visibility="gone"
                 app:autoPlay="false"
                 app:showFullScreenButton="false"
@@ -109,7 +112,7 @@
             android:id="@+id/message_recycler_View"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="0dp"
             android:layout_marginBottom="8dp"
             android:paddingTop="4dp"
             app:layout_constraintBottom_toTopOf="@id/bottom_bar"
@@ -120,8 +123,8 @@
     <RelativeLayout
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/darkButtonBackground"
+        android:layout_height="80dp"
+        android:background="@color/nav_darktheme_btn_active"
         android:padding="12dp">
 
         <Button
@@ -129,18 +132,20 @@
             android:id="@+id/back_btn"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            android:layout_margin="24dp"
+            android:layout_centerVertical="true"
             android:background="@drawable/ic_keyboard_arrow_left_white_24dp" />
 
         <TextView
             android:id="@+id/group_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/group_icon"
-            android:layout_marginLeft="32dp"
-            android:layout_marginTop="4dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@id/group_icon"
+            android:gravity="left"
             android:layout_marginRight="32dp"
-            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="16sp"
             android:maxLines="2"
             android:textStyle="bold"
             tools:text="Group name" />
@@ -149,8 +154,8 @@
             android:id="@+id/group_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/back_btn"
             tools:src="@drawable/no_profile" />
 
 
@@ -260,8 +265,8 @@
         android:layout_height="56dp"
         android:layout_alignParentBottom="true"
         android:layout_margin="4dp"
-        android:alpha="0.75"
         android:background="@drawable/message_box_drawable"
+        android:backgroundTint="@color/nav_darktheme_btn_active"
         android:fitsSystemWindows="true"
         android:paddingLeft="4dp"
         android:paddingTop="2dp"
@@ -497,6 +502,8 @@
             layout="@layout/spotify_search_dialog"
             android:visibility="visible" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <include layout="@layout/activity_web_view" />
 
 
 </RelativeLayout>

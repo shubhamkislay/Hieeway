@@ -71,6 +71,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int MESSAGE_SENT = 1;
     private static final int MESSAGE_RECEIVED = 2;
     private static final int SONG_SENT = 3;
+    private static final int SONG_RECEIVED = 4;
     public String userID;
     private Context context;
     private List<GroupMessage> groupMessageList = new ArrayList<>();
@@ -125,7 +126,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().height = (int) height/2;*/
 
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
-        } else {
+        } else if (viewType == SONG_SENT) {
             View view = LayoutInflater.from(context).inflate(R.layout.group_song_sent_layout, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
@@ -135,6 +136,26 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().height = (int) height/2;*/
 
             return new GroupMessageAdapter.GroupSongViewHolder(view);
+        } else if (viewType == SONG_RECEIVED) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_song_received_layout, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupSongViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_sending_layout, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().height = (int) height;
+            user_photo.getLayoutParams().width = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupMessageViewHolder(view);
         }
     }
 
@@ -152,7 +173,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         GroupMessage groupMessage = groupMessageList.get(position);
 
         if (groupMessage.getType().equals("song")) {
-            return SONG_SENT;
+            if (groupMessage.getSenderId().equals(userID))
+                return SONG_SENT;
+            else
+                return SONG_RECEIVED;
+
         } else {
             if (groupMessage.getSenderId().equals(userID)) {
                 if (groupMessage.getSentStatus().equals("sending"))
@@ -303,34 +328,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (groupMessage.getSenderId().equals(userID))
                 groupSongViewHolder.username.setText("You played this song");
             else
-                groupSongViewHolder.username.setText(groupMessage.getUsername());
-
-            RequestOptions requestOptions = new RequestOptions();
-            //requestOptions.override(100, 100);
-            requestOptions.placeholder(context.getDrawable(R.drawable.no_profile));
-            //requestOptions.circleCrop();
-            //requestOptions.centerCrop();
-            //requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-
-            if (!groupMessage.getPhoto().equals("default"))
-                Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).addListener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-
-                        /*int height = groupSongViewHolder.view_container_layout.getHeight();
-                        groupSongViewHolder.user_photo.getLayoutParams().width = (int) height / 2;*/
-                        groupSongViewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                        return false;
-                    }
-                }).into(groupSongViewHolder.user_photo);
-            else
-                Glide.with(context).load(activity.getDrawable(R.drawable.no_profile)).apply(requestOptions).into(groupSongViewHolder.user_photo);
+                groupSongViewHolder.username.setText(groupMessage.getUsername() + " played the song");
 
 
             try {
@@ -464,7 +462,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public class GroupSongViewHolder extends RecyclerView.ViewHolder {
 
         TextView message_view;
-        CustomImageView user_photo;
+        CircleImageView user_photo;
         TextView timestamp, username;
         TextView song_name, artist_name;
         ImageView song_art;

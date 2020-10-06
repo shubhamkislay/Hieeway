@@ -86,6 +86,7 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
     public static String userIDCHATTINGWITH = "";
+    public String curr_id;
     public static String userNameChattingWith = "";
     public static String USERPHOTO = "";
     public static String USER_PRIVATE_KEY = "";
@@ -134,7 +135,6 @@ public class VerticalPageActivityPerf extends AppCompatActivity implements Messa
     private ValueEventListener friendShipValueListener;
     private List<Fragment> fragmentList;
     public static final String USER_ID = "userid";
-    public String curr_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
