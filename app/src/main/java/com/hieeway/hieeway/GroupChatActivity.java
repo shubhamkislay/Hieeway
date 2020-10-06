@@ -68,6 +68,7 @@ import com.hieeway.hieeway.Fragments.LiveMessageFragmentPerf;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
+import com.hieeway.hieeway.Interface.SpotifyRemoteConnectListener;
 import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
 import com.hieeway.hieeway.Model.GroupMessage;
 import com.hieeway.hieeway.Model.Music;
@@ -82,6 +83,8 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -111,7 +114,7 @@ import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
 import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 import static com.hieeway.hieeway.VerticalPageActivityPerf.userIDCHATTINGWITH;
 
-public class GroupChatActivity extends AppCompatActivity implements ScrollRecyclerViewListener, SpotifySongSelectedListener {
+public class GroupChatActivity extends AppCompatActivity implements ScrollRecyclerViewListener, SpotifySongSelectedListener, SpotifyRemoteConnectListener {
 
     private RelativeLayout bin;
     private ImageView disablerecord_button;
@@ -143,6 +146,13 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     public static final String SPOTIFY_TOKEN = "spotify_token";
     private static final String VIDEO_NODE = "GroupVideo";
     private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
+
+
+    public static final String MUSIC_BEACON = "musicbeacon";
+    public static final String SPOTIFY_CONNECT = "spotifyconnect";
+    private static final int REQUEST_CODE = 1337;
+    private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
+    private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     private RecyclerView message_recycler_View;
     private ValueEventListener valueEventListener;
     private List<GroupMessage> groupMessageList;
@@ -153,9 +163,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private String currentUsername;
     private boolean updated = false;
     private Boolean scrollRecyclerView = true;
-    private static final int REQUEST_CODE = 1338;
-    private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
-    private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     RecyclerView video_listView;
     RelativeLayout video_search_progress;
     BottomSheetBehavior bottomSheetBehavior;
@@ -297,7 +304,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         linearLayoutManager.setStackFromEnd(true);
 
         message_recycler_View.setLayoutManager(linearLayoutManager);
+        message_recycler_View.setHasTransientState(false);
+
         message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
+
 
         groupMessageList.clear();
         groupMessageAdapter = new GroupMessageAdapter(
@@ -306,7 +316,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 userID,
                 this,
                 groupID,
-                SpotifyRemoteHelper.getInstance().getSpotifyAppRemote());
+                SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(),
+                GroupChatActivity.this);
+        groupMessageAdapter.setHasStableIds(false);
 
         message_recycler_View.setAdapter(groupMessageAdapter);
 
@@ -452,7 +464,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 super.onReady(youTubePlayer);
 
                 mYouTubePlayer = youTubePlayer;
-                customUiController = new CustomUiController(customUiView, mYouTubePlayer, GroupChatActivity.this, youtubeID, youtubeTitle);
+                customUiController = new CustomUiController(customUiView, mYouTubePlayer, GroupChatActivity.this, youtubeID, youtubeTitle, groupID);
 
                 //mYouTubePlayer.addListener(customUiController);
                 playerInitialised = true;
@@ -759,12 +771,19 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         }
 
                         loadWhenInitialised = false;
+                        YoutubeSync compYoutubeSync = new YoutubeSync();
+                        compYoutubeSync.setVideoSec(0.0f);
+                        compYoutubeSync.setVideoTitle("test");
+                        compYoutubeSync.setYoutubeID("xyz");
+                        compYoutubeSync.setTimeStamp(sharedPreferences.getString(groupID, ""));
 
-                        mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
-                        mYouTubePlayer.play();
-                        sync_video_layout.setVisibility(View.VISIBLE);
-                        youtube_player_view.setVisibility(View.VISIBLE);
-                        youtube_layout.setVisibility(View.VISIBLE);
+                        if (youtubeSync.compareTo(compYoutubeSync) >= 0) {
+                            mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
+                            mYouTubePlayer.play();
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.VISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+                        }
                         // seekRef.removeValue();
                     } catch (Exception e) {
                         //  Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_LONG).show();
@@ -846,6 +865,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
 
+        seekRef.addValueEventListener(seekValueEventListener);
+
     }
 
     private void connectToSpotify() {
@@ -887,7 +908,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     editor.putString(SPOTIFY_TOKEN, response.getAccessToken());
                     editor.apply();
                     spotifyToken = response.getAccessToken();
-                    Toast.makeText(GroupChatActivity.this, "Connected to Spotify: " + response.getAccessToken(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupChatActivity.this, "Connected to Spotify :)", Toast.LENGTH_SHORT).show();
 
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     bottomSheetVisible = true;
@@ -899,7 +920,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 // Auth flow returned an error
                 case ERROR:
                     // Handle error response
-                    Toast.makeText(GroupChatActivity.this, "Error " + response.getError(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(GroupChatActivity.this, "Error " + response.getError(), Toast.LENGTH_SHORT).show();
                     video_search_progress.setVisibility(View.GONE);
                     break;
 
@@ -907,7 +928,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 default:
                     // Handle other cases
                     video_search_progress.setVisibility(View.GONE);
-                    Toast.makeText(GroupChatActivity.this, "Error " + response.getType().toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(GroupChatActivity.this, "Error " + response.getType().toString(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -1137,6 +1158,40 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
     }
 
+    @Override
+    public void getSpotifyAppRemote(String songID) {
+        ConnectionParams connectionParams =
+                new ConnectionParams.Builder(CLIENT_ID)
+                        .setRedirectUri(REDIRECT_URI)
+                        .setPreferredThumbnailImageSize(1500)
+                        .setPreferredImageSize(1500)
+                        .showAuthView(true)
+                        .build();
+        SpotifyAppRemote.CONNECTOR.connect(GroupChatActivity.this, connectionParams,
+                new Connector.ConnectionListener() {
+
+                    @Override
+                    public void onConnected(SpotifyAppRemote spotifyAppRemote) {
+                        appRemote = spotifyAppRemote;
+                        SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(appRemote);
+
+                        appRemote.getPlayerApi().play(songID);
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        // Log.e("MainActivity", throwable.getMessage(), throwable);
+                        Toast.makeText(GroupChatActivity.this, "Cannot play the song\nTry reconnecting to spotify app", Toast.LENGTH_SHORT).show();
+
+
+                        // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Something went wrong when attempting to connect! Handle errors here
+                    }
+                });
+    }
+
     private void loadVideo(String url, String videoID) {
 
         if (!videoID.equals(defaultVideoID)) {
@@ -1203,6 +1258,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             //youtube_api_player_view.setVisibility(View.VISIBLE);
             youtube_player_view.setVisibility(View.VISIBLE);
 
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
 
             TaskCompletionSource<Video> videoTaskCompletionSource = new TaskCompletionSource<>();
             new Thread(new Runnable() {
@@ -1248,6 +1305,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     youtubeVideoHash.put(YOUTUBEID_TAG, loadVideoID);
                     youtubeVideoHash.put(VIDEOSEC_TAG, 0.0f);
                     youtubeVideoHash.put(VIDEOTITLE_TAG, youtubeTitle);
+                    youtubeVideoHash.put("timeStamp", timestamp.toString());
 
                     FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                             .child(groupID)
@@ -1372,6 +1430,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         } catch (Exception e) {
             //
         }
+        seekRef.removeEventListener(seekValueEventListener);
     }
 
     @Override
@@ -1452,12 +1511,20 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     @Override
     protected void onResume() {
         super.onResume();
-        seekRef.addValueEventListener(seekValueEventListener);
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        seekRef.removeEventListener(seekValueEventListener);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        editor.putString(groupID, timestamp.toString());
+        editor.apply();
     }
+
+
+
+
+
 }

@@ -1,10 +1,11 @@
 package com.hieeway.hieeway.Model;
 
-public class YoutubeSync {
+public class YoutubeSync implements Comparable<YoutubeSync> {
 
     private String youtubeID;
     private float videoSec;
     private String videoTitle;
+    private String timeStamp;
 
     public YoutubeSync() {
     }
@@ -31,5 +32,25 @@ public class YoutubeSync {
 
     public void setVideoTitle(String videoTitle) {
         this.videoTitle = videoTitle;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    @Override
+    public int compareTo(YoutubeSync o) {
+
+
+        try {
+            return this.getTimeStamp().compareTo(o.getTimeStamp());
+        } catch (Exception e) {
+            return 0;
+        }
+
     }
 }

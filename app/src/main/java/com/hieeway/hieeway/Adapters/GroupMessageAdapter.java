@@ -38,6 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
+import com.hieeway.hieeway.Interface.SpotifyRemoteConnectListener;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.GroupMessage;
@@ -79,8 +80,9 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Activity activity;
     private String groupID;
     private SpotifyAppRemote appRemote;
+    private SpotifyRemoteConnectListener spotifyRemoteConnectListener;
 
-    public GroupMessageAdapter(Context context, List<GroupMessage> groupMessageList, String currentUserId, ScrollRecyclerViewListener scrollRecyclerViewListener, String groupID, SpotifyAppRemote appRemote) {
+    public GroupMessageAdapter(Context context, List<GroupMessage> groupMessageList, String currentUserId, ScrollRecyclerViewListener scrollRecyclerViewListener, String groupID, SpotifyAppRemote appRemote, Activity activity) {
         this.context = context;
         this.groupMessageList.addAll(groupMessageList);
         this.userID = currentUserId;
@@ -88,6 +90,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.activity = (Activity) context;
         this.groupID = groupID;
         this.appRemote = appRemote;
+        this.spotifyRemoteConnectListener = (SpotifyRemoteConnectListener) activity;
     }
 
 
@@ -406,7 +409,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                                                 });
                                     } catch (Exception e) {
-                                        Toast.makeText(context, "Cannot play the song\nTry reconnecting to spotify app", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Connecting to spotify ", Toast.LENGTH_SHORT).show();
+                                        spotifyRemoteConnectListener.getSpotifyAppRemote(music.getSpotifySong());
                                     }
 
                                 }

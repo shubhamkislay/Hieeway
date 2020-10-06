@@ -52,8 +52,7 @@ public class CustomUiController implements YouTubePlayerListener {
 
 
     @SuppressLint("ClickableViewAccessibility")
-    public CustomUiController(View customPlayerUI, final YouTubePlayer youTubePlayer, final Context context, String videoID, String videoTitle) {
-
+    public CustomUiController(View customPlayerUI, final YouTubePlayer youTubePlayer, final Context context, String videoID, String videoTitle, String type) {
 
 
         this.youTubePlayer = youTubePlayer;
@@ -175,19 +174,28 @@ public class CustomUiController implements YouTubePlayerListener {
                         .child(userIDCHATTINGWITH)
                         .updateChildren(youtubeVideoHash);*/
 
-                HashMap<String, Object> youtubeVideoHash = new HashMap<>();
-                youtubeVideoHash.put("videoSec", v);
-                //youtubeVideoHash.put("youtubeID", videoID);
+                if (type.equals("live")) {
+                    HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                    youtubeVideoHash.put("videoSec", v);
+                    //youtubeVideoHash.put("youtubeID", videoID);
 
-                FirebaseDatabase.getInstance().getReference("Video")
-                        .child(userIDCHATTINGWITH)
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .updateChildren(youtubeVideoHash);
+                    FirebaseDatabase.getInstance().getReference("Video")
+                            .child(userIDCHATTINGWITH)
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .updateChildren(youtubeVideoHash);
 
-                FirebaseDatabase.getInstance().getReference("Video")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                        .child(userIDCHATTINGWITH)
-                        .updateChildren(youtubeVideoHash);
+                    FirebaseDatabase.getInstance().getReference("Video")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child(userIDCHATTINGWITH)
+                            .updateChildren(youtubeVideoHash);
+                } else {
+                    HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                    youtubeVideoHash.put("videoSec", v);
+
+                    FirebaseDatabase.getInstance().getReference("GroupVideo")
+                            .child(type)
+                            .updateChildren(youtubeVideoHash);
+                }
 
 
             }
