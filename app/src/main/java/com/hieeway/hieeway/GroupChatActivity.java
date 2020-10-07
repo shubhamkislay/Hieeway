@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +18,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.MediaRecorder;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -70,6 +73,7 @@ import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Interface.SpotifyRemoteConnectListener;
 import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
+import com.hieeway.hieeway.Model.ChatMessage;
 import com.hieeway.hieeway.Model.GroupMessage;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.SpotiySearchItem;
@@ -194,7 +198,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private YouTube.Videos.List videoQuery;
     private YouTube youtube;
     private TextView sync_video_txt;
-    private RelativeLayout sync_video_layout;
+    //private RelativeLayout sync_video_layout;
     private String videoID = "kJQP7kiw5Fk";
     private YouTubePlayerView youtube_player_view;
 
@@ -212,11 +216,15 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private boolean pauseVideo;
     private ValueEventListener seekValueEventListener;
     private DatabaseReference seekRef;
+    private ItemTouchHelper itemTouchHelper;
+    private boolean youtubeVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_chats);
+        //setContentView(R.layout.activity_group_chats);
+
+        setContentView(R.layout.group_chats_layout_perf);
 
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -228,7 +236,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         youtube_button = findViewById(R.id.youtube_btn);
         youtube_web_view = findViewById(R.id.youtube_web_view);
         sync_video_txt = findViewById(R.id.sync_video_txt);
-        sync_video_layout = findViewById(R.id.sync_video_layout);
+        //sync_video_layout = findViewById(R.id.sync_video_layout);
         youtube_player_view = findViewById(R.id.youtube_player_view);
         youtube_layout = findViewById(R.id.youtube_layout);
 
@@ -248,12 +256,12 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         search_video_btn = findViewById(R.id.search_video_btn);
         back_btn = findViewById(R.id.back_btn);
 
-        equlizer = findViewById(R.id.equlizer);
+        /*equlizer = findViewById(R.id.equlizer);
         equi_one = findViewById(R.id.equi_one);
         equi_two = findViewById(R.id.equi_two);
         equi_three = findViewById(R.id.equi_three);
         equi_four = findViewById(R.id.equi_four);
-        equi_five = findViewById(R.id.equi_five);
+        equi_five = findViewById(R.id.equi_five);*/
         spotify_btn = findViewById(R.id.spotify_btn);
         search_video_edittext = findViewById(R.id.search_video_edittext);
         groupMessageList = new ArrayList<>();
@@ -383,8 +391,83 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 youtube_web_view.setAnimation(animation);
                 message_box.clearFocus();
 
+
+                youtubeVisible = true;
+
             }
         });
+        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+                try {
+
+                    final int positionItem = viewHolder.getAdapterPosition();
+
+                    final GroupMessage message = groupMessageList.get(positionItem);
+
+
+                    //      if(message.getSentStatus().equals("sent")) {
+
+
+                    //Toast.makeText(getActivity(), "Your swiped status: " + swiped, Toast.LENGTH_SHORT).show();
+                    if (message.getSenderId().equals(userID)) {
+                        //groupMessageList.remove(message);
+
+
+                        FirebaseDatabase.getInstance().getReference("GroupMessage")
+                                .child(groupID)
+                                .child(message.getMessageId())
+                                .removeValue();
+
+                        if (message.getType().equals("song")) {
+                            String mediaID = message.getMediaID();
+                            FirebaseDatabase.getInstance().getReference("MusicMessage")
+                                    .child(groupID)
+                                    .child(mediaID).removeValue();
+                        } else if (message.getType().equals("video")) {
+                            String mediaID = message.getMediaID();
+                            FirebaseDatabase.getInstance().getReference("VideoMessage")
+                                    .child(groupID)
+                                    .child(mediaID).removeValue();
+                        }
+
+                        //groupMessageAdapter.updateList(groupMessageList);
+                    } else {
+                        groupMessageAdapter.notifyItemChanged(positionItem);
+                    }
+
+                    /**
+                     * Uncomment the message below to delete the message from the Firebase
+                     */
+
+
+                    //sendMessageAdapter.notifyItemRemoved(positionItem);
+                    //Toast.makeText(getActivity(), "Message Deleted for all!", Toast.LENGTH_SHORT).show();
+                    //soundPool.play(delsound2, 1, 1, 0, 0, 1);
+
+
+                } catch (Exception e) {
+
+                }
+
+
+            }
+/*
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder instanceof CartAdapter.MyViewHolder) return 0;
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }*/
+
+
+        });
+        itemTouchHelper.attachToRecyclerView(message_recycler_View);
 
 
         //recordButton.setListenForRecord(false);
@@ -505,7 +588,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         customUiController.autoUpdateControlView();
                         customUiController.setYoutube_player_seekbarVisibility(true);
                         youtube_player_view.setVisibility(View.VISIBLE);
-                        sync_video_layout.setVisibility(View.INVISIBLE);
+                        //sync_video_layout.setVisibility(View.INVISIBLE);
                         customUiController.setBufferingProgress(View.GONE);
                         customUiController.setPlayPauseBtn(View.VISIBLE);
                     } else {
@@ -689,9 +772,14 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
             }
 
-            @Override
+           /* @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
+            }*/
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
             }
         };
 
@@ -780,7 +868,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         if (youtubeSync.compareTo(compYoutubeSync) >= 0) {
                             mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
                             mYouTubePlayer.play();
-                            sync_video_layout.setVisibility(View.VISIBLE);
+                            //sync_video_layout.setVisibility(View.VISIBLE);
                             youtube_player_view.setVisibility(View.VISIBLE);
                             youtube_layout.setVisibility(View.VISIBLE);
                         }
@@ -789,7 +877,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         //  Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_LONG).show();
 
                         loadWhenInitialised = true;
-                        sync_video_layout.setVisibility(View.VISIBLE);
+                        //sync_video_layout.setVisibility(View.VISIBLE);
                         youtube_player_view.setVisibility(View.VISIBLE);
                         youtube_layout.setVisibility(View.VISIBLE);
 
@@ -1227,7 +1315,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             /*messageBox.requestFocus();
             messageBox.setCursorVisible(true);*/
 
-            bottomSheetVisible = false;
+            youtubeVisible = false;
 
 
             //  youtube_web_view.loadDataWithBaseURL(youtubeUrl, htmlbegin+ htmlend,
@@ -1256,8 +1344,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             //youtubeID = videoID;
             videoQuery.setId(videoID);
 
-            sync_video_layout.setAlpha(1.0f);
-            sync_video_layout.setVisibility(View.VISIBLE);
+            //sync_video_layout.setAlpha(1.0f);
+            //sync_video_layout.setVisibility(View.VISIBLE);
             youtube_layout.setVisibility(View.VISIBLE);
             //youtube_api_player_view.setVisibility(View.VISIBLE);
             youtube_player_view.setVisibility(View.VISIBLE);
@@ -1315,6 +1403,14 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                             .child(groupID)
                             .updateChildren(youtubeVideoHash);
 
+                    YoutubeSync youtubeSync = new YoutubeSync();
+                    youtubeSync.setYoutubeID(loadVideoID);
+                    youtubeSync.setVideoTitle(youtubeTitle);
+                    youtubeSync.setTimeStamp(timestamp.toString());
+
+
+                    sendVideoMessage(youtubeSync, url);
+
 
                 }
             });
@@ -1332,6 +1428,59 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         // startLiveMessaging();
 
 
+    }
+
+    private void sendVideoMessage(YoutubeSync youtubeSync, String url) {
+        DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                .child(groupID);
+
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        String messageId = groupMessageSendRef.push().getKey();
+
+        DatabaseReference videoSendRef = FirebaseDatabase.getInstance().getReference("VideoMessage")
+                .child(groupID);
+
+        String videoKey = videoSendRef.push().getKey();
+
+
+        HashMap<String, Object> videoHash = new HashMap<>();
+        videoHash.put("youtubeId", youtubeSync.getYoutubeID());
+        videoHash.put("youtubeTitle", youtubeSync.getVideoTitle());
+        videoHash.put("youtubeUrl", url);
+        //songHash.put("username", USER_NAME);
+        //songHash.put("userId", USER_ID);
+        //songHash.put("userPhoto", USER_PHOTO);
+        //songHash.put("musicKey", musicKey);
+        // songHash.put("timestamp", timestamp.toString());
+
+        videoSendRef.child(videoKey).updateChildren(videoHash);
+
+        //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+
+
+        HashMap<String, Object> groupMessageHash = new HashMap<>();
+        groupMessageHash.put("messageText", "");
+        groupMessageHash.put("senderId", userID);
+        groupMessageHash.put("messageId", messageId);
+        groupMessageHash.put("timeStamp", timestamp.toString());
+        groupMessageHash.put("photo", userPhoto);
+        groupMessageHash.put("sentStatus", "sending");
+        groupMessageHash.put("username", currentUsername);
+        groupMessageHash.put("type", "video");
+        groupMessageHash.put("mediaID", videoKey);
+
+
+        groupMessageSendRef.child(messageId).updateChildren(groupMessageHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                HashMap<String, Object> groupMessageUpdateHash = new HashMap<>();
+                groupMessageUpdateHash.put("sentStatus", "sent");
+                groupMessageSendRef.child(messageId).updateChildren(groupMessageUpdateHash);
+
+            }
+        });
     }
 
 
@@ -1507,6 +1656,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         if (bottomSheetVisible) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             bottomSheetVisible = false;
+
+        } else if (youtubeVisible) {
+            closeBottomSheet();
+            youtubeVisible = false;
         } else
             super.onBackPressed();
 
@@ -1527,8 +1680,29 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         editor.apply();
     }
 
+    public void closeBottomSheet() {
 
+        //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
+        if (youtube_web_view.getVisibility() == View.VISIBLE) {
+            Animation animation = AnimationUtils.loadAnimation(GroupChatActivity.this, R.anim.youtube_webview_close);
+            youtube_web_view.setAnimation(animation);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    youtube_web_view.setVisibility(View.GONE);
+
+                    /*if (resumePlay)
+                        nativeYoutubePlayer.play();*/
+                }
+            }, 350);
+        }
+        //search_video_edittext.clearFocus();
+        message_box.requestFocus();
+        message_box.setCursorVisible(true);
+
+    }
 
 
 }

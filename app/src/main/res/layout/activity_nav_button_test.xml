@@ -495,7 +495,7 @@
             android:elevation="20dp"
             android:gravity="center"
             android:maxLines="1"
-            android:visibility="gone"
+            android:visibility="visible"
             android:padding="48dp"
             android:paddingRight="100dp"
             android:text="Hieeway"
@@ -522,7 +522,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </RelativeLayout>
 

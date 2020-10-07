@@ -238,24 +238,24 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);*/
 
-   // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
         view = findViewById(R.id.videoView);
 
-        Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
+        /*Uri video = Uri.parse("android.resource://" + getPackageName() + "/"
                 + R.raw.hiee_splash);
-        /*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
-                + R.raw.high_image_splash_alt);*/
+        *//*Uri videoAlt = Uri.parse("android.resource://" + getPackageName() + "/"
+                + R.raw.high_image_splash_alt);*//*
 
         // String path = "android.resource://" + getPackageName() + "/" + R.raw.hieeway_splashscreen;
-        view.setVideoURI(video);
+        view.setVideoURI(video);*/
 
 
         /**
          * Original code.. which shows a splash screen
          */
-        view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        /*view.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
 
@@ -282,7 +282,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 }, 1500);
 
             }
-        });
+        });*/
 
 
         /*view.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

@@ -33,6 +33,9 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,11 +44,14 @@ import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
 import com.hieeway.hieeway.Interface.SpotifyRemoteConnectListener;
+import com.hieeway.hieeway.LiveMessageActiveService;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.GroupMessage;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicMessage;
+import com.hieeway.hieeway.Model.VideoMessage;
+import com.hieeway.hieeway.Model.YoutubeSync;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
@@ -60,8 +66,10 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -75,6 +83,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int MESSAGE_RECEIVED = 2;
     private static final int SONG_SENT = 3;
     private static final int SONG_RECEIVED = 4;
+    private static final int VIDEO_SENT = 5;
+    private static final int VIDEO_RECEIVED = 6;
     public String userID;
     private Context context;
     private List<GroupMessage> groupMessageList = new ArrayList<>();
@@ -83,6 +93,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private String groupID;
     private SpotifyAppRemote appRemote;
     private SpotifyRemoteConnectListener spotifyRemoteConnectListener;
+    private static final String YOUTUBEID_TAG = "youtubeID";
+    private static final String VIDEOSEC_TAG = "videoSec";
+    private static final String VIDEOTITLE_TAG = "videoTitle";
+    private static final String VIDEO_NODE = "GroupVideo";
 
     public GroupMessageAdapter(Context context, List<GroupMessage> groupMessageList, String currentUserId, ScrollRecyclerViewListener scrollRecyclerViewListener, String groupID, SpotifyAppRemote appRemote, Activity activity) {
         this.context = context;
@@ -102,7 +116,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (viewType == MESSAGE_SENDING) {
 
-            View view = LayoutInflater.from(context).inflate(R.layout.group_message_sending_layout, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.group_msg_sending_perf, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
             int height = relative_layout.getHeight();
@@ -112,7 +126,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
         } else if (viewType == MESSAGE_SENT) {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_message_sent_layout, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.group_msg_sent_perf, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
             int height = relative_layout.getHeight();
@@ -122,7 +136,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
         } else if (viewType == MESSAGE_RECEIVED) {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_message_receive_layout, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.group_msg_receive_perf, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
             int height = relative_layout.getHeight();
@@ -151,6 +165,26 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().height = (int) height/2;*/
 
             return new GroupMessageAdapter.GroupSongViewHolder(view);
+        } else if (viewType == VIDEO_SENT) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_youtube_item_sent, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupVideoViewHolder(view);
+        } else if (viewType == VIDEO_RECEIVED) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_youtube_item_receive, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupVideoViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_sending_layout, parent, false);
 
@@ -182,6 +216,12 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return SONG_SENT;
             else
                 return SONG_RECEIVED;
+
+        } else if (groupMessage.getType().equals("video")) {
+            if (groupMessage.getSenderId().equals(userID))
+                return VIDEO_SENT;
+            else
+                return VIDEO_RECEIVED;
 
         } else {
             if (groupMessage.getSenderId().equals(userID)) {
@@ -244,8 +284,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("text")) {
 
+
             GroupMessageViewHolder viewHolder = (GroupMessageViewHolder) holder;
             GroupMessage groupMessage = groupMessageList.get(viewHolder.getAdapterPosition());
+
+            viewHolder.user_photo.setVisibility(View.INVISIBLE);
 
             if (groupMessage.getSenderId().equals(userID))
                 viewHolder.username.setVisibility(View.GONE);
@@ -304,6 +347,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         viewHolder.user_photo.getLayoutParams().width = (int) height / 2;
 
                         viewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        viewHolder.user_photo.setVisibility(View.VISIBLE);
+
 
                     /*
                     if (height > pxFromDp(context,100) ) {
@@ -380,6 +425,55 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             } catch (Exception e) {
                 groupSongViewHolder.timestamp.setVisibility(View.INVISIBLE);
+
+            }
+        } else if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("video")) {
+
+            GroupVideoViewHolder groupVideoViewHolder = (GroupVideoViewHolder) holder;
+            GroupMessage groupMessage = groupMessageList.get(groupVideoViewHolder.getAdapterPosition());
+
+            groupVideoViewHolder.song_name.setVisibility(View.GONE);
+            groupVideoViewHolder.spinkit_wave.setVisibility(View.VISIBLE);
+            groupVideoViewHolder.fetch_music_txt.setVisibility(View.VISIBLE);
+            groupVideoViewHolder.artist_name.setVisibility(View.GONE);
+            groupVideoViewHolder.song_art.setVisibility(View.INVISIBLE);
+
+            if (groupMessage.getSenderId().equals(userID))
+                groupVideoViewHolder.username.setText("You played this video");
+            else
+                groupVideoViewHolder.username.setText(groupMessage.getUsername() + " played the video");
+
+
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                Date parsedDate = dateFormat.parse(groupMessage.getTimeStamp());
+
+
+                Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+
+                PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+                String ago = prettyTime.format(parsedDate);
+                // S is the millisecond
+                // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");/*  dd MMM YYYY*/
+
+
+                groupVideoViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+
+                //holder.timestamp.setText(""+height);
+
+
+                //sendMessageViewHolder.timestamp.setText("" + ago);
+
+                fetchVideo(groupMessage,
+                        groupVideoViewHolder.song_name,
+                        groupVideoViewHolder.artist_name,
+                        groupVideoViewHolder.song_art,
+                        groupVideoViewHolder.spinkit_wave,
+                        groupVideoViewHolder.fetch_music_txt);
+
+            } catch (Exception e) {
+                groupVideoViewHolder.timestamp.setVisibility(View.INVISIBLE);
 
             }
         }
@@ -491,6 +585,185 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 });
     }
 
+    private void fetchVideo(GroupMessage groupMessage,
+                            TextView song_name,
+                            TextView artist_name,
+                            ImageView song_art,
+                            ProgressBar spinkit_wave,
+                            TextView fetch_music_txt) {
+        FirebaseDatabase.getInstance().getReference("VideoMessage")
+                .child(groupID)
+                .child(groupMessage.getMediaID())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+
+                            VideoMessage videoMessage = snapshot.getValue(VideoMessage.class);
+                            try {
+                                song_name.setText(videoMessage.getYoutubeTitle());
+                            } catch (Exception e) {
+                                song_name.setText("");
+                            }
+                            artist_name.setText(videoMessage.getYoutubeUrl());
+
+/*
+                           appRemote.getImagesApi().getImage(music.getSpotifyCover()).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+                               @Override
+                               public void onResult(Bitmap bitmap) {
+
+                                   song_art.setImageBitmap(bitmap);
+
+                               }
+                           });
+*/
+                            TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+
+                                    try {
+                                        Bitmap bitmap = Glide.with(context)
+                                                .asBitmap()
+                                                .load("https://img.youtube.com/vi/" + videoMessage.getYoutubeId() + "/0.jpg")
+                                                .submit(512, 512)
+                                                .get();
+
+                                        bitmapTaskCompletionSource.setResult(bitmap);
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+
+                                }
+                            }).start();
+
+
+                            Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+                            bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Bitmap> task) {
+                                    song_art.setImageBitmap(task.getResult());
+                                }
+                            });
+
+                            song_name.setVisibility(View.VISIBLE);
+                            spinkit_wave.setVisibility(View.GONE);
+                            fetch_music_txt.setVisibility(View.GONE);
+                            artist_name.setVisibility(View.VISIBLE);
+                            song_art.setVisibility(View.VISIBLE);
+
+                            artist_name.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                                        HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                                        youtubeVideoHash.put(YOUTUBEID_TAG, videoMessage.getYoutubeId());
+                                        youtubeVideoHash.put(VIDEOSEC_TAG, 0.0f);
+                                        youtubeVideoHash.put(VIDEOTITLE_TAG, videoMessage.getYoutubeTitle());
+                                        youtubeVideoHash.put("timeStamp", timestamp.toString());
+
+                                        FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                                                .child(groupID)
+                                                .updateChildren(youtubeVideoHash);
+
+                                    } catch (Exception e) {
+                                        //
+                                    }
+
+                                }
+                            });
+
+                            song_name.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                                        HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                                        youtubeVideoHash.put(YOUTUBEID_TAG, videoMessage.getYoutubeId());
+                                        youtubeVideoHash.put(VIDEOSEC_TAG, 0.0f);
+                                        youtubeVideoHash.put(VIDEOTITLE_TAG, videoMessage.getYoutubeTitle());
+                                        youtubeVideoHash.put("timeStamp", timestamp.toString());
+
+                                        FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                                                .child(groupID)
+                                                .updateChildren(youtubeVideoHash);
+
+                                    } catch (Exception e) {
+                                        //
+                                    }
+
+                                }
+                            });
+
+                            song_art.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                                        HashMap<String, Object> youtubeVideoHash = new HashMap<>();
+                                        youtubeVideoHash.put(YOUTUBEID_TAG, videoMessage.getYoutubeId());
+                                        youtubeVideoHash.put(VIDEOSEC_TAG, 0.0f);
+                                        youtubeVideoHash.put(VIDEOTITLE_TAG, videoMessage.getYoutubeTitle());
+                                        youtubeVideoHash.put("timeStamp", timestamp.toString());
+
+                                        FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                                                .child(groupID)
+                                                .updateChildren(youtubeVideoHash);
+
+                                    } catch (Exception e) {
+                                        //
+                                    }
+
+                                }
+                            });
+                            song_art.setOnTouchListener(new View.OnTouchListener() {
+                                @SuppressLint("ClickableViewAccessibility")
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+
+                                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                        song_art.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                                        song_art.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                                    } else {
+                                        song_art.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                                    }
+                                    return false;
+                                }
+                            });
+
+
+                        } else {
+                            song_name.setVisibility(View.GONE);
+                            spinkit_wave.setVisibility(View.VISIBLE);
+                            fetch_music_txt.setVisibility(View.VISIBLE);
+                            artist_name.setVisibility(View.GONE);
+                            song_art.setVisibility(View.INVISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        song_name.setVisibility(View.GONE);
+                        spinkit_wave.setVisibility(View.VISIBLE);
+                        fetch_music_txt.setVisibility(View.VISIBLE);
+                        artist_name.setVisibility(View.GONE);
+                        song_art.setVisibility(View.INVISIBLE);
+                    }
+                });
+    }
+
     public static float dpFromPx(final Context context, final float px) {
         return px / context.getResources().getDisplayMetrics().density;
     }
@@ -541,6 +814,32 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             open_spotify_text = itemView.findViewById(R.id.open_spotify_text);
             spotify_back = itemView.findViewById(R.id.spotify_back);
             spotify_icon = itemView.findViewById(R.id.spotify_icon);
+
+
+        }
+    }
+
+    public class GroupVideoViewHolder extends RecyclerView.ViewHolder {
+
+        CircleImageView user_photo;
+        TextView timestamp, username;
+        TextView song_name, artist_name;
+        ImageView song_art;
+        ProgressBar spinkit_wave;
+        TextView fetch_music_txt;
+
+
+        public GroupVideoViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            user_photo = itemView.findViewById(R.id.user_photo);
+            timestamp = itemView.findViewById(R.id.timestamp);
+            username = itemView.findViewById(R.id.username);
+            fetch_music_txt = itemView.findViewById(R.id.fetch_music_txt);
+            song_art = itemView.findViewById(R.id.song_art);
+            song_name = itemView.findViewById(R.id.song_name);
+            artist_name = itemView.findViewById(R.id.artist_name);
+            spinkit_wave = itemView.findViewById(R.id.spinkit_wave);
 
 
         }

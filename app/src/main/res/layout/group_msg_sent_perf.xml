@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="2dp">
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/layer_message_box_drawable_white"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/message_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/user_photo"
+        app:layout_constraintWidth_max="300dp" />
+
+    <ImageView
+        android:id="@+id/user_photo"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:alpha="0.35"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:scaleType="centerCrop"
+        android:transitionName="imageTransitionnot"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/message_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/message_view"
+        tools:src="@drawable/profile_pic" />
+
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/side_fade_back"
+        android:backgroundTint="#000"
+        android:rotation="180"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo"
+        app:layout_constraintTop_toTopOf="@id/user_photo" />
+
+
+    <TextView
+
+        android:id="@+id/message_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="4dp"
+        android:layout_toLeftOf="@id/user_photo"
+        android:fontFamily="sans-serif"
+        android:gravity="left"
+        android:maxWidth="300dp"
+        android:paddingLeft="32dp"
+        android:paddingTop="24dp"
+        android:paddingRight="24dp"
+        android:paddingBottom="24dp"
+        android:text="Hi"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="300dp" />
+
+    <TextView
+        android:id="@+id/timestamp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_view"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-16dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        android:alpha="0.85"
+        android:gravity="right"
+        android:textSize="@dimen/timestampsize"
+        app:layout_constraintBottom_toBottomOf="@id/message_view"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="00:00" />
+
+
+    <TextView
+        android:id="@+id/username"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/message_view"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-16dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="right"
+        android:textSize="@dimen/timestampsize"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/message_view"
+        tools:text="username" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

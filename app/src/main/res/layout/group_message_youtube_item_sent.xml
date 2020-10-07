@@ -7,19 +7,6 @@
     android:layout_gravity="right"
     android:padding="4dp">
 
-    <ImageView
-        android:id="@+id/back_item"
-        android:layout_width="300dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/layer_message_box_drawable_white"
-        android:backgroundTint="@color/nav_darktheme_btn_active"
-        android:paddingTop="30dp"
-        app:layout_constraintBottom_toBottomOf="@id/timestamp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
     <Button
         android:id="@+id/spotify_icon"
         android:layout_width="18dp"
@@ -32,10 +19,23 @@
         app:layout_constraintLeft_toRightOf="@id/song_art"
         app:layout_constraintTop_toTopOf="@id/spotify_back" />
 
+
+    <ImageView
+        android:id="@+id/back_item"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/layer_message_box_drawable_white"
+        android:backgroundTint="@color/nav_darktheme_btn_active"
+        android:paddingTop="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/timestamp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/song_art"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="16dp"
         android:visibility="invisible"
@@ -54,7 +54,6 @@
         app:layout_constraintLeft_toRightOf="@id/song_art"
         app:layout_constraintRight_toRightOf="@id/open_spotify_text"
         app:layout_constraintTop_toBottomOf="@id/artist_name" />
-
 
 
     <TextView
@@ -88,34 +87,35 @@
 
     <TextView
         android:id="@+id/artist_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="2dp"
-        android:maxLines="1"
+        android:layout_marginRight="8dp"
         android:textColor="#777777"
         android:textSize="10sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/back_item"
+        app:layout_constraintBottom_toTopOf="@+id/timestamp"
         app:layout_constraintLeft_toRightOf="@id/song_art"
-        app:layout_constraintTop_toTopOf="@id/back_item"
-        tools:text="Song Name" />
+        app:layout_constraintRight_toRightOf="@id/back_item"
+        app:layout_constraintTop_toBottomOf="@+id/song_name"
+        tools:text="Artist Name" />
 
     <TextView
         android:id="@+id/song_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginRight="8dp"
         android:maxLines="2"
         android:textColor="#fff"
         android:textSize="16sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/artist_name"
+        app:layout_constraintBottom_toTopOf="@+id/artist_name"
         app:layout_constraintLeft_toRightOf="@id/song_art"
         app:layout_constraintRight_toRightOf="@id/back_item"
+        app:layout_constraintTop_toTopOf="@+id/song_art"
+        app:layout_constraintVertical_chainStyle="spread"
         tools:text="Song Name" />
 
     <TextView
@@ -140,10 +140,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/spinkit_wave"
         android:gravity="center"
-        android:text="Fetching Music..."
+        android:text="Fetching Video..."
         android:textColor="#575757"
-        android:visibility="visible"
         android:textSize="12sp"
+        android:visibility="visible"
         app:layout_constraintLeft_toLeftOf="@id/back_item"
         app:layout_constraintRight_toRightOf="@id/back_item"
         app:layout_constraintTop_toBottomOf="@id/spinkit_wave" />
@@ -154,8 +154,8 @@
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        app:SpinKit_Style="Wave"
         android:visibility="visible"
+        app:SpinKit_Style="Wave"
         app:layout_constraintBottom_toBottomOf="@id/back_item"
         app:layout_constraintLeft_toLeftOf="@id/back_item"
         app:layout_constraintRight_toRightOf="@id/back_item"
@@ -165,7 +165,7 @@
         android:id="@+id/item_pic"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/spotify_icon_rgb_green"
+        android:src="@drawable/youtube_social_circle_red"
         app:layout_constraintBottom_toTopOf="@id/back_item"
         app:layout_constraintEnd_toEndOf="@id/back_item"
         app:layout_constraintStart_toStartOf="@id/back_item"
