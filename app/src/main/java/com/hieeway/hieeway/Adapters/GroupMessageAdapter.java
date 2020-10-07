@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -130,7 +132,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             return new GroupMessageAdapter.GroupMessageViewHolder(view);
         } else if (viewType == SONG_SENT) {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_song_sent_layout, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_spotify_item_sent, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
             int height = relative_layout.getHeight();
@@ -140,7 +142,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             return new GroupMessageAdapter.GroupSongViewHolder(view);
         } else if (viewType == SONG_RECEIVED) {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_song_received_layout, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_spotify_item_receive, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
             int height = relative_layout.getHeight();
@@ -325,8 +327,19 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         } else if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("song")) {
+
+
             GroupSongViewHolder groupSongViewHolder = (GroupSongViewHolder) holder;
             GroupMessage groupMessage = groupMessageList.get(groupSongViewHolder.getAdapterPosition());
+
+            groupSongViewHolder.song_name.setVisibility(View.GONE);
+            groupSongViewHolder.spinkit_wave.setVisibility(View.VISIBLE);
+            groupSongViewHolder.fetch_music_txt.setVisibility(View.VISIBLE);
+            groupSongViewHolder.artist_name.setVisibility(View.GONE);
+            groupSongViewHolder.spotify_back.setVisibility(View.GONE);
+            groupSongViewHolder.spotify_icon.setVisibility(View.GONE);
+            groupSongViewHolder.open_spotify_text.setVisibility(View.GONE);
+            groupSongViewHolder.song_art.setVisibility(View.INVISIBLE);
 
             if (groupMessage.getSenderId().equals(userID))
                 groupSongViewHolder.username.setText("You played this song");
@@ -355,7 +368,15 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 //sendMessageViewHolder.timestamp.setText("" + ago);
 
-                fetchSong(groupMessage, groupSongViewHolder.song_name, groupSongViewHolder.artist_name, groupSongViewHolder.song_art, groupSongViewHolder.open_spotify_layout, groupSongViewHolder.loading_music_layout);
+                fetchSong(groupMessage,
+                        groupSongViewHolder.song_name,
+                        groupSongViewHolder.artist_name,
+                        groupSongViewHolder.song_art,
+                        groupSongViewHolder.spinkit_wave,
+                        groupSongViewHolder.fetch_music_txt,
+                        groupSongViewHolder.spotify_back,
+                        groupSongViewHolder.spotify_icon,
+                        groupSongViewHolder.open_spotify_text);
 
             } catch (Exception e) {
                 groupSongViewHolder.timestamp.setVisibility(View.INVISIBLE);
@@ -366,7 +387,15 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    private void fetchSong(GroupMessage groupMessage, TextView song_name, TextView artist_name, ImageView song_art, RelativeLayout open_spotify_lay, RelativeLayout fetching_music_layout) {
+    private void fetchSong(GroupMessage groupMessage,
+                           TextView song_name,
+                           TextView artist_name,
+                           ImageView song_art,
+                           ProgressBar spinkit_wave,
+                           TextView fetch_music_txt,
+                           ImageView spotify_back,
+                           Button spotify_icon,
+                           TextView open_spotify_text) {
         FirebaseDatabase.getInstance().getReference("MusicMessage")
                 .child(groupID)
                 .child(groupMessage.getMediaID())
@@ -374,6 +403,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
+
                             MusicMessage music = snapshot.getValue(MusicMessage.class);
                             song_name.setText(music.getSpotifySong());
                             artist_name.setText(music.getSpotifyArtist());
@@ -391,9 +421,12 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             Glide.with(context).load(music.getSpotifyCover()).into(song_art);
 
                             song_name.setVisibility(View.VISIBLE);
-                            fetching_music_layout.setVisibility(View.GONE);
+                            spinkit_wave.setVisibility(View.GONE);
+                            fetch_music_txt.setVisibility(View.GONE);
                             artist_name.setVisibility(View.VISIBLE);
-                            open_spotify_lay.setVisibility(View.VISIBLE);
+                            spotify_back.setVisibility(View.VISIBLE);
+                            spotify_icon.setVisibility(View.VISIBLE);
+                            open_spotify_text.setVisibility(View.VISIBLE);
                             song_art.setVisibility(View.VISIBLE);
 
                             song_art.setOnClickListener(new View.OnClickListener() {
@@ -410,7 +443,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                                 });
                                     } catch (Exception e) {
                                         Toast.makeText(context, "Connecting to spotify ", Toast.LENGTH_SHORT).show();
-                                        spotifyRemoteConnectListener.getSpotifyAppRemote(music.getSpotifySong());
+                                        spotifyRemoteConnectListener.getSpotifyAppRemote(music.getSpotifyId(), music.getSpotifySong());
                                     }
 
                                 }
@@ -432,18 +465,38 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             });
 
 
+                        } else {
+                            song_name.setVisibility(View.GONE);
+                            spinkit_wave.setVisibility(View.VISIBLE);
+                            fetch_music_txt.setVisibility(View.VISIBLE);
+                            artist_name.setVisibility(View.GONE);
+                            spotify_back.setVisibility(View.GONE);
+                            spotify_icon.setVisibility(View.GONE);
+                            open_spotify_text.setVisibility(View.GONE);
+                            song_art.setVisibility(View.INVISIBLE);
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        song_name.setVisibility(View.GONE);
+                        spinkit_wave.setVisibility(View.VISIBLE);
+                        fetch_music_txt.setVisibility(View.VISIBLE);
+                        artist_name.setVisibility(View.GONE);
+                        spotify_back.setVisibility(View.GONE);
+                        spotify_icon.setVisibility(View.GONE);
+                        open_spotify_text.setVisibility(View.GONE);
+                        song_art.setVisibility(View.INVISIBLE);
                     }
                 });
     }
 
     public static float dpFromPx(final Context context, final float px) {
         return px / context.getResources().getDisplayMetrics().density;
+    }
+
+    public void setAppRemote(SpotifyAppRemote appRemote) {
+        this.appRemote = appRemote;
     }
 
     public class GroupMessageViewHolder extends RecyclerView.ViewHolder {
@@ -465,30 +518,29 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public class GroupSongViewHolder extends RecyclerView.ViewHolder {
 
-        TextView message_view;
         CircleImageView user_photo;
         TextView timestamp, username;
         TextView song_name, artist_name;
-        ImageView song_art;
-        RelativeLayout open_spotify_layout;
-        RelativeLayout loading_music_layout;
-        ConstraintLayout view_container_layout;
+        ImageView song_art, spotify_back;
+        ProgressBar spinkit_wave;
+        Button spotify_icon;
+        TextView fetch_music_txt, open_spotify_text;
 
 
         public GroupSongViewHolder(@NonNull View itemView) {
             super(itemView);
-            message_view = itemView.findViewById(R.id.message_view);
+
             user_photo = itemView.findViewById(R.id.user_photo);
             timestamp = itemView.findViewById(R.id.timestamp);
             username = itemView.findViewById(R.id.username);
-
+            fetch_music_txt = itemView.findViewById(R.id.fetch_music_txt);
             song_art = itemView.findViewById(R.id.song_art);
             song_name = itemView.findViewById(R.id.song_name);
             artist_name = itemView.findViewById(R.id.artist_name);
-            open_spotify_layout = itemView.findViewById(R.id.open_spotify_lay);
-
-            loading_music_layout = itemView.findViewById(R.id.loading_music);
-            view_container_layout = itemView.findViewById(R.id.view_container_layout);
+            spinkit_wave = itemView.findViewById(R.id.spinkit_wave);
+            open_spotify_text = itemView.findViewById(R.id.open_spotify_text);
+            spotify_back = itemView.findViewById(R.id.spotify_back);
+            spotify_icon = itemView.findViewById(R.id.spotify_icon);
 
 
         }

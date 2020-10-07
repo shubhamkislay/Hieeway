@@ -304,7 +304,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         linearLayoutManager.setStackFromEnd(true);
 
         message_recycler_View.setLayoutManager(linearLayoutManager);
-        message_recycler_View.setHasTransientState(false);
 
         message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
 
@@ -318,7 +317,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 groupID,
                 SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(),
                 GroupChatActivity.this);
-        groupMessageAdapter.setHasStableIds(false);
+
+        //groupMessageAdapter.setHasStableIds(true);
 
         message_recycler_View.setAdapter(groupMessageAdapter);
 
@@ -1106,7 +1106,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
-            Toast.makeText(GroupChatActivity.this, "Connecting to spotify: " + e.toString(), Toast.LENGTH_LONG).show();
+            Toast.makeText(GroupChatActivity.this, "Connecting to spotify", Toast.LENGTH_SHORT).show();
             AuthenticationRequest.Builder builder =
                     new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
@@ -1159,12 +1159,12 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     }
 
     @Override
-    public void getSpotifyAppRemote(String songID) {
+    public void getSpotifyAppRemote(String songID, String song) {
         ConnectionParams connectionParams =
                 new ConnectionParams.Builder(CLIENT_ID)
                         .setRedirectUri(REDIRECT_URI)
-                        .setPreferredThumbnailImageSize(1500)
-                        .setPreferredImageSize(1500)
+                        .setPreferredThumbnailImageSize(150)
+                        .setPreferredImageSize(150)
                         .showAuthView(true)
                         .build();
         SpotifyAppRemote.CONNECTOR.connect(GroupChatActivity.this, connectionParams,
@@ -1176,6 +1176,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(appRemote);
 
                         appRemote.getPlayerApi().play(songID);
+                        groupMessageAdapter.setAppRemote(appRemote);
+
+                        Toast.makeText(GroupChatActivity.this, "Playing " + song, Toast.LENGTH_SHORT).show();
 
 
                     }
@@ -1183,7 +1186,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     @Override
                     public void onFailure(Throwable throwable) {
                         // Log.e("MainActivity", throwable.getMessage(), throwable);
-                        Toast.makeText(GroupChatActivity.this, "Cannot play the song\nTry reconnecting to spotify app", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GroupChatActivity.this, "Cannot Connect to spotify app. Check if you have spotify installed in your phone", Toast.LENGTH_SHORT).show();
 
 
                         // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
@@ -1191,6 +1194,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     }
                 });
     }
+
 
     private void loadVideo(String url, String videoID) {
 
