@@ -323,7 +323,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 userID,
                 this,
                 groupID,
-                SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(),
+                //SpotifyRemoteHelper.getInstance().getSpotifyAppRemote(),
+                null,
                 GroupChatActivity.this);
 
         //groupMessageAdapter.setHasStableIds(true);
@@ -962,6 +963,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         groupMessageRef.addValueEventListener(valueEventListener);
 
+        groupMessageAdapter.setAppRemote(null);
+
 
     }
 
@@ -1472,6 +1475,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                 .child(groupID);
 
+
         seekValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -1582,6 +1586,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         };
         seekRef.addValueEventListener(seekValueEventListener);
         populateMessages();
+
+
     }
 
     @Override
@@ -1593,6 +1599,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             //
         }
         seekRef.removeEventListener(seekValueEventListener);
+
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         editor.putString(groupID, timestamp.toString());

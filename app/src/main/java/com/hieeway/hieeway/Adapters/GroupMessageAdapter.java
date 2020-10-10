@@ -3,10 +3,13 @@ package com.hieeway.hieeway.Adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -97,6 +101,13 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final String VIDEOSEC_TAG = "videoSec";
     private static final String VIDEOTITLE_TAG = "videoTitle";
     private static final String VIDEO_NODE = "GroupVideo";
+    private Palette.Swatch vibrantSwatch;
+    private Palette.Swatch mutedSwatch;
+    private Palette.Swatch lightVibrantSwatch;
+    private Palette.Swatch darkVibrantSwatch;
+    private Palette.Swatch dominantSwatch;
+    private Palette.Swatch lightMutedSwatch;
+    private Palette.Swatch darkMutedSwatch;
 
     public GroupMessageAdapter(Context context, List<GroupMessage> groupMessageList, String currentUserId, ScrollRecyclerViewListener scrollRecyclerViewListener, String groupID, SpotifyAppRemote appRemote, Activity activity) {
         this.context = context;
@@ -514,47 +525,121 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 */
                             Glide.with(context).load(music.getSpotifyCover()).into(song_art);
 
-                            song_name.setVisibility(View.VISIBLE);
-                            spinkit_wave.setVisibility(View.GONE);
-                            fetch_music_txt.setVisibility(View.GONE);
-                            artist_name.setVisibility(View.VISIBLE);
-                            spotify_back.setVisibility(View.VISIBLE);
-                            spotify_icon.setVisibility(View.VISIBLE);
-                            open_spotify_text.setVisibility(View.VISIBLE);
-                            song_art.setVisibility(View.VISIBLE);
+                            TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
 
-                            song_art.setOnClickListener(new View.OnClickListener() {
+                            new Thread(new Runnable() {
                                 @Override
-                                public void onClick(View v) {
-                                    try {
-                                        appRemote.getPlayerApi().play(music.getSpotifyId())
-                                                .setResultCallback(new CallResult.ResultCallback<Empty>() {
-                                                    @Override
-                                                    public void onResult(Empty empty) {
-                                                        Toast.makeText(context, "Playing " + music.getSpotifySong(), Toast.LENGTH_SHORT).show();
-                                                    }
+                                public void run() {
 
-                                                });
+                                    try {
+                                        Bitmap bitmap = Glide.with(context)
+                                                .asBitmap()
+                                                .load(music.getSpotifyCover())
+                                                .submit(250, 250)
+                                                .get();
+
+                                        bitmapTaskCompletionSource.setResult(bitmap);
                                     } catch (Exception e) {
-                                        Toast.makeText(context, "Connecting to spotify ", Toast.LENGTH_SHORT).show();
-                                        spotifyRemoteConnectListener.getSpotifyAppRemote(music.getSpotifyId(), music.getSpotifySong());
+                                        bitmapTaskCompletionSource.setResult(null);
                                     }
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
 
                                 }
-                            });
-                            song_art.setOnTouchListener(new View.OnTouchListener() {
-                                @SuppressLint("ClickableViewAccessibility")
-                                @Override
-                                public boolean onTouch(View v, MotionEvent event) {
+                            }).start();
 
-                                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                                        song_art.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
-                                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                                        song_art.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
-                                    } else {
-                                        song_art.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+
+                            Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+                            bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Bitmap> task) {
+                                    if (task.getResult() != null) {
+
+                                        song_art.setImageBitmap(task.getResult());
+
+                                        song_name.setVisibility(View.VISIBLE);
+                                        spinkit_wave.setVisibility(View.GONE);
+                                        fetch_music_txt.setVisibility(View.GONE);
+                                        artist_name.setVisibility(View.VISIBLE);
+                                        spotify_back.setVisibility(View.VISIBLE);
+                                        spotify_icon.setVisibility(View.VISIBLE);
+                                        open_spotify_text.setVisibility(View.VISIBLE);
+                                        song_art.setVisibility(View.VISIBLE);
+
+                                        song_art.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                try {
+                                                    appRemote.getPlayerApi().play(music.getSpotifyId())
+                                                            .setResultCallback(new CallResult.ResultCallback<Empty>() {
+                                                                @Override
+                                                                public void onResult(Empty empty) {
+                                                                    Toast.makeText(context, "Playing " + music.getSpotifySong(), Toast.LENGTH_SHORT).show();
+                                                                }
+
+                                                            });
+                                                } catch (Exception e) {
+                                                    Toast.makeText(context, "Connecting to spotify ", Toast.LENGTH_SHORT).show();
+                                                    spotifyRemoteConnectListener.getSpotifyAppRemote(music.getSpotifyId(), music.getSpotifySong());
+                                                }
+
+                                            }
+                                        });
+                                        song_art.setOnTouchListener(new View.OnTouchListener() {
+                                            @SuppressLint("ClickableViewAccessibility")
+                                            @Override
+                                            public boolean onTouch(View v, MotionEvent event) {
+
+                                                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                                                    song_art.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                                                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                                                    song_art.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                                                } else {
+                                                    song_art.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                                                }
+                                                return false;
+                                            }
+                                        });
+
+
+                                        spotify_icon.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                intent.setData(Uri.parse("" + music.getSpotifyId()));
+                                                intent.putExtra(Intent.EXTRA_REFERRER,
+                                                        Uri.parse("android-app://" + context.getPackageName()));
+                                                context.startActivity(intent);
+                                            }
+                                        });
+
+                                        spotify_back.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                intent.setData(Uri.parse("" + music.getSpotifyId()));
+                                                intent.putExtra(Intent.EXTRA_REFERRER,
+                                                        Uri.parse("android-app://" + context.getPackageName()));
+                                                context.startActivity(intent);
+                                            }
+                                        });
+
+                                        open_spotify_text.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                intent.setData(Uri.parse("" + music.getSpotifyId()));
+                                                intent.putExtra(Intent.EXTRA_REFERRER,
+                                                        Uri.parse("android-app://" + context.getPackageName()));
+                                                context.startActivity(intent);
+                                            }
+                                        });
+
+
                                     }
-                                    return false;
+
                                 }
                             });
 
@@ -647,9 +732,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Bitmap> task) {
-                                    if (task.getResult() != null)
+                                    if (task.getResult() != null) {
                                         song_art.setImageBitmap(task.getResult());
-                                    else {
+                                        song_art.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                                    } else {
                                         song_art.setImageDrawable(context.getDrawable(R.drawable.youtube_social_icon_dark));
                                         //song_art.setColorFilter(context.getResources().getColor(R.color.colorBlack));
                                         song_art.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -802,6 +889,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ProgressBar spinkit_wave;
         Button spotify_icon;
         TextView fetch_music_txt, open_spotify_text;
+
 
 
         public GroupSongViewHolder(@NonNull View itemView) {
