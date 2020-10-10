@@ -649,8 +649,11 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                 public void onComplete(@NonNull Task<Bitmap> task) {
                                     if (task.getResult() != null)
                                         song_art.setImageBitmap(task.getResult());
-                                    else
-                                        song_art.setImageDrawable(context.getDrawable(R.drawable.youtube_social_square_red));
+                                    else {
+                                        song_art.setImageDrawable(context.getDrawable(R.drawable.youtube_social_icon_dark));
+                                        //song_art.setColorFilter(context.getResources().getColor(R.color.colorBlack));
+                                        song_art.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                                    }
                                 }
                             });
 
