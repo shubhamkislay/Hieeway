@@ -34,11 +34,12 @@
 
     <ImageView
         android:id="@+id/song_art"
-        android:layout_width="150dp"
-        android:layout_height="100dp"
-        android:layout_marginLeft="12dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:visibility="invisible"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@id/back_item"
         app:layout_constraintStart_toStartOf="@id/back_item"
         app:layout_constraintTop_toBottomOf="@id/username"
         tools:src="@drawable/no_profile" />
@@ -82,21 +83,22 @@
         android:paddingBottom="12dp"
         android:textSize="@dimen/timestampsize"
         app:layout_constraintRight_toRightOf="@id/back_item"
-        app:layout_constraintTop_toBottomOf="@id/song_art"
+        app:layout_constraintTop_toBottomOf="@id/artist_name"
         tools:text="00:00" />
 
     <TextView
         android:id="@+id/artist_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:textColor="#777777"
-        android:textSize="10sp"
+        android:autoLink="web"
+        android:textColorLink="#8F8F8F"
+        android:textSize="12sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/timestamp"
-        app:layout_constraintLeft_toRightOf="@id/song_art"
-        app:layout_constraintRight_toRightOf="@id/back_item"
+        app:layout_constraintLeft_toLeftOf="@id/song_art"
+        app:layout_constraintRight_toRightOf="@id/song_art"
         app:layout_constraintTop_toBottomOf="@+id/song_name"
         tools:text="Artist Name" />
 
@@ -104,18 +106,16 @@
         android:id="@+id/song_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:maxLines="2"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="12dp"
         android:textColor="#fff"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/artist_name"
-        app:layout_constraintLeft_toRightOf="@id/song_art"
-        app:layout_constraintRight_toRightOf="@id/back_item"
-        app:layout_constraintTop_toTopOf="@+id/song_art"
-        app:layout_constraintVertical_chainStyle="spread"
+        app:layout_constraintLeft_toLeftOf="@id/song_art"
+        app:layout_constraintRight_toRightOf="@id/song_art"
+        app:layout_constraintTop_toBottomOf="@+id/song_art"
         tools:text="Song Name" />
 
     <TextView

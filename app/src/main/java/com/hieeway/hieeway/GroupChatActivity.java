@@ -344,6 +344,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             //
         }
 
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.nav_darktheme_btn_active));
+
 
         recordView.setSmallMicColor(Color.parseColor("#ffffff"));
 
@@ -817,120 +819,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         //IMPORTANT
         recordButton.setRecordView(recordView);
 
-        seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
-                .child(groupID);
-
-        seekValueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    //  if (initialiseActivity) {
-                    try {
-                        YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
-
-                        try {
-                            videoTitle = youtubeSync.getVideoTitle();
-
-                        } catch (Exception e) {
-                            //
-                            videoTitle = " ";
-                        }
 
 
-                        try {
-
-                            customUiController.setYoutube_player_seekbarVisibility(false);
-                            customUiController.setVideo_title(videoTitle);
-                        } catch (Exception e) {
-
-                            // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
-                        }
-
-                        //youtube_player_view.setVisibility(View.VISIBLE);
-
-                        try {
-
-                            if (!youtubeSync.getYoutubeID().equals(defaultVideoID)) {
-                                youtubeID = youtubeSync.getYoutubeID();
-                                youtubeSynSec = youtubeSync.getVideoSec();
-                            }
-                        } catch (Exception e) {
-
-                        }
-
-                        loadWhenInitialised = false;
-                        YoutubeSync compYoutubeSync = new YoutubeSync();
-                        compYoutubeSync.setVideoSec(0.0f);
-                        compYoutubeSync.setVideoTitle("test");
-                        compYoutubeSync.setYoutubeID("xyz");
-                        compYoutubeSync.setTimeStamp(sharedPreferences.getString(groupID, ""));
-
-                        if (youtubeSync.compareTo(compYoutubeSync) >= 0) {
-                            mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
-                            mYouTubePlayer.play();
-                            //sync_video_layout.setVisibility(View.VISIBLE);
-                            youtube_player_view.setVisibility(View.VISIBLE);
-                            youtube_layout.setVisibility(View.VISIBLE);
-                        }
-                        // seekRef.removeValue();
-                    } catch (Exception e) {
-                        //  Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_LONG).show();
-
-                        loadWhenInitialised = true;
-                        //sync_video_layout.setVisibility(View.VISIBLE);
-                        youtube_player_view.setVisibility(View.VISIBLE);
-                        youtube_layout.setVisibility(View.VISIBLE);
-
-                            /*youtube_layout.setVisibility(View.GONE);
-                            //youtube_player_view.setVisibility(View.VISIBLE);
-
-                            sync_video_layout.setVisibility(View.GONE);*/
-
-                    }
-                    //     }
-                    //   initialiseActivity = true;
-                } else {
-                    /*if(youtubeTitle!=null)
-                    {
-
-                        try {
-                            try {
-
-                                customUiController.setYoutube_player_seekbarVisibility(false);
-                            } catch (Exception e) {
-
-                                // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                            youtubeID = notifyoutubeID;
-                            mYouTubePlayer.loadVideo(notifyoutubeID, youtubeSynSec);
-                            mYouTubePlayer.play();
-                            sync_video_layout.setVisibility(View.VISIBLE);
-                            youtube_player_view.setVisibility(View.INVISIBLE);
-                            youtube_layout.setVisibility(View.VISIBLE);
-                        }
-                        catch (Exception e)
-                        {
-                            loadWhenInitialised = true;
-                            sync_video_layout.setVisibility(View.VISIBLE);
-                            youtube_player_view.setVisibility(View.INVISIBLE);
-                            youtube_layout.setVisibility(View.VISIBLE);
-
-                        }
-                    }*/
-
-                }
 
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-
-        populateMessages();
 
         message_recycler_View.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -953,7 +845,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         youtube_player_view.addYouTubePlayerListener(abstractYouTubePlayerListener);
 
-        seekRef.addValueEventListener(seekValueEventListener);
+
 
     }
 
@@ -1574,16 +1466,137 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 }).check();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
+                .child(groupID);
+
+        seekValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    //  if (initialiseActivity) {
+                    try {
+                        YoutubeSync youtubeSync = dataSnapshot.getValue(YoutubeSync.class);
+
+                        try {
+                            videoTitle = youtubeSync.getVideoTitle();
+
+                        } catch (Exception e) {
+                            //
+                            videoTitle = " ";
+                        }
+
+
+                        try {
+
+                            customUiController.setYoutube_player_seekbarVisibility(false);
+                            customUiController.setVideo_title(videoTitle);
+                        } catch (Exception e) {
+
+                            // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        //youtube_player_view.setVisibility(View.VISIBLE);
+
+                        try {
+
+                            if (!youtubeSync.getYoutubeID().equals(defaultVideoID)) {
+                                youtubeID = youtubeSync.getYoutubeID();
+                                youtubeSynSec = youtubeSync.getVideoSec();
+                            }
+                        } catch (Exception e) {
+
+                        }
+
+                        loadWhenInitialised = false;
+                        YoutubeSync compYoutubeSync = new YoutubeSync();
+                        compYoutubeSync.setVideoSec(0.0f);
+                        compYoutubeSync.setVideoTitle("test");
+                        compYoutubeSync.setYoutubeID("xyz");
+                        compYoutubeSync.setTimeStamp(sharedPreferences.getString(groupID, ""));
+
+                        if (youtubeSync.compareTo(compYoutubeSync) >= 0) {
+                            mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
+                            mYouTubePlayer.play();
+                            //sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.VISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+                        }
+                        // seekRef.removeValue();
+                    } catch (Exception e) {
+                        //  Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_LONG).show();
+
+                        loadWhenInitialised = true;
+                        //sync_video_layout.setVisibility(View.VISIBLE);
+                        youtube_player_view.setVisibility(View.VISIBLE);
+                        youtube_layout.setVisibility(View.VISIBLE);
+
+                            /*youtube_layout.setVisibility(View.GONE);
+                            //youtube_player_view.setVisibility(View.VISIBLE);
+
+                            sync_video_layout.setVisibility(View.GONE);*/
+
+                    }
+                    //     }
+                    //   initialiseActivity = true;
+                } else {
+                    /*if(youtubeTitle!=null)
+                    {
+
+                        try {
+                            try {
+
+                                customUiController.setYoutube_player_seekbarVisibility(false);
+                            } catch (Exception e) {
+
+                                // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                            youtubeID = notifyoutubeID;
+                            mYouTubePlayer.loadVideo(notifyoutubeID, youtubeSynSec);
+                            mYouTubePlayer.play();
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.INVISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+                        }
+                        catch (Exception e)
+                        {
+                            loadWhenInitialised = true;
+                            sync_video_layout.setVisibility(View.VISIBLE);
+                            youtube_player_view.setVisibility(View.INVISIBLE);
+                            youtube_layout.setVisibility(View.VISIBLE);
+
+                        }
+                    }*/
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        seekRef.addValueEventListener(seekValueEventListener);
+        populateMessages();
+    }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         try {
             groupMessageRef.removeEventListener(valueEventListener);
         } catch (Exception e) {
             //
         }
         seekRef.removeEventListener(seekValueEventListener);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        editor.putString(groupID, timestamp.toString());
+        editor.apply();
     }
 
     @Override
@@ -1665,20 +1678,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
 
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        editor.putString(groupID, timestamp.toString());
-        editor.apply();
-    }
 
     public void closeBottomSheet() {
 

@@ -631,10 +631,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                                 .get();
 
                                         bitmapTaskCompletionSource.setResult(bitmap);
-                                    } catch (ExecutionException e) {
-                                        e.printStackTrace();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                                    } catch (Exception e) {
+                                        bitmapTaskCompletionSource.setResult(null);
                                     }
 
             /*bitmap = BitmapFactory.decodeResource(getResources(),
@@ -649,7 +647,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                             bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Bitmap> task) {
-                                    song_art.setImageBitmap(task.getResult());
+                                    if (task.getResult() != null)
+                                        song_art.setImageBitmap(task.getResult());
+                                    else
+                                        song_art.setImageDrawable(context.getDrawable(R.drawable.youtube_social_square_red));
                                 }
                             });
 

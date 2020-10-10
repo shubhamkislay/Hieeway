@@ -7,39 +7,27 @@
     android:layout_gravity="right"
     android:padding="4dp">
 
-    <ImageView
-        android:id="@+id/back_item"
-        android:layout_width="300dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/layer_message_box_drawable_white"
-        android:backgroundTint="@color/nav_darktheme_btn_active"
-        android:paddingTop="30dp"
-        app:layout_constraintBottom_toBottomOf="@id/timestamp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
     <Button
         android:id="@+id/spotify_icon"
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="8dp"
         android:background="@drawable/spotify_white_icon"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/spotify_back"
-        app:layout_constraintLeft_toRightOf="@id/song_art"
+        app:layout_constraintLeft_toLeftOf="@id/spotify_back"
         app:layout_constraintTop_toTopOf="@id/spotify_back" />
+
 
     <ImageView
         android:id="@+id/song_art"
-        android:layout_width="125dp"
-        android:layout_height="125dp"
-        android:layout_marginLeft="12dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_marginTop="16dp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/back_item"
+        app:layout_constraintEnd_toEndOf="@id/back_item"
         app:layout_constraintTop_toBottomOf="@id/username"
         tools:src="@drawable/no_profile" />
 
@@ -51,10 +39,21 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/message_box_drawable"
         android:visibility="gone"
-        app:layout_constraintLeft_toRightOf="@id/song_art"
-        app:layout_constraintRight_toRightOf="@id/open_spotify_text"
+        app:layout_constraintLeft_toLeftOf="@id/song_art"
+        app:layout_constraintRight_toRightOf="@id/song_art"
         app:layout_constraintTop_toBottomOf="@id/artist_name" />
 
+    <ImageView
+        android:id="@+id/back_item"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/layer_message_box_drawable_white"
+        android:backgroundTint="@color/nav_darktheme_btn_active"
+        android:paddingTop="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/timestamp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -83,22 +82,21 @@
         android:paddingBottom="12dp"
         android:textSize="@dimen/timestampsize"
         app:layout_constraintRight_toRightOf="@id/back_item"
-        app:layout_constraintTop_toBottomOf="@id/song_art"
+        app:layout_constraintTop_toBottomOf="@id/spotify_back"
         tools:text="00:00" />
 
     <TextView
         android:id="@+id/artist_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="2dp"
-        android:maxLines="1"
         android:textColor="#777777"
         android:textSize="10sp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/back_item"
-        app:layout_constraintLeft_toRightOf="@id/song_art"
-        app:layout_constraintTop_toTopOf="@id/back_item"
+        app:layout_constraintLeft_toLeftOf="@id/song_art"
+        app:layout_constraintRight_toRightOf="@id/song_art"
+        app:layout_constraintTop_toBottomOf="@id/song_name"
         tools:text="Song Name" />
 
     <TextView
@@ -108,14 +106,13 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="8dp"
-        android:maxLines="2"
         android:textColor="#fff"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/artist_name"
-        app:layout_constraintLeft_toRightOf="@id/song_art"
-        app:layout_constraintRight_toRightOf="@id/back_item"
+        app:layout_constraintLeft_toLeftOf="@id/song_art"
+        app:layout_constraintRight_toRightOf="@id/song_art"
+        app:layout_constraintTop_toBottomOf="@id/song_art"
         tools:text="Song Name" />
 
     <TextView
@@ -123,15 +120,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
         android:layout_toRightOf="@id/spotify_icon"
         android:paddingRight="10dp"
         android:text="Open in Spotify"
         android:textColor="#fff"
         android:textSize="12sp"
         android:visibility="gone"
+
         app:layout_constraintBottom_toBottomOf="@id/spotify_back"
         app:layout_constraintLeft_toRightOf="@id/spotify_icon"
+        app:layout_constraintRight_toRightOf="@id/spotify_back"
         app:layout_constraintTop_toTopOf="@id/spotify_back" />
 
     <TextView
