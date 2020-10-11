@@ -72,7 +72,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             CustomImageView backItem = view.findViewById(R.id.user_photo);
 
-            backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
+            backItem.getLayoutParams().height = (int) dispSize * 50 / 100;
+
+            //backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
 
 
             return new PostViewHolder(view);

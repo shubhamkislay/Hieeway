@@ -97,7 +97,7 @@
             <RelativeLayout
 
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
+                android:layout_height="10dp"
                 android:layout_gravity="bottom"
                 android:alpha="1.0"
                 android:background="@drawable/status_bar_fade"

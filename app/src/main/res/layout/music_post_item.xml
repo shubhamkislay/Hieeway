@@ -6,6 +6,20 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="0.5"
+        android:background="@drawable/chat_user_gradient"
+        android:rotation="180"
+        android:backgroundTint="#1DB954"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo"
+        app:layout_constraintTop_toTopOf="@id/user_photo" />
+
     <ImageButton
 
         android:id="@+id/back_bottom"
@@ -19,18 +33,6 @@
         app:layout_constraintLeft_toLeftOf="@id/user_photo"
         app:layout_constraintRight_toRightOf="@id/user_photo" />
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:alpha="1.0"
-        android:background="@drawable/music_post_item_ring"
-        android:rotation="180"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo"></RelativeLayout>
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -46,15 +48,15 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:alpha="0.7"
-        android:background="@drawable/chat_user_gradient"
+        android:alpha="1.0"
+        android:background="@drawable/music_post_item_ring"
         android:rotation="180"
         android:scaleType="centerCrop"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/user_photo"
         app:layout_constraintLeft_toLeftOf="@id/user_photo"
         app:layout_constraintRight_toRightOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo"></RelativeLayout>
+        app:layout_constraintTop_toTopOf="@id/user_photo" />
 
     <TextView
         android:id="@+id/username"
@@ -76,7 +78,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/profile_pic" />
+        tools:src="@drawable/no_profile" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
