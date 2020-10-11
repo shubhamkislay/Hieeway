@@ -2,25 +2,18 @@ package com.hieeway.hieeway.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
@@ -33,19 +26,12 @@ import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.GroupChatActivity;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
-import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
-import com.hieeway.hieeway.Interface.FiltersListFragmentListener;
-import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.R;
-import com.zomato.photofilters.utils.ThumbnailItem;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHolder> {
-
 
     private static final int GROUP_ITEM = 3;
     private static final int CREATE_GROUP_ITEM = 0;
@@ -67,7 +53,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         this.seeAllGroupItemsListener = seeAllGroupItemsListener;
 
         //refreshedList = new ArrayList<>();
-        /*MyGroup friend1 = new MyGroup();
+        /*
+        MyGroup friend1 = new MyGroup();
         MyGroup friend2 = new MyGroup();
         MyGroup friend3 = new MyGroup();
         refreshedList.add(friend1);
@@ -75,7 +62,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         refreshedList.add(friend3);
         refreshedList.addAll(myGroupList);*/
 
-        /*MyGroup seeAllItem = new MyGroup();
+        /*
+        MyGroup seeAllItem = new MyGroup();
 
         seeAllItem.setGroupID("123");
         seeAllItem.setGroupName("234");
@@ -84,7 +72,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         if(myGroupList.size()>3&&myGroupList.size()<7)
             myGroupList.add(seeAllItem);
         else if(myGroupList.size()>=7)
-            myGroupList.add(6,seeAllItem);*/
+            myGroupList.add(6,seeAllItem);
+        */
 
     }
 
@@ -284,10 +273,12 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+
             prof_pic = itemView.findViewById(R.id.user_photo);
             username = itemView.findViewById(R.id.username);
             one = itemView.findViewById(R.id.progress);
             two = itemView.findViewById(R.id.progressTwo);
+
         }
     }
 }

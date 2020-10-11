@@ -79,6 +79,18 @@
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     tools:listitem="@layout/edge_to_edge" />
 
+                <RelativeLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@id/shots_title"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="8dp"
+                    android:alpha="1.0"
+                    android:background="@drawable/status_bar_fade"
+                    android:backgroundTint="@color/darkButtonBackground"
+                    android:visibility="visible" />
+
 
             </RelativeLayout>
 

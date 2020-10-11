@@ -488,9 +488,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 //  Bitmap bitmap = getBitmapFromURL(chatStamp.getPhoto());
 
                 RequestOptions requestOptions = new RequestOptions();
-                requestOptions.placeholder(R.color.darkGrey);
+               /* requestOptions.placeholder(R.color.darkGrey);
                 requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
-                requestOptions.format(DecodeFormat.PREFER_RGB_565);
+                requestOptions.format(DecodeFormat.PREFER_RGB_565);*/
                 requestOptions.placeholder(mContext.getDrawable(R.drawable.no_profile));
                 //requestOptions.centerCrop();
 

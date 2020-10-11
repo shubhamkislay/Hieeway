@@ -32,13 +32,16 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.GroupsAdapter;
+import com.hieeway.hieeway.Adapters.PostAdapter;
 import com.hieeway.hieeway.ChatParentActivity;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
@@ -50,6 +53,7 @@ import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.FriendListValues;
 import com.hieeway.hieeway.Model.Groups;
 import com.hieeway.hieeway.Model.MyGroup;
+import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.R;
 
 import java.util.ArrayList;
@@ -72,13 +76,15 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
     private List<MyGroup> userList;
     private ChatFragmentOpenListener chatFragmentOpenListener;
     private List<MyGroup> myGroupList;
-
-
+    StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private List<Post> postList;
+    private PostAdapter postAdapter;
     private AnimationArrowListener animationArrowListener;
     private String userID;
     private boolean alreadyScrolled = false;
     private SharedPreferences sharedPreferences;
     private Button see_all_btn;
+    private Boolean lastPost = false;
 
     public ShotsFragment() {
 
@@ -113,6 +119,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
 
 
         userList = new ArrayList<>();
+        postList = new ArrayList<>();
         userList.clear();
         MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
         MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
@@ -122,6 +129,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
         userList.add(friend3);
 
         groupsAdapter = new GroupsAdapter(userList, getActivity(), this);
+
 
 
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -190,14 +198,16 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
         });
 
 
-        // staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2,LinearLayoutManager.VERTICAL);
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2, LinearLayoutManager.VERTICAL);
+
+
         LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
 
 
         gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
         //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        feeds_recyclerview.setLayoutManager(gridLayoutManager);
+        feeds_recyclerview.setLayoutManager(staggeredGridLayoutManager);
         feeds_recyclerview.setHasFixedSize(true);
         feeds_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
@@ -211,6 +221,11 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
         feeds_recyclerview.setDrawingCacheEnabled(true);
         feeds_recyclerview.setItemAnimator(new DefaultItemAnimator());
         feeds_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+
+        postAdapter = new PostAdapter(postList, parentActivity, userID);
+
+        feeds_recyclerview.setAdapter(postAdapter);
 
 
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext());
@@ -343,8 +358,93 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
 
 
                 populateGroups();
+                lookForPosts();
             }
         }, 350);
+    }
+
+    private void lookForPosts() {
+
+
+        postList.clear();
+
+
+        DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
+                .child(userID);
+
+        friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Friend friend = dataSnapshot.getValue(Friend.class);
+                        if (friend.getStatus().equals("friends"))
+                            populatePosts(friend.getFriendId());
+                    }
+
+                    /*new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            *//*postAdapter = new PostAdapter(postList,parentActivity,userID);
+                            feeds_recyclerview.setAdapter(postAdapter);*//*
+                            //postAdapter.updateList(postList);
+                            Toast.makeText(parentActivity,"Size: "+postList.size(),Toast.LENGTH_SHORT).show();
+                        }
+                    },5000);*/
+
+
+                    lastPost = true;
+                } else {
+                    Toast.makeText(parentActivity, "FriendList doesnot exists", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+    }
+
+    private void populatePosts(String friendId) {
+
+
+        DatabaseReference postRefs = FirebaseDatabase.getInstance().getReference("Post")
+                .child(friendId);
+
+        postRefs.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Post post = dataSnapshot.getValue(Post.class);
+                        postList.add(post);
+
+                        //Toast.makeText(parentActivity,"Post added",Toast.LENGTH_SHORT).show();
+
+                    }
+
+                    //if(lastPost)
+                    postAdapter.updateList(postList);
+                    //Toast.makeText(parentActivity,"Post Size: "+postList.size(),Toast.LENGTH_SHORT).show();
+                    /*postAdapter = new PostAdapter(postList,parentActivity,userID);
+                    feeds_recyclerview.setAdapter(postAdapter);*/
+
+                } else {
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     @Override
