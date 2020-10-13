@@ -6,19 +6,16 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/user_photo"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="matrix"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/no_profile" />
 
-    <ImageButton
-
-        android:id="@+id/back_bottom"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:background="@drawable/music_post_bottom_back"
-        android:padding="12dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/spotify_logo_rgb_white"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo" />
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -49,14 +46,7 @@
         app:layout_constraintRight_toRightOf="@id/user_photo"
         app:layout_constraintTop_toTopOf="@id/user_photo" />
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:background="@drawable/bottom_fade_dark_background"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo" />
+
 
 
     <TextView
@@ -72,15 +62,6 @@
         app:layout_constraintTop_toTopOf="@id/user_photo"
         tools:text="username" />
 
-    <com.hieeway.hieeway.CustomImageView
-        android:id="@+id/user_photo"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:scaleType="matrix"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/no_profile" />
 
     <es.claucookie.miniequalizerlibrary.EqualizerView
         android:id="@+id/equalizer_view"
@@ -162,6 +143,28 @@
         app:layout_constraintBottom_toTopOf="@id/back_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/equalizer_view_seven" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo" />
+
+    <ImageButton
+
+        android:id="@+id/back_bottom"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@drawable/music_post_bottom_back"
+        android:padding="12dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/spotify_logo_rgb_white"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
