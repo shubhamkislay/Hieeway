@@ -1024,15 +1024,17 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         friendsBtnUnpressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_active_size);
         //friendsBtnPressed.setColorFilter(null);
 
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+
 
         friendsBtnUnpressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
-       // friendsBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        // friendsBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
         friendsBtnUnpressed.setAlpha(1.0f);
 
         friends_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
-       // friendsBtnUnpressed.setBackground(getDrawable(R.drawable.ic_friends_active));
+        // friendsBtnUnpressed.setBackground(getDrawable(R.drawable.ic_friends_active));
 
         text_friends.setVisibility(View.VISIBLE);
 
@@ -1107,11 +1109,12 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         text_friends.setVisibility(View.GONE);
     }
 
-    public void activateHomeBtn()
-    {
+    public void activateHomeBtn() {
         /*homeBtnUnpressed.setVisibility(View.GONE);
         homeBtnPressed.setVisibility(View.VISIBLE);
         text_home.setVisibility(View.VISIBLE);*/
+
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
 
 
         homeBtnPressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
@@ -1120,7 +1123,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         homeBtnPressed.setAlpha(1.0f);
         homeBtnPressed.setBackgroundTintList(null);
-       // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+        // homeBtnPressed.setBackgroundColor(getResources().getColor(R.color.colorWhite));
 
         //home_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
 
@@ -1184,11 +1187,13 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     }
 
 
-    public void activateSearchBtn()
-    {
+    public void activateSearchBtn() {
         /*searchBtnUnpressed.setVisibility(View.GONE);
         searchBtnPressed.setVisibility(View.VISIBLE);
         text_search.setVisibility(View.VISIBLE);*/
+
+
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
 
 
         searchBtnUnpressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
@@ -1308,9 +1313,13 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+
                 if (!chatFragmentActive) {
 
                     // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.shotFragmentThemecolor)));
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
+
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
                             .replace(R.id.container_layout, shotsFragment)
@@ -1321,6 +1330,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 } else {
 
                     // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+
                     menuFragmentManager.beginTransaction()
 
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
@@ -1388,6 +1399,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         //profileBtnPressed.setAlpha(1.0f);
 
         //profile_button_layout.setBackground(getDrawable(R.drawable.active_nav_background));
+
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
 
         text_profile.setVisibility(View.VISIBLE);
 
@@ -1881,7 +1894,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         appLogoAnimation(true);
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
+        //window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
         animatorY = ObjectAnimator.ofFloat(send_arrow, "translationY", -displayHeight - (displayHeight) / 3);
         animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 
@@ -2244,6 +2257,8 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                     //animateBottomNavMenuText(text_feed,feed_button_pressed);
 
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
+
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
                             .replace(R.id.container_layout, shotsFragment).commit();
@@ -2260,6 +2275,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     feed_button_pressed.setBackgroundTintList(null);
 
                     //animateBottomNavMenuText(text_feed,feed_button_pressed);
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
 
 
                     feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));

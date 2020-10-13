@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -44,6 +43,8 @@ import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListene
 
 import java.util.ArrayList;
 import java.util.List;
+
+import es.claucookie.miniequalizerlibrary.EqualizerView;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -82,7 +83,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             CustomImageView backItem = view.findViewById(R.id.user_photo);
 
-            backItem.getLayoutParams().height = (int) dispSize * 50 / 100;
+            backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
 
             //backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
 
@@ -118,6 +119,17 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
         if (post.getType().equals("music")) {
+
+
+            postViewHolder.equalizer.animateBars();
+            postViewHolder.equalizer_view_two.animateBars();
+            postViewHolder.equalizer_view_three.animateBars();
+            postViewHolder.equalizer_view_four.animateBars();
+            postViewHolder.equalizer_view_five.animateBars();
+            postViewHolder.equalizer_view_six.animateBars();
+            postViewHolder.equalizer_view_seven.animateBars();
+            postViewHolder.equalizer_view_eight.animateBars();
+
             postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -229,12 +241,24 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private CustomImageView user_photo;
         private TextView username;
+        EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
+                equalizer_view_five, equalizer_view_six, equalizer_view_seven, equalizer_view_eight;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
 
             user_photo = itemView.findViewById(R.id.user_photo);
             username = itemView.findViewById(R.id.username);
+
+            equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
+
+            equalizer_view_two = (EqualizerView) itemView.findViewById(R.id.equalizer_view_two);
+            equalizer_view_three = (EqualizerView) itemView.findViewById(R.id.equalizer_view_three);
+            equalizer_view_four = (EqualizerView) itemView.findViewById(R.id.equalizer_view_four);
+            equalizer_view_five = (EqualizerView) itemView.findViewById(R.id.equalizer_view_five);
+            equalizer_view_six = (EqualizerView) itemView.findViewById(R.id.equalizer_view_six);
+            equalizer_view_seven = (EqualizerView) itemView.findViewById(R.id.equalizer_view_seven);
+            equalizer_view_eight = (EqualizerView) itemView.findViewById(R.id.equalizer_view_eight);
 
         }
     }

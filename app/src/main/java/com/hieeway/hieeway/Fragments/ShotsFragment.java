@@ -63,6 +63,7 @@ import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatFragmentOpenListener;
 import com.hieeway.hieeway.Interface.FeelingListener;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
+import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.FriendListValues;
 import com.hieeway.hieeway.Model.Groups;
@@ -74,6 +75,7 @@ import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.SharedViewModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -469,9 +471,17 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
         DatabaseReference myGroupRefs = FirebaseDatabase.getInstance().getReference("MyGroup")
                 .child(userID);
-        myGroupRefs.addListenerForSingleValueEvent(new ValueEventListener() {
+        myGroupRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                myGroupList.clear();
+                MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
+                MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
+                MyGroup friend3 = new MyGroup("ijk", "xyz", "abc");
+                myGroupList.add(friend1);
+                myGroupList.add(friend2);
+                myGroupList.add(friend3);
+
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         MyGroup myGroup = dataSnapshot.getValue(MyGroup.class);
@@ -486,6 +496,9 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                     }
 
 
+                } else {
+
+                    groupsAdapter.updateList(myGroupList);
                 }
 
                 playArrowAnimation();
@@ -598,6 +611,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                     }
 
                     //if(lastPost)
+                    Collections.sort(postList, Collections.<Post>reverseOrder());
                     postAdapter.updateList(postList);
                     //Toast.makeText(parentActivity,"Post Size: "+postList.size(),Toast.LENGTH_SHORT).show();
                     /*postAdapter = new PostAdapter(postList,parentActivity,userID);

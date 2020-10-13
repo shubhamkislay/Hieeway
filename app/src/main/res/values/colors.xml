@@ -59,12 +59,15 @@
     <color name="darkGrey">#1F1F1F</color>
 
 
-
     <color name="lightPrimary">#3FAA01</color>
 
     <color name="nav_button_inactive">#C4C4C4</color>
 
     <color name="background_theme">#000</color>
+
+    <color name="spotify_color">#1DB954</color>
+
+    <color name="equilizer_color">#1DB954</color>
 
 
     <color name="nav_background_color">#0F0F0F</color>

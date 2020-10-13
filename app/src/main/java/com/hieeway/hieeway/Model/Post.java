@@ -15,6 +15,7 @@ public class Post implements Comparable<Post> {
     public String mediaUrl;
     public String mediaKey;
     public String username;
+    public String timeStamp;
 
     public Post() {
     }
@@ -67,18 +68,18 @@ public class Post implements Comparable<Post> {
         this.username = username;
     }
 
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
     @Override
     public int compareTo(Post o) {
         try {
-
-            /*int i = this.getPostKey().compareTo(o.getPostKey());
-            if (i != 0) return i;
-            i = this.getType().compareTo(o.getType());
-            if (i != 0) return i;
-            return 0;*/
-
-            return this.getUserId().compareTo(o.getUserId());
+            return this.getTimeStamp().compareTo(o.getTimeStamp());
         } catch (Exception e) {
             return 0;
         }

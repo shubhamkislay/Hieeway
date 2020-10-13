@@ -514,6 +514,7 @@ public class MusicBeamService extends Service {
                                     postHash.put("mediaUrl", "default");
                                     postHash.put("mediaKey", musicKey);
                                     postHash.put("username", username);
+                                    postHash.put("timestamp", timestamp.toString());
 
                                     postRef.child(postKey).updateChildren(postHash);
 

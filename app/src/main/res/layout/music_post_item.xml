@@ -6,29 +6,6 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <com.hieeway.hieeway.CustomImageView
-        android:id="@+id/user_photo"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="matrix"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/no_profile" />
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:alpha="0.5"
-        android:background="@drawable/chat_user_gradient"
-        android:rotation="180"
-        android:backgroundTint="#1DB954"
-        android:scaleType="centerCrop"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo" />
 
     <ImageButton
 
@@ -43,17 +20,21 @@
         app:layout_constraintLeft_toLeftOf="@id/user_photo"
         app:layout_constraintRight_toRightOf="@id/user_photo" />
 
-
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/bottom_fade_dark_background"
-        android:backgroundTint="#1DB954"
+        android:alpha="0.95"
+        android:background="@drawable/chat_user_gradient"
+        android:rotation="180"
+        android:scaleType="centerCrop"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
         app:layout_constraintLeft_toLeftOf="@id/user_photo"
         app:layout_constraintRight_toRightOf="@id/user_photo"
         app:layout_constraintTop_toTopOf="@id/user_photo" />
+
+
+
 
     <RelativeLayout
         android:layout_width="0dp"
@@ -68,11 +49,22 @@
         app:layout_constraintRight_toRightOf="@id/user_photo"
         app:layout_constraintTop_toTopOf="@id/user_photo" />
 
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo" />
+
+
     <TextView
         android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:fontFamily="sans-serif-thin"
         android:gravity="center"
         android:textColor="#fff"
         app:layout_constraintLeft_toLeftOf="@id/user_photo"
@@ -80,5 +72,98 @@
         app:layout_constraintTop_toTopOf="@id/user_photo"
         tools:text="username" />
 
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/user_photo"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="matrix"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/no_profile" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view"
+        android:layout_width="0dp"
+        android:layout_height="12dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_three"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view_two" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_two"
+        android:layout_width="0dp"
+        android:layout_height="31dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_three"
+        android:layout_width="0dp"
+        android:layout_height="41dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_four"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_four"
+        android:layout_width="0dp"
+        android:layout_height="17dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_five"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view_three" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_five"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_six"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view_four" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_six"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_seven"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view_five" />
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_seven"
+        android:layout_width="0dp"
+        android:layout_height="37dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_eight"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view_six" />
+
+
+    <es.claucookie.miniequalizerlibrary.EqualizerView
+        android:id="@+id/equalizer_view_eight"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        app:animDuration="3500"
+        app:foregroundColor="@color/equilizer_color"
+        app:layout_constraintBottom_toTopOf="@id/back_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/equalizer_view_seven" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
