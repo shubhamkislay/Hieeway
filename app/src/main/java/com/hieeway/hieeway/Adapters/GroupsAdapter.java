@@ -7,13 +7,17 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
@@ -29,6 +33,14 @@ import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
 import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
+
 import java.util.List;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHolder> {
@@ -44,6 +56,21 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     private Boolean seeAllBtn = false;
     private SeeAllGroupItemsListener seeAllGroupItemsListener;
     private int currentViewCount = 0;
+    ImageLoader imageLoader = ImageLoader.getInstance();
+    ImageSize targetSize = new ImageSize(64, 64);
+    DisplayImageOptions options = new DisplayImageOptions.Builder()
+            .showImageOnLoading(R.drawable.no_profile) // resource or drawable// resource or drawable
+            .showImageOnFail(R.drawable.no_profile) // resource or drawable
+            .resetViewBeforeLoading(false)  // default
+            .delayBeforeLoading(500)
+            //.cacheInMemory(false) // default
+            .cacheOnDisk(true) // default
+            //.considerExifParams(false) // default
+            .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
+            .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+            .displayer(new SimpleBitmapDisplayer()) // default
+            .handler(new Handler()) // default
+            .build();
 
 
     public GroupsAdapter(List<MyGroup> myGroupList, Context context, SeeAllGroupItemsListener seeAllGroupItemsListener) {
@@ -51,6 +78,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         this.context = context;
         this.seeAllGroupItemsListener = seeAllGroupItemsListener;
+
+        imageLoader.init(ImageLoaderConfiguration.createDefault(context));
 
         //refreshedList = new ArrayList<>();
         /*
@@ -128,7 +157,11 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
             MyGroup myGroup = myGroupList.get(myViewHolder.getAdapterPosition());
 
 
-            if (!myGroup.getIcon().equals("default")) {
+            /**
+             * Uncomment below code to implement group image loading through Glide
+             */
+
+            /*if (!myGroup.getIcon().equals("default")) {
 
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.override(100, 100);
@@ -156,7 +189,23 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                 Glide.with(context).load(context.getDrawable(R.drawable.no_profile)).into(myViewHolder.prof_pic);
                 myViewHolder.one.setVisibility(View.GONE);
                 myViewHolder.two.setVisibility(View.GONE);
-            }
+            }*/
+            if (!myGroup.getIcon().equals("default")) {
+                /*imageLoader.loadImage(myGroup.getIcon(), targetSize, new SimpleImageLoadingListener() {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        //super.onLoadingComplete(imageUri, view, loadedImage);
+                        myViewHolder.prof_pic.setImageBitmap(loadedImage);
+
+                        //imageLoader.
+
+
+                    }
+                });*/
+
+                ImageLoader.getInstance().displayImage(myGroup.getIcon(), myViewHolder.prof_pic, options);
+            } else
+                imageLoader.displayImage("drawable://" + R.drawable.no_profile, myViewHolder.prof_pic);
             myViewHolder.username.setText(myGroup.getGroupName());
 
             myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {
@@ -245,8 +294,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         if (holder.getAdapterPosition() == 2)
             if (seeAllBtn) {
-                seeAllGroupItemsListener.seeAllBtnVisibility(View.GONE);
-                seeAllBtn = false;
+                /*seeAllGroupItemsListener.seeAllBtnVisibility(View.GONE);
+                seeAllBtn = false;*/
             }
 
     }
@@ -258,8 +307,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         if (holder.getAdapterPosition() == 2)
             if (!seeAllBtn) {
-                seeAllGroupItemsListener.seeAllBtnVisibility(View.VISIBLE);
-                seeAllBtn = true;
+                /*seeAllGroupItemsListener.seeAllBtnVisibility(View.VISIBLE);
+                seeAllBtn = true;*/
             }
 
 
@@ -269,15 +318,14 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         CustomCircularView prof_pic;
         TextView username;
-        ProgressBar one, two;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             prof_pic = itemView.findViewById(R.id.user_photo);
             username = itemView.findViewById(R.id.username);
-            one = itemView.findViewById(R.id.progress);
-            two = itemView.findViewById(R.id.progressTwo);
+
 
         }
     }

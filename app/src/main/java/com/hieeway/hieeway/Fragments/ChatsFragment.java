@@ -167,6 +167,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     private boolean blinking = false;
     private ChatFragmentOpenListener chatFragmentOpenListener;
 
+
     public ChatsFragment() {
     }
 
@@ -264,203 +265,208 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        if (view != null)
+            return view;
 
-        visibility = sharedPreferences.getBoolean(VISIBILITY, false);
-        musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
-        spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
+        else {
 
-        view = inflater.inflate(R.layout.fragment_chat_collapse_layout, container, false);
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            visibility = sharedPreferences.getBoolean(VISIBILITY, false);
+            musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
+            spotifyconnect = sharedPreferences.getBoolean(SPOTIFY_CONNECT, false);
 
-        spotify_status_back = view.findViewById(R.id.spotify_status_back);
+            view = inflater.inflate(R.layout.fragment_chat_collapse_layout, container, false);
 
-        animationDrawableTop = (AnimationDrawable) spotify_status_back.getBackground();
+            // getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        animationDrawableTop.setEnterFadeDuration(1000);
-        animationDrawableTop.setExitFadeDuration(1000);
-        animationDrawableTop.start();
+            spotify_status_back = view.findViewById(R.id.spotify_status_back);
+
+            animationDrawableTop = (AnimationDrawable) spotify_status_back.getBackground();
+
+            animationDrawableTop.setEnterFadeDuration(1000);
+            animationDrawableTop.setExitFadeDuration(1000);
+            animationDrawableTop.start();
 
 
-        email = view.findViewById(R.id.email);
-        logo_title = view.findViewById(R.id.logo_title);
+            email = view.findViewById(R.id.email);
+            logo_title = view.findViewById(R.id.logo_title);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Window window = Objects.requireNonNull(getActivity()).getWindow();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Window window = Objects.requireNonNull(getActivity()).getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
-                } catch (Exception e) {
-                    //
+                        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
+                    } catch (Exception e) {
+                        //
+                    }
+
                 }
-
-            }
-        }, 0);
+            }, 0);
 
 
-        userList = new ArrayList<>();
+            userList = new ArrayList<>();
 
 
-        //  username = view.findViewById(R.id.username);
-        chats_recyclerview = view.findViewById(R.id.chats_recyclerview);
-        chatStampsList = new ArrayList<>();
-        resetList = new ArrayList<>();
+            //  username = view.findViewById(R.id.username);
+            chats_recyclerview = view.findViewById(R.id.chats_recyclerview);
+            chatStampsList = new ArrayList<>();
+            resetList = new ArrayList<>();
 
-        chatStampsListtwo = new ArrayList<>();
-        spotify_status = view.findViewById(R.id.spotify_status);
-
-
-        // search_btn_layout = view.findViewById(R.id.search_btn_layout);
-        search_bar_layout = view.findViewById(R.id.search_bar_layout);
-        progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
-
-        search_bar = view.findViewById(R.id.search_bar);
-
-        bottom_delete_options = view.findViewById(R.id.bottom_delete_options);
+            chatStampsListtwo = new ArrayList<>();
+            spotify_status = view.findViewById(R.id.spotify_status);
 
 
-        search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            // search_btn_layout = view.findViewById(R.id.search_btn_layout);
+            search_bar_layout = view.findViewById(R.id.search_bar_layout);
+            progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
 
-        search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
+            search_bar = view.findViewById(R.id.search_bar);
 
-
-        deleteForMe = view.findViewById(R.id.delete_for_me_option);
-
-        deleteForAll = view.findViewById(R.id.delete_for_all_option);
-
-        optionsTag = view.findViewById(R.id.options_txt);
-
-        deleteForMeDesc = view.findViewById(R.id.delete_for_me_des);
-        deleteForAllDesc = view.findViewById(R.id.delete_for_all_des);
-
-        delete_for_all_option_layout = view.findViewById(R.id.delete_for_all_option_layout);
-
-        delete_for_me_option_layout = view.findViewById(R.id.delete_for_me_option_layout);
-
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_delete_options);
-
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                }
-            }
-
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-            }
-        });
+            bottom_delete_options = view.findViewById(R.id.bottom_delete_options);
 
 
-        search_bar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+            search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
 
-            }
+            deleteForMe = view.findViewById(R.id.delete_for_me_option);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            deleteForAll = view.findViewById(R.id.delete_for_all_option);
 
-                // if(s.length()>0)
-                //  searchChat(s.toString());
+            optionsTag = view.findViewById(R.id.options_txt);
 
-                if (s.toString().length() > 0)
-                    searchUsername(s.toString());
+            deleteForMeDesc = view.findViewById(R.id.delete_for_me_des);
+            deleteForAllDesc = view.findViewById(R.id.delete_for_all_des);
 
+            delete_for_all_option_layout = view.findViewById(R.id.delete_for_all_option_layout);
 
-                else {
-                    /**
-                     * Uncomment
-                     */
-                    if (before > 0) {
-                        //resetChatList();
-                        chatMessageAdapter.updateList(resettedList);
+            delete_for_me_option_layout = view.findViewById(R.id.delete_for_me_option_layout);
 
-                        chats_recyclerview.scrollToPosition(0);
+            bottomSheetBehavior = BottomSheetBehavior.from(bottom_delete_options);
+
+            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(View bottomSheet, int newState) {
+                    if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                     }
                 }
 
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-
-            }
-        });
-
-        search_chat_btn = view.findViewById(R.id.search_chat_btn);
+                @Override
+                public void onSlide(View bottomSheet, float slideOffset) {
+                }
+            });
 
 
-        close_search = view.findViewById(R.id.close_search);
+            search_bar.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-
-        search_chat_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //search_bar_layout.setVisibility(View.VISIBLE);
-
-                if(searchBtnActive) {
-                    searchBtnActive = false;
-                    appTitle.setVisibility(View.GONE);
-
-                    search_bar.setVisibility(View.VISIBLE);
-
-                    showSoftKeyboard(search_bar);
-
-                    // search_bar.setFocusable(true);
-
-                    search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp));
-                    search_bar.requestFocus();
-
-
-                    // search_bar.setFocusable(true);
-                    // search_bar.setSelected(true);
-                    // search_btn_layout.setVisibility(View.GONE);
-
-                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-                } else {
-                    searchBtnActive = true;
-
-                    appTitle.setVisibility(View.VISIBLE);
-
-                    hideSoftKeyboard(search_bar);
-                    search_bar.setText("");
-
-                    /*chatMessageAdapter = new ChatMessageAdapter(getContext(), resetList, activity*//*,ChatsFragment.this*//*);
-                    chats_recyclerview.setAdapter(chatMessageAdapter);*/
-                    //chatMessageAdapter.notifyDataSetChanged();
-
-                    search_bar.setVisibility(View.GONE);
-
-                    search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_search_black_24dp));
 
                 }
 
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-            }
-        });
+                    // if(s.length()>0)
+                    //  searchChat(s.toString());
+
+                    if (s.toString().length() > 0)
+                        searchUsername(s.toString());
 
 
-        spotify_status.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    else {
+                        /**
+                         * Uncomment
+                         */
+                        if (before > 0) {
+                            //resetChatList();
+                            chatMessageAdapter.updateList(resettedList);
 
-                //spotify_status_back.setVisibility(View.GONE);
+                            chats_recyclerview.scrollToPosition(0);
+                        }
+                    }
+
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+
+                }
+            });
+
+            search_chat_btn = view.findViewById(R.id.search_chat_btn);
+
+
+            close_search = view.findViewById(R.id.close_search);
+
+
+            search_chat_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //search_bar_layout.setVisibility(View.VISIBLE);
+
+                    if (searchBtnActive) {
+                        searchBtnActive = false;
+                        appTitle.setVisibility(View.GONE);
+
+                        search_bar.setVisibility(View.VISIBLE);
+
+                        showSoftKeyboard(search_bar);
+
+                        // search_bar.setFocusable(true);
+
+                        search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp));
+                        search_bar.requestFocus();
+
+
+                        // search_bar.setFocusable(true);
+                        // search_bar.setSelected(true);
+                        // search_btn_layout.setVisibility(View.GONE);
+
+                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+                    } else {
+                        searchBtnActive = true;
+
+                        appTitle.setVisibility(View.VISIBLE);
+
+                        hideSoftKeyboard(search_bar);
+                        search_bar.setText("");
+
+                        /*chatMessageAdapter = new ChatMessageAdapter(getContext(), resetList, activity*//*,ChatsFragment.this*//*);
+                    chats_recyclerview.setAdapter(chatMessageAdapter);*/
+                        //chatMessageAdapter.notifyDataSetChanged();
+
+                        search_bar.setVisibility(View.GONE);
+
+                        search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_search_black_24dp));
+
+                    }
+
+
+                }
+            });
+
+
+            spotify_status.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    //spotify_status_back.setVisibility(View.GONE);
 
 
                 /*if (sharedPreferences.getBoolean(MUSIC_BEACON, false))
@@ -475,113 +481,112 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                     startActivity(new Intent(getActivity(), SettingsActivity.class));
                 }*/
 
-                chatFragmentOpenListener.setChatFragmentStatus(false);
-                //startActivity(new Intent(getActivity(), YoutubeTestActivity.class));
+                    chatFragmentOpenListener.setChatFragmentStatus(false);
+                    //startActivity(new Intent(getActivity(), YoutubeTestActivity.class));
 
-                //throw new RuntimeException("Test Crash");
+                    //throw new RuntimeException("Test Crash");
 
-            }
-        });
-
-
-        spotify_status.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    spotify_status.animate().scaleX(1.25f).scaleY(1.25f).setDuration(0);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    spotify_status.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                } else {
-                    spotify_status.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
                 }
-                return false;
+            });
+
+
+            spotify_status.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        spotify_status.animate().scaleX(1.25f).scaleY(1.25f).setDuration(0);
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        spotify_status.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    } else {
+                        spotify_status.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    }
+                    return false;
+                }
+            });
+
+
+            activity = getActivity();
+            noTextBack = view.findViewById(R.id.no_items_text);
+
+            progressBar = view.findViewById(R.id.progress);
+            progressTwo = view.findViewById(R.id.progressTwo);
+
+            appTitle = view.findViewById(R.id.app_title);
+
+            try {
+                appTitle.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                logo_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                noTextBack.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            } catch (NullPointerException e) {
+                //
             }
-        });
 
 
-        activity = getActivity();
-        noTextBack = view.findViewById(R.id.no_items_text);
+            button = view.findViewById(R.id.refresh);
 
-        progressBar = view.findViewById(R.id.progress);
-        progressTwo = view.findViewById(R.id.progressTwo);
+            Display display = getActivity().getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            float displayWidth = size.x;
+            float displayHeight = size.y;
 
-        appTitle = view.findViewById(R.id.app_title);
-
-        try {
-            appTitle.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            logo_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            noTextBack.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        }catch (NullPointerException e) {
-            //
-        }
+            // Toast.makeText(getContext(),"Height: "+displayHeight,Toast.LENGTH_LONG).show();
 
 
-        button = view.findViewById(R.id.refresh);
+            int spanCount; // 3 columns
+            int spacing = 0; // 50px
+            boolean includeEdge = true;
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float displayWidth = size.x;
-        float displayHeight = size.y;
+            if (displayWidth >= 1920)
+                spanCount = 2;
 
-        // Toast.makeText(getContext(),"Height: "+displayHeight,Toast.LENGTH_LONG).show();
+            else if (displayWidth >= 1080)
+                spanCount = 2;
 
-
-        int spanCount; // 3 columns
-        int spacing = 0; // 50px
-        boolean includeEdge = true;
-
-        if(displayWidth>=1920)
-            spanCount = 2;
-
-        else if(displayWidth>=1080)
-            spanCount = 2;
-
-        else if(displayWidth>=500)
-            spanCount=2;
-        else
-            spanCount=1;
+            else if (displayWidth >= 500)
+                spanCount = 2;
+            else
+                spanCount = 1;
 
 
-        search_bar.getLayoutParams().width = (int) displayWidth;
+            search_bar.getLayoutParams().width = (int) displayWidth;
 
 
-        // staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2,LinearLayoutManager.VERTICAL);
-        LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),spanCount);
+            // staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2,LinearLayoutManager.VERTICAL);
+            LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
 
 
-        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
+            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
-        //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        chats_recyclerview.setLayoutManager(gridLayoutManager);
-        chats_recyclerview.setHasFixedSize(true);
-        chats_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+            //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+            chats_recyclerview.setLayoutManager(gridLayoutManager);
+            chats_recyclerview.setHasFixedSize(true);
+            chats_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-        RecyclerView.ItemAnimator animator = chats_recyclerview.getItemAnimator();
-        if (animator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-        }
-
-
-        chats_recyclerview.setItemViewCacheSize(20);
-        chats_recyclerview.setDrawingCacheEnabled(true);
-        chats_recyclerview.setItemAnimator(new DefaultItemAnimator());
-        chats_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chatMessageAdapter.notifyDataSetChanged();
+            RecyclerView.ItemAnimator animator = chats_recyclerview.getItemAnimator();
+            if (animator instanceof SimpleItemAnimator) {
+                ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
             }
-        });
 
 
+            chats_recyclerview.setItemViewCacheSize(20);
+            chats_recyclerview.setDrawingCacheEnabled(true);
+            chats_recyclerview.setItemAnimator(new DefaultItemAnimator());
+            chats_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
 
-        return view;
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    chatMessageAdapter.notifyDataSetChanged();
+                }
+            });
+
+
+            return view;
+        }
     }
 
     private void changeTranslationForSpotifyBack() {

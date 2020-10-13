@@ -6,6 +6,16 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/user_photo"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="matrix"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/no_profile" />
+
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -69,16 +79,6 @@
         app:layout_constraintRight_toRightOf="@id/user_photo"
         app:layout_constraintTop_toTopOf="@id/user_photo"
         tools:text="username" />
-
-    <com.hieeway.hieeway.CustomImageView
-        android:id="@+id/user_photo"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="matrix"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/no_profile" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

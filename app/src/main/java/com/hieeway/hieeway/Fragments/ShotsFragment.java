@@ -34,6 +34,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -85,6 +87,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
     private SharedPreferences sharedPreferences;
     private Button see_all_btn;
     private Boolean lastPost = false;
+    private View view = null;
 
     public ShotsFragment() {
 
@@ -102,180 +105,188 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_shots, container, false);
+        if (view != null)
+            return view;
+
+        else {
+            view = inflater.inflate(R.layout.fragment_shots, container, false);
 
 
-        feeds_recyclerview = view.findViewById(R.id.feeds_recyclerview);
-        feed_title = view.findViewById(R.id.feed_title);
-        groups_title = view.findViewById(R.id.groups_title);
-        shots_title = view.findViewById(R.id.shots_title);
-        groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
-        chats = view.findViewById(R.id.chats);
-        see_all_btn = view.findViewById(R.id.see_all_btn);
+            feeds_recyclerview = view.findViewById(R.id.feeds_recyclerview);
+            feed_title = view.findViewById(R.id.feed_title);
+            groups_title = view.findViewById(R.id.groups_title);
+            shots_title = view.findViewById(R.id.shots_title);
+            groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
+            chats = view.findViewById(R.id.chats);
+            see_all_btn = view.findViewById(R.id.see_all_btn);
 
-        sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            try {
+                sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-        userID = sharedPreferences.getString(USER_ID, "");
-
-
-        userList = new ArrayList<>();
-        postList = new ArrayList<>();
-        userList.clear();
-        MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
-        MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
-        MyGroup friend3 = new MyGroup("ijk", "xyz", "abc");
-        userList.add(friend1);
-        userList.add(friend2);
-        userList.add(friend3);
-
-        groupsAdapter = new GroupsAdapter(userList, getActivity(), this);
+                userID = sharedPreferences.getString(USER_ID, "");
+            } catch (NullPointerException e) {
+                userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
 
 
+            userList = new ArrayList<>();
+            postList = new ArrayList<>();
+            userList.clear();
+            MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
+            MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
+            MyGroup friend3 = new MyGroup("ijk", "xyz", "abc");
+            userList.add(friend1);
+            userList.add(friend2);
+            userList.add(friend3);
 
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float displayWidth = size.x;
-        float displayHeight = size.y;
+            groupsAdapter = new GroupsAdapter(userList, getActivity(), this);
 
-        try {
-            // text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            feed_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            groups_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            shots_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            //text_feed.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-        } catch (Exception e) {
-            //
-        }
+            Display display = getActivity().getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            float displayWidth = size.x;
+            float displayHeight = size.y;
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Window window = Objects.requireNonNull(getActivity()).getWindow();
+            try {
+                // text_home.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                feed_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                groups_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                shots_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                //text_feed.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+            } catch (Exception e) {
+                //
+            }
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Window window = Objects.requireNonNull(getActivity()).getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
-                } catch (Exception e) {
-                    //
+                        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.darkButtonBackground));
+                    } catch (Exception e) {
+                        //
+                    }
+
                 }
+            }, 0);
 
-            }
-        }, 0);
-
-        // Toast.makeText(getContext(),"Height: "+displayHeight,Toast.LENGTH_LONG).show();
+            // Toast.makeText(getContext(),"Height: "+displayHeight,Toast.LENGTH_LONG).show();
 
 
-        int spanCount; // 3 columns
-        int spacing = 0; // 50px
-        boolean includeEdge = true;
+            int spanCount; // 3 columns
+            int spacing = 0; // 50px
+            boolean includeEdge = true;
 
-        if (displayWidth >= 1920)
-            spanCount = 2;
+            if (displayWidth >= 1920)
+                spanCount = 2;
 
-        else if (displayWidth >= 1080)
-            spanCount = 2;
+            else if (displayWidth >= 1080)
+                spanCount = 2;
 
-        else if (displayWidth >= 500)
-            spanCount = 2;
-        else
-            spanCount = 1;
-
-
-        chats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // startActivity(new Intent(getActivity(), ChatParentActivity.class));
-                chatFragmentOpenListener.setChatFragmentStatus(true);
-            }
-        });
+            else if (displayWidth >= 500)
+                spanCount = 2;
+            else
+                spanCount = 1;
 
 
-        staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2, LinearLayoutManager.VERTICAL);
-
-
-        LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
-
-
-        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
-
-        //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        feeds_recyclerview.setLayoutManager(staggeredGridLayoutManager);
-        feeds_recyclerview.setHasFixedSize(true);
-        feeds_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
-        RecyclerView.ItemAnimator animator = feeds_recyclerview.getItemAnimator();
-        if (animator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-        }
-
-
-        feeds_recyclerview.setItemViewCacheSize(20);
-        feeds_recyclerview.setDrawingCacheEnabled(true);
-        feeds_recyclerview.setItemAnimator(new DefaultItemAnimator());
-        feeds_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-
-        postAdapter = new PostAdapter(postList, parentActivity, userID);
-
-        feeds_recyclerview.setAdapter(postAdapter);
-
-
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext());
-        horizontalLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
-        horizontalLayoutManager.setStackFromEnd(false);
-
-
-        groups_recyclerview.setLayoutManager(horizontalLayoutManager);
-        groups_recyclerview.setHasFixedSize(true);
-
-
-        RecyclerView.ItemAnimator groups_recyclerviewAnimator = feeds_recyclerview.getItemAnimator();
-        if (groups_recyclerviewAnimator instanceof SimpleItemAnimator) {
-            ((SimpleItemAnimator) groups_recyclerviewAnimator).setSupportsChangeAnimations(false);
-        }
-
-
-        groups_recyclerview.setItemViewCacheSize(20);
-        groups_recyclerview.setDrawingCacheEnabled(true);
-        groups_recyclerview.setItemAnimator(new DefaultItemAnimator());
-        groups_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        groups_recyclerview.setAdapter(groupsAdapter);
-        groups_recyclerview.scrollToPosition(0);
-
-
-        chats.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    chats.animate().scaleX(1.5f).scaleY(1.5f).setDuration(0);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    chats.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                } else {
-                    chats.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+            chats.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // startActivity(new Intent(getActivity(), ChatParentActivity.class));
+                    chatFragmentOpenListener.setChatFragmentStatus(true);
                 }
-                return false;
+            });
+
+
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2, LinearLayoutManager.VERTICAL);
+
+
+            LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
+
+
+            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
+
+            //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+            feeds_recyclerview.setLayoutManager(staggeredGridLayoutManager);
+            feeds_recyclerview.setHasFixedSize(true);
+            feeds_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+
+            RecyclerView.ItemAnimator animator = feeds_recyclerview.getItemAnimator();
+            if (animator instanceof SimpleItemAnimator) {
+                ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
             }
-        });
 
-        see_all_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Toast.makeText(getActivity(), "Opening groups", Toast.LENGTH_SHORT).show();
+            feeds_recyclerview.setItemViewCacheSize(20);
+            feeds_recyclerview.setDrawingCacheEnabled(true);
+            feeds_recyclerview.setItemAnimator(new DefaultItemAnimator());
+            feeds_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+
+            postAdapter = new PostAdapter(postList, parentActivity, userID);
+
+            feeds_recyclerview.setAdapter(postAdapter);
+
+
+            LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext());
+            horizontalLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+            horizontalLayoutManager.setStackFromEnd(false);
+
+
+            groups_recyclerview.setLayoutManager(horizontalLayoutManager);
+            groups_recyclerview.setHasFixedSize(true);
+
+
+            RecyclerView.ItemAnimator groups_recyclerviewAnimator = feeds_recyclerview.getItemAnimator();
+            if (groups_recyclerviewAnimator instanceof SimpleItemAnimator) {
+                ((SimpleItemAnimator) groups_recyclerviewAnimator).setSupportsChangeAnimations(false);
             }
-        });
 
 
+            groups_recyclerview.setItemViewCacheSize(20);
+            groups_recyclerview.setDrawingCacheEnabled(true);
+            groups_recyclerview.setItemAnimator(new DefaultItemAnimator());
+            groups_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+            groups_recyclerview.setAdapter(groupsAdapter);
+            groups_recyclerview.scrollToPosition(0);
+
+
+            chats.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        chats.animate().scaleX(1.5f).scaleY(1.5f).setDuration(0);
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        chats.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    } else {
+                        chats.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                    }
+                    return false;
+                }
+            });
+
+            see_all_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Toast.makeText(getActivity(), "Opening groups", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }
         return view;
     }
 
@@ -418,9 +429,19 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+
+                    List<Post> postToRemoveList = new ArrayList<>();
+                    for (Post postToRemove : postList) {
+                        if (postToRemove.getUserId().equals(friendId))
+                            postToRemoveList.add(postToRemove);
+                    }
+
+                    postList.removeAll(postToRemoveList);
+
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Post post = dataSnapshot.getValue(Post.class);
-                        postList.add(post);
+                        if (!postList.contains(post))
+                            postList.add(post);
 
                         //Toast.makeText(parentActivity,"Post added",Toast.LENGTH_SHORT).show();
 
@@ -434,6 +455,14 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
 
                 } else {
 
+                    List<Post> postToRemoveList = new ArrayList<>();
+                    for (Post postToRemove : postList) {
+                        if (postToRemove.getUserId().equals(friendId))
+                            postToRemoveList.add(postToRemove);
+                    }
+
+                    postList.removeAll(postToRemoveList);
+                    postAdapter.updateList(postList);
                 }
 
 

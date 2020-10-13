@@ -19,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -42,8 +43,10 @@ public class MyApplication extends Application {
         createNotificationChannels();
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 

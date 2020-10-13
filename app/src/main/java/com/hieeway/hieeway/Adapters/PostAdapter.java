@@ -2,13 +2,16 @@ package com.hieeway.hieeway.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,10 @@ import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.PostListDiffUtilCallback;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +56,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private Activity activity;
     private String userId;
+    ImageLoader imageLoader = ImageLoader.getInstance();
+    //ImageSize targetSize = new ImageSize(100, 200);
 
 
     public PostAdapter(List<Post> postList, Activity activity, String userId) {
@@ -56,6 +65,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.context = (Context) activity;
         this.userId = userId;
         this.activity = activity;
+        imageLoader.init(ImageLoaderConfiguration.createDefault(context));
     }
 
     @NonNull
@@ -155,7 +165,11 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                                 }
                                             })
                                             .into(user_photo);
+
+
                                 }
+
+
                             } catch (Exception e) {
                                 Glide.with(context)
                                         .load(context.getDrawable(R.drawable.no_profile))

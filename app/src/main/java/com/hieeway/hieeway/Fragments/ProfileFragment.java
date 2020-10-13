@@ -82,6 +82,7 @@ import com.hieeway.hieeway.MainActivity;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicBeamService;
+import com.hieeway.hieeway.NavButtonTest;
 import com.hieeway.hieeway.PictureChangeDialog;
 import com.hieeway.hieeway.ProfilePhotoActivity;
 import com.hieeway.hieeway.R;
@@ -162,7 +163,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     public static final String MUSIC_BEACON = "musicbeacon";
     public static final String SPOTIFY_CONNECT = "spotifyconnect";
     public static final String VISIBILITY = "visibility";
-    Activity activity;
+    NavButtonTest activity;
     ChangePictureListener changePictureListener;
 
     ProgressBar upload_active_progress;
@@ -207,6 +208,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences;
     private String activePhoto;
+    private View view;
 
     public ProfileFragment() {
 
@@ -214,7 +216,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
     public ProfileFragment(Activity activity) {
         this.changePictureListener = (ChangePictureListener) activity;
-        this.activity = activity;
+        this.activity = (NavButtonTest) activity;
     }
 
 
@@ -281,7 +283,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                     //
                 }*/
 
-                        SpotifyAppRemote.CONNECTOR.connect(getActivity(), connectionParams,
+                        SpotifyAppRemote.CONNECTOR.connect(activity, connectionParams,
                                 new Connector.ConnectionListener() {
 
                                     @Override
@@ -296,7 +298,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                         spotify_icon.setVisibility(View.VISIBLE);
                                         music_layout.setVisibility(View.VISIBLE);
                                         music_loading_layout.setVisibility(View.GONE);
-                                        // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                                        // Toast.makeText(activity,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
                                         // Now you can start interacting with App Remote
                                         spotifyConnected = true;
@@ -319,7 +321,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                                         //song_name.setText("Connect to spotify");
 
                                         spotifyConnected = false;
-                                        // Toast.makeText(getActivity(), "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                                        // Toast.makeText(activity, "Cannot connect to spotify automtically :(" + throwable.getMessage(), Toast.LENGTH_SHORT).show();
                                         // Something went wrong when attempting to connect! Handle errors here
                                     }
                                 });
@@ -330,7 +332,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         spotify_icon.setVisibility(View.VISIBLE);
                         music_layout.setVisibility(View.VISIBLE);
                         music_loading_layout.setVisibility(View.GONE);
-                        // Toast.makeText(getActivity(),"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(activity,"Connected to spotify automtically :D",Toast.LENGTH_SHORT).show();
 
                         // Now you can start interacting with App Remote
                         spotifyConnected = true;
@@ -363,7 +365,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                     spotifyConnected = false;
                 }
 
-        /*Intent intent1 = new Intent(getActivity(), MusicBeamService.class);
+        /*Intent intent1 = new Intent(activity, MusicBeamService.class);
         activity.startService(intent1);*/
             }
         }, 500);
@@ -383,524 +385,517 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         // Inflate the layout for this fragment
 
 
-        Display display = activity.getWindowManager().getDefaultDisplay();
-        size = new Point();
-        display.getSize(size);
-        displayHeight = size.y;
-        displayWidth = size.x;
+        if (view != null)
+            return view;
 
-        final View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        music_layout = view.findViewById(R.id.music_layout);
-
-
-        upload_active_progress = view.findViewById(R.id.upload_active_progress);
+        else {
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            size = new Point();
+            display.getSize(size);
+            displayHeight = size.y;
+            displayWidth = size.x;
 
 
+            view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+            music_layout = view.findViewById(R.id.music_layout);
 
 
-
+            upload_active_progress = view.findViewById(R.id.upload_active_progress);
 
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-        try {
-            window = activity.getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            try {
+                window = activity.getWindow();
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-            window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorBlack));
-        } catch (Exception e) {
-            //
-        }
-
-        edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
-        edit_active_pic = view.findViewById(R.id.edit_active_pic);
-        edit_bio = view.findViewById(R.id.edit_bio);
-        edit_settings_option_btn = view.findViewById(R.id.edit_settings_option_btn);
-
-        bottom_dialog_title = view.findViewById(R.id.title);
-        prof_txt = view.findViewById(R.id.profile_txt);
-        bio_txt_dialog = view.findViewById(R.id.bio_txtview);
-
-        username = view.findViewById(R.id.username);
-        profile_pic_background = view.findViewById(R.id.profile_pic_background);
-        center_dp = view.findViewById(R.id.center_dp);
-        spotify_cover = view.findViewById(R.id.spotify_cover);
-        artist_name = view.findViewById(R.id.artist_name);
-        song_name = view.findViewById(R.id.song_name);
-        music_loading_layout = view.findViewById(R.id.music_loading_layout);
-        connect_spotify_layout = view.findViewById(R.id.connect_spotify_layout);
-        connect_spotify_text = view.findViewById(R.id.connect_spotify_text);
-
-
-        name = view.findViewById(R.id.name);
-        logoutBtn = view.findViewById(R.id.logout_btn);
-        uploadActivityButton = view.findViewById(R.id.change_activity);
-        feeling_icon = view.findViewById(R.id.feeling_icon);
-        bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
-        top_fade = view.findViewById(R.id.top_fade);
-        bottom_fade = view.findViewById(R.id.bottom_fade);
-        overlay_fade = view.findViewById(R.id.overlay_fade);
-
-        feeling_txt = view.findViewById(R.id.feeling_txt);
-        change_nio_edittext = view.findViewById(R.id.change_nio_edittext);
-        bio_txt = view.findViewById(R.id.bio_txt);
-        edit_profile_option_btn = view.findViewById(R.id.edit_profile_option_btn);
-        connect_spotify = view.findViewById(R.id.connect_spotify);
-        spotify_icon = view.findViewById(R.id.spotify_icon);
-
-        bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
-
-        activity.getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
-
-
-        upload_progress = view.findViewById(R.id.upload_progress);
-        relay = view.findViewById(R.id.relay);
-
-        music_loading_txt = view.findViewById(R.id.music_loading_txt);
-
-
-
-
-
-        emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
-
-        ring_blinker_layout = view.findViewById(R.id.ring_blinker_layout);
-
-        emoji_icon = view.findViewById(R.id.emoji_icon);
-
-        center_dp.getLayoutParams().height = (int) displayHeight / 4;
-        center_dp.getLayoutParams().width = (int) displayHeight / 8;
-
-
-        connect_spotify_text.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        music_loading_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        feeling_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        username.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
-        //change_nio_edittext.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        bio_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        //bio_txt_dialog.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        //prof_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        bottom_dialog_title.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        song_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        artist_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
-
-        uploadActivityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                imageSelectionCropListener.imageSelect(false);
+                window.setStatusBarColor(ContextCompat.getColor(activity, R.color.colorBlack));
+            } catch (Exception e) {
+                //
             }
-        });
-        song_name.setSelected(true);
-        artist_name.setSelected(true);
+
+            edit_profile_pic = view.findViewById(R.id.edit_profile_pic);
+            edit_active_pic = view.findViewById(R.id.edit_active_pic);
+            edit_bio = view.findViewById(R.id.edit_bio);
+            edit_settings_option_btn = view.findViewById(R.id.edit_settings_option_btn);
+
+            bottom_dialog_title = view.findViewById(R.id.title);
+            prof_txt = view.findViewById(R.id.profile_txt);
+            bio_txt_dialog = view.findViewById(R.id.bio_txtview);
+
+            username = view.findViewById(R.id.username);
+            profile_pic_background = view.findViewById(R.id.profile_pic_background);
+            center_dp = view.findViewById(R.id.center_dp);
+            spotify_cover = view.findViewById(R.id.spotify_cover);
+            artist_name = view.findViewById(R.id.artist_name);
+            song_name = view.findViewById(R.id.song_name);
+            music_loading_layout = view.findViewById(R.id.music_loading_layout);
+            connect_spotify_layout = view.findViewById(R.id.connect_spotify_layout);
+            connect_spotify_text = view.findViewById(R.id.connect_spotify_text);
 
 
-        edit_settings_option_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.startActivity(new Intent(getActivity(), SettingsActivity.class));
-            }
-        });
+            name = view.findViewById(R.id.name);
+            logoutBtn = view.findViewById(R.id.logout_btn);
+            uploadActivityButton = view.findViewById(R.id.change_activity);
+            feeling_icon = view.findViewById(R.id.feeling_icon);
+            bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
+            top_fade = view.findViewById(R.id.top_fade);
+            bottom_fade = view.findViewById(R.id.bottom_fade);
+            overlay_fade = view.findViewById(R.id.overlay_fade);
+
+            feeling_txt = view.findViewById(R.id.feeling_txt);
+            change_nio_edittext = view.findViewById(R.id.change_nio_edittext);
+            bio_txt = view.findViewById(R.id.bio_txt);
+            edit_profile_option_btn = view.findViewById(R.id.edit_profile_option_btn);
+            connect_spotify = view.findViewById(R.id.connect_spotify);
+            spotify_icon = view.findViewById(R.id.spotify_icon);
+
+            bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_dialog_layout);
+
+            activity.getWindow().setSoftInputMode(SOFT_INPUT_ADJUST_PAN);
 
 
-        // spotify_cover.getLayoutParams().height = (int) displayWidth;
+            upload_progress = view.findViewById(R.id.upload_progress);
+            relay = view.findViewById(R.id.relay);
 
-        connect_spotify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                editor.putBoolean(MUSIC_BEACON, true);
-                editor.putBoolean(SPOTIFY_CONNECT, true);
-                editor.apply();
+            music_loading_txt = view.findViewById(R.id.music_loading_txt);
 
 
-                PackageManager pm = null;
-                try {
-                    pm = activity.getPackageManager();
+            emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
 
-                    boolean isSpotifyInstalled;
+            ring_blinker_layout = view.findViewById(R.id.ring_blinker_layout);
+
+            emoji_icon = view.findViewById(R.id.emoji_icon);
+
+            center_dp.getLayoutParams().height = (int) displayHeight / 4;
+            center_dp.getLayoutParams().width = (int) displayHeight / 8;
 
 
+            connect_spotify_text.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            music_loading_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            feeling_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            username.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
+            //change_nio_edittext.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            bio_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            //bio_txt_dialog.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            //prof_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            bottom_dialog_title.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            song_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            artist_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
+
+            uploadActivityButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    imageSelectionCropListener.imageSelect(false);
+                }
+            });
+            song_name.setSelected(true);
+            artist_name.setSelected(true);
+
+
+            edit_settings_option_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.startActivity(new Intent(activity, SettingsActivity.class));
+                }
+            });
+
+
+            // spotify_cover.getLayoutParams().height = (int) displayWidth;
+
+            connect_spotify.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    editor.putBoolean(MUSIC_BEACON, true);
+                    editor.putBoolean(SPOTIFY_CONNECT, true);
+                    editor.apply();
+
+
+                    PackageManager pm = null;
                     try {
-                        pm.getPackageInfo("com.spotify.music", 0);
-                        isSpotifyInstalled = true;
-                        // Toast.makeText(getActivity(), "Log in to Spotify", Toast.LENGTH_SHORT).show();
-                        AuthenticationRequest.Builder builder =
-                                new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+                        pm = activity.getPackageManager();
 
-                        builder.setScopes(new String[]{"streaming"});
-                        AuthenticationRequest request = builder.build();
+                        boolean isSpotifyInstalled;
 
-                        AuthenticationClient.openLoginActivity(getActivity(), REQUEST_CODE, request);
-                    } catch (PackageManager.NameNotFoundException e) {
-                        isSpotifyInstalled = false;
-
-                        Toast.makeText(getActivity(), "Install spotify app to continue", Toast.LENGTH_LONG).show();
 
                         try {
-                            Uri uri = Uri.parse("market://details")
-                                    .buildUpon()
-                                    .appendQueryParameter("id", appPackageName)
-                                    .appendQueryParameter("referrer", referrer)
-                                    .build();
-                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                        } catch (android.content.ActivityNotFoundException ignored) {
-                            Uri uri = Uri.parse("https://play.google.com/store/apps/details")
-                                    .buildUpon()
-                                    .appendQueryParameter("id", appPackageName)
-                                    .appendQueryParameter("referrer", referrer)
-                                    .build();
-                            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                            pm.getPackageInfo("com.spotify.music", 0);
+                            isSpotifyInstalled = true;
+                            // Toast.makeText(activity, "Log in to Spotify", Toast.LENGTH_SHORT).show();
+                            AuthenticationRequest.Builder builder =
+                                    new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+                            builder.setScopes(new String[]{"streaming"});
+                            AuthenticationRequest request = builder.build();
+
+                            AuthenticationClient.openLoginActivity(activity, REQUEST_CODE, request);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            isSpotifyInstalled = false;
+
+                            Toast.makeText(activity, "Install spotify app to continue", Toast.LENGTH_LONG).show();
+
+                            try {
+                                Uri uri = Uri.parse("market://details")
+                                        .buildUpon()
+                                        .appendQueryParameter("id", appPackageName)
+                                        .appendQueryParameter("referrer", referrer)
+                                        .build();
+                                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                            } catch (android.content.ActivityNotFoundException ignored) {
+                                Uri uri = Uri.parse("https://play.google.com/store/apps/details")
+                                        .buildUpon()
+                                        .appendQueryParameter("id", appPackageName)
+                                        .appendQueryParameter("referrer", referrer)
+                                        .build();
+                                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                            }
+
                         }
-
+                    } catch (Exception e) {
+                        Toast.makeText(activity, "Cannot fetch package manager", Toast.LENGTH_SHORT).show();
                     }
-                } catch (Exception e) {
-                    Toast.makeText(getActivity(), "Cannot fetch package manager", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+            });
 
-        spotify_cover.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            spotify_cover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                try {
-                    // mSpotifyAppRemote.getPlayerApi().play(songId);
+                    try {
+                        // mSpotifyAppRemote.getPlayerApi().play(songId);
                     /*Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
                     if (launchIntent != null) {
                         startActivity(launchIntent);//null pointer check in case package name was not found
                     }*/
 
-                    if (songId != null) {
+                        if (songId != null) {
 
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("" + songId));
-                        intent.putExtra(Intent.EXTRA_REFERRER,
-                                Uri.parse("android-app://" + getContext().getPackageName()));
-                        getContext().startActivity(intent);
-                    } else {
-                        Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
-                        if (launchIntent != null) {
-                            startActivity(launchIntent);//null pointer check in case package name was not found
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("" + songId));
+                            intent.putExtra(Intent.EXTRA_REFERRER,
+                                    Uri.parse("android-app://" + getContext().getPackageName()));
+                            getContext().startActivity(intent);
+                        } else {
+                            Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                            if (launchIntent != null) {
+                                startActivity(launchIntent);//null pointer check in case package name was not found
+                            }
                         }
+                    } catch (Exception e) {
+                        //
                     }
-                } catch (Exception e) {
-                    //
                 }
-            }
-        });
+            });
 
 
-        spotify_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    if (songId != null) {
+            spotify_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        if (songId != null) {
 
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("" + songId));
-                        intent.putExtra(Intent.EXTRA_REFERRER,
-                                Uri.parse("android-app://" + getContext().getPackageName()));
-                        getContext().startActivity(intent);
-                    } else {
-                        Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
-                        if (launchIntent != null) {
-                            startActivity(launchIntent);//null pointer check in case package name was not found
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("" + songId));
+                            intent.putExtra(Intent.EXTRA_REFERRER,
+                                    Uri.parse("android-app://" + getContext().getPackageName()));
+                            getContext().startActivity(intent);
+                        } else {
+                            Intent launchIntent = activity.getPackageManager().getLaunchIntentForPackage("com.spotify.music");
+                            if (launchIntent != null) {
+                                startActivity(launchIntent);//null pointer check in case package name was not found
+                            }
                         }
+                    } catch (Exception e) {
+
                     }
-                } catch (Exception e) {
+                }
+            });
+
+
+            logoutBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("token", "default");
+                    hashMap.put("online", false);
+
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    databaseReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            FirebaseAuth.getInstance().signOut();
+
+                            try {
+                                startActivity(new Intent(activity, MainActivity.class));
+                                activity.finish();
+                            } catch (Exception e) {
+                                Toast.makeText(getContext(), "Logout done! Close app and restart", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+
 
                 }
-            }
-        });
+            });
 
 
-
-
-
-
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("token", "default");
-                hashMap.put("online", false);
-
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                databaseReference.updateChildren(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-
-                        FirebaseAuth.getInstance().signOut();
-
-                        try {
-                            startActivity(new Intent(getActivity(), MainActivity.class));
-                            activity.finish();
-                        } catch (Exception e) {
-                            Toast.makeText(getContext(), "Logout done! Close app and restart", Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
-
-
-            }
-        });
-
-
-        center_dp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!bottomSheetDialogVisible) {
-                    /*Intent intent = new Intent(getActivity(), ProfilePhotoActivity.class);
+            center_dp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!bottomSheetDialogVisible) {
+                    /*Intent intent = new Intent(activity, ProfilePhotoActivity.class);
                     intent.putExtra("profilepic", profilepic);
 
                     activity.startActivity(intent);*/
 
-                    PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(getActivity(), false, profilepic, ProfileFragment.this, "photo");
-                    pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    pictureChangeDialog.setCancelable(true);
-                    pictureChangeDialog.show();
+                        PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(activity, false, profilepic, ProfileFragment.this, "photo");
+                        pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        pictureChangeDialog.setCancelable(true);
+                        pictureChangeDialog.show();
 
+                    }
                 }
-            }
-        });
+            });
 
-        feeling_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!bottomSheetDialogVisible) {
+            feeling_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!bottomSheetDialogVisible) {
 
-                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
-                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    feelingDialog.show();
+                        feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                        feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        feelingDialog.show();
+                    }
                 }
-            }
-        });
+            });
 
-        emoji_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!bottomSheetDialogVisible) {
-                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
-                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    feelingDialog.show();
+            emoji_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!bottomSheetDialogVisible) {
+                        feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                        feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        feelingDialog.show();
+                    }
                 }
-            }
-        });
+            });
 
 
-        bio_txt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            bio_txt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
 
-                if (!bottomSheetDialogVisible) {
+                    if (!bottomSheetDialogVisible) {
                 /*
 
                 change_nio_edittext.setText(bio_txt.getText().toString());
                 bio_txt.setVisibility(View.GONE);
                 change_nio_edittext.setVisibility(View.VISIBLE);
                 change_nio_edittext.setEnabled(true);*/
-                    if (bio_txt.getText().toString().length() < 1)
-                        editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
+                        if (bio_txt.getText().toString().length() < 1)
+                            editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
+                    }
                 }
+            });
+
+
+            try {
+                if (bio.length() < 1) {
+                    bio_txt.setText("Tell something about yourself");
+                    bio_txt.setTextColor(activity.getResources().getColor(R.color.darkGrey));
+                } else {
+                    bio_txt.setText(bio);
+                    stripUnderlines(bio_txt);
+                    bio_txt.setTextColor(activity.getResources().getColor(R.color.colorWhite));
+                }
+            } catch (Exception e) {
+                //
             }
-        });
 
-
-        try {
-            if (bio.length() < 1) {
-                bio_txt.setText("Tell something about yourself");
-                bio_txt.setTextColor(activity.getResources().getColor(R.color.darkGrey));
-            } else {
-                bio_txt.setText(bio);
-                stripUnderlines(bio_txt);
-                bio_txt.setTextColor(activity.getResources().getColor(R.color.colorWhite));
-            }
-        } catch (Exception e) {
-            //
-        }
-
-        edit_profile_option_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!bottomSheetDialogVisible) {
+            edit_profile_option_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!bottomSheetDialogVisible) {
                 /*EditProfileDialog editProfileDialog = new EditProfileDialog(getContext(), ProfileFragment.this);
                 editProfileDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 editProfileDialog.show();*/
-                    relay.setVisibility(View.VISIBLE);
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    bottomSheetDialogVisible = true;
+                        relay.setVisibility(View.VISIBLE);
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        bottomSheetDialogVisible = true;
+                    }
                 }
-            }
-        });
+            });
 
-        edit_profile_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                relay.setVisibility(View.GONE);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(getActivity(), false, profilepic, ProfileFragment.this, "photo");
-                pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                pictureChangeDialog.setCancelable(true);
+            edit_profile_pic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    relay.setVisibility(View.GONE);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(activity, false, profilepic, ProfileFragment.this, "photo");
+                    pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    pictureChangeDialog.setCancelable(true);
 
-                pictureChangeDialog.show();
-                //imageSelectionCropListener.imageSelect(false);
-                bottomSheetDialogVisible = false;
-            }
-        });
-
-        edit_active_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                relay.setVisibility(View.GONE);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                //imageSelectionCropListener.imageSelect(true);
-                PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(getActivity(), true, activePhoto, ProfileFragment.this, "activePhoto");
-                pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                pictureChangeDialog.setCancelable(true);
-                pictureChangeDialog.show();
-                bottomSheetDialogVisible = false;
-            }
-        });
-
-        edit_bio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                relay.setVisibility(View.GONE);
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
-                bottomSheetDialogVisible = false;
-            }
-        });
-
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    pictureChangeDialog.show();
+                    //imageSelectionCropListener.imageSelect(false);
+                    bottomSheetDialogVisible = false;
                 }
-            }
+            });
 
-            @Override
-            public void onSlide(View bottomSheet, float slideOffset) {
-            }
-        });
+            edit_active_pic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    relay.setVisibility(View.GONE);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    //imageSelectionCropListener.imageSelect(true);
+                    PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(activity, true, activePhoto, ProfileFragment.this, "activePhoto");
+                    pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    pictureChangeDialog.setCancelable(true);
+                    pictureChangeDialog.show();
+                    bottomSheetDialogVisible = false;
+                }
+            });
 
-        emoji_holder_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
-                feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                feelingDialog.show();
-            }
-        });
+            edit_bio.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    relay.setVisibility(View.GONE);
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
+                    bottomSheetDialogVisible = false;
+                }
+            });
 
-        emoji_holder_layout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(300);
-                    emoji_holder_layout.setAlpha(0.75f);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                    emoji_holder_layout.setAlpha(1.0f);
-                } else {
-                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                    emoji_holder_layout.setAlpha(1.0f);
+            bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+                @Override
+                public void onStateChanged(View bottomSheet, int newState) {
+                    if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    }
                 }
 
-
-                return false;
-            }
-        });
-
-
-        emoji_icon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(300);
-                    emoji_holder_layout.setAlpha(0.75f);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                    emoji_holder_layout.setAlpha(1.0f);
-                } else {
-                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                    emoji_holder_layout.setAlpha(1.0f);
+                @Override
+                public void onSlide(View bottomSheet, float slideOffset) {
                 }
+            });
 
-
-                return false;
-            }
-        });
-
-
-        feeling_icon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(0);
-                    emoji_holder_layout.setAlpha(0.75f);
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(30);
-                    emoji_holder_layout.setAlpha(1.0f);
-                } else {
-                    emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
-                    emoji_holder_layout.setAlpha(1.0f);
+            emoji_holder_layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    feelingDialog.show();
                 }
+            });
+
+            emoji_holder_layout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(300);
+                        emoji_holder_layout.setAlpha(0.75f);
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                        emoji_holder_layout.setAlpha(1.0f);
+                    } else {
+                        emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                        emoji_holder_layout.setAlpha(1.0f);
+                    }
 
 
-                return false;
-            }
-        });
-
-        TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
-
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try {
-                    Bitmap bitmap = Glide.with(getActivity())
-                            .asBitmap()
-                            .load(userPhoto)
-                            .submit(5, 5)
-                            .get();
-                    //setPaletteColor();
-                    bitmapTaskCompletionSource.setResult(bitmap);
-
-                } catch (Exception e) {
-                    //
+                    return false;
                 }
-
-            }
-        }).start();
+            });
 
 
-        Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
-        bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
-            @Override
-            public void onComplete(@NonNull Task<Bitmap> task) {
-                if (task.isSuccessful())
-                    bitmap = task.getResult();
+            emoji_icon.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(300);
+                        emoji_holder_layout.setAlpha(0.75f);
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                        emoji_holder_layout.setAlpha(1.0f);
+                    } else {
+                        emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                        emoji_holder_layout.setAlpha(1.0f);
+                    }
 
 
-            }
-        });
+                    return false;
+                }
+            });
+
+
+            feeling_icon.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        emoji_holder_layout.animate().scaleX(0.75f).scaleY(0.75f).setDuration(0);
+                        emoji_holder_layout.setAlpha(0.75f);
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                        emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(30);
+                        emoji_holder_layout.setAlpha(1.0f);
+                    } else {
+                        emoji_holder_layout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
+                        emoji_holder_layout.setAlpha(1.0f);
+                    }
+
+
+                    return false;
+                }
+            });
+
+            TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        Bitmap bitmap = Glide.with(activity)
+                                .asBitmap()
+                                .load(userPhoto)
+                                .submit(5, 5)
+                                .get();
+                        //setPaletteColor();
+                        bitmapTaskCompletionSource.setResult(bitmap);
+
+                    } catch (Exception e) {
+                        //
+                    }
+
+                }
+            }).start();
+
+
+            Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
+            bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                @Override
+                public void onComplete(@NonNull Task<Bitmap> task) {
+                    if (task.isSuccessful())
+                        bitmap = task.getResult();
+
+
+                }
+            });
 
 
 /*
@@ -988,11 +983,12 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 */
 
 
-        if (!blinking) {
-            blinking = true;
-            startBlinking();
+            if (!blinking) {
+                blinking = true;
+                startBlinking();
+            }
+            return view;
         }
-        return view;
     }
 
     public void onFragmentActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -1015,7 +1011,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                     spotify_icon.setVisibility(View.VISIBLE);
                     music_layout.setVisibility(View.VISIBLE);
                     music_loading_layout.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "Connected to spotify :D", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Connected to spotify :D", Toast.LENGTH_SHORT).show();
                     spotifyConnected = true;
                     break;
 
@@ -1030,7 +1026,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                     spotifyConnected = false;
                     music_loading_layout.setVisibility(View.GONE);
                     //song_name.setText("Connect to spotify");
-                    Toast.makeText(getActivity(), "Cannot connect to spotify :(" + response.getError(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Cannot connect to spotify :(" + response.getError(), Toast.LENGTH_SHORT).show();
                     break;
 
                 // Most likely auth flow was cancelled
@@ -1094,7 +1090,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                                 Log.d("Spotify Activity", track.name + " by " + track.artist.name);
                                 // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();
-                                //  Toast.makeText(getActivity(),"Track is "+track.name,Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(activity,"Track is "+track.name,Toast.LENGTH_SHORT).show();
                                 spotify_icon.setVisibility(View.VISIBLE);
                                 spotify_cover.setVisibility(View.INVISIBLE);
                                 song_name.setText(track.name);
@@ -1118,10 +1114,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                                 //Glide.with(SpotifyActivity.this).load(track.imageUri).into(track_cover);
                             } else {
-                                // Toast.makeText(getActivity(),"Track is null",Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(activity,"Track is null",Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // Toast.makeText(getActivity(),"PlayerState is null",Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(activity,"PlayerState is null",Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -1252,7 +1248,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+                sharedViewModel = ViewModelProviders.of(activity).get(SharedViewModel.class);
 
                 sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
                     @Override
@@ -1499,7 +1495,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                         // ...
                     } else {
-                        //Toast.makeText(getActivity(), "Null color", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(activity, "Null color", Toast.LENGTH_SHORT).show();
                         top_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
                         bottom_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));
                         overlay_fade.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.profile_color_theme)));

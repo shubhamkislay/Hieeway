@@ -64,14 +64,17 @@ public class MusicBeamService extends Service {
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER_ID = "userid";
     public static final String USERNAME = "username";
+    public static final String LAST_SPOTIFY_ID = "lastspotifyid";
     Intent stopSelfIntent, openSpotifyIntent;
     private SpotifyAppRemote mSpotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
     private PendingIntent pIntentlogin, openSpotify;
     private MediaSessionCompat mediaSessionCompat;
     private int notificationId;
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     String userId;
     String username;
+    String lastSpotifyId;
 
 
     @Nullable
@@ -165,9 +168,11 @@ public class MusicBeamService extends Service {
 
 
                                 sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                                editor = sharedPreferences.edit();
 
                                 userId = sharedPreferences.getString(USER_ID, "");
                                 username = sharedPreferences.getString(USERNAME, "");
+                                lastSpotifyId = sharedPreferences.getString(LAST_SPOTIFY_ID, "default");
 
                                 checkSettings();
 
@@ -206,13 +211,18 @@ public class MusicBeamService extends Service {
                         .setAutoCancel(true)
                         .build();
 
+                sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                editor = sharedPreferences.edit();
+
+                userId = sharedPreferences.getString(USER_ID, "");
+                username = sharedPreferences.getString(USERNAME, "");
+                lastSpotifyId = sharedPreferences.getString(LAST_SPOTIFY_ID, "default");
 
                 startForeground(notificationId, notification);
 
 
                 listedToSpotifySong();
 
-                sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
                 checkSettings();
             }
@@ -361,7 +371,8 @@ public class MusicBeamService extends Service {
                                                 Music music = mutableData.getValue(Music.class);
 
                                                 try {
-                                                    if (music.getSpotifyId() == null || !music.getSpotifyId().equals(songId)) {
+                                                    if (music.getSpotifyId() == null
+                                                            || !music.getSpotifyId().equals(songId)) {
 
                                                         HashMap<String, Object> songHash = new HashMap<>();
                                                         songHash.put("spotifyId", songId);
@@ -394,42 +405,12 @@ public class MusicBeamService extends Service {
                                                                     }
                                                                 });
 
-                                                        HashMap<String, Object> musicPostHash = new HashMap<>();
-                                                        musicPostHash.put("spotifyId", songId);
-                                                        musicPostHash.put("spotifySong", track.name);
-                                                        musicPostHash.put("spotifyArtist", postArtist);
-                                                        musicPostHash.put("spotifyCover", track.imageUri);
-                                                        musicPostHash.put("timestamp", timestamp.toString());
-
-                                                        FirebaseDatabase.getInstance().getReference("MusicPost")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                .child(musicKey)
-                                                                .updateChildren(musicPostHash);
-
-
-                                                        DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                                                        String postKey = FirebaseDatabase.getInstance().getReference("Post")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
-
-
-                                                        HashMap<String, Object> postHash = new HashMap<>();
-                                                        postHash.put("userId", userId);
-                                                        postHash.put("postKey", postKey);
-                                                        postHash.put("type", "music");
-                                                        postHash.put("mediaUrl", "default");
-                                                        postHash.put("mediaKey", musicKey);
-                                                        postHash.put("username", username);
-
-                                                        postRef.child(postKey).updateChildren(postHash);
-
 
                                                     }
 
 
                                                 } catch (NullPointerException e) {
-
+/*
                                                     HashMap<String, Object> songHash = new HashMap<>();
                                                     songHash.put("spotifyId", songId);
                                                     songHash.put("spotifySong", track.name);
@@ -485,7 +466,7 @@ public class MusicBeamService extends Service {
                                                     postHash.put("username", username);
 
 
-                                                    postRef.child(postKey).updateChildren(postHash);
+                                                    postRef.child(postKey).updateChildren(postHash);*/
 
                                                 }
 
@@ -497,6 +478,52 @@ public class MusicBeamService extends Service {
 
                                             }
                                         });
+
+
+                                if (!sharedPreferences.getString(LAST_SPOTIFY_ID, "default").equals(songId)) {
+
+
+                                    String musicKey =
+                                            FirebaseDatabase.getInstance().getReference("MusicPost")
+                                                    .child(userId).push().getKey();
+
+                                    HashMap<String, Object> musicPostHash = new HashMap<>();
+                                    musicPostHash.put("spotifyId", songId);
+                                    musicPostHash.put("spotifySong", track.name);
+                                    musicPostHash.put("spotifyArtist", postArtist);
+                                    musicPostHash.put("spotifyCover", track.imageUri);
+                                    musicPostHash.put("timestamp", timestamp.toString());
+
+                                    FirebaseDatabase.getInstance().getReference("MusicPost")
+                                            .child(userId)
+                                            .child(musicKey)
+                                            .updateChildren(musicPostHash);
+
+
+                                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post")
+                                            .child(userId);
+
+                                    String postKey = FirebaseDatabase.getInstance().getReference("Post")
+                                            .child(userId).push().getKey();
+
+
+                                    HashMap<String, Object> postHash = new HashMap<>();
+                                    postHash.put("userId", userId);
+                                    postHash.put("postKey", postKey);
+                                    postHash.put("type", "music");
+                                    postHash.put("mediaUrl", "default");
+                                    postHash.put("mediaKey", musicKey);
+                                    postHash.put("username", username);
+
+                                    postRef.child(postKey).updateChildren(postHash);
+
+                                    editor.putString(LAST_SPOTIFY_ID, songId);
+                                    editor.apply();
+
+
+                                }
+
+
 
 
                                 /*HashMap<String, Object> songHash = new HashMap<>();

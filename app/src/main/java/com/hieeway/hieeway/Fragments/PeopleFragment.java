@@ -58,6 +58,7 @@ public class PeopleFragment extends Fragment {
     ProgressBar progressBar, progressBarTwo;
     private List<User> userlist;
     TextView logo_title;
+    private View view;
 
     public PeopleFragment() {
     }
@@ -67,50 +68,53 @@ public class PeopleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        if (view != null)
+            return view;
 
-        View view = inflater.inflate(R.layout.fragment_people, container, false);
-        username = view.findViewById(R.id.username);
-        peopleRecyclerView = view.findViewById(R.id.peoplerecycler);
-        userlist = new ArrayList<>();
+        else {
 
-        activity = getActivity();
+            view = inflater.inflate(R.layout.fragment_people, container, false);
+            username = view.findViewById(R.id.username);
+            peopleRecyclerView = view.findViewById(R.id.peoplerecycler);
+            userlist = new ArrayList<>();
 
-        progressBar = view.findViewById(R.id.progress);
-        progressBarTwo = view.findViewById(R.id.progressTwo);
+            activity = getActivity();
 
-        searchPeople = view.findViewById(R.id.search_people);
+            progressBar = view.findViewById(R.id.progress);
+            progressBarTwo = view.findViewById(R.id.progressTwo);
 
-        searchPeople.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            searchPeople = view.findViewById(R.id.search_people);
 
-        searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
-        logo_title = view.findViewById(R.id.layout_title);
+            searchPeople.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+            searchPeople.setRawInputType(InputType.TYPE_CLASS_TEXT);
+            logo_title = view.findViewById(R.id.layout_title);
 
 
-        Window window = getActivity().getWindow();
+            Window window = getActivity().getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
+            window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
 
-        result_text = view.findViewById(R.id.result_text);
-        result_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            result_text = view.findViewById(R.id.result_text);
+            result_text.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-        progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
+            progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
 
-        logo_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            logo_title.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
 
+            peopleRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            peopleRecyclerView.setHasFixedSize(true);
 
-        peopleRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        peopleRecyclerView.setHasFixedSize(true);
-
-        peopleAdapter = new PeopleAdapter(getContext(), userlist,activity);
-        peopleRecyclerView.setAdapter(peopleAdapter);
+            peopleAdapter = new PeopleAdapter(getContext(), userlist, activity);
+            peopleRecyclerView.setAdapter(peopleAdapter);
 
 /*        new Handler().postDelayed(new Runnable() {
             @Override
@@ -136,42 +140,41 @@ public class PeopleFragment extends Fragment {
                 }
             }
         },250);*/
-        showSoftKeyboard(searchPeople);
+            showSoftKeyboard(searchPeople);
 
-        //searchPeople.requestFocus();
+            //searchPeople.requestFocus();
 
-        searchPeople.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            searchPeople.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 /*                userlist.clear();
                 peopleAdapter.setList(userlist);
                 peopleAdapter.notifyDataSetChanged();
 
                 if(s.length()>0)
                     searchUsers(s.toString().toLowerCase());*/
-                userlist.clear();
-                peopleAdapter.setList(userlist);
+                    userlist.clear();
+                    peopleAdapter.setList(userlist);
 
-            }
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 /*                userlist.clear();
                 peopleAdapter.setList(userlist);
                 peopleAdapter.notifyDataSetChanged();*/
 
-                if(s.length()>0) {
-                    searchUsers(s.toString().toLowerCase());
+                    if (s.length() > 0) {
+                        searchUsers(s.toString().toLowerCase());
 
-                    searchingUsername = s.toString();
+                        searchingUsername = s.toString();
+                    }
                 }
-            }
 
 
-
-            @Override
-            public void afterTextChanged(Editable s) {
+                @Override
+                public void afterTextChanged(Editable s) {
 /*                userlist.clear();
                 peopleAdapter.setList(userlist);
                 peopleAdapter.notifyDataSetChanged();
@@ -179,24 +182,23 @@ public class PeopleFragment extends Fragment {
                 if(s.length()>0)
                     searchUsers(s.toString().toLowerCase());*/
 
-                userlist.clear();
-                peopleAdapter.setList(userlist);
+                    userlist.clear();
+                    peopleAdapter.setList(userlist);
 
 
-
-            }
-        });
-
-
-        //listenToSearchInputs();
+                }
+            });
 
 
-
-        animateMenuImage(progress_menu_logo);
-
+            //listenToSearchInputs();
 
 
-        return view;
+            animateMenuImage(progress_menu_logo);
+
+
+            return view;
+        }
+
     }
 
     private void listenToSearchInputs() {

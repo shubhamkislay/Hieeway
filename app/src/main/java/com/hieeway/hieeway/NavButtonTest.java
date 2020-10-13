@@ -55,6 +55,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.logging.Logger;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -163,6 +164,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     private ImageView feed_button_unpressed;
     private ShotsFragment shotsFragment;
     private Boolean chatFragmentActive = false;
+
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -319,6 +321,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
     }
+
 
     private void userStatusOnDiconnect() {
 
@@ -1878,7 +1881,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
 
         appLogoAnimation(true);
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
         animatorY = ObjectAnimator.ofFloat(send_arrow, "translationY", -displayHeight - (displayHeight) / 3);
         animateTextLogo = ObjectAnimator.ofFloat(typeWriter,"translationY",-displayHeight -(displayHeight)/3);
 

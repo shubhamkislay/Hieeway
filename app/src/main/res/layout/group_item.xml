@@ -6,28 +6,7 @@
     android:layout_height="wrap_content">
 
 
-    <ProgressBar
-        android:id="@+id/progress"
-        style="@style/SpinKitView.Large.Wave"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:indeterminateTint="#fff"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintEnd_toEndOf="@id/user_photo"
-        app:layout_constraintStart_toStartOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo" />
 
-    <ProgressBar
-        android:id="@+id/progressTwo"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_centerInParent="true"
-        android:indeterminateTint="#fff"
-        android:rotation="180"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintEnd_toEndOf="@id/user_photo"
-        app:layout_constraintStart_toStartOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo" />
 
     <TextView
         android:id="@+id/username"

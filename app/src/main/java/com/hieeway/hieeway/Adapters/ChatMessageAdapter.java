@@ -491,7 +491,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                /* requestOptions.placeholder(R.color.darkGrey);
                 requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
                 requestOptions.format(DecodeFormat.PREFER_RGB_565);*/
-                requestOptions.placeholder(mContext.getDrawable(R.drawable.no_profile));
+                requestOptions.placeholder(R.color.darkGrey);
                 //requestOptions.centerCrop();
 
                 try {
@@ -508,23 +508,23 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                                     // viewHolder.progressBar.setVisibility(View.INVISIBLE);
 
                                     if (chatStamp.getPhoto().contains("https://firebasestorage")) {
-
                                         final Matrix matrix = viewHolder.user_photo.getImageMatrix();
                                         final float imageWidth = resource.getIntrinsicWidth();
-                                final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
-                                final float scaleRatio = screenWidth / imageWidth;
-                                // matrix.postScale(scaleRatio, scaleRatio);
-                                matrix.postScale(1, 1);
-                                viewHolder.user_photo.setImageMatrix(matrix);
-                                viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
-                                viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
-                            } else {
-                                viewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
-                                viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
-                            }
-                            return false;
-                        }
+                                        final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
+                                        //final float scaleRatio = screenWidth / imageWidth;
+                                        //matrix.postScale(scaleRatio, scaleRatio);
+                                        matrix.postScale(1, 1);
+                                        viewHolder.user_photo.setImageMatrix(matrix);
+
+                                        viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                                        viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                                    } else {
+                                        viewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                        viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                                        viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                                    }
+                                    return false;
+                                }
                             })
                             .transition(withCrossFade()).into(viewHolder.user_photo);
                 }catch (Exception e)

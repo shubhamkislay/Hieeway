@@ -109,7 +109,7 @@ public class FriendListFagment extends Fragment {
     public static final String SHARED_PREFS = "sharedPrefs";
     private static final String PHONE = "phone";
     private List<Friend> resettedList;
-
+    private View view;
 
     public FriendListFagment() {
         // Required empty public constructor
@@ -220,64 +220,68 @@ public class FriendListFagment extends Fragment {
         // Inflate the layout for this fragment
 
         // View view = inflater.inflate(R.layout.fragment_friend_list_fagment, container, false);
-        View view = inflater.inflate(R.layout.fragment_friend_collapsing_layout, container, false);
+        if (view != null)
+            return view;
 
-        //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        else {
+            view = inflater.inflate(R.layout.fragment_friend_collapsing_layout, container, false);
 
-        //   getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            //    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        final Activity activity = getActivity();
+            //   getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        userList = new ArrayList<>();
+            final Activity activity = getActivity();
 
-        contactsbntn = view.findViewById(R.id.contactsbntn);
+            userList = new ArrayList<>();
 
-        friend_list_recyclerview = view.findViewById(R.id.friend_list_recyclerview);
+            contactsbntn = view.findViewById(R.id.contactsbntn);
 
-        appTitle = view.findViewById(R.id.app_title);
+            friend_list_recyclerview = view.findViewById(R.id.friend_list_recyclerview);
 
-        toolbar = view.findViewById(R.id.toolbar);
+            appTitle = view.findViewById(R.id.app_title);
 
-        requests_btn = view.findViewById(R.id.requests_btn_friends);
-        requests_btn_friends_back = view.findViewById(R.id.requests_btn_friends_back);
+            toolbar = view.findViewById(R.id.toolbar);
 
-        progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
+            requests_btn = view.findViewById(R.id.requests_btn_friends);
+            requests_btn_friends_back = view.findViewById(R.id.requests_btn_friends_back);
 
-        progress_menu_logo_two = view.findViewById(R.id.progress_menu_logo_two);
+            progress_menu_logo = view.findViewById(R.id.progress_menu_logo);
 
-        Window window = getActivity().getWindow();
+            progress_menu_logo_two = view.findViewById(R.id.progress_menu_logo_two);
+
+            Window window = getActivity().getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 
 // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
+            window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
 
 
-        // search_btn_layout = view.findViewById(R.id.search_bar_layout_friends);
+            // search_btn_layout = view.findViewById(R.id.search_bar_layout_friends);
 
 
-        search_bar = view.findViewById(R.id.search_bar_friends);
+            search_bar = view.findViewById(R.id.search_bar_friends);
 
-        search_result_txt = view.findViewById(R.id.search_result_txt);
-        search_result_txt.setVisibility(View.GONE);
-
-
-        search_chat_btn = view.findViewById(R.id.search_chat_btn_friends);
-
-        //  phonenumber = getArguments().getString("phonenumber");
+            search_result_txt = view.findViewById(R.id.search_result_txt);
+            search_result_txt.setVisibility(View.GONE);
 
 
-        search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            search_chat_btn = view.findViewById(R.id.search_chat_btn_friends);
 
-        search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
+            //  phonenumber = getArguments().getString("phonenumber");
 
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        phonenumber = sharedPreferences.getString(PHONE, "default");
+            search_bar.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+            search_bar.setRawInputType(InputType.TYPE_CLASS_TEXT);
+
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            phonenumber = sharedPreferences.getString(PHONE, "default");
         /*sharedViewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
 
 
@@ -288,9 +292,9 @@ public class FriendListFagment extends Fragment {
                 phonenumber = user.getPhonenumber();
             }
         });*/
-        //search_chat_btn_back = view.findViewById(R.id.search_chat_btn_back);
+            //search_chat_btn_back = view.findViewById(R.id.search_chat_btn_back);
 
-        //close_search = view.findViewById(R.id.close_search);
+            //close_search = view.findViewById(R.id.close_search);
 
         /*search_chat_btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -332,60 +336,60 @@ public class FriendListFagment extends Fragment {
             }
         });*/
 
-        contactsbntn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            contactsbntn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
 
-                Intent intent = new Intent(getActivity(), ContactsActivity.class);
-                intent.putExtra("phonenumber", phonenumber);
-                startActivity(intent);
-
-            }
-        });
-
-        search_chat_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //search_bar_layout.setVisibility(View.VISIBLE);
-
-                if(searchBtnActive) {
-                    searchBtnActive = false;
-                    appTitle.setVisibility(View.GONE);
-
-                    search_bar.setVisibility(View.VISIBLE);
-
-                    showSoftKeyboard(search_bar);
-
-                    // search_bar.setFocusable(true);
-                    requests_btn.setVisibility(View.GONE);
-
-                    search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp));
-                    search_bar.requestFocus();
-                    // search_bar.setFocusable(true);
-                    // search_bar.setSelected(true);
-
-                    // search_btn_layout.setVisibility(View.GONE);
-                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-
-                } else {
-                    searchBtnActive = true;
-
-                    appTitle.setVisibility(View.VISIBLE);
-                    requests_btn.setVisibility(View.VISIBLE);
-
-                    hideSoftKeyboard(search_bar);
-                    search_bar.setText("");
-
-                    search_bar.setVisibility(View.GONE);
-
-                    search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_search_black_24dp));
+                    Intent intent = new Intent(getActivity(), ContactsActivity.class);
+                    intent.putExtra("phonenumber", phonenumber);
+                    startActivity(intent);
 
                 }
+            });
+
+            search_chat_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //search_bar_layout.setVisibility(View.VISIBLE);
+
+                    if (searchBtnActive) {
+                        searchBtnActive = false;
+                        appTitle.setVisibility(View.GONE);
+
+                        search_bar.setVisibility(View.VISIBLE);
+
+                        showSoftKeyboard(search_bar);
+
+                        // search_bar.setFocusable(true);
+                        requests_btn.setVisibility(View.GONE);
+
+                        search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp));
+                        search_bar.requestFocus();
+                        // search_bar.setFocusable(true);
+                        // search_bar.setSelected(true);
+
+                        // search_btn_layout.setVisibility(View.GONE);
+                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
+                    } else {
+                        searchBtnActive = true;
+
+                        appTitle.setVisibility(View.VISIBLE);
+                        requests_btn.setVisibility(View.VISIBLE);
+
+                        hideSoftKeyboard(search_bar);
+                        search_bar.setText("");
+
+                        search_bar.setVisibility(View.GONE);
+
+                        search_chat_btn.setBackground(getActivity().getDrawable(R.drawable.ic_search_black_24dp));
+
+                    }
 
 
-            }
-        });
+                }
+            });
 
 /*        search_btn_layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,107 +429,107 @@ public class FriendListFagment extends Fragment {
             }
         });*/
 
-        search_bar.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            search_bar.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
 
-                //userList.clear();
-            }
+                    //userList.clear();
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (s.length() > 0)
-                    searchFriends(s.toString().toLowerCase());
+                    if (s.length() > 0)
+                        searchFriends(s.toString().toLowerCase());
 
-                else {
+                    else {
                     /*userList.clear();
                     friendsAdapter.notifyDataSetChanged();
                     search_result_txt.setVisibility(View.VISIBLE);
                     search_result_txt.setText("Add friends from search tab");*/
 
-                    //populateWithFriends();
-                    if (before > 0)
-                        friendsAdapter.updateList(resettedList);
+                        //populateWithFriends();
+                        if (before > 0)
+                            friendsAdapter.updateList(resettedList);
+                    }
+
+
                 }
 
+                @Override
+                public void afterTextChanged(Editable s) {
 
+
+                }
+            });
+
+
+            progressBar = view.findViewById(R.id.progress);
+            progressBarTwo = view.findViewById(R.id.progressTwo);
+
+            try {
+                appTitle.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                requests_btn.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                search_result_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            } catch (Exception e) {
+                //
             }
 
-            @Override
-            public void afterTextChanged(Editable s) {
+            requests_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), RequestTrackerActivity.class);
+
+                    getActivity().startActivity(intent);
+                    enableRefreshButton = true;
+                }
+            });
+
+            Display display = getActivity().getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            float displayWidth = size.x;
 
 
-            }
-        });
+            int spanCount; // 3 columns
+            int spacing = 0; // 50px
+            boolean includeEdge = true;
+
+            if (displayWidth >= 1920)
+                spanCount = 2;
+
+            else if (displayWidth >= 1080)
+                spanCount = 2;
+
+            else if (displayWidth >= 500)
+                spanCount = 2;
+            else
+                spanCount = 1;
+
+            search_bar.getLayoutParams().width = (int) displayWidth;
+
+            LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
 
 
-        progressBar = view.findViewById(R.id.progress);
-        progressBarTwo = view.findViewById(R.id.progressTwo);
+            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
-        try {
-            appTitle.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            requests_btn.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-            search_result_txt.setTypeface(Typeface.createFromAsset(getActivity().getAssets(), "fonts/samsungsharpsans-bold.otf"));
-        }catch (Exception e) {
-            //
-        }
+            //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+            friend_list_recyclerview.setLayoutManager(gridLayoutManager);
+            friend_list_recyclerview.setHasFixedSize(true);
+            friend_list_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-        requests_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), RequestTrackerActivity.class);
-
-                getActivity().startActivity(intent);
-                enableRefreshButton = true;
-            }
-        });
-
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        float displayWidth = size.x;
+            friend_list_recyclerview.setItemViewCacheSize(20);
+            friend_list_recyclerview.setDrawingCacheEnabled(true);
+            friend_list_recyclerview.setItemAnimator(new DefaultItemAnimator());
+            friend_list_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
 
-        int spanCount; // 3 columns
-        int spacing = 0; // 50px
-        boolean includeEdge = true;
-
-        if(displayWidth>=1920)
-            spanCount = 2;
-
-        else if(displayWidth>=1080)
-            spanCount = 2;
-
-        else if(displayWidth>=500)
-            spanCount=2;
-        else
-            spanCount=1;
-
-        search_bar.getLayoutParams().width = (int) displayWidth;
-
-        LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),spanCount);
+            // peopleAdapter = new FriendsAdapter(getContext(), userList,activity);
+            // friend_list_recyclerview.setAdapter(peopleAdapter);
 
 
-        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
-
-        //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        friend_list_recyclerview.setLayoutManager(gridLayoutManager);
-        friend_list_recyclerview.setHasFixedSize(true);
-        friend_list_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
-        friend_list_recyclerview.setItemViewCacheSize(20);
-        friend_list_recyclerview.setDrawingCacheEnabled(true);
-        friend_list_recyclerview.setItemAnimator(new DefaultItemAnimator());
-        friend_list_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-
-        // peopleAdapter = new FriendsAdapter(getContext(), userList,activity);
-        // friend_list_recyclerview.setAdapter(peopleAdapter);
-
-
-        //animateMenuImage(progress_menu_logo, progress_menu_logo_two);
+            //animateMenuImage(progress_menu_logo, progress_menu_logo_two);
 
 
 
@@ -567,7 +571,8 @@ public class FriendListFagment extends Fragment {
             }
         }, 400);*/
 
-        return view;
+            return view;
+        }
     }
 
     private void getUserPhonenumber() {
