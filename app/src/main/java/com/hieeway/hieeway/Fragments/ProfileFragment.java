@@ -218,15 +218,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         this.changePictureListener = (ChangePictureListener) activity;
         this.activity = (NavButtonTest) activity;
     }
-
-
-
-/*
+    /*
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }*/
-
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -376,8 +372,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
     }
-
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -674,7 +668,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 public void onClick(View v) {
                     if (!bottomSheetDialogVisible) {
 
-                        feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                        feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener, "profile");
                         feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         feelingDialog.show();
                     }
@@ -685,7 +679,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 @Override
                 public void onClick(View v) {
                     if (!bottomSheetDialogVisible) {
-                        feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                        feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener, "profile");
                         feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         feelingDialog.show();
                     }
@@ -794,7 +788,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             emoji_holder_layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener);
+                    feelingDialog = new FeelingDialog(getContext(), ProfileFragment.this, feelingNow, addFeelingFragmentListener, "profile");
                     feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     feelingDialog.show();
                 }
@@ -1239,8 +1233,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }, 1000);
     }
 
-
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -1542,7 +1534,9 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     public void changeFeeling(String feeling) {
         DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
         animateEmoji();
+
         HashMap<String, Object> feelingHash = new HashMap<>();
         feeling_icon.setVisibility(View.VISIBLE);
         emoji_icon.setVisibility(View.GONE);
@@ -1604,8 +1598,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
     }
 
-
-
     public void setBottomSheetBehavior(MotionEvent event) {
         try {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
@@ -1663,7 +1655,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }
 
     }
-
 
     public void setActiveProgressVisibility(int visibility) {
         upload_active_progress.setVisibility(visibility);

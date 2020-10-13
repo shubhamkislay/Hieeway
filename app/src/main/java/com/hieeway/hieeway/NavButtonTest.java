@@ -430,7 +430,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
         editBioLayoutFragment = new EditBioLayoutFragment();
 
-        addFeelingFragment = new AddFeelingFragment();
+
 
         /*menuFragmentManager.beginTransaction()
                 .replace(R.id.container_layout, chatsFragment).commit();*/
@@ -2139,39 +2139,71 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
     }
 
     @Override
-    public void setFeelingChange(Boolean returnFromAddFeeling, String feelingIcon, String feelingText) {
+    public void setFeelingChange(Boolean returnFromAddFeeling, String feelingIcon, String feelingText, String fromFragment) {
 
-        if (returnFromAddFeeling) {
-
-            profileFragment.setImageSelectionCropListener(NavButtonTest.this);
-            profileFragment.setEditBioFragmentListener(NavButtonTest.this);
-            profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    menuFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
-                            .replace(R.id.container_layout, profileFragment).commit();
-                }
-            }, changeAnimation);
+        if (fromFragment.equals("shots")) {
+            if (returnFromAddFeeling) {
 
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        menuFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                .replace(R.id.container_layout, shotsFragment).commit();
+                    }
+                }, changeAnimation);
+
+
+            } else {
+                addFeelingFragment = new AddFeelingFragment("shots");
+
+                addFeelingFragment.setAddFeelingFragmentListener(NavButtonTest.this);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        menuFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                                .replace(R.id.container_layout, addFeelingFragment).commit();
+
+                    }
+                }, changeAnimation);
+
+            }
         } else {
-            addFeelingFragment = new AddFeelingFragment();
+            if (returnFromAddFeeling) {
 
-            addFeelingFragment.setAddFeelingFragmentListener(NavButtonTest.this);
+                profileFragment.setImageSelectionCropListener(NavButtonTest.this);
+                profileFragment.setEditBioFragmentListener(NavButtonTest.this);
+                profileFragment.setAddFeelingFragmentListener(NavButtonTest.this);
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    menuFragmentManager.beginTransaction()
-                            .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
-                            .replace(R.id.container_layout, addFeelingFragment).commit();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        menuFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_bottom_to_top, R.anim.exit_bottom_to_top)
+                                .replace(R.id.container_layout, profileFragment).commit();
+                    }
+                }, changeAnimation);
 
-                }
-            }, changeAnimation);
 
+            } else {
+                addFeelingFragment = new AddFeelingFragment("profile");
+
+                addFeelingFragment.setAddFeelingFragmentListener(NavButtonTest.this);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        menuFragmentManager.beginTransaction()
+                                .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)
+                                .replace(R.id.container_layout, addFeelingFragment).commit();
+
+                    }
+                }, changeAnimation);
+
+            }
         }
 
     }

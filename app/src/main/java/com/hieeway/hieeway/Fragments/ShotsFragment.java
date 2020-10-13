@@ -1,11 +1,17 @@
 package com.hieeway.hieeway.Fragments;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Display;
@@ -15,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -34,6 +42,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,37 +54,54 @@ import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.GroupsAdapter;
 import com.hieeway.hieeway.Adapters.PostAdapter;
 import com.hieeway.hieeway.ChatParentActivity;
+import com.hieeway.hieeway.FeelingDialog;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
 import com.hieeway.hieeway.GroupChatActivity;
+import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.AnimationArrowListener;
 import com.hieeway.hieeway.Interface.ChatFragmentOpenListener;
+import com.hieeway.hieeway.Interface.FeelingListener;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.FriendListValues;
 import com.hieeway.hieeway.Model.Groups;
 import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.Model.Post;
+import com.hieeway.hieeway.Model.User;
+import com.hieeway.hieeway.NavButtonTest;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.SharedViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.hieeway.hieeway.NavButtonTest.CURR_USER_ID;
+import static com.hieeway.hieeway.NavButtonTest.USER_NAME;
+import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 
 
-public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener {
+public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener, FeelingListener {
 
     private RecyclerView feeds_recyclerview, groups_recyclerview;
     private TextView feed_title, shots_title, groups_title;
-    private Activity parentActivity;
+    public static final String FEELING = "feeling";
     public static final String SHARED_PREFS = "sharedPrefs";
     private FriendListFragmentViewModel friendListFragmentViewModel;
     private GroupsAdapter groupsAdapter;
     private ImageButton chats;
     public static final String USER_ID = "userid";
     private List<MyGroup> userList;
+    final static String HAPPY = "happy";
+    final static String BORED = "bored";
+    final static String EXCITED = "excited";
+    final static String SAD = "sad";
+    final static String CONFUSED = "confused";
+    final static String ANGRY = "angry";
+    RelativeLayout emoji_holder_layout;
     private ChatFragmentOpenListener chatFragmentOpenListener;
     private List<MyGroup> myGroupList;
     StaggeredGridLayoutManager staggeredGridLayoutManager;
@@ -88,6 +114,12 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
     private Button see_all_btn;
     private Boolean lastPost = false;
     private View view = null;
+    TextView feeling_icon, emoji_icon;
+    FeelingDialog feelingDialog;
+    String feelingNow = null;
+    AddFeelingFragmentListener addFeelingFragmentListener;
+    private NavButtonTest parentActivity;
+    private SharedViewModel sharedViewModel;
 
     public ShotsFragment() {
 
@@ -95,14 +127,15 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
 
     public ShotsFragment(Activity activity) {
         this.animationArrowListener = (AnimationArrowListener) activity;
-        parentActivity = activity;
+        parentActivity = (NavButtonTest) activity;
         this.chatFragmentOpenListener = (ChatFragmentOpenListener) activity;
-
+        this.addFeelingFragmentListener = (AddFeelingFragmentListener) activity;
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         if (view != null)
@@ -119,13 +152,18 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
             groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
             chats = view.findViewById(R.id.chats);
             see_all_btn = view.findViewById(R.id.see_all_btn);
+            feeling_icon = view.findViewById(R.id.feeling_icon);
+            emoji_icon = view.findViewById(R.id.emoji_icon);
+            emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
 
             try {
                 sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
                 userID = sharedPreferences.getString(USER_ID, "");
+                feelingNow = sharedPreferences.getString(FEELING, "happy");
             } catch (NullPointerException e) {
                 userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                feelingNow = "happy";
             }
 
 
@@ -285,9 +323,121 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
                 }
             });
 
+            feeling_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    feelingDialog = new FeelingDialog(getContext(), ShotsFragment.this, feelingNow, addFeelingFragmentListener, "shots");
+                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    feelingDialog.show();
+
+                }
+            });
+            emoji_holder_layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    feelingDialog = new FeelingDialog(getContext(), ShotsFragment.this, feelingNow, addFeelingFragmentListener, "shots");
+                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    feelingDialog.show();
+
+                }
+            });
+
+            emoji_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    feelingDialog = new FeelingDialog(getContext(), ShotsFragment.this, feelingNow, addFeelingFragmentListener, "shots");
+                    feelingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    feelingDialog.show();
+
+                }
+            });
+
 
         }
         return view;
+    }
+
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                sharedViewModel = ViewModelProviders.of(parentActivity).get(SharedViewModel.class);
+
+                sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+                    @Override
+                    public void onChanged(@Nullable User user) {
+
+
+                        //  feeling_txt.setText(user.getFeeling());
+                        feelingNow = user.getFeeling();
+                        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                        editor.putString(FEELING, feelingNow);
+                        editor.apply();
+
+                        try {
+                            if (!user.getFeelingIcon().equals("default")) {
+                                feelingNow = user.getFeeling();
+                                feeling_icon.setVisibility(View.GONE);
+                                emoji_icon.setText(user.getFeelingIcon());
+                                emoji_icon.setVisibility(View.VISIBLE);
+
+
+                            } else {
+                                feeling_icon.setVisibility(View.GONE);
+                                emoji_icon.setVisibility(View.GONE);
+
+                                feelingNow = user.getFeeling();
+                                switch (user.getFeeling()) {
+                                    case HAPPY:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                                        break;
+                                    case SAD:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                                        break;
+                                    case BORED:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                                        break;
+                                    case ANGRY:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                                        break;
+                                    case "excited":
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
+                                        break;
+                                    case CONFUSED:
+                                        feeling_icon.setVisibility(View.VISIBLE);
+                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                                        break;
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            //
+                        }
+
+
+                    }
+                });
+
+
+            }
+        }, 350);
     }
 
     private void playArrowAnimation() {
@@ -479,5 +629,78 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener 
     @Override
     public void seeAllBtnVisibility(int visibility) {
         see_all_btn.setVisibility(visibility);
+    }
+
+    @Override
+    public void changeFeeling(String feeling) {
+        DatabaseReference feelingReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(userID);
+
+        animateEmoji();
+
+        HashMap<String, Object> feelingHash = new HashMap<>();
+        feeling_icon.setVisibility(View.VISIBLE);
+        emoji_icon.setVisibility(View.GONE);
+        switch (feeling) {
+            case HAPPY:
+                feelingHash.put("feeling", HAPPY);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(parentActivity.getResources().getColor(R.color.colorPrimaryDark)));
+
+                break;
+            case SAD:
+                feelingHash.put("feeling", SAD);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(parentActivity.getResources().getColor(R.color.colorPrimaryDark)));
+
+                break;
+            case BORED:
+                feelingHash.put("feeling", BORED);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(parentActivity.getResources().getColor(R.color.colorPrimaryDark)));
+
+                break;
+            case ANGRY:
+                feelingHash.put("feeling", ANGRY);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(parentActivity.getResources().getColor(R.color.colorPrimaryDark)));
+
+                break;
+            case "excited":
+                feelingHash.put("feeling", "excited");
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(parentActivity.getResources().getColor(R.color.colorPrimaryDark)));
+
+                break;
+            case CONFUSED:
+                feelingHash.put("feeling", CONFUSED);
+                feelingHash.put("feelingIcon", "default");
+                feelingReference.updateChildren(feelingHash);
+                feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                feeling_icon.setBackgroundTintList(ColorStateList.valueOf(parentActivity.getResources().getColor(R.color.colorPrimaryDark)));
+
+                break;
+        }
+
+    }
+
+    public void animateEmoji() {
+        Animation hyperspaceJump = AnimationUtils.loadAnimation(getContext(), R.anim.image_bounce);
+
+        hyperspaceJump.setRepeatMode(Animation.INFINITE);
+
+        emoji_holder_layout.setAnimation(hyperspaceJump);
+        //feeling_txt.setAnimation(hyperspaceJump);
+
     }
 }

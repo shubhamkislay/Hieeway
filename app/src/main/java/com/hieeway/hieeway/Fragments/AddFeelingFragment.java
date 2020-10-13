@@ -47,9 +47,11 @@ public class AddFeelingFragment extends Fragment implements EmojiDisplayAdapter.
     EmojiDisplayAdapter adapter;
     List<String> emptyList;
     AddFeelingFragmentListener addFeelingFragmentListener;
+    String fromFragment;
 
-    public AddFeelingFragment() {
+    public AddFeelingFragment(String fromFragment) {
         // Required empty public constructor
+        this.fromFragment = fromFragment;
     }
 
     public static void hideKeyboardFrom(Context context, View view) {
@@ -99,10 +101,10 @@ public class AddFeelingFragment extends Fragment implements EmojiDisplayAdapter.
                     databaseReference.updateChildren(hashMap);
                     hideKeyboardFrom(getContext(), view);
 
-                    addFeelingFragmentListener.setFeelingChange(true, emoji_icon.getText().toString(), edit_feeling.getText().toString());
+                    addFeelingFragmentListener.setFeelingChange(true, emoji_icon.getText().toString(), edit_feeling.getText().toString(), fromFragment);
                 } else {
                     hideKeyboardFrom(getContext(), view);
-                    addFeelingFragmentListener.setFeelingChange(true, "default", "");
+                    addFeelingFragmentListener.setFeelingChange(true, "default", "", fromFragment);
                 }
             }
         });
@@ -114,7 +116,7 @@ public class AddFeelingFragment extends Fragment implements EmojiDisplayAdapter.
 
                 hideKeyboardFrom(getContext(), view);
 
-                addFeelingFragmentListener.setFeelingChange(true, "default", "");
+                addFeelingFragmentListener.setFeelingChange(true, "default", "", fromFragment);
             }
         });
 

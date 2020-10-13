@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     private EditText editTextTitle;
     private EditText editTextMessage;
     RelativeLayout splash_layout;
-
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
     public static final String PUBLIC_KEY = "publicKey";
@@ -118,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     public static final String USER_ID = "userid";
     public static final String PHOTO_URL = "photourl";
     public static final String ACTIVE_PHOTO = "activePhoto";
-
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
     public static final String NAME = "name";
@@ -140,11 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
     RelativeLayout highlights_layout;
     private ImageButton why_hieeway_btn;
     String activeImage = "default";
-
-
     GoogleApiClient mCredentialsApiClient;
-
-
     ImageView sendArrow, background_screen;
     float buttonSizeAlpha = 1.30f;
     float displayHeight;

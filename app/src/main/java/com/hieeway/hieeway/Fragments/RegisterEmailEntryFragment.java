@@ -56,6 +56,7 @@ public class RegisterEmailEntryFragment extends Fragment {
 
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String PRIVATE_KEY = "privateKey";
+    public static final String FEELING = "feeling";
     public static final String PUBLIC_KEY = "publicKey";
     public static final String PUBLIC_KEY_ID = "publicKeyID";
     public static final String USER_ID = "userid";
@@ -434,6 +435,7 @@ public class RegisterEmailEntryFragment extends Fragment {
         editor.putBoolean(MUSIC_BEACON, false);
         editor.putBoolean(SPOTIFY_CONNECT, false);
         editor.putBoolean(VISIBILITY, false);
+        editor.putString(FEELING, "happy");
 
 
         editor.apply();

@@ -40,14 +40,16 @@ public class FeelingDialog extends Dialog {
     TextView bored_txt;
     RelativeLayout add_feeling_layout, add_feeling_btn, custom_feel_bacl;
     Context context;
+    String fromFragment;
 
 
-    public FeelingDialog(Context context, FeelingListener feelingListener, String feelingNow, AddFeelingFragmentListener addFeelingFragmentListener) {
+    public FeelingDialog(Context context, FeelingListener feelingListener, String feelingNow, AddFeelingFragmentListener addFeelingFragmentListener, String fromFragment) {
         super(context);
         this.context = context;
         this.feelingListener = feelingListener;
         this.feelingNow = feelingNow;
         this.addFeelingFragmentListener = addFeelingFragmentListener;
+        this.fromFragment = fromFragment;
     }
 
     @Override
@@ -78,7 +80,7 @@ public class FeelingDialog extends Dialog {
         add_feeling_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addFeelingFragmentListener.setFeelingChange(false, "", "");
+                addFeelingFragmentListener.setFeelingChange(false, "", "", fromFragment);
                 dismiss();
             }
         });
@@ -86,7 +88,7 @@ public class FeelingDialog extends Dialog {
         add_feeling_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addFeelingFragmentListener.setFeelingChange(false, "", "");
+                addFeelingFragmentListener.setFeelingChange(false, "", "", fromFragment);
                 dismiss();
             }
         });
