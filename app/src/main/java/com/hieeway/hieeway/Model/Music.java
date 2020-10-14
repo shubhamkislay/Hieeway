@@ -19,6 +19,18 @@ public class Music implements Comparable<Music> {
     public Music() {
     }
 
+    public Music(String spotifyId, String spotifySong, String spotifyArtist, ImageUri spotifyCover, String timestamp, String userId, String userPhoto, String username, String musicKey) {
+        this.spotifyId = spotifyId;
+        this.spotifySong = spotifySong;
+        this.spotifyArtist = spotifyArtist;
+        this.spotifyCover = spotifyCover;
+        this.timestamp = timestamp;
+        this.userId = userId;
+        this.userPhoto = userPhoto;
+        this.username = username;
+        this.musicKey = musicKey;
+    }
+
     public String getSpotifyId() {
         return spotifyId;
     }

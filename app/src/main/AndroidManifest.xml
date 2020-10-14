@@ -72,7 +72,8 @@
         <activity
             android:name=".NavButtonTest"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" /> <!-- android:screenOrientation="portrait" -->
+            android:theme="@style/AppTheme" /> <!-- android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"-->
         <activity
             android:name=".NavButtonTestActivity"
             android:screenOrientation="portrait"

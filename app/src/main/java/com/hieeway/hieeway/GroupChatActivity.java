@@ -160,7 +160,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private RecyclerView message_recycler_View;
     private ValueEventListener valueEventListener;
     private List<GroupMessage> groupMessageList;
-    private DatabaseReference groupMessageRef;
     private GroupMessageAdapter groupMessageAdapter;
     private String userID;
     private String userPhoto;
@@ -218,6 +217,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private DatabaseReference seekRef;
     private ItemTouchHelper itemTouchHelper;
     private boolean youtubeVisible = false;
+    DatabaseReference groupMessageSendRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -298,7 +298,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         groupNameTxt = intent.getStringExtra("groupName");
         iconUrl = intent.getStringExtra("icon");
 
-        groupMessageRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+
+        groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
                 .child(groupID);
 
 
@@ -961,7 +962,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             }
         };
 
-        groupMessageRef.addValueEventListener(valueEventListener);
+        groupMessageSendRef.addValueEventListener(valueEventListener);
 
         groupMessageAdapter.setAppRemote(null);
 
@@ -1326,8 +1327,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     }
 
     private void sendVideoMessage(YoutubeSync youtubeSync, String url) {
-        DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
-                .child(groupID);
+
 
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1384,8 +1384,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         if (message_box.getText().toString().length() > 0) {
             String message = message_box.getText().toString();
-            DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
-                    .child(groupID);
 
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1594,7 +1592,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     protected void onStop() {
         super.onStop();
         try {
-            groupMessageRef.removeEventListener(valueEventListener);
+            groupMessageSendRef.removeEventListener(valueEventListener);
         } catch (Exception e) {
             //
         }
@@ -1617,8 +1615,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
-        DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
-                .child(groupID);
 
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());

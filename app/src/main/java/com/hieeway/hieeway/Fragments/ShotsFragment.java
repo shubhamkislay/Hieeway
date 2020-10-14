@@ -116,7 +116,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
     private Button see_all_btn;
     private Boolean lastPost = false;
     private View view = null;
-    TextView feeling_icon, emoji_icon;
+    TextView feeling_icon, emoji_icon, new_shot_btn;
     FeelingDialog feelingDialog;
     String feelingNow = null;
     AddFeelingFragmentListener addFeelingFragmentListener;
@@ -157,6 +157,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             feeling_icon = view.findViewById(R.id.feeling_icon);
             emoji_icon = view.findViewById(R.id.emoji_icon);
             emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
+            new_shot_btn = view.findViewById(R.id.new_shot_btn);
 
             try {
                 sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
@@ -193,6 +194,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                 feed_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
                 groups_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
                 shots_title.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+                new_shot_btn.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
                 //text_feed.setTypeface(Typeface.createFromAsset(parentActivity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
             } catch (Exception e) {
@@ -212,7 +214,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-                        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.darkButtonBackground));
+                        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_darktheme_btn_active));
                     } catch (Exception e) {
                         //
                     }
@@ -261,6 +263,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             feeds_recyclerview.setHasFixedSize(true);
             feeds_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
+
             RecyclerView.ItemAnimator animator = feeds_recyclerview.getItemAnimator();
             if (animator instanceof SimpleItemAnimator) {
                 ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
@@ -272,8 +275,19 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             feeds_recyclerview.setItemAnimator(new DefaultItemAnimator());
             feeds_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
+            Post post = new Post();
+            post.setMediaKey("xyz");
+            post.setMediaUrl("xyz");
+            post.setPostKey("xyz");
+            post.setTimeStamp("xyz");
+            post.setType("xyz");
+            post.setUsername("xyz");
+            post.setUserId(userID);
+
+            postList.add(post);
 
             postAdapter = new PostAdapter(postList, parentActivity, userID);
+            postAdapter.setHasStableIds(true);
 
             feeds_recyclerview.setAdapter(postAdapter);
 
@@ -314,6 +328,13 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                         chats.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300);
                     }
                     return false;
+                }
+            });
+
+            new_shot_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "Creating new shot", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -541,6 +562,17 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
 
         postList.clear();
+
+        Post post = new Post();
+        post.setMediaKey("xyz");
+        post.setMediaUrl("xyz");
+        post.setPostKey("xyz");
+        post.setTimeStamp("xyz");
+        post.setType("xyz");
+        post.setUsername("xyz");
+        post.setUserId(userID);
+
+        postList.add(post);
 
 
         DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")

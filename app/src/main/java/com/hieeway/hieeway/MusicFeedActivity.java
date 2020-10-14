@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.MusicFeedAdapter;
@@ -37,6 +38,8 @@ import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicAdapterItem;
+import com.hieeway.hieeway.Model.MusicMessage;
+import com.hieeway.hieeway.Model.MusicPost;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -81,11 +84,13 @@ public class MusicFeedActivity extends AppCompatActivity {
     private Button connection_error_btn;
     private Boolean connectionSuccessull = false;
     RelativeLayout no_music_layout;
+    String otherUserId, otherUserName, otherUserPhoto;
+    DatabaseReference musicPostRef;
+    private ValueEventListener musicFetchValueEventListener;
 
     @Override
     protected void onResume() {
         super.onResume();
-
 
 
     }
@@ -135,11 +140,12 @@ public class MusicFeedActivity extends AppCompatActivity {
         });
 
 
+        otherUserId = getIntent().getStringExtra("otherUserId");
+        otherUserName = getIntent().getStringExtra("otherUserName");
+        otherUserPhoto = getIntent().getStringExtra("otherUserPhoto");
 
-
-
-
-
+        musicPostRef = FirebaseDatabase.getInstance().getReference("MusicPost")
+                .child(otherUserId);
 
 
         music_recyclerview = findViewById(R.id.music_recyclerview);
@@ -258,7 +264,8 @@ public class MusicFeedActivity extends AppCompatActivity {
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    populateMusicList();
+                                    //populateMusicList();
+                                    populateMusicListForASingleUser();
                                 }
                             }, 500);
 
@@ -341,7 +348,9 @@ public class MusicFeedActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    populateMusicList();
+                    //populateMusicList();
+
+                    populateMusicListForASingleUser();
                 }
             }, 500);
 
@@ -352,6 +361,57 @@ public class MusicFeedActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private void populateMusicListForASingleUser() {
+
+        musicFetchValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                userList.clear();
+                if (snapshot.exists()) {
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        String musicKey = FirebaseDatabase.getInstance().getReference("MusicPost")
+                                .child(otherUserId).push().getKey();
+
+                        MusicPost musicPost = dataSnapshot.getValue(MusicPost.class);
+                        userList.add(new Music(musicPost.getSpotifyId(),
+                                musicPost.getSpotifySong(),
+                                musicPost.getSpotifyArtist(),
+                                musicPost.getSpotifyCover(),
+                                musicPost.getTimestamp(),
+                                otherUserId,
+                                otherUserPhoto,
+                                otherUserName,
+                                musicKey));
+                    }
+                    Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                    if (userList.size() > 3)
+                        userList.subList(3, userList.size()).clear();
+
+
+                    musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                    music_recyclerview.setAdapter(musicFeedAdapter);
+                    musicFeedAdapter.notifyDataSetChanged();
+                    loading_feed.setVisibility(View.GONE);
+
+                    Toast.makeText(MusicFeedActivity.this, "List size: " + userList.size(), Toast.LENGTH_SHORT).show();
+
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        musicPostRef.addValueEventListener(musicFetchValueEventListener);
     }
 
     private void populateMusicList() {
@@ -555,5 +615,11 @@ public class MusicFeedActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         // FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        try {
+            musicPostRef.removeEventListener(musicFetchValueEventListener);
+        } catch (Exception e) {
+            //
+        }
+
     }
 }

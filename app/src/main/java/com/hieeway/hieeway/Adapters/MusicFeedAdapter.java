@@ -189,27 +189,34 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                 new Handler().post(runnable);
             }
         };
-        Glide.with(mContext).load(music.getUserPhoto()).addListener(new RequestListener<Drawable>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                return false;
-            }
+        if (!music.getUserPhoto().equals("default"))
+            Glide.with(mContext).load(music.getUserPhoto()).addListener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    return false;
+                }
 
-            @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
 
-                final Matrix matrix = holder.profile_pic.getImageMatrix();
-                final float imageWidth = resource.getIntrinsicWidth();
-                final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
-                final float scaleRatio = screenWidth / imageWidth;
-                //matrix.postScale(scaleRatio, scaleRatio);
-                matrix.postScale(1, 1);
-                holder.profile_pic.setImageMatrix(matrix);
+                    final Matrix matrix = holder.profile_pic.getImageMatrix();
+                    final float imageWidth = resource.getIntrinsicWidth();
+                    final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels;
+                    final float scaleRatio = screenWidth / imageWidth;
+                    //matrix.postScale(scaleRatio, scaleRatio);
+                    matrix.postScale(1, 1);
+                    holder.profile_pic.setImageMatrix(matrix);
 
-                return false;
-            }
-        }).into(holder.profile_pic);
+                    return false;
+                }
+            }).into(holder.profile_pic);
+
+        else {
+            holder.profile_pic.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            holder.profile_pic.setImageDrawable(activity.getDrawable(R.drawable.no_profile));
+        }
+
         holder.username.setText(music.getUsername() + " played...");
         holder.song_name.setText(music.getSpotifySong());
         holder.artist_name.setText(music.getSpotifyArtist());

@@ -232,7 +232,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.background_theme));
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.nav_darktheme_btn_active));
 
 
 
@@ -1318,7 +1318,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 if (!chatFragmentActive) {
 
                     // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.shotFragmentThemecolor)));
-                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_left_to_right, R.anim.exit_left_to_right)
@@ -2257,7 +2257,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                     //animateBottomNavMenuText(text_feed,feed_button_pressed);
 
-                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.darkButtonBackground));
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
                     menuFragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.enter_top_to_bottom, R.anim.exit_top_to_bottom)

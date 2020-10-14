@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="10dp"
+    android:padding="6dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/item_back"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="4dp"
+        android:background="@drawable/dotted"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <TextView
+        android:id="@+id/create_shot_txt"
+        android:text="Create a shot"
+        android:gravity="center"
+        android:textSize="14sp"
+        app:layout_constraintTop_toTopOf="@id/item_back"
+        app:layout_constraintBottom_toBottomOf="@id/item_back"
+        app:layout_constraintLeft_toLeftOf="@id/item_back"
+        app:layout_constraintRight_toRightOf="@id/item_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

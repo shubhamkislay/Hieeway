@@ -2,11 +2,14 @@ package com.hieeway.hieeway.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +36,7 @@ import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.User;
+import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.PostListDiffUtilCallback;
@@ -53,6 +57,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYP_PHOTO = 2;
     private static final int TYP_VIDEO = 3;
     private static final int TYP_YOUTUBE = 4;
+    private static final int TYP_CREATE = 5;
     private List<Post> postList = new ArrayList<>();
     private Context context;
     private Activity activity;
@@ -83,12 +88,14 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             CustomImageView backItem = view.findViewById(R.id.user_photo);
 
-            backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
+            backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
+
+            TextView back_bottom = view.findViewById(R.id.back_bottom);
+            back_bottom.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
             //backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
-
-
             return new PostViewHolder(view);
+
         } else if (viewType == TYP_TEXT) {
             View view = LayoutInflater.from(context).inflate(R.layout.group_msg_sending_perf, parent, false);
 
@@ -99,8 +106,25 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
             return new PostViewHolder(view);
+        } else if (viewType == TYP_CREATE) {
+            View view = LayoutInflater.from(context).inflate(R.layout.post_create_item, parent, false);
+
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            float dispSize = size.x;
+
+            RelativeLayout backItem = view.findViewById(R.id.item_back);
+
+            backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
+
+            TextView back_bottom = view.findViewById(R.id.create_shot_txt);
+            back_bottom.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+
+            return new PostViewHolder(view);
         } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_msg_sending_perf, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.post_create_item, parent, false);
 
 
             return new PostViewHolder(view);
@@ -110,32 +134,53 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        PostViewHolder postViewHolder = (PostViewHolder) holder;
-        Post post = postList.get(postViewHolder.getAdapterPosition());
 
-        postViewHolder.username.setText(post.getUsername());
+        if (position == 0) {
 
-        getLatestProfilePic(post.getUserId(), postViewHolder.user_photo);
+        } else {
+
+            PostViewHolder postViewHolder = (PostViewHolder) holder;
+            Post post = postList.get(postViewHolder.getAdapterPosition());
+
+            postViewHolder.username.setText(post.getUsername());
+
+            getLatestProfilePic(post.getUserId(), postViewHolder.user_photo);
 
 
-        if (post.getType().equals("music")) {
+            if (post.getType().equals("music")) {
 
 
-            postViewHolder.equalizer.animateBars();
-            postViewHolder.equalizer_view_two.animateBars();
-            postViewHolder.equalizer_view_three.animateBars();
-            postViewHolder.equalizer_view_four.animateBars();
-            postViewHolder.equalizer_view_five.animateBars();
-            postViewHolder.equalizer_view_six.animateBars();
-            postViewHolder.equalizer_view_seven.animateBars();
-            postViewHolder.equalizer_view_eight.animateBars();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        postViewHolder.equalizer_view_two.animateBars();
+                        postViewHolder.equalizer_view_four.animateBars();
+                        postViewHolder.equalizer_view_six.animateBars();
+                        postViewHolder.equalizer_view_eight.animateBars();
+                    }
+                }, 300);
 
-            postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(context, "Opening Music Item", Toast.LENGTH_SHORT).show();
-                }
-            });
+                postViewHolder.equalizer.animateBars();
+                postViewHolder.equalizer_view_three.animateBars();
+                postViewHolder.equalizer_view_five.animateBars();
+                postViewHolder.equalizer_view_seven.animateBars();
+
+
+                postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(context, "Opening Music Item", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(activity, MusicFeedActivity.class);
+                        intent.putExtra("otherUserId", post.getUserId());
+                        intent.putExtra("otherUserName", post.getUsername());
+                        intent.putExtra("otherUserPhoto", "default");
+
+                        activity.startActivity(intent);
+
+                    }
+                });
+            }
         }
 
 
@@ -234,7 +279,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else if(post.getType().equals("youtube"))
             return TYP_YOUTUBE;
         else*/
-        return TYP_MUSIC;
+        if (position == 0)
+            return TYP_CREATE;
+        else
+            return TYP_MUSIC;
     }
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
