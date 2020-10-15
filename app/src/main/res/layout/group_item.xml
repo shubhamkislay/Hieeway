@@ -19,7 +19,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
-        android:textSize="14dp"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@id/user_photo"
         app:layout_constraintStart_toStartOf="@id/user_photo"
         app:layout_constraintTop_toBottomOf="@id/user_photo"
@@ -28,8 +28,8 @@
 
     <com.hieeway.hieeway.CustomCircularView
         android:id="@+id/user_photo"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:scaleType="centerCrop"
         android:transitionName="imageTransition"
         app:layout_constraintEnd_toEndOf="parent"
