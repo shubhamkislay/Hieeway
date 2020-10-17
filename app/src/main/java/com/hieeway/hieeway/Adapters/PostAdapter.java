@@ -1,5 +1,6 @@
 package com.hieeway.hieeway.Adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -180,6 +182,43 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             getLatestProfilePic(post.getUserId(), postViewHolder.user_photo);
 
 
+            postViewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint("ClickableViewAccessibility")
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                        // viewHolder.user_photo.setAlpha(0.4f);
+
+                        postViewHolder.user_photo.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                        postViewHolder.post_ring.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
+
+                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                        postViewHolder.user_photo.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                        postViewHolder.post_ring.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+
+                        //         viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
+
+
+                    } else {
+                        // viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+
+
+                        postViewHolder.user_photo.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                        postViewHolder.post_ring.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                    }
+
+                    return false;
+                }
+
+            });
+
+
             if (post.getType().equals("music")) {
 
 
@@ -330,6 +369,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private CustomImageView user_photo;
         private TextView username, timestamp, type, by_beacon;
+        private RelativeLayout post_ring;
 
        /* EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
                 equalizer_view_five, equalizer_view_six, equalizer_view_seven, equalizer_view_eight;*/
@@ -342,6 +382,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             timestamp = itemView.findViewById(R.id.timestamp);
             type = itemView.findViewById(R.id.type);
             by_beacon = itemView.findViewById(R.id.by_beacon);
+            post_ring = itemView.findViewById(R.id.post_ring);
 
             /*equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
 

@@ -6,6 +6,12 @@
 
     <stroke
         android:width="2dp"
-        android:color="@color/nav_darktheme_btn_active" />
+        android:color="@color/spotify_color" />
 
 </shape>
+
+
+    <!--
+    <stroke
+    android:width="2dp"
+    android:color="@color/nav_darktheme_btn_active" />-->
