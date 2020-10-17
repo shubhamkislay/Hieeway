@@ -695,17 +695,6 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
                     postList.removeAll(postToRemoveList);*/
 
-                    postList.clear();
-                    Post postDum = new Post();
-                    postDum.setMediaKey("xyz");
-                    postDum.setMediaUrl("xyz");
-                    postDum.setPostKey("xyz");
-                    postDum.setTimeStamp("xyz");
-                    postDum.setType("xyz");
-                    postDum.setUsername("xyz");
-                    postDum.setUserId(userID);
-
-                    postList.add(postDummy);
                     postAdapter.updateList(postList);
                 }
 

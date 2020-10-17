@@ -45,6 +45,7 @@ import com.hieeway.hieeway.Model.MusicMessage;
 import com.hieeway.hieeway.Model.MusicPost;
 import com.hieeway.hieeway.Model.PostSeen;
 import com.hieeway.hieeway.Model.User;
+import com.hieeway.hieeway.Utils.SpotifyMusicPostRemote;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -184,6 +185,19 @@ public class MusicFeedActivity extends AppCompatActivity {
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(music_recyclerview);
 
+        SpotifyAppRemote spotifyAppRemote = SpotifyMusicPostRemote.getInstance().getSpotifyAppRemote();
+
+        musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
+                userID,
+                musicPostList,
+                MusicFeedActivity.this,
+                mSpotifyAppRemote,
+                otherUserPhoto,
+                otherUserName,
+                otherUserId
+        );
+        music_recyclerview.setAdapter(musicFeedAdapter);
+
         new_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -273,7 +287,8 @@ public class MusicFeedActivity extends AppCompatActivity {
         }, 10000);
 
 
-        SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
+        //SpotifyAppRemote spotifyAppRemote = SpotifyRemoteHelper.getInstance().getSpotifyAppRemote();
+
 
         if (spotifyAppRemote == null) {
             SpotifyAppRemote.CONNECTOR.connect(this, connectionParams,
@@ -371,10 +386,12 @@ public class MusicFeedActivity extends AppCompatActivity {
 
             // remoteReady = true;
 
+            SpotifyMusicPostRemote.getInstance().setSpotifyAppRemote(spotifyAppRemote);
+
             connecting_spotify_txt.setText("Launching Music Beacon...");
 
 
-            SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
+            //SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
 
             /*Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
             startService(intent1);*/
@@ -406,6 +423,7 @@ public class MusicFeedActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
 
+                //musicPostList.clear();
                 if (snapshot.exists()) {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -498,11 +516,11 @@ public class MusicFeedActivity extends AppCompatActivity {
                         musicPostList.subList(3, musicPostList.size()).clear();
 
                     else if (musicPostList.size() < 1) {
-                        // musicPostRef.addListenerForSingleValueEvent(musicFetchValueEventListener);
+                        //musicPostRef.addListenerForSingleValueEvent(musicFetchValueEventListener);
                     }
 
 
-                    musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
+                    /*musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
                             userID,
                             musicPostList,
                             MusicFeedActivity.this,
@@ -512,12 +530,29 @@ public class MusicFeedActivity extends AppCompatActivity {
                             otherUserId
                     );
                     music_recyclerview.setAdapter(musicFeedAdapter);
-                    //musicFeedAdapter.notifyDataSetChanged();
+                    musicFeedAdapter.notifyDataSetChanged();*/
+
+                    musicFeedAdapter.updateList(musicPostList, mSpotifyAppRemote);
                     loading_feed.setVisibility(View.GONE);
 
                     // Toast.makeText(MusicFeedActivity.this, "List size: " + userList.size(), Toast.LENGTH_SHORT).show();
 
 
+                } else {
+                    /*musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
+                            userID,
+                            musicPostList,
+                            MusicFeedActivity.this,
+                            mSpotifyAppRemote,
+                            otherUserPhoto,
+                            otherUserName,
+                            otherUserId
+                    );
+                    music_recyclerview.setAdapter(musicFeedAdapter);
+                    musicFeedAdapter.notifyDataSetChanged();*/
+
+                    musicFeedAdapter.updateList(musicPostList, mSpotifyAppRemote);
+                    loading_feed.setVisibility(View.GONE);
                 }
 
 
@@ -530,7 +565,7 @@ public class MusicFeedActivity extends AppCompatActivity {
         };
 
 
-        /*HashMap<String, Object> hashMap = new HashMap<>();
+/*        HashMap<String, Object> hashMap = new HashMap<>();
 
         hashMap.put("dummy", userID);
 
@@ -547,6 +582,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                 });*/
 
         musicPostRef.addValueEventListener(musicFetchValueEventListener);
+
     }
 
     /*
@@ -758,5 +794,16 @@ public class MusicFeedActivity extends AppCompatActivity {
             //
         }
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            //SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
+        } catch (Exception e) {
+
+        }
     }
 }

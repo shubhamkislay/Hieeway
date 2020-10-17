@@ -80,6 +80,7 @@ import com.hieeway.hieeway.Model.User;
 import static com.hieeway.hieeway.MyApplication.darkMutedSwatch;
 
 import com.hieeway.hieeway.Utils.MutedVideoView;
+import com.hieeway.hieeway.Utils.SpotifyMusicPostRemote;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.yalantis.ucrop.UCrop;
 
@@ -2286,6 +2287,17 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                 }
             }, changeAnimation);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            SpotifyAppRemote.CONNECTOR.disconnect(SpotifyMusicPostRemote.getInstance().getSpotifyAppRemote());
+            SpotifyMusicPostRemote.getInstance().setSpotifyAppRemote(null);
+        } catch (Exception e) {
+
         }
     }
 }

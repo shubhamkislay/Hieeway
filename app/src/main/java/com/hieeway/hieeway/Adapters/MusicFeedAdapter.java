@@ -29,6 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -45,11 +46,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomCircularView;
+import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Like;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicPost;
 import com.hieeway.hieeway.Model.PostSeen;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
+import com.hieeway.hieeway.Utils.MusicFeedListDiffUtilCallback;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
@@ -72,7 +76,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     public SpotifyAppRemote spotifyAppRemote;
-    List<MusicPost> musicPostList;
+    List<MusicPost> musicPostList = new ArrayList<>();
     Activity activity;
     private Context mContext;
     private Palette.Swatch vibrantSwatch;
@@ -95,8 +99,8 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             , List<MusicPost> musicPostList
             , Activity activity
             , SpotifyAppRemote spotifyAppRemote
-            , String username
             , String photo
+            , String username
             , String otherUid) {
         this.mContext = mContext;
         this.userID = userID;
@@ -106,6 +110,9 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         this.photo = photo;
         this.username = username;
         this.otherUid = otherUid;
+
+        this.musicPostList = new ArrayList<>();
+        musicPostList.clear();
 
     }
 
@@ -719,6 +726,20 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             }
         });
 
+
+    }
+
+    public void updateList(List<MusicPost> newMusicPostList, SpotifyAppRemote spotifyAppRemote) {
+
+        this.spotifyAppRemote = spotifyAppRemote;
+
+        MusicFeedListDiffUtilCallback musicFeedListDiffUtilCallback = new MusicFeedListDiffUtilCallback(this.musicPostList, newMusicPostList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(musicFeedListDiffUtilCallback);
+
+        musicPostList.clear();
+        musicPostList.addAll(newMusicPostList);
+
+        diffResult.dispatchUpdatesTo(this);
 
 
     }
