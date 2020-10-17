@@ -482,6 +482,7 @@ public class MusicBeamService extends Service {
 
                                 if (!sharedPreferences.getString(LAST_SPOTIFY_ID, "default").equals(songId)) {
 
+                                    Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
 
                                     String musicKey =
                                             FirebaseDatabase.getInstance().getReference("MusicPost")
@@ -492,7 +493,7 @@ public class MusicBeamService extends Service {
                                     musicPostHash.put("spotifySong", track.name);
                                     musicPostHash.put("spotifyArtist", postArtist);
                                     musicPostHash.put("spotifyCover", track.imageUri);
-                                    musicPostHash.put("timestamp", timestamp.toString());
+                                    musicPostHash.put("timestamp", timeStamp.toString());
 
                                     FirebaseDatabase.getInstance().getReference("MusicPost")
                                             .child(userId)
@@ -514,7 +515,7 @@ public class MusicBeamService extends Service {
                                     postHash.put("mediaUrl", "default");
                                     postHash.put("mediaKey", musicKey);
                                     postHash.put("username", username);
-                                    postHash.put("timestamp", timestamp.toString());
+                                    postHash.put("timeStamp", timeStamp.toString());
 
                                     postRef.child(postKey).updateChildren(postHash);
 

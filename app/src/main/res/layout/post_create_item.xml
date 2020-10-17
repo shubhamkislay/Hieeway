@@ -3,13 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="10dp"
-    android:padding="6dp"
+    android:padding="3dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:id="@+id/item_back"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="4dp"
         android:background="@drawable/dotted"
         android:layout_width="match_parent"
         android:layout_height="200dp" />

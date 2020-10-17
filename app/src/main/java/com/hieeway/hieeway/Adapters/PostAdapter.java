@@ -45,8 +45,15 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import org.ocpsoft.prettytime.PrettyTime;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import es.claucookie.miniequalizerlibrary.EqualizerView;
 
@@ -90,8 +97,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
 
-            TextView back_bottom = view.findViewById(R.id.back_bottom);
-            back_bottom.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            TextView type = view.findViewById(R.id.type);
+            type.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
             //backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
             return new PostViewHolder(view);
@@ -143,6 +150,30 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             Post post = postList.get(postViewHolder.getAdapterPosition());
 
             postViewHolder.username.setText(post.getUsername());
+
+
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                Date parsedDate = dateFormat.parse(post.getTimeStamp());
+
+
+                PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+
+                String ago = prettyTime.format(parsedDate).replace("moments ago", "now");
+
+
+                postViewHolder.timestamp.setText("" + ago);
+            } catch (Exception e) {
+                //
+            }
+
+
+            //} catch (Exception e) { //this generic but you can control another types of exception
+            // look the origin of excption
+
+
+            //Toast.makeText(context,"Exception: "+e.toString(),Toast.LENGTH_SHORT).show();
+
 
             getLatestProfilePic(post.getUserId(), postViewHolder.user_photo);
 
@@ -288,7 +319,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class PostViewHolder extends RecyclerView.ViewHolder {
 
         private CustomImageView user_photo;
-        private TextView username;
+        private TextView username, timestamp;
         EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
                 equalizer_view_five, equalizer_view_six, equalizer_view_seven, equalizer_view_eight;
 
@@ -297,6 +328,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             user_photo = itemView.findViewById(R.id.user_photo);
             username = itemView.findViewById(R.id.username);
+            timestamp = itemView.findViewById(R.id.timestamp);
 
             equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
 

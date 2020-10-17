@@ -187,7 +187,7 @@
                     android:alpha="1.0"
                     android:background="@drawable/status_bar_fade"
                     android:backgroundTint="@color/colorBlack"
-                    android:visibility="visible" />
+                    android:visibility="invisible" />
 
 
             </RelativeLayout>
