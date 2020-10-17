@@ -104,12 +104,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new PostViewHolder(view);
 
         } else if (viewType == TYP_TEXT) {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_msg_sending_perf, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.shots_post_item, parent, false);
 
 
             return new PostViewHolder(view);
         } else if (viewType == TYP_PHOTO) {
-            View view = LayoutInflater.from(context).inflate(R.layout.group_msg_sending_perf, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.shots_post_item, parent, false);
 
 
             return new PostViewHolder(view);
@@ -131,7 +131,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             return new PostViewHolder(view);
         } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.post_create_item, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.shots_post_item, parent, false);
 
 
             return new PostViewHolder(view);
@@ -161,6 +161,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                 String ago = prettyTime.format(parsedDate).replace("moments ago", "now");
 
+                ago = ago.replace("moments from now", "just now");
+
 
                 postViewHolder.timestamp.setText("" + ago);
             } catch (Exception e) {
@@ -181,7 +183,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if (post.getType().equals("music")) {
 
 
-                new Handler().postDelayed(new Runnable() {
+                /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         postViewHolder.equalizer_view_two.animateBars();
@@ -197,6 +199,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 postViewHolder.equalizer_view_seven.animateBars();
 
 
+*/
+                postViewHolder.type.setText("Music");
+                postViewHolder.by_beacon.setText("Music Beacon");
                 postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -211,6 +216,11 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                     }
                 });
+
+
+            } else {
+                postViewHolder.by_beacon.setText("");
+                postViewHolder.type.setText(post.getType());
             }
         }
 
@@ -319,9 +329,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class PostViewHolder extends RecyclerView.ViewHolder {
 
         private CustomImageView user_photo;
-        private TextView username, timestamp;
-        EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
-                equalizer_view_five, equalizer_view_six, equalizer_view_seven, equalizer_view_eight;
+        private TextView username, timestamp, type, by_beacon;
+
+       /* EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
+                equalizer_view_five, equalizer_view_six, equalizer_view_seven, equalizer_view_eight;*/
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -329,8 +340,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             user_photo = itemView.findViewById(R.id.user_photo);
             username = itemView.findViewById(R.id.username);
             timestamp = itemView.findViewById(R.id.timestamp);
+            type = itemView.findViewById(R.id.type);
+            by_beacon = itemView.findViewById(R.id.by_beacon);
 
-            equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
+            /*equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
 
             equalizer_view_two = (EqualizerView) itemView.findViewById(R.id.equalizer_view_two);
             equalizer_view_three = (EqualizerView) itemView.findViewById(R.id.equalizer_view_three);
@@ -338,7 +351,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             equalizer_view_five = (EqualizerView) itemView.findViewById(R.id.equalizer_view_five);
             equalizer_view_six = (EqualizerView) itemView.findViewById(R.id.equalizer_view_six);
             equalizer_view_seven = (EqualizerView) itemView.findViewById(R.id.equalizer_view_seven);
-            equalizer_view_eight = (EqualizerView) itemView.findViewById(R.id.equalizer_view_eight);
+            equalizer_view_eight = (EqualizerView) itemView.findViewById(R.id.equalizer_view_eight);*/
 
         }
     }

@@ -287,7 +287,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             postList.add(post);
 
             postAdapter = new PostAdapter(postList, parentActivity, userID);
-            postAdapter.setHasStableIds(true);
+            //postAdapter.setHasStableIds(true);
 
             feeds_recyclerview.setAdapter(postAdapter);
 
@@ -635,8 +635,11 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Post post = dataSnapshot.getValue(Post.class);
-                        if (!postList.contains(post))
+                        if (!postList.contains(post)) {
                             postList.add(post);
+                        } else {
+                            postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
+                        }
 
                         //Toast.makeText(parentActivity,"Post added",Toast.LENGTH_SHORT).show();
 
@@ -644,6 +647,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
                     //if(lastPost)
                     Collections.sort(postList, Collections.<Post>reverseOrder());
+
                     postAdapter.updateList(postList);
                     //Toast.makeText(parentActivity,"Post Size: "+postList.size(),Toast.LENGTH_SHORT).show();
                     /*postAdapter = new PostAdapter(postList,parentActivity,userID);

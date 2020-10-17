@@ -32,16 +32,6 @@
         app:layout_constraintTop_toTopOf="@id/user_photo" />
 
 
-
-
-
-
-
-
-
-
-
-
     <es.claucookie.miniequalizerlibrary.EqualizerView
         android:id="@+id/equalizer_view"
         android:layout_width="0dp"
@@ -188,7 +178,7 @@
         android:id="@+id/type"
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/timestamp"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="8dp"
         tools:text="Music"
         android:textColor="#fff"
         android:textSize="18sp"
@@ -198,10 +188,10 @@
     <TextView
         android:id="@+id/by_beacon"
         app:layout_constraintBottom_toTopOf="@id/type"
-        android:layout_marginLeft="12dp"
-        android:textSize="10sp"
-        android:textColor="#939393"
-        tools:text="Music Beacon"
+        android:layout_marginLeft="8dp"
+        android:textSize="12sp"
+        android:textColor="#989898"
+        tools:text="Captured by Music Beacon"
         app:layout_constraintLeft_toLeftOf="@id/user_photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -210,7 +200,7 @@
         android:id="@+id/timestamp"
         tools:text="10:00"
 
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginBottom="8dp"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@id/user_photo"
