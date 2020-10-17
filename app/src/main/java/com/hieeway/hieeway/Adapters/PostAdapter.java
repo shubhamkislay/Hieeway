@@ -78,7 +78,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.context = (Context) activity;
         this.userId = userId;
         this.activity = activity;
-        imageLoader.init(ImageLoaderConfiguration.createDefault(context));
+        imageLoader.init(ImageLoaderConfiguration.createDefault(activity.getApplicationContext()));
     }
 
     @NonNull

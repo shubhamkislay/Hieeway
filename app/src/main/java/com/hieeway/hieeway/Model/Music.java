@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.spotify.protocol.types.ImageUri;
 
+import java.util.List;
+
 public class Music implements Comparable<Music> {
 
     private String spotifyId;
@@ -15,11 +17,13 @@ public class Music implements Comparable<Music> {
     private String userPhoto;
     private String username;
     private String musicKey;
+    public List<String> seenBy;
+
 
     public Music() {
     }
 
-    public Music(String spotifyId, String spotifySong, String spotifyArtist, ImageUri spotifyCover, String timestamp, String userId, String userPhoto, String username, String musicKey) {
+    public Music(String spotifyId, String spotifySong, String spotifyArtist, ImageUri spotifyCover, String timestamp, String userId, String userPhoto, String username, String musicKey, List<String> seenBy) {
         this.spotifyId = spotifyId;
         this.spotifySong = spotifySong;
         this.spotifyArtist = spotifyArtist;
@@ -29,6 +33,7 @@ public class Music implements Comparable<Music> {
         this.userPhoto = userPhoto;
         this.username = username;
         this.musicKey = musicKey;
+        this.seenBy = seenBy;
     }
 
     public String getSpotifyId() {
@@ -97,6 +102,14 @@ public class Music implements Comparable<Music> {
 
     public String getMusicKey() {
         return musicKey;
+    }
+
+    public List<String> getSeenBy() {
+        return seenBy;
+    }
+
+    public void setSeenBy(List<String> seenBy) {
+        this.seenBy = seenBy;
     }
 
     public void setMusicKey(String musicKey) {

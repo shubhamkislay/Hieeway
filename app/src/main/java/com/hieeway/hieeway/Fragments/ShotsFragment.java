@@ -69,6 +69,7 @@ import com.hieeway.hieeway.Model.FriendListValues;
 import com.hieeway.hieeway.Model.Groups;
 import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.Model.Post;
+import com.hieeway.hieeway.Model.PostSeen;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.NavButtonTest;
 import com.hieeway.hieeway.R;
@@ -553,7 +554,9 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
 
                 populateGroups();
-                lookForPosts();
+                //lookForPosts();
+
+                populatePosts(userID);
             }
         }, 350);
     }
@@ -623,23 +626,52 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         postRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                postList.clear();
+                Post postDummy = new Post();
+                postDummy.setMediaKey("xyz");
+                postDummy.setMediaUrl("xyz");
+                postDummy.setPostKey("xyz");
+                postDummy.setTimeStamp("xyz");
+                postDummy.setType("xyz");
+                postDummy.setUsername("xyz");
+                postDummy.setUserId(userID);
+
+                postList.add(postDummy);
                 if (snapshot.exists()) {
 
-                    List<Post> postToRemoveList = new ArrayList<>();
+                    /*List<Post> postToRemoveList = new ArrayList<>();
                     for (Post postToRemove : postList) {
                         if (postToRemove.getUserId().equals(friendId))
                             postToRemoveList.add(postToRemove);
                     }
 
-                    postList.removeAll(postToRemoveList);
+                    postList.removeAll(postToRemoveList);*/
+
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Post post = dataSnapshot.getValue(Post.class);
-                        if (!postList.contains(post)) {
-                            postList.add(post);
+
+                        /**
+                         * Fan in code below
+                         */
+                        /*if (!postList.contains(post)) {
+                            try {
+                                if (!post.getSeenBy().contains(userID))
+                                    postList.add(post);
+                            }catch (Exception e)
+                            {
+                                postList.add(post);
+                            }
                         } else {
                             postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
-                        }
+                        }*/
+
+
+                        if (!postList.contains(post))
+                            postList.add(post);
+                        else
+                            postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
 
                         //Toast.makeText(parentActivity,"Post added",Toast.LENGTH_SHORT).show();
 
@@ -655,13 +687,25 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
                 } else {
 
-                    List<Post> postToRemoveList = new ArrayList<>();
+                    /*List<Post> postToRemoveList = new ArrayList<>();
                     for (Post postToRemove : postList) {
                         if (postToRemove.getUserId().equals(friendId))
                             postToRemoveList.add(postToRemove);
                     }
 
-                    postList.removeAll(postToRemoveList);
+                    postList.removeAll(postToRemoveList);*/
+
+                    postList.clear();
+                    Post postDum = new Post();
+                    postDum.setMediaKey("xyz");
+                    postDum.setMediaUrl("xyz");
+                    postDum.setPostKey("xyz");
+                    postDum.setTimeStamp("xyz");
+                    postDum.setType("xyz");
+                    postDum.setUsername("xyz");
+                    postDum.setUserId(userID);
+
+                    postList.add(postDummy);
                     postAdapter.updateList(postList);
                 }
 

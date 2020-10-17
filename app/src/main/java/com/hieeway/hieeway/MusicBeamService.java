@@ -28,9 +28,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.ChatStamp;
+import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.PostSeen;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -42,6 +45,7 @@ import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -355,6 +359,7 @@ public class MusicBeamService extends Service {
                                             }
                                         });
 
+/*
 
                                 final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -410,6 +415,7 @@ public class MusicBeamService extends Service {
 
 
                                                 } catch (NullPointerException e) {
+*/
 /*
                                                     HashMap<String, Object> songHash = new HashMap<>();
                                                     songHash.put("spotifyId", songId);
@@ -466,7 +472,8 @@ public class MusicBeamService extends Service {
                                                     postHash.put("username", username);
 
 
-                                                    postRef.child(postKey).updateChildren(postHash);*/
+                                                    postRef.child(postKey).updateChildren(postHash);*//*
+
 
                                                 }
 
@@ -478,15 +485,20 @@ public class MusicBeamService extends Service {
 
                                             }
                                         });
+*/
 
 
                                 if (!sharedPreferences.getString(LAST_SPOTIFY_ID, "default").equals(songId)) {
 
                                     Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
 
-                                    String musicKey =
-                                            FirebaseDatabase.getInstance().getReference("MusicPost")
-                                                    .child(userId).push().getKey();
+
+                                    //String postKey = "abc";
+
+
+                                    String postKey = FirebaseDatabase.getInstance().getReference("Post")
+                                            .child(userId).push().getKey();
+
 
                                     HashMap<String, Object> musicPostHash = new HashMap<>();
                                     musicPostHash.put("spotifyId", songId);
@@ -494,18 +506,19 @@ public class MusicBeamService extends Service {
                                     musicPostHash.put("spotifyArtist", postArtist);
                                     musicPostHash.put("spotifyCover", track.imageUri);
                                     musicPostHash.put("timestamp", timeStamp.toString());
+                                    musicPostHash.put("postKey", postKey);
 
-                                    FirebaseDatabase.getInstance().getReference("MusicPost")
+                                    //musicPostHash.put("seenBy",postSeenList);
+
+                                    /*FirebaseDatabase.getInstance().getReference("MusicPost")
                                             .child(userId)
-                                            .child(musicKey)
-                                            .updateChildren(musicPostHash);
+                                            .child(postKey)
+                                            .updateChildren(musicPostHash);*/
 
 
                                     DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post")
                                             .child(userId);
 
-                                    String postKey = FirebaseDatabase.getInstance().getReference("Post")
-                                            .child(userId).push().getKey();
 
 
                                     HashMap<String, Object> postHash = new HashMap<>();
@@ -513,14 +526,78 @@ public class MusicBeamService extends Service {
                                     postHash.put("postKey", postKey);
                                     postHash.put("type", "music");
                                     postHash.put("mediaUrl", "default");
-                                    postHash.put("mediaKey", musicKey);
+                                    postHash.put("mediaKey", postKey);
                                     postHash.put("username", username);
                                     postHash.put("timeStamp", timeStamp.toString());
+                                    //postHash.put("seenBy",postSeenList);
 
                                     postRef.child(postKey).updateChildren(postHash);
 
                                     editor.putString(LAST_SPOTIFY_ID, songId);
                                     editor.apply();
+
+
+                                    DatabaseReference postFanOutRef = FirebaseDatabase
+                                            .getInstance()
+                                            .getReference("Post");
+
+                                    DatabaseReference myPostRef = FirebaseDatabase
+                                            .getInstance()
+                                            .getReference("MyPosts");
+
+                                    FirebaseDatabase
+                                            .getInstance()
+                                            .getReference("MyMusicPosts")
+                                            .child(userId)
+                                            .child(postKey)
+                                            .updateChildren(musicPostHash);
+
+                                    myPostRef.child(userId)
+                                            .child(postKey)
+                                            .updateChildren(postHash);
+
+
+                                    FirebaseDatabase.getInstance()
+                                            .getReference("FriendList")
+                                            .child(userId)
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.exists()) {
+                                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                            Friend friend = dataSnapshot.getValue(Friend.class);
+
+                                                            postFanOutRef
+                                                                    .child(friend.getFriendId())
+                                                                    .child(postKey)
+                                                                    .updateChildren(postHash);
+
+                                                            FirebaseDatabase.getInstance().getReference("MusicPost")
+                                                                    .child(friend.getFriendId())
+                                                                    .child(postKey)
+                                                                    .updateChildren(musicPostHash);
+
+                                                            /*HashMap<String, Object> seenHash = new HashMap<>();
+                                                            seenHash.put("seen",false);*/
+
+                                                            /*FirebaseDatabase
+                                                                    .getInstance()
+                                                                    .getReference("PostedTo")
+                                                                    .child(userId)
+                                                                    .child(postKey)
+                                                                    .child(friend.getFriendId())
+                                                                    .updateChildren(seenHash);*/
+
+                                                        }
+
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
 
 
                                 }

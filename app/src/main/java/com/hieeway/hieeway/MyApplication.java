@@ -43,7 +43,7 @@ public class MyApplication extends Application {
         createNotificationChannels();
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
+        //FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG);
 
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {

@@ -76,9 +76,7 @@ import com.hieeway.hieeway.Interface.DeleteOptionsListener;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.Music;
-import com.hieeway.hieeway.MusicFeedActivity;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.SettingsActivity;
 import com.hieeway.hieeway.SharedViewModel;
 import com.hieeway.hieeway.UserPicViewModel;
 

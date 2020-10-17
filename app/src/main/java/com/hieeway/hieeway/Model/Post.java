@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.Comparator;
+import java.util.List;
 
 public class Post implements Comparable<Post> {
 
@@ -16,6 +17,16 @@ public class Post implements Comparable<Post> {
     public String mediaKey;
     public String username;
     public String timeStamp;
+    public String seenBy;
+
+    public String getSeenBy() {
+        return seenBy;
+    }
+
+    public void setSeenBy(String seenBy) {
+        this.seenBy = seenBy;
+    }
+
 
     public Post() {
     }

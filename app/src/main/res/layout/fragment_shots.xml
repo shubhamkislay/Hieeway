@@ -286,14 +286,15 @@
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/groups_recyclerview"
+
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@android:color/transparent"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="16dp"
                                 android:layout_marginLeft="8dp"
                                 android:layout_marginRight="8dp"
                                 android:layout_toStartOf="@id/see_all_btn"
-                                android:layout_marginBottom="8dp"
+                                android:layout_marginBottom="16dp"
                                 android:visibility="visible"
                                 android:orientation="horizontal" />
 

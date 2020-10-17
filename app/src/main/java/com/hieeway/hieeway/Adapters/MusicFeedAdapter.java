@@ -41,28 +41,24 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.Model.Like;
 import com.hieeway.hieeway.Model.Music;
-import com.hieeway.hieeway.Model.MusicAdapterItem;
-import com.hieeway.hieeway.Model.User;
-import com.hieeway.hieeway.MusicFeedActivity;
+import com.hieeway.hieeway.Model.MusicPost;
+import com.hieeway.hieeway.Model.PostSeen;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.ViewProfileActivity;
 import com.spotify.android.appremote.api.ConnectionParams;
-import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Empty;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,7 +72,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     public SpotifyAppRemote spotifyAppRemote;
-    List<Music> userList;
+    List<MusicPost> musicPostList;
     Activity activity;
     private Context mContext;
     private Palette.Swatch vibrantSwatch;
@@ -88,13 +84,29 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private Palette.Swatch darkMutedSwatch;
     private int swatchNumber;
     private Handler mHandler;
+    private String userID;
+    private String photo;
+    private String otherUid;
+    private String username;
 
 
-    public MusicFeedAdapter(Context mContext, List<Music> userList, Activity activity, SpotifyAppRemote spotifyAppRemote) {
+    public MusicFeedAdapter(Context mContext
+            , String userID
+            , List<MusicPost> musicPostList
+            , Activity activity
+            , SpotifyAppRemote spotifyAppRemote
+            , String username
+            , String photo
+            , String otherUid) {
         this.mContext = mContext;
-        this.userList = userList;
+        this.userID = userID;
+        this.musicPostList = musicPostList;
         this.spotifyAppRemote = spotifyAppRemote;
         this.activity = activity;
+        this.photo = photo;
+        this.username = username;
+        this.otherUid = otherUid;
+
     }
 
     @NonNull
@@ -151,17 +163,17 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     @Override
     public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
         // super.onViewAttachedToWindow(holder);
-        Music music = userList.get(holder.getAdapterPosition());
+        MusicPost musicPost = musicPostList.get(holder.getAdapterPosition());
 
         /**
          * Below code plays the songs as soon as it is visible on the screen
          */
 
         /*try {
-            spotifyAppRemote.getPlayerApi().play(music.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
+            spotifyAppRemote.getPlayerApi().play(musicPost.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
                 @Override
                 public void onResult(Empty empty) {
-                    Toast.makeText(mContext, "Playing \"" + music.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Playing \"" + musicPost.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -170,12 +182,63 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
         }*/
 
+        /*HashMap<String, Object> postSeenHash = new HashMap<>();
+
+
+       String updateSeen = null;
+
+        //updateSeen.add(userID);
+        try {
+            updateSeen = musicPost.getSeenBy();
+            if (!musicPost.getSeenBy().contains(userID))
+                updateSeen = musicPost.getSeenBy()+"/-/"+userID;
+            else if(updateSeen==null) {
+                updateSeen = userID;
+            }
+        }catch (Exception e)
+        {
+            updateSeen = userID;
+        }
+        postSeenHash.put("seenBy",updateSeen);*/
+
+        FirebaseDatabase.getInstance().getReference("MusicPost")
+                .child(userID)
+                .child(musicPost.getPostKey())
+                .removeValue();
+        //.updateChildren(postSeenHash);
+
+                /*.child("seenBy")
+                .setValue(updateSeen);*/
+
+        FirebaseDatabase.getInstance().getReference("Post")
+                .child(userID)
+                .child(musicPost.getPostKey())
+                .removeValue();
+        //.updateChildren(postSeenHash);
+               /* .child("seenBy")
+                .setValue(updateSeen);*/
+
+        HashMap<String, Object> postSeenHash = new HashMap<>();
+
+        postSeenHash.put("username", username);
+        postSeenHash.put("photo", photo);
+
+        DatabaseReference seenByRef = FirebaseDatabase
+                .getInstance()
+                .getReference("SeenBy")
+                .child(userID);
+
+        seenByRef
+                .child(musicPost.getPostKey())
+                .child(seenByRef.push().getKey())
+                .updateChildren(postSeenHash);
+
 
     }
 
     @Override
     public void onBindViewHolder(@NonNull MusicFeedAdapter.ViewHolder holder, int position) {
-        Music music = userList.get(position);
+        MusicPost musicPost = musicPostList.get(holder.getAdapterPosition());
 
 
         mHandler = new Handler(Looper.getMainLooper()) {
@@ -189,8 +252,8 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                 new Handler().post(runnable);
             }
         };
-        if (!music.getUserPhoto().equals("default"))
-            Glide.with(mContext).load(music.getUserPhoto()).addListener(new RequestListener<Drawable>() {
+        if (!photo.equals("default"))
+            Glide.with(mContext).load(photo).addListener(new RequestListener<Drawable>() {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                     return false;
@@ -217,9 +280,9 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             holder.profile_pic.setImageDrawable(activity.getDrawable(R.drawable.no_profile));
         }
 
-        holder.username.setText(music.getUsername() + " played...");
-        holder.song_name.setText(music.getSpotifySong());
-        holder.artist_name.setText(music.getSpotifyArtist());
+        holder.username.setText(username + " played...");
+        holder.song_name.setText(musicPost.getSpotifySong());
+        holder.artist_name.setText(musicPost.getSpotifyArtist());
         holder.song_name.setSelected(true);
         holder.artist_name.setSelected(true);
 
@@ -233,8 +296,8 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         // holder.foreground_lay.animate().alpha(0.0f).setDuration(300);
 
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-            Date parsedDate = dateFormat.parse(music.getTimestamp());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Date parsedDate = dateFormat.parse(musicPost.getTimestamp());
 
             PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
             String ago = prettyTime.format(parsedDate).replace("moments ago", "now");
@@ -252,15 +315,15 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         try {
 
             FirebaseDatabase.getInstance().getReference("Likes")
-                    .child(music.getUserId())
-                    .child(music.getMusicKey())
+                    .child(otherUid)
+                    .child(musicPost.getPostKey())
                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Like like = dataSnapshot.getValue(Like.class);
                             try {
-                                if (like.getSong().equals(music.getSpotifySong()))
+                                if (like.getSong().equals(musicPost.getSpotifySong()))
                                     holder.like_btn.setBackgroundTintList(ColorStateList.valueOf(mContext.getResources().getColor(R.color.colorRed)));
                             } catch (Exception e) {
 
@@ -277,7 +340,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         }
 
 
-        spotifyAppRemote.getImagesApi().getImage(music.getSpotifyCover())
+        spotifyAppRemote.getImagesApi().getImage(musicPost.getSpotifyCover())
                 .setResultCallback(new CallResult.ResultCallback<Bitmap>() {
                     @Override
                     public void onResult(Bitmap bitmap) {
@@ -504,13 +567,13 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
 
                 HashMap<String, Object> likesHashMap = new HashMap<>();
-                likesHashMap.put("song", music.getSpotifySong());
-                likesHashMap.put("artist", music.getSpotifyArtist());
+                likesHashMap.put("song", musicPost.getSpotifySong());
+                likesHashMap.put("artist", musicPost.getSpotifyArtist());
 
 
                 FirebaseDatabase.getInstance().getReference("Likes")
-                        .child(music.getUserId())
-                        .child(music.getMusicKey())
+                        .child(otherUid)
+                        .child(musicPost.getPostKey())
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .updateChildren(likesHashMap);
 
@@ -532,10 +595,10 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             @Override
             public void onClick(View v) {
                 try {
-                    spotifyAppRemote.getPlayerApi().play(music.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
+                    spotifyAppRemote.getPlayerApi().play(musicPost.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
                         @Override
                         public void onResult(Empty empty) {
-                            Toast.makeText(mContext, "Playing \"" + music.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Playing \"" + musicPost.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -616,7 +679,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
                 //spotifyAppRemote.getPlayerApi().play(user.getSpotifyId());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("" + music.getSpotifyId()));
+                intent.setData(Uri.parse("" + musicPost.getSpotifyId()));
                 intent.putExtra(Intent.EXTRA_REFERRER,
                         Uri.parse("android-app://" + mContext.getPackageName()));
                 mContext.startActivity(intent);
@@ -632,7 +695,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                 // spotifyAppRemote.getPlayerApi().play(user.getSpotifyId());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 //intent.setData(Uri.parse("spotify:track:"+user.getSpotifySong()));
-                intent.setData(Uri.parse("" + music.getSpotifyId()));
+                intent.setData(Uri.parse("" + musicPost.getSpotifyId()));
                 //spotify:track:2jCnn1QPQ3E8ExtLe6INsx
                 intent.putExtra(Intent.EXTRA_REFERRER,
                         Uri.parse("android-app://" + mContext.getPackageName()));
@@ -647,7 +710,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             public void onClick(View v) {
                 // spotifyAppRemote.getPlayerApi().play(user.getSpotifyId());
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("" + music.getSpotifyId()));
+                intent.setData(Uri.parse("" + musicPost.getSpotifyId()));
                 intent.putExtra(Intent.EXTRA_REFERRER,
                         Uri.parse("android-app://" + mContext.getPackageName()));
                 mContext.startActivity(intent);
@@ -662,7 +725,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        return musicPostList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -721,4 +784,6 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
         }
     }
+
+
 }

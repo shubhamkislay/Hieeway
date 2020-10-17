@@ -26,11 +26,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.MusicFeedAdapter;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
@@ -40,6 +43,7 @@ import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicAdapterItem;
 import com.hieeway.hieeway.Model.MusicMessage;
 import com.hieeway.hieeway.Model.MusicPost;
+import com.hieeway.hieeway.Model.PostSeen;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -62,8 +66,10 @@ public class MusicFeedActivity extends AppCompatActivity {
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
     final String referrer = "adjust_campaign=com.hieeway.hieeway&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
     final String appPackageName = "com.spotify.music";
+    public static final String USER_ID = "userid";
     RecyclerView music_recyclerview;
     List<Music> userList;
+    List<MusicPost> musicPostList;
     int sentListSize;
     Boolean searchedList = false;
     RelativeLayout loading_feed;
@@ -87,6 +93,8 @@ public class MusicFeedActivity extends AppCompatActivity {
     String otherUserId, otherUserName, otherUserPhoto;
     DatabaseReference musicPostRef;
     private ValueEventListener musicFetchValueEventListener;
+    private SharedPreferences sharedPreferences;
+    private String userID;
 
     @Override
     protected void onResume() {
@@ -113,6 +121,15 @@ public class MusicFeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_music_feed);
 
         // FirebaseDatabase.getInstance().setPersistenceEnabled(false);
+
+        try {
+            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            userID = sharedPreferences.getString(USER_ID, "");
+
+        } catch (NullPointerException e) {
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        }
 
 
         new_update = findViewById(R.id.new_update);
@@ -145,7 +162,7 @@ public class MusicFeedActivity extends AppCompatActivity {
         otherUserPhoto = getIntent().getStringExtra("otherUserPhoto");
 
         musicPostRef = FirebaseDatabase.getInstance().getReference("MusicPost")
-                .child(otherUserId);
+                .child(userID);
 
 
         music_recyclerview = findViewById(R.id.music_recyclerview);
@@ -161,6 +178,7 @@ public class MusicFeedActivity extends AppCompatActivity {
         music_pal = findViewById(R.id.music_pal);
 
         userList = new ArrayList<>();
+        musicPostList = new ArrayList<>();
 
         music_recyclerview.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         SnapHelper snapHelper = new PagerSnapHelper();
@@ -170,7 +188,15 @@ public class MusicFeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new_update_lay.setVisibility(View.GONE);
-                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
+                        userID,
+                        musicPostList,
+                        MusicFeedActivity.this,
+                        mSpotifyAppRemote,
+                        otherUserPhoto,
+                        otherUserName,
+                        otherUserId
+                );
                 music_recyclerview.setAdapter(musicFeedAdapter);
                 musicFeedAdapter.notifyDataSetChanged();
                 loading_feed.setVisibility(View.GONE);
@@ -204,7 +230,15 @@ public class MusicFeedActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 new_update_lay.setVisibility(View.GONE);
-                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
+                        userID,
+                        musicPostList,
+                        MusicFeedActivity.this,
+                        mSpotifyAppRemote,
+                        otherUserPhoto,
+                        otherUserName,
+                        otherUserId
+                );
                 music_recyclerview.setAdapter(musicFeedAdapter);
                 musicFeedAdapter.notifyDataSetChanged();
                 loading_feed.setVisibility(View.GONE);
@@ -257,9 +291,9 @@ public class MusicFeedActivity extends AppCompatActivity {
 
 
                             SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
-
+/*
                             Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
-                            startService(intent1);
+                            startService(intent1);*/
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -342,13 +376,14 @@ public class MusicFeedActivity extends AppCompatActivity {
 
             SpotifyRemoteHelper.getInstance().setSpotifyAppRemote(mSpotifyAppRemote);
 
-            Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
-            startService(intent1);
+            /*Intent intent1 = new Intent(MusicFeedActivity.this, MusicBeamService.class);
+            startService(intent1);*/
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     //populateMusicList();
+
 
                     populateMusicListForASingleUser();
                 }
@@ -365,43 +400,126 @@ public class MusicFeedActivity extends AppCompatActivity {
 
     private void populateMusicListForASingleUser() {
 
+        musicPostList.clear();
         musicFetchValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                userList.clear();
+
                 if (snapshot.exists()) {
 
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        String musicKey = FirebaseDatabase.getInstance().getReference("MusicPost")
-                                .child(otherUserId).push().getKey();
+                       /* String musicKey = FirebaseDatabase.getInstance().getReference("MusicPost")
+                                .child(otherUserId).push().getKey();*/
 
                         MusicPost musicPost = dataSnapshot.getValue(MusicPost.class);
-                        userList.add(new Music(musicPost.getSpotifyId(),
-                                musicPost.getSpotifySong(),
-                                musicPost.getSpotifyArtist(),
-                                musicPost.getSpotifyCover(),
-                                musicPost.getTimestamp(),
-                                otherUserId,
-                                otherUserPhoto,
-                                otherUserName,
-                                musicKey));
+                        //MusicPost musicPost = new MusicPost();
+
+                        if (!musicPostList.contains(musicPost))
+                            musicPostList.add(musicPost);
+
+
+/*
+                        List<String> seenBy  = null;
+                        try{
+                            seenBy = musicPost.getSeenBy();
+                            if(!seenBy.contains(userID))
+                                userList.add(new Music(musicPost.getSpotifyId(),
+                                        musicPost.getSpotifySong(),
+                                        musicPost.getSpotifyArtist(),
+                                        musicPost.getSpotifyCover(),
+                                        musicPost.getTimestamp(),
+                                        otherUserId,
+                                        otherUserPhoto,
+                                        otherUserName,
+                                        musicPost.getPostKey(),
+                                        seenBy));
+                        }catch (Exception e)
+                        {
+                            //
+                            seenBy = new ArrayList<>();
+                            userList.add(new Music(musicPost.getSpotifyId(),
+                                    musicPost.getSpotifySong(),
+                                    musicPost.getSpotifyArtist(),
+                                    musicPost.getSpotifyCover(),
+                                    musicPost.getTimestamp(),
+                                    otherUserId,
+                                    otherUserPhoto,
+                                    otherUserName,
+                                    musicPost.getPostKey(),
+                                    seenBy));
+                        }*/
+                       /*String seenBy;
+                        try {
+                            seenBy = musicPost.getSeenBy();
+                            if (!seenBy.contains(userID)) {
+                                *//*userList.add(new Music(musicPost.getSpotifyId(),
+                                        musicPost.getSpotifySong(),
+                                        musicPost.getSpotifyArtist(),
+                                        musicPost.getSpotifyCover(),
+                                        musicPost.getTimestamp(),
+                                        otherUserId,
+                                        otherUserPhoto,
+                                        otherUserName,
+                                        musicPost.getPostKey(),
+                                        seenBy));*//*
+                                musicPostList.add(musicPost);
+                                //Toast.makeText(MusicFeedActivity.this,"Music added by checking",Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                               // Toast.makeText(MusicFeedActivity.this,"Music not added by checking "+userID,Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        }catch (Exception e)
+                        {
+                           // seenBy = new ArrayList<>();;
+                            *//*userList.add(new Music(musicPost.getSpotifyId(),
+                                    musicPost.getSpotifySong(),
+                                    musicPost.getSpotifyArtist(),
+                                    musicPost.getSpotifyCover(),
+                                    musicPost.getTimestamp(),
+                                    otherUserId,
+                                    otherUserPhoto,
+                                    otherUserName,
+                                    musicPost.getPostKey(),
+                                    seenBy));*//*
+
+                            musicPostList.add(musicPost);
+
+                           // Toast.makeText(MusicFeedActivity.this,"Music added",Toast.LENGTH_SHORT).show();
+                        }*/
+
                     }
-                    Collections.sort(userList, Collections.<Music>reverseOrder());
+                    Collections.sort(musicPostList, Collections.<MusicPost>reverseOrder());
 
-                    if (userList.size() > 3)
-                        userList.subList(3, userList.size()).clear();
+                    if (musicPostList.size() > 3)
+                        musicPostList.subList(3, musicPostList.size()).clear();
+
+                    else if (musicPostList.size() < 1) {
+                        // musicPostRef.addListenerForSingleValueEvent(musicFetchValueEventListener);
+                    }
 
 
-                    musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                    musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
+                            userID,
+                            musicPostList,
+                            MusicFeedActivity.this,
+                            mSpotifyAppRemote,
+                            otherUserPhoto,
+                            otherUserName,
+                            otherUserId
+                    );
                     music_recyclerview.setAdapter(musicFeedAdapter);
-                    musicFeedAdapter.notifyDataSetChanged();
+                    //musicFeedAdapter.notifyDataSetChanged();
                     loading_feed.setVisibility(View.GONE);
 
-                    Toast.makeText(MusicFeedActivity.this, "List size: " + userList.size(), Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(MusicFeedActivity.this, "List size: " + userList.size(), Toast.LENGTH_SHORT).show();
 
 
                 }
+
 
             }
 
@@ -411,31 +529,126 @@ public class MusicFeedActivity extends AppCompatActivity {
             }
         };
 
+
+        /*HashMap<String, Object> hashMap = new HashMap<>();
+
+        hashMap.put("dummy", userID);
+
+        FirebaseDatabase.getInstance().getReference("Dummy")
+                .child(userID)
+                .updateChildren(hashMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            musicPostRef.addListenerForSingleValueEvent(musicFetchValueEventListener);
+                        }
+                    }
+                });*/
+
         musicPostRef.addValueEventListener(musicFetchValueEventListener);
     }
 
-    private void populateMusicList() {
+    /*
+        private void populateMusicList() {
 
 
-        FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        userList.clear();
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                Friend friend = snapshot.getValue(Friend.class);
-                                if (friend.getStatus().equals("friends")) {
+            FirebaseDatabase.getInstance().getReference("FriendList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            userList.clear();
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    Friend friend = snapshot.getValue(Friend.class);
+                                    if (friend.getStatus().equals("friends")) {
 
-                                    FirebaseDatabase.getInstance().getReference("Music")
-                                            .child(friend.getFriendId())
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
-                                                    if (musicSnapshot.exists()) {
+                                        FirebaseDatabase.getInstance().getReference("Music")
+                                                .child(friend.getFriendId())
+                                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                        if (musicSnapshot.exists()) {
 
-                                                        try {
+                                                            try {
+                                                                Music music = musicSnapshot.getValue(Music.class);
+
+
+                                                                if (!userList.contains(music)) {
+                                                                    userList.add(music);
+                                                                } else {
+                                                                    userList.remove(music);
+                                                                    userList.add(music);
+                                                                }
+
+
+                                                                if (searchedList && sentListSize < userList.size()) {
+                                                                    try {
+
+                                                                        Collections.sort(userList, Collections.<Music>reverseOrder());
+
+                                                                        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                                                                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                                        editor.putString(CHECKED_TIMESTAMP, userList.get(0).getTimestamp());
+                                                                        editor.apply();
+
+                                                                        new Handler().postDelayed(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userID, userList, MusicFeedActivity.this, mSpotifyAppRemote);
+                                                                                music_recyclerview.setAdapter(musicFeedAdapter);
+                                                                                musicFeedAdapter.notifyDataSetChanged();
+                                                                                loading_feed.setVisibility(View.GONE);
+
+
+                                                                            }
+                                                                        }, 500);
+
+                                                                        new Handler().postDelayed(new Runnable() {
+                                                                            @Override
+                                                                            public void run() {
+                                                                                listPopulated = true;
+
+
+                                                                                if (userList.size() > 0)
+                                                                                    no_music_layout.setVisibility(View.GONE);
+
+                                                                                else
+                                                                                    no_music_layout.setVisibility(View.VISIBLE);
+                                                                            }
+                                                                        }, 1500);
+
+                                                                    } catch (Exception e) {
+                                                                        //
+                                                                    }
+
+                                                                }
+
+                                                            } catch (Exception e) {
+                                                                //
+                                                            }
+
+
+                                                        } else {
+                                                            no_music_layout.setVisibility(View.VISIBLE);
+                                                        }
+
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                        FirebaseDatabase.getInstance().getReference("Music")
+                                                .child(friend.getFriendId())
+                                                .addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
+                                                        if (musicSnapshot.exists()) {
                                                             Music music = musicSnapshot.getValue(Music.class);
 
 
@@ -452,97 +665,20 @@ public class MusicFeedActivity extends AppCompatActivity {
 
                                                                     Collections.sort(userList, Collections.<Music>reverseOrder());
 
-                                                                    SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                                                    editor.putString(CHECKED_TIMESTAMP, userList.get(0).getTimestamp());
-                                                                    editor.apply();
-
                                                                     new Handler().postDelayed(new Runnable() {
                                                                         @Override
                                                                         public void run() {
-                                                                            musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this, userList, MusicFeedActivity.this, mSpotifyAppRemote);
-                                                                            music_recyclerview.setAdapter(musicFeedAdapter);
-                                                                            musicFeedAdapter.notifyDataSetChanged();
-                                                                            loading_feed.setVisibility(View.GONE);
 
-
-                                                                        }
-                                                                    }, 500);
-
-                                                                    new Handler().postDelayed(new Runnable() {
-                                                                        @Override
-                                                                        public void run() {
-                                                                            listPopulated = true;
-
-
-                                                                            if (userList.size() > 0)
-                                                                                no_music_layout.setVisibility(View.GONE);
-
-                                                                            else
-                                                                                no_music_layout.setVisibility(View.VISIBLE);
-                                                                        }
-                                                                    }, 1500);
-
-                                                                } catch (Exception e) {
-                                                                    //
-                                                                }
-
-                                                            }
-
-                                                        } catch (Exception e) {
-                                                            //
-                                                        }
-
-
-                                                    } else {
-                                                        no_music_layout.setVisibility(View.VISIBLE);
-                                                    }
-
-
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                }
-                                            });
-
-                                    FirebaseDatabase.getInstance().getReference("Music")
-                                            .child(friend.getFriendId())
-                                            .addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot musicSnapshot) {
-                                                    if (musicSnapshot.exists()) {
-                                                        Music music = musicSnapshot.getValue(Music.class);
-
-
-                                                        if (!userList.contains(music)) {
-                                                            userList.add(music);
-                                                        } else {
-                                                            userList.remove(music);
-                                                            userList.add(music);
-                                                        }
-
-
-                                                        if (searchedList && sentListSize < userList.size()) {
-                                                            try {
-
-                                                                Collections.sort(userList, Collections.<Music>reverseOrder());
-
-                                                                new Handler().postDelayed(new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-
-                                                                        if (listPopulated) {
-                                                                            new_update_lay.setVisibility(View.VISIBLE);
-                                                                            /*    else
+                                                                            if (listPopulated) {
+                                                                                new_update_lay.setVisibility(View.VISIBLE);
+                                                                                *//*    else
                                                                             if (initialCheck) {
                                                                                 if (secondCheck)
                                                                                     new_update_lay.setVisibility(View.VISIBLE);
                                                                                 else
                                                                                     secondCheck = true;
                                                                             } else
-                                                                                initialCheck = true;*/
+                                                                                initialCheck = true;*//*
                                                                         }
                                                                     }
                                                                 }, 500);
@@ -580,7 +716,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                             float displayHeight = size.y;
 
                             loading_feed.animate().translationY(-displayHeight - 100).setDuration(500);
-                            /*new Handler().postDelayed(new Runnable() {
+                            *//*new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     Collections.sort(userList, Collections.<Music>reverseOrder());
@@ -589,7 +725,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                                     musicFeedAdapter.notifyDataSetChanged();
                                     loading_feed.setVisibility(View.GONE);
                                 }
-                            }, 500);*/
+                            }, 500);*//*
 
 
                             searchedList = true;
@@ -611,6 +747,7 @@ public class MusicFeedActivity extends AppCompatActivity {
 
     }
 
+   */
     @Override
     protected void onPause() {
         super.onPause();
