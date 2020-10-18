@@ -288,7 +288,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             postList.add(post);
 
             postAdapter = new PostAdapter(postList, parentActivity, userID);
-            //postAdapter.setHasStableIds(true);
+            postAdapter.setHasStableIds(true);
 
             feeds_recyclerview.setAdapter(postAdapter);
 
@@ -628,16 +628,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 postList.clear();
-                Post postDummy = new Post();
-                postDummy.setMediaKey("xyz");
-                postDummy.setMediaUrl("xyz");
-                postDummy.setPostKey("xyz");
-                postDummy.setTimeStamp("xyz");
-                postDummy.setType("xyz");
-                postDummy.setUsername("xyz");
-                postDummy.setUserId(userID);
 
-                postList.add(postDummy);
                 if (snapshot.exists()) {
 
                     /*List<Post> postToRemoveList = new ArrayList<>();
@@ -686,15 +677,6 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                     feeds_recyclerview.setAdapter(postAdapter);*/
 
                 } else {
-
-                    /*List<Post> postToRemoveList = new ArrayList<>();
-                    for (Post postToRemove : postList) {
-                        if (postToRemove.getUserId().equals(friendId))
-                            postToRemoveList.add(postToRemove);
-                    }
-
-                    postList.removeAll(postToRemoveList);*/
-
                     postAdapter.updateList(postList);
                 }
 

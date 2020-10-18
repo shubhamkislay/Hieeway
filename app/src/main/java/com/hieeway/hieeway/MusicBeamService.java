@@ -33,6 +33,8 @@ import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.MusicPost;
+import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.PostSeen;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -508,6 +510,14 @@ public class MusicBeamService extends Service {
                                     musicPostHash.put("timestamp", timeStamp.toString());
                                     musicPostHash.put("postKey", postKey);
 
+                                    MusicPost musicPost = new MusicPost();
+                                    musicPost.setSpotifyId(songId);
+                                    musicPost.setSpotifySong(track.name);
+                                    musicPost.setSpotifyArtist(postArtist);
+                                    musicPost.setSpotifyCover(track.imageUri);
+                                    musicPost.setTimestamp(timeStamp.toString());
+                                    musicPost.setPostKey(postKey);
+
                                     //musicPostHash.put("seenBy",postSeenList);
 
                                     /*FirebaseDatabase.getInstance().getReference("MusicPost")
@@ -520,7 +530,6 @@ public class MusicBeamService extends Service {
                                             .child(userId);
 
 
-
                                     HashMap<String, Object> postHash = new HashMap<>();
                                     postHash.put("userId", userId);
                                     postHash.put("postKey", postKey);
@@ -530,6 +539,15 @@ public class MusicBeamService extends Service {
                                     postHash.put("username", username);
                                     postHash.put("timeStamp", timeStamp.toString());
                                     //postHash.put("seenBy",postSeenList);
+
+                                    Post post = new Post();
+                                    post.setUserId(userId);
+                                    post.setPostKey(postKey);
+                                    post.setType("music");
+                                    post.setMediaUrl("default");
+                                    post.setUsername(username);
+                                    post.setMediaKey(postKey);
+                                    post.setTimeStamp(timeStamp.toString());
 
                                     postRef.child(postKey).updateChildren(postHash);
 
@@ -557,6 +575,10 @@ public class MusicBeamService extends Service {
                                             .updateChildren(postHash);
 
 
+                                    HashMap<String, Object> multiplePathUpdate = new HashMap<>();
+                                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+
                                     FirebaseDatabase.getInstance()
                                             .getReference("FriendList")
                                             .child(userId)
@@ -567,7 +589,7 @@ public class MusicBeamService extends Service {
                                                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                                             Friend friend = dataSnapshot.getValue(Friend.class);
 
-                                                            postFanOutRef
+                                                            /*postFanOutRef
                                                                     .child(friend.getFriendId())
                                                                     .child(postKey)
                                                                     .updateChildren(postHash);
@@ -575,7 +597,7 @@ public class MusicBeamService extends Service {
                                                             FirebaseDatabase.getInstance().getReference("MusicPost")
                                                                     .child(friend.getFriendId())
                                                                     .child(postKey)
-                                                                    .updateChildren(musicPostHash);
+                                                                    .updateChildren(musicPostHash);*/
 
                                                             /*HashMap<String, Object> seenHash = new HashMap<>();
                                                             seenHash.put("seen",false);*/
@@ -588,7 +610,22 @@ public class MusicBeamService extends Service {
                                                                     .child(friend.getFriendId())
                                                                     .updateChildren(seenHash);*/
 
+                                                            multiplePathUpdate
+                                                                    .put("Post/"
+                                                                                    + friend.getFriendId()
+                                                                                    + "/"
+                                                                                    + postKey
+                                                                            , post);
+                                                            multiplePathUpdate
+                                                                    .put("MusicPost/"
+                                                                                    + friend.getFriendId()
+                                                                                    + "/"
+                                                                                    + postKey
+                                                                            , musicPost);
+
+
                                                         }
+                                                        databaseReference.updateChildren(multiplePathUpdate);
 
                                                     }
                                                 }

@@ -37,11 +37,11 @@ public class PostListDiffUtilCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp()) &&
+        return //mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp()) &&
                 mNewList.get(newItemPosition).getType().equals(mOldList.get(oldItemPosition).getType())
-                && mNewList.get(newItemPosition).getMediaKey().equals(mOldList.get(oldItemPosition).getMediaKey())
-                && mNewList.get(newItemPosition).getUserId().equals(mOldList.get(oldItemPosition).getUserId())
-                && mNewList.get(newItemPosition).getMediaUrl().equals(mOldList.get(oldItemPosition).getMediaUrl())
-                && mNewList.get(newItemPosition).getUsername().equals(mOldList.get(oldItemPosition).getUsername());
+                        && mNewList.get(newItemPosition).getMediaKey().equals(mOldList.get(oldItemPosition).getMediaKey())
+                        && mNewList.get(newItemPosition).getUserId().equals(mOldList.get(oldItemPosition).getUserId())
+                        && mNewList.get(newItemPosition).getMediaUrl().equals(mOldList.get(oldItemPosition).getMediaUrl())
+                        && mNewList.get(newItemPosition).getUsername().equals(mOldList.get(oldItemPosition).getUsername());
     }
 }
