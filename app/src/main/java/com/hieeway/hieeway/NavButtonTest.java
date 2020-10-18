@@ -1025,7 +1025,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         friendsBtnUnpressed.getLayoutParams().height = (int) getResources().getDimension(R.dimen.nav_button_active_size);
         //friendsBtnPressed.setColorFilter(null);
 
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
 
         friendsBtnUnpressed.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorPrimaryDark)));
@@ -1115,7 +1115,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         homeBtnPressed.setVisibility(View.VISIBLE);
         text_home.setVisibility(View.VISIBLE);*/
 
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
 
         homeBtnPressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
@@ -1194,7 +1194,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         text_search.setVisibility(View.VISIBLE);*/
 
 
-        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+        window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
 
         searchBtnUnpressed.getLayoutParams().width = (int) getResources().getDimension(R.dimen.nav_button_active_size);
@@ -1331,7 +1331,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                 } else {
 
                     // nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
-                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
                     menuFragmentManager.beginTransaction()
 
@@ -2276,7 +2276,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     feed_button_pressed.setBackgroundTintList(null);
 
                     //animateBottomNavMenuText(text_feed,feed_button_pressed);
-                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.background_theme));
+                    window.setStatusBarColor(ContextCompat.getColor(NavButtonTest.this, R.color.nav_darktheme_btn_active));
 
 
                     feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));

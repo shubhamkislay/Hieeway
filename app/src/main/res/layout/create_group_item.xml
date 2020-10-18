@@ -51,8 +51,8 @@
 
     <com.hieeway.hieeway.CustomCircularView
         android:id="@+id/user_photo"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:padding="16dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_baseline_group_add_24"

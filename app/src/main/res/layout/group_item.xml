@@ -28,8 +28,8 @@
 
     <com.hieeway.hieeway.CustomCircularView
         android:id="@+id/user_photo"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:scaleType="centerCrop"
         android:transitionName="imageTransition"
         app:layout_constraintEnd_toEndOf="parent"

@@ -303,7 +303,7 @@ public class ChatsFragment extends Fragment implements DeleteOptionsListener{
                         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
 
 // finally change the color
-                        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.background_theme));
+                        window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.nav_darktheme_btn_active));
                     } catch (Exception e) {
                         //
                     }
