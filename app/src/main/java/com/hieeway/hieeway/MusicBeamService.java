@@ -340,336 +340,79 @@ public class MusicBeamService extends Service {
                                                         .setAutoCancel(true)
                                                         .build();
                                                 startForeground(notificationId, notification);
-
-
-
-                                                /*.setContentTitle(""+track.name)
-                                                        .setContentText(""+postArtist)
-                                                        .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
-                                                        .addAction(R.drawable.ic_cancel_white_24dp, "Stop Music Beacon", pIntentlogin)
-                                                        .addAction(R.drawable.spotify_white_icon,"Open in Spotify",openSpotify)*/
-                                                //.setColor(getResources().getColor(R.color.colorPrimaryDark))
-                                                //.setColorized(true)
-                                                        /*.setLargeIcon(bitmap)
-                                                        //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
-                                                        .setAutoCancel(true)
-                                                        .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                                                        .setMediaSession(mediaSessionCompat.getSessionToken())
-                                                        .setShowActionsInCompactView(0,1))*/
-                                                // .setContentIntent(pendingIntent)
-                                                //.setProgress(0, 0, true)
+                                                Log.d("Spotify Activity", track.name + " by " + track.artist.name);
                                             }
                                         });
 
-/*
 
-                                final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!sharedPreferences.getString(LAST_SPOTIFY_ID, "default").equals(songId)) {
 
-                                FirebaseDatabase.getInstance().getReference("Music")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .runTransaction(new Transaction.Handler() {
-                                            @NonNull
-                                            @Override
-                                            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
+                                            Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+                                            String postKey = FirebaseDatabase.getInstance().getReference("Post")
+                                                    .child(userId).push().getKey();
 
-                                                String musicKey = FirebaseDatabase.getInstance().getReference("Music")
-                                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
+                                            MusicPost musicPost = new MusicPost();
+                                            musicPost.setSpotifyId(songId);
+                                            musicPost.setSpotifySong(track.name);
+                                            musicPost.setSpotifyArtist(postArtist);
+                                            musicPost.setSpotifyCover(track.imageUri);
+                                            musicPost.setTimestamp(timeStamp.toString());
+                                            musicPost.setPostKey(postKey);
 
-                                                Music music = mutableData.getValue(Music.class);
+                                            Post post = new Post();
+                                            post.setUserId(userId);
+                                            post.setPostKey(postKey);
+                                            post.setType("music");
+                                            post.setMediaUrl("default");
+                                            post.setUsername(username);
+                                            post.setMediaKey(postKey);
+                                            post.setTimeStamp(timeStamp.toString());
+                                            //postRef.child(postKey).updateChildren(postHash);
+                                            editor.putString(LAST_SPOTIFY_ID, songId);
+                                            editor.apply();
+                                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-                                                try {
-                                                    if (music.getSpotifyId() == null
-                                                            || !music.getSpotifyId().equals(songId)) {
+                                            HashMap<String, Object> postHash = new HashMap<>();
+                                            postHash.put("MyPosts/" + userId + "/" + postKey, post);
+                                            postHash.put("MyMusicPosts/" + userId + "/" + postKey, musicPost);
+                                            databaseReference.updateChildren(postHash);
 
-                                                        HashMap<String, Object> songHash = new HashMap<>();
-                                                        songHash.put("spotifyId", songId);
-                                                        songHash.put("spotifySong", track.name);
-                                                        songHash.put("spotifyArtist", postArtist);
-                                                        songHash.put("spotifyCover", track.imageUri);
-                                                        songHash.put("username", userId);
-                                                        songHash.put("userId", username);
-                                                        songHash.put("userPhoto", USER_PHOTO);
-                                                        songHash.put("musicKey", musicKey);
-                                                        songHash.put("timestamp", timestamp.toString());
-
-                                                        //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
-
-                                                        FirebaseDatabase.getInstance().getReference("Music")
-                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                .removeValue()
-                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                    @Override
-                                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                                        FirebaseDatabase.getInstance().getReference("Likes")
-                                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                                .removeValue();
-
-                                                                        FirebaseDatabase.getInstance()
-                                                                                .getReference("Music")
-                                                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                                .updateChildren(songHash);
-
-                                                                    }
-                                                                });
-
-
-                                                    }
-
-
-                                                } catch (NullPointerException e) {
-*/
-/*
-                                                    HashMap<String, Object> songHash = new HashMap<>();
-                                                    songHash.put("spotifyId", songId);
-                                                    songHash.put("spotifySong", track.name);
-                                                    songHash.put("spotifyArtist", postArtist);
-                                                    songHash.put("spotifyCover", track.imageUri);
-                                                    songHash.put("username", username);
-                                                    songHash.put("userId", userId);
-                                                    songHash.put("userPhoto", USER_PHOTO);
-                                                    songHash.put("musicKey", musicKey);
-                                                    songHash.put("timestamp", timestamp.toString());
-
-                                                    //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
-
-                                                    FirebaseDatabase.getInstance().getReference("Music")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .removeValue()
-                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                @Override
-                                                                public void onComplete(@NonNull Task<Void> task) {
-                                                                    FirebaseDatabase.getInstance()
-                                                                            .getReference("Music")
-                                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                                            .updateChildren(songHash);
-
+                                            HashMap<String, Object> multiplePathUpdate = new HashMap<>();
+                                            FirebaseDatabase.getInstance()
+                                                    .getReference("FriendList")
+                                                    .child(userId)
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            if (snapshot.exists()) {
+                                                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                                    Friend friend = dataSnapshot.getValue(Friend.class);
+                                                                    multiplePathUpdate.put("Post/" + friend.getFriendId() + "/" + postKey, post);
+                                                                    multiplePathUpdate.put("MusicPost/" + friend.getFriendId() + "/" + postKey, musicPost);
                                                                 }
-                                                            });
-
-
-                                                    HashMap<String, Object> musicPostHash = new HashMap<>();
-                                                    musicPostHash.put("spotifyId", songId);
-                                                    musicPostHash.put("spotifySong", track.name);
-                                                    musicPostHash.put("spotifyArtist", postArtist);
-                                                    musicPostHash.put("spotifyCover", track.imageUri);
-                                                    musicPostHash.put("timestamp", timestamp.toString());
-
-                                                    FirebaseDatabase.getInstance().getReference("MusicPost")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                                            .child(musicKey)
-                                                            .updateChildren(musicPostHash);
-
-                                                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                                                    String postKey = FirebaseDatabase.getInstance().getReference("Post")
-                                                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).push().getKey();
-
-                                                    HashMap<String, Object> postHash = new HashMap<>();
-                                                    postHash.put("userId", userId);
-                                                    postHash.put("postKey", postKey);
-                                                    postHash.put("type", "music");
-                                                    postHash.put("mediaUrl", "default");
-                                                    postHash.put("mediaKey", musicKey);
-                                                    postHash.put("username", username);
-
-
-                                                    postRef.child(postKey).updateChildren(postHash);*//*
-
-
-                                                }
-
-                                                return null;
-                                            }
-
-                                            @Override
-                                            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-                                            }
-                                        });
-*/
-
-
-                                if (!sharedPreferences.getString(LAST_SPOTIFY_ID, "default").equals(songId)) {
-
-                                    Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
-
-
-                                    //String postKey = "abc";
-
-
-                                    String postKey = FirebaseDatabase.getInstance().getReference("Post")
-                                            .child(userId).push().getKey();
-
-
-                                    HashMap<String, Object> musicPostHash = new HashMap<>();
-                                    musicPostHash.put("spotifyId", songId);
-                                    musicPostHash.put("spotifySong", track.name);
-                                    musicPostHash.put("spotifyArtist", postArtist);
-                                    musicPostHash.put("spotifyCover", track.imageUri);
-                                    musicPostHash.put("timestamp", timeStamp.toString());
-                                    musicPostHash.put("postKey", postKey);
-
-                                    MusicPost musicPost = new MusicPost();
-                                    musicPost.setSpotifyId(songId);
-                                    musicPost.setSpotifySong(track.name);
-                                    musicPost.setSpotifyArtist(postArtist);
-                                    musicPost.setSpotifyCover(track.imageUri);
-                                    musicPost.setTimestamp(timeStamp.toString());
-                                    musicPost.setPostKey(postKey);
-
-                                    //musicPostHash.put("seenBy",postSeenList);
-
-                                    /*FirebaseDatabase.getInstance().getReference("MusicPost")
-                                            .child(userId)
-                                            .child(postKey)
-                                            .updateChildren(musicPostHash);*/
-
-
-                                    DatabaseReference postRef = FirebaseDatabase.getInstance().getReference("Post")
-                                            .child(userId);
-
-
-                                    HashMap<String, Object> postHash = new HashMap<>();
-                                    postHash.put("userId", userId);
-                                    postHash.put("postKey", postKey);
-                                    postHash.put("type", "music");
-                                    postHash.put("mediaUrl", "default");
-                                    postHash.put("mediaKey", postKey);
-                                    postHash.put("username", username);
-                                    postHash.put("timeStamp", timeStamp.toString());
-                                    //postHash.put("seenBy",postSeenList);
-
-                                    Post post = new Post();
-                                    post.setUserId(userId);
-                                    post.setPostKey(postKey);
-                                    post.setType("music");
-                                    post.setMediaUrl("default");
-                                    post.setUsername(username);
-                                    post.setMediaKey(postKey);
-                                    post.setTimeStamp(timeStamp.toString());
-
-                                    postRef.child(postKey).updateChildren(postHash);
-
-                                    editor.putString(LAST_SPOTIFY_ID, songId);
-                                    editor.apply();
-
-
-                                    DatabaseReference postFanOutRef = FirebaseDatabase
-                                            .getInstance()
-                                            .getReference("Post");
-
-                                    DatabaseReference myPostRef = FirebaseDatabase
-                                            .getInstance()
-                                            .getReference("MyPosts");
-
-                                    FirebaseDatabase
-                                            .getInstance()
-                                            .getReference("MyMusicPosts")
-                                            .child(userId)
-                                            .child(postKey)
-                                            .updateChildren(musicPostHash);
-
-                                    myPostRef.child(userId)
-                                            .child(postKey)
-                                            .updateChildren(postHash);
-
-
-                                    HashMap<String, Object> multiplePathUpdate = new HashMap<>();
-                                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-
-                                    FirebaseDatabase.getInstance()
-                                            .getReference("FriendList")
-                                            .child(userId)
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    if (snapshot.exists()) {
-                                                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                                            Friend friend = dataSnapshot.getValue(Friend.class);
-
-                                                            /*postFanOutRef
-                                                                    .child(friend.getFriendId())
-                                                                    .child(postKey)
-                                                                    .updateChildren(postHash);
-
-                                                            FirebaseDatabase.getInstance().getReference("MusicPost")
-                                                                    .child(friend.getFriendId())
-                                                                    .child(postKey)
-                                                                    .updateChildren(musicPostHash);*/
-
-                                                            /*HashMap<String, Object> seenHash = new HashMap<>();
-                                                            seenHash.put("seen",false);*/
-
-                                                            /*FirebaseDatabase
-                                                                    .getInstance()
-                                                                    .getReference("PostedTo")
-                                                                    .child(userId)
-                                                                    .child(postKey)
-                                                                    .child(friend.getFriendId())
-                                                                    .updateChildren(seenHash);*/
-
-                                                            multiplePathUpdate
-                                                                    .put("Post/"
-                                                                                    + friend.getFriendId()
-                                                                                    + "/"
-                                                                                    + postKey
-                                                                            , post);
-                                                            multiplePathUpdate
-                                                                    .put("MusicPost/"
-                                                                                    + friend.getFriendId()
-                                                                                    + "/"
-                                                                                    + postKey
-                                                                            , musicPost);
-
-
+                                                                databaseReference.updateChildren(multiplePathUpdate);
+                                                            }
                                                         }
-                                                        databaseReference.updateChildren(multiplePathUpdate);
 
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                                }
-                                            });
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+                                                        }
+                                                    });
 
 
-                                }
+                                        }
+                                    }
+                                }).start();
 
 
-
-
-                                /*HashMap<String, Object> songHash = new HashMap<>();
-                                songHash.put("spotifyId", songId);
-                                songHash.put("spotifySong", track.name);
-                                songHash.put("spotifyArtist", artistNames);
-                                songHash.put("spotifyCover", track.imageUri);
-                                songHash.put("username", USER_NAME);
-                                songHash.put("userId", USER_ID);
-                                songHash.put("userPhoto", USER_PHOTO);
-                                songHash.put("timestamp", timestamp.toString());
-
-                                //song_name.setTextColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
-
-                                FirebaseDatabase.getInstance()
-                                        .getReference("Music")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .updateChildren(songHash);*/
-
-                                Log.d("Spotify Activity", track.name + " by " + track.artist.name);
-                                // Toast.makeText(SpotifyActivity.this,"You are playing "+track.name,Toast.LENGTH_SHORT).show();
-                                //  Toast.makeText(getActivity(),"Track is "+track.name,Toast.LENGTH_SHORT).show();
-
-
-                                //Glide.with(SpotifyActivity.this).load(track.imageUri).into(track_cover);
                             } else {
-                                // Toast.makeText(getActivity(),"Track is null",Toast.LENGTH_SHORT).show();
+                                stopSelf();
                             }
                         } else {
-                            // Toast.makeText(getActivity(),"PlayerState is null",Toast.LENGTH_SHORT).show();
+
                         }
 
                     }
