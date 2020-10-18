@@ -99,6 +99,6 @@ public class Post implements Comparable<Post> {
     @Override
     public boolean equals(@Nullable Object obj) {
         Post o = (Post) obj;
-        return this.getUserId().equals(o.getUserId());
+        return this.getUserId().equals(o.getUserId()) && this.getType().equals(o.getType());
     }
 }

@@ -1367,7 +1367,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         if (!chatFragmentActive) {
             feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
 
-            text_feed.setText("Feed");
+            text_feed.setText("Home");
 
         }
         feed_button_pressed.setAlpha(0.15f);
@@ -2254,7 +2254,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
 
 
-                    text_feed.setText("Feed");
+                    text_feed.setText("Home");
 
                     //animateBottomNavMenuText(text_feed,feed_button_pressed);
 

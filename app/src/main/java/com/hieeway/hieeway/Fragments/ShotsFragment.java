@@ -382,6 +382,14 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                 }
             });
 
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    populateGroups();
+                    populatePosts(userID);
+                }
+            }, 350);
+
 
         }
         return view;
@@ -536,29 +544,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
 
-                /*friendListFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(FriendListFragmentViewModel.class);
-                friendListFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<FriendListValues>() {
-                    @Override
-                    public void onChanged(@Nullable final FriendListValues friendListValues) {
-                        //userList = friendListValues.getFriendList();
-                        groupsAdapter.updateList(userList);
-                        groups_recyclerview.scrollToPosition(0);
-                        playArrowAnimation();
-
-                    }
-                });*/
-
-
-                populateGroups();
-                //lookForPosts();
-
-                populatePosts(userID);
-            }
-        }, 350);
     }
 
     private void lookForPosts() {
@@ -623,11 +609,25 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         DatabaseReference postRefs = FirebaseDatabase.getInstance().getReference("Post")
                 .child(friendId);
 
+        List<Post> refreshPostList = new ArrayList<>();
+
         postRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 postList.clear();
+                refreshPostList.clear();
+
+                Post postDummy = new Post();
+                postDummy.setMediaKey(postRefs.push().getKey());
+                postDummy.setMediaUrl("xyz");
+                postDummy.setPostKey(postRefs.push().getKey());
+                postDummy.setTimeStamp("xyz");
+                postDummy.setType("xyz");
+                postDummy.setUsername("xyz");
+                postDummy.setUserId("xyz");
+
+                refreshPostList.add(postDummy);
 
                 if (snapshot.exists()) {
 
@@ -671,13 +671,15 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                     //if(lastPost)
                     Collections.sort(postList, Collections.<Post>reverseOrder());
 
-                    postAdapter.updateList(postList);
+                    refreshPostList.addAll(postList);
+
+                    postAdapter.updateList(refreshPostList);
                     //Toast.makeText(parentActivity,"Post Size: "+postList.size(),Toast.LENGTH_SHORT).show();
                     /*postAdapter = new PostAdapter(postList,parentActivity,userID);
                     feeds_recyclerview.setAdapter(postAdapter);*/
 
                 } else {
-                    postAdapter.updateList(postList);
+                    postAdapter.updateList(refreshPostList);
                 }
 
 

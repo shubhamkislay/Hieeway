@@ -512,10 +512,16 @@ public class MusicFeedActivity extends AppCompatActivity {
                     }
                     Collections.sort(musicPostList, Collections.<MusicPost>reverseOrder());
 
-                    if (musicPostList.size() > 3)
+                    if (musicPostList.size() > 3) {
+                        DatabaseReference dataDelRef = FirebaseDatabase.getInstance().getReference();
+                        HashMap<String, Object> delHashRef = new HashMap<>();
+                        for (int i = 3; i < musicPostList.size(); i++) {
+                            delHashRef.put("Post/" + userID + "/" + musicPostList.get(i).getPostKey(), null);
+                            delHashRef.put("MusicPost/" + userID + "/" + musicPostList.get(i).getPostKey(), null);
+                        }
+                        dataDelRef.updateChildren(delHashRef);
                         musicPostList.subList(3, musicPostList.size()).clear();
-
-                    else if (musicPostList.size() < 1) {
+                    } else if (musicPostList.size() < 1) {
                         //musicPostRef.addListenerForSingleValueEvent(musicFetchValueEventListener);
                     }
 

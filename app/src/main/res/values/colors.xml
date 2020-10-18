@@ -91,6 +91,7 @@
     <color name="offbackgroundtheme">#111111</color>
 
 
+    <color name="nav_darktheme_btn_active_light">#1B1B1B</color>
     <color name="darkbackground">#171717</color>
     <color name="nav_darktheme_btn_active">#131313</color>
     <color name="darkButtonBackground">#0E0E0E</color>

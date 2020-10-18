@@ -18,6 +18,8 @@
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_below="@id/feed_title_layout"
+
+            android:layout_marginTop="-24dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/background_theme">
@@ -52,6 +54,7 @@
 
 
             <RelativeLayout
+                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
@@ -182,11 +185,10 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-24dp"
                             android:layout_marginLeft="-2.5dp"
                             android:layout_marginRight="-2.5dp"
+                            android:backgroundTint="@color/darkButtonBackground"
                             android:background="@drawable/rounded_bottom_corner_stroke_drawable"
-                            android:backgroundTint="@color/colorBlack"
                             android:padding="0dp">
 
                             <Button
@@ -220,7 +222,7 @@
                                 android:layout_marginLeft="8dp"
                                 android:layout_marginTop="40dp"
                                 android:layout_marginRight="8dp"
-                                android:layout_marginBottom="20dp"
+                                android:layout_marginBottom="16dp"
                                 android:layout_toStartOf="@id/see_all_btn"
 
                                 android:orientation="horizontal"
@@ -242,9 +244,8 @@
 
         <RelativeLayout
             android:id="@+id/feed_title_layout"
-            android:backgroundTint="@color/darkButtonBackground"
+            android:backgroundTint="@color/nav_darktheme_btn_active"
             android:background="@drawable/rounded_bottom_corner_drawable"
-
             android:layout_width="match_parent"
             android:layout_height="70dp">
 
@@ -256,7 +257,7 @@
                 android:layout_margin="12dp"
                 android:layout_centerVertical="true"
                 android:background="@drawable/nav_btn_back_drawable"
-                android:backgroundTint="@color/darkbackground"
+                android:backgroundTint="@color/nav_darktheme_btn_active_light"
                 android:elevation="10dp"
                 android:padding="12dp"
                 android:scaleType="centerInside"
@@ -282,10 +283,10 @@
             <TextView
                 android:id="@+id/feed_title"
                 android:layout_width="wrap_content"
-                android:layout_toRightOf="@id/emoji_holder_layout"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/emoji_holder_layout"
                 android:gravity="center"
                 android:padding="12dp"
                 android:text="Hieeway"
@@ -301,7 +302,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_centerVertical="true"
                 android:background="@drawable/nav_btn_back_drawable"
-                android:backgroundTint="@color/darkbackground"
+                android:backgroundTint="@color/nav_darktheme_btn_active_light"
                 android:visibility="visible">
 
 

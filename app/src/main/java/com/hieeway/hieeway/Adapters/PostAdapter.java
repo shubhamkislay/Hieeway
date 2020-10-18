@@ -339,7 +339,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(chatStampListDiffUtilCallback);
 
         postList.clear();
-        Post postDummy = new Post();
+        /*Post postDummy = new Post();
         postDummy.setMediaKey("xyz");
         postDummy.setMediaUrl("xyz");
         postDummy.setPostKey("xyz");
@@ -348,7 +348,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         postDummy.setUsername("xyz");
         postDummy.setUserId("xyz");
 
-        postList.add(postDummy);
+        postList.add(postDummy);*/
 
         postList.addAll(newListChatStamp);
 
