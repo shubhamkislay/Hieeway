@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+    app:layoutDescription="@xml/activity_create_shot_scene"
+    tools:context="com.hieeway.hieeway.CreateShotActivity">
+
+    <TextView
+        android:id="@+id/text_msg"
+        android:paddingBottom="70dp"
+        android:autoSizeMaxTextSize="@dimen/message_text_size"
+        android:autoSizeMinTextSize="1dp"
+        android:autoSizeStepGranularity="1sp"
+        android:autoSizeTextType="uniform"
+        android:breakStrategy="simple"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hyphenationFrequency="full"
+        android:textColor="@color/textThemeColor"
+        app:autoSizeMaxTextSize="@dimen/message_text_size"
+        app:autoSizeTextType="uniform"
+        android:hint="What's on your mind?"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/message_box_behind"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="2.5dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="2dp"
+        android:alpha="0.0"
+        android:background="@drawable/gradient_wallpaper_list"
+        android:fitsSystemWindows="true"
+        android:padding="2dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+
+        <Button
+            android:id="@+id/send_button_bck"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:alpha="1.0"
+            android:background="@drawable/nav_hieeway_send_btn"
+            android:enabled="false"
+            android:visibility="visible" />
+
+
+        <EditText
+            android:id="@+id/message_box_bck"
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+
+            android:layout_marginLeft="8dp"
+
+
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_toLeftOf="@id/send_button_bck"
+            android:layout_toRightOf="@id/camera_background_bck"
+            android:background="@android:color/transparent"
+            android:focusableInTouchMode="true"
+            android:focusedByDefault="false"
+            android:fontFamily="sans-serif"
+            android:hint=" "
+            android:inputType="textEmailAddress|textNoSuggestions"
+            android:maxHeight="150dp"
+            android:maxLength="80"
+            android:minHeight="42dp"
+
+            android:paddingLeft="12dp"
+            android:paddingTop="12dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/textThemeColor"
+            android:textColorHint="#FFFFFF"
+            android:textSize="17sp"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+
+            />
+
+
+        <Button
+            android:id="@+id/camera_background_bck"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/camera_background_drawable" />
+
+        <Button
+            android:id="@+id/camera_bck"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="9dp"
+            android:background="@drawable/ic_camera_alt_white_24dp"
+            android:backgroundTint="#fff" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:background="@drawable/message_box_drawable"
+        android:fitsSystemWindows="true"
+        android:alpha="0.75"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/message_box_behind"
+        app:layout_constraintEnd_toEndOf="@+id/message_box_behind"
+        app:layout_constraintStart_toStartOf="@+id/message_box_behind"
+        app:layout_constraintTop_toTopOf="@+id/message_box_behind">
+
+
+        <Button
+            android:id="@+id/send_button"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="12dp"
+            android:alpha="0.15"
+            android:background="@drawable/nav_hieeway_send_btn"
+            android:enabled="false"
+            android:visibility="visible" />
+
+
+        <EditText
+            android:id="@+id/message_box"
+            android:layout_width="wrap_content"
+            android:layout_height="46dp"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+
+            android:layout_marginLeft="8dp"
+
+
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_toLeftOf="@id/send_button"
+            android:layout_toRightOf="@id/image_background"
+            android:background="@android:color/transparent"
+            android:focusableInTouchMode="true"
+            android:focusedByDefault="false"
+            android:fontFamily="sans-serif"
+            android:hint="Type here..."
+            android:inputType="textEmailAddress|textNoSuggestions"
+            android:maxHeight="150dp"
+            android:maxLength="80"
+            android:minHeight="42dp"
+
+            android:paddingLeft="12dp"
+            android:paddingTop="12dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="12dp"
+            android:textColor="@color/textThemeColor"
+            android:textColorHint="#FFFFFF"
+            android:textSize="17sp"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+
+            />
+
+
+        <Button
+            android:id="@+id/camera_background"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/camera_background_drawable" />
+
+        <Button
+            android:id="@+id/camera"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="9dp"
+            android:background="@drawable/ic_camera_alt_white_24dp"
+            android:backgroundTint="#fff" />
+
+        <Button
+            android:id="@+id/image_background"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/camera_background"
+            android:layout_marginLeft="4dp"
+            android:backgroundTint="@color/darkGrey"
+            android:background="@drawable/camera_background_drawable" />
+
+        <Button
+            android:id="@+id/image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_toRightOf="@id/camera_background"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="9dp"
+            android:background="@drawable/ic_image_24dp"
+            android:backgroundTint="#fff" />
+
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/send_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:alpha="0.0"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:src="@drawable/hiewaylogomessagebackfresh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/recipients"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:background="@drawable/rounded_bottom_corner_drawable"
+        android:backgroundTint="@color/colorBlack"
+        android:paddingBottom="10dp"
+        android:text="Swipe down to see your recipients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/recipients_text"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:alpha="0.0"
+        android:gravity="center"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:background="@color/darkButtonBackground"
+        android:backgroundTint="@color/darkButtonBackground"
+        android:paddingBottom="10dp"
+        android:text="Recipients"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/darkButtonBackground"
+        android:id="@+id/recipients_recyclerview"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:layout_height="0dp" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

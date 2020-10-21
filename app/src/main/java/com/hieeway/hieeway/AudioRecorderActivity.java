@@ -95,7 +95,7 @@ public class AudioRecorderActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer = null;
     // Requesting permission to RECORD_AUDIO
     private boolean permissionToRecordAccepted = false;
-    private String[] permissions = {Manifest.permission.MEDIA_CONTENT_CONTROL};
+//    private String[] permissions = {Manifest.permission.MEDIA_CONTENT_CONTROL};
     private boolean intialStage = true;
     String sender;
     Boolean deleteMessage = true;

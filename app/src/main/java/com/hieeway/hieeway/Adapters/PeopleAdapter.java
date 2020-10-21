@@ -36,6 +36,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.Recipient;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.VerticalPageActivityPerf;
@@ -49,7 +50,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.content.Context.MODE_PRIVATE;
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
-public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolder> {
+public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder> {
 
     private Context mContext;
     private Activity activity;
@@ -59,8 +60,10 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
     public static final String PHOTO_URL = "photourl";
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USERNAME = "username";
-    String userphoto, username;
-    public PeopleAdapter(Context mContext, List<User> mUsers,Activity activity) {
+    public static final String USER_ID = "userid";
+    String userphoto, username, userId;
+
+    public PeopleAdapter(Context mContext, List<User> mUsers, Activity activity) {
 
 
         this.activity = activity;
@@ -71,6 +74,8 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
         SharedPreferences sharedPreferences = mContext.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         userphoto = sharedPreferences.getString(PHOTO_URL, "default");
         username = sharedPreferences.getString(USERNAME, "");
+        userId = sharedPreferences.getString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
         this.currentUsername = username;
     }
 
@@ -278,6 +283,30 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(user.getUserid());
 
+                    DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+
+                    HashMap<String, Object> recipientHash = new HashMap<>();
+
+                    Long tsLong = System.currentTimeMillis() / 1000;
+
+
+                    Recipient sendRecipient = new Recipient();
+                    sendRecipient.setPhoto(user.getPhoto());
+                    sendRecipient.setUserid(user.getUserid());
+                    sendRecipient.setUsername(user.getUsername());
+                    sendRecipient.setLocaluserstamp(tsLong);
+
+                    Recipient recieveRecipient = new Recipient();
+                    recieveRecipient.setPhoto(userphoto);
+                    recieveRecipient.setUserid(userId);
+                    recieveRecipient.setOtheruserstamp(tsLong);
+                    recieveRecipient.setUsername(currentUsername);
+
+                    recipientHash.put("Recipient/" + user.getUserid() + "/" + userId, recieveRecipient);
+                    recipientHash.put("Recipient/" + userId + "/" + user.getUserid(), sendRecipient);
+
+                    recipientRef.updateChildren(recipientHash);
+
 
                     HashMap<String, Object> hashMap = new HashMap<>();
 
@@ -328,6 +357,14 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
 
                     //notifyItemRemoved(viewHolder.getAdapterPosition());
 
+                    DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+
+                    HashMap<String, Object> recipientHash = new HashMap<>();
+                    recipientHash.put("Recipient/" + user.getUserid() + "/" + userId, null);
+                    recipientHash.put("Recipient/" + userId + "/" + user.getUserid(), null);
+
+                    recipientRef.updateChildren(recipientHash);
+
                     DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                             .child(user.getUserid());
@@ -357,6 +394,14 @@ public class PeopleAdapter  extends RecyclerView.Adapter<PeopleAdapter.ViewHolde
                     viewHolder.requestBtn.setVisibility(View.GONE);
 
                     // notifyItemRemoved(viewHolder.getAdapterPosition());
+
+                    DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+
+                    HashMap<String, Object> recipientHash = new HashMap<>();
+                    recipientHash.put("Recipient/" + user.getUserid() + "/" + userId, null);
+                    recipientHash.put("Recipient/" + userId + "/" + user.getUserid(), null);
+
+                    recipientRef.updateChildren(recipientHash);
 
                     DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

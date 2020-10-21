@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.Recipient;
 import com.hieeway.hieeway.Model.User;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -55,6 +56,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     final static String EXCITED = "excited";
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
+    public static final String USER_ID = "userid";
     final static String ANGRY = "angry";
     public static final String PHOTO_URL = "photourl";
     public static final String SHARED_PREFS = "sharedPrefs";
@@ -88,7 +90,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private SpotifyAppRemote mSpotifyAppRemote;
 
 
-    String userId;
+    String otherUserId;
     Button friend_btn, start_chat;
     private ValueEventListener valueEventListener, musicListener;
     private DatabaseReference findUserDataReference, findUserData;
@@ -103,6 +105,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private String activePhoto;
     private Boolean spotifyconnect;
     private boolean subscribed = true;
+    String currentUserphoto, userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +172,8 @@ public class ViewProfileActivity extends AppCompatActivity {
         name.setText(intent.getStringExtra("name"));
 
         photourl = intent.getStringExtra("photourl");
-        userId = intent.getStringExtra("userId");
+        otherUserId = intent.getStringExtra("userId");
+
         currentUsername = intent.getStringExtra("currentUsername");
 
 
@@ -178,6 +182,11 @@ public class ViewProfileActivity extends AppCompatActivity {
         currentUserPhoto = intent.getStringExtra("currentUserPhoto");
 
         usernameText = intent.getStringExtra("username");
+
+
+        currentUserPhoto = sharedPreferences.getString(PHOTO_URL, "default");
+        currentUsername = sharedPreferences.getString(USERNAME, "");
+        userId = sharedPreferences.getString(USER_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         center_dp.getLayoutParams().height = (int) displayHeight / 4;
         center_dp.getLayoutParams().width = (int) displayHeight / 8;
@@ -202,7 +211,7 @@ public class ViewProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ViewProfileActivity.this, VerticalPageActivityPerf.class);
                 intent.putExtra("username", usernameText);
-                intent.putExtra("userid", userId);
+                intent.putExtra("userid", otherUserId);
                 intent.putExtra("photo", photourl);
                 intent.putExtra("live", "no");
                 intent.putExtra("activePhoto", activePhoto);
@@ -216,7 +225,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         FirebaseDatabase.getInstance().getReference("Emosubscribe")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+                .child(otherUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
@@ -376,7 +385,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     FirebaseDatabase.getInstance().getReference("Emosubscribe")
                             .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .child(userId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            .child(otherUserId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             Toast.makeText(ViewProfileActivity.this, usernameText + "'s feelings  notification have been muted", Toast.LENGTH_SHORT).show();
@@ -402,7 +411,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
                             FirebaseDatabase.getInstance().getReference("Emosubscribe")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child(userId).updateChildren(feelingsHash).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .child(otherUserId).updateChildren(feelingsHash).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     Toast.makeText(ViewProfileActivity.this, "You will now be notified about " + usernameText + "'s feelings", Toast.LENGTH_SHORT).show();
@@ -710,7 +719,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
                 }
             } catch (Exception e) {
-                loadNullValue(userId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                loadNullValue(otherUserId, FirebaseAuth.getInstance().getCurrentUser().getUid());
                 feelingEmoji = "default";
                 emoji_icon.setVisibility(View.INVISIBLE);
                 feeling_icon.setVisibility(View.VISIBLE);
@@ -772,12 +781,12 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userId);
+                .child(otherUserId);
 
 
         HashMap<String, Object> hashMap = new HashMap<>();
 
-        hashMap.put("friendId", userId);
+        hashMap.put("friendId", otherUserId);
         hashMap.put("status", "requested");
         hashMap.put("username", usernameText);
         hashMap.put("photo", photourl);
@@ -786,7 +795,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
 
         DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(userId)
+                .child(otherUserId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         HashMap<String, Object> receiveHashMap = new HashMap<>();
@@ -808,6 +817,14 @@ public class ViewProfileActivity extends AppCompatActivity {
         start_chat.setVisibility(View.GONE);
         spotify_icon.setVisibility(View.GONE);
         music_layout.setVisibility(View.GONE);
+
+        DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> recipientHash = new HashMap<>();
+        recipientHash.put("Recipient/" + otherUserId + "/" + userId, null);
+        recipientHash.put("Recipient/" + userId + "/" + otherUserId, null);
+
+        recipientRef.updateChildren(recipientHash);
 
 
         FirebaseMessaging.getInstance().unsubscribeFromTopic(usernameText).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -834,12 +851,36 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userId);
+                .child(otherUserId);
+
+        DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> recipientHash = new HashMap<>();
+
+        Long tsLong = System.currentTimeMillis() / 1000;
+
+
+        Recipient sendRecipient = new Recipient();
+        sendRecipient.setPhoto(photourl);
+        sendRecipient.setUserid(otherUserId);
+        sendRecipient.setUsername(usernameText);
+        sendRecipient.setLocaluserstamp(tsLong);
+
+        Recipient recieveRecipient = new Recipient();
+        recieveRecipient.setPhoto(currentUserPhoto);
+        recieveRecipient.setUserid(userId);
+        recieveRecipient.setOtheruserstamp(tsLong);
+        recieveRecipient.setUsername(currentUsername);
+
+        recipientHash.put("Recipient/" + otherUserId + "/" + userId, recieveRecipient);
+        recipientHash.put("Recipient/" + userId + "/" + otherUserId, sendRecipient);
+
+        recipientRef.updateChildren(recipientHash);
 
 
         HashMap<String, Object> hashMap = new HashMap<>();
 
-        hashMap.put("friendId", userId);
+        hashMap.put("friendId", otherUserId);
         hashMap.put("status", "friends");
         hashMap.put("username", usernameText);
         hashMap.put("photo", photourl);
@@ -857,7 +898,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
 
         DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(userId)
+                .child(otherUserId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         HashMap<String, Object> receiveHashMap = new HashMap<>();
@@ -899,31 +940,40 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         DatabaseReference requestSentReference = FirebaseDatabase.getInstance().getReference("FriendList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userId);
+                .child(otherUserId);
 
         DatabaseReference chatUserReference = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userId);
+                .child(otherUserId);
 
         DatabaseReference messageUserReference = FirebaseDatabase.getInstance().getReference("Messages")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(userId);
+                .child(otherUserId);
 
         chatUserReference.removeValue();
         requestSentReference.removeValue();
         messageUserReference.removeValue();
 
+        DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> recipientHash = new HashMap<>();
+
+        recipientHash.put("Recipient/" + otherUserId + "/" + userId, null);
+        recipientHash.put("Recipient/" + userId + "/" + otherUserId, null);
+
+        recipientRef.updateChildren(recipientHash);
+
 
         DatabaseReference requestReceiveReference = FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(userId)
+                .child(otherUserId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         DatabaseReference chatOtherReference = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(userId)
+                .child(otherUserId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         DatabaseReference messageOtherReference = FirebaseDatabase.getInstance().getReference("Messages")
-                .child(userId)
+                .child(otherUserId)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         chatOtherReference.removeValue();

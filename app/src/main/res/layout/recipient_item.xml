@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/user_photo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/profile_pic"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="23dp"
+        android:layout_width="100dp"
+        android:layout_height="160dp" />
+
+    <RelativeLayout
+        android:id="@+id/emoji_holder_layout"
+        app:layout_constraintTop_toTopOf="@id/user_photo"
+        app:layout_constraintBottom_toTopOf="@id/user_photo"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_centerVertical="true"
+        android:background="@drawable/nav_btn_back_drawable"
+        android:backgroundTint="@color/nav_darktheme_btn_active_light"
+        android:visibility="visible">
+
+
+        <TextView
+            android:id="@+id/feeling_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="6dp"
+            android:background="@drawable/ic_emoticon_feeling_happy"
+            android:backgroundTint="@color/colorPrimaryDark" />
+
+        <TextView
+            android:id="@+id/emoji_icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="1.5dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/chat_user_gradient"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@id/user_photo"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        app:layout_constraintEnd_toEndOf="@id/user_photo"
+        app:layout_constraintStart_toStartOf="@id/user_photo"
+        tools:text="username"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+
+        android:layout_height="wrap_content" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
