@@ -10,6 +10,7 @@
         <OnSwipe
             motion:touchAnchorId="@+id/recipients"
             motion:touchAnchorSide="middle"
+            motion:onTouchUp="autoComplete"
             motion:dragDirection="dragDown" />
 
         <OnClick
@@ -17,6 +18,7 @@
             motion:clickAction="toggle" />
 
     </Transition>
+
 
     <ConstraintSet android:id="@+id/end">
 
@@ -39,6 +41,11 @@
             <CustomAttribute
                 motion:attributeName="text"
                 motion:customStringValue="Tap to close" />
+
+
+            <CustomAttribute
+                motion:attributeName="background"
+                motion:customColorValue="@color/darkbackground" />
 
             <CustomAttribute
                 motion:attributeName="backgroundColor"
@@ -100,8 +107,10 @@
                 motion:attributeName="text"
                 motion:customStringValue="Swipe down to see your recipients" />
             <CustomAttribute
-                motion:attributeName="backgroundColor"
+                motion:attributeName="background"
                 motion:customColorValue="@color/colorBlack" />
+
+
         </Constraint>
 
 
@@ -129,8 +138,7 @@
             android:layout_width="match_parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintTop_toBottomOf="@id/recipients_text"
-            motion:layout_constraintBottom_toTopOf="@id/recipients"
+            motion:layout_constraintBottom_toTopOf="parent"
             android:layout_height="0dp" />
 
 
