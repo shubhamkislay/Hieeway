@@ -14,31 +14,47 @@ import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.NoRecipientAdapter;
 import com.hieeway.hieeway.Adapters.RecipientAdapter;
+import com.hieeway.hieeway.Interface.AddRecipientListener;
+import com.hieeway.hieeway.Interface.RemoveRecipientListener;
 import com.hieeway.hieeway.Model.Recipient;
+import com.hieeway.hieeway.Model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateShotActivity extends AppCompatActivity {
+public class CreateShotActivity extends AppCompatActivity implements AddRecipientListener, RemoveRecipientListener {
 
-    private TextView recipients;
-    private RecyclerView recipients_recyclerview;
+    private TextView no_recipient_txt, recipients_text;
+    private Button recipients;
+    private RecyclerView recipients_recyclerview, not_recipients_recyclerview;
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USER_ID = "userid";
+    final static String HAPPY = "happy";
+    final static String BORED = "bored";
+    final static String EXCITED = "excited";
+    final static String SAD = "sad";
+    final static String CONFUSED = "confused";
+    final static String ANGRY = "angry";
     private RecipientAdapter recipientAdapter;
-    StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private NoRecipientAdapter noRecipientAdapter;
+    StaggeredGridLayoutManager staggeredGridLayoutManager, staggeredGridLayoutManagerTwo;
     private String userID;
     private SharedPreferences sharedPreferences;
     private List<Recipient> recipientList;
+    private List<Recipient> notRecipientList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +62,17 @@ public class CreateShotActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_shot);
 
         recipients = findViewById(R.id.recipients);
+        no_recipient_txt = findViewById(R.id.no_recipient_txt);
+        recipients_text = findViewById(R.id.recipients_text);
 
         recipientList = new ArrayList<>();
+        notRecipientList = new ArrayList<>();
         recipients_recyclerview = findViewById(R.id.recipients_recyclerview);
+        not_recipients_recyclerview = findViewById(R.id.not_recipients_recyclerview);
 
         recipients.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        recipients_text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+        no_recipient_txt.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
         sharedPreferences = this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
@@ -80,16 +102,29 @@ public class CreateShotActivity extends AppCompatActivity {
             spanCount = 2;
 
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL);
+        staggeredGridLayoutManagerTwo = new StaggeredGridLayoutManager(spanCount, LinearLayoutManager.VERTICAL);
 
 
-        LinearLayoutManager gridLayoutManager = new GridLayoutManager(CreateShotActivity.this, spanCount);
+       /* LinearLayoutManager gridLayoutManager = new GridLayoutManager(CreateShotActivity.this, spanCount);
 
 
-        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
+        gridLayoutManager.setOrientation(RecyclerView.VERTICAL);*/
 
         //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         recipients_recyclerview.setLayoutManager(staggeredGridLayoutManager);
         recipients_recyclerview.setHasFixedSize(true);
+
+
+        not_recipients_recyclerview.setLayoutManager(staggeredGridLayoutManagerTwo);
+        not_recipients_recyclerview.setHasFixedSize(true);
+
+
+        recipientAdapter = new RecipientAdapter(CreateShotActivity.this, recipientList);
+        recipients_recyclerview.setAdapter(recipientAdapter);
+
+
+        noRecipientAdapter = new NoRecipientAdapter(CreateShotActivity.this, notRecipientList);
+        not_recipients_recyclerview.setAdapter(noRecipientAdapter);
         //recipients_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
 
@@ -117,82 +152,8 @@ public class CreateShotActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Recipient recipient = dataSnapshot.getValue(Recipient.class);
-
-                        recipient.setFeelingIcon("default");
-                        recipient.setFeeling("happy");
-
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-                        recipientList.add(recipient);
-
-
+                        fetchFeeling(recipient);
                     }
-
-                    recipientAdapter = new RecipientAdapter(CreateShotActivity.this, recipientList);
-                    recipients_recyclerview.setAdapter(recipientAdapter);
-
                 }
             }
 
@@ -201,5 +162,71 @@ public class CreateShotActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void fetchFeeling(Recipient recipient) {
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(recipient.getUserid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            User user = snapshot.getValue(User.class);
+                            recipient.setFeelingIcon(user.getFeelingIcon());
+                            recipient.setFeeling(user.getFeeling());
+                            recipient.setPhoto(user.getPhoto());
+
+                            Long tsLong = System.currentTimeMillis() / 1000;
+
+                            long localUserDiff = tsLong - recipient.getLocaluserstamp();
+                            long remoteUserDiff = tsLong - recipient.getOtheruserstamp();
+
+
+                            long localDiffHours = localUserDiff / (60 * 60 * 24 * 30);
+                            long otherDiffHours = remoteUserDiff / (60 * 60 * 24 * 30);
+
+                            Log.i("localDiffHours", "" + localDiffHours);
+                            Log.i("otherDiffHours", "" + otherDiffHours);
+
+
+                            if (localDiffHours < 1 && otherDiffHours < 1) {
+                                recipient.setManual(false);
+                                recipientList.add(recipient);
+                                recipientAdapter.updateList(recipientList);
+                            } else {
+                                recipient.setManual(true);
+                                notRecipientList.add(recipient);
+                                noRecipientAdapter.updateList(notRecipientList);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    @Override
+    public void addtoRecipientList(Recipient recipient) {
+
+        notRecipientList.remove(recipient);
+        noRecipientAdapter.updateList(notRecipientList);
+
+        recipientList.add(recipient);
+        recipientAdapter.updateList(recipientList);
+
+    }
+
+    @Override
+    public void removeFromRecipientList(Recipient recipient) {
+        recipientList.remove(recipient);
+        recipientAdapter.updateList(recipientList);
+
+
+        notRecipientList.add(recipient);
+        noRecipientAdapter.updateList(notRecipientList);
+
     }
 }

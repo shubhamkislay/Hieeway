@@ -8,9 +8,10 @@ public class Recipient {
     private String feelingIcon;
     private long localuserstamp;
     private long otheruserstamp;
+    private Boolean manual;
 
 
-    public Recipient(String username, String userid, String photo, String feeling, String feelingIcon, long localuserstamp, long otheruserstamp) {
+    public Recipient(String username, String userid, String photo, String feeling, String feelingIcon, long localuserstamp, long otheruserstamp, Boolean manual) {
         this.username = username;
         this.userid = userid;
         this.photo = photo;
@@ -18,6 +19,7 @@ public class Recipient {
         this.feelingIcon = feelingIcon;
         this.localuserstamp = localuserstamp;
         this.otheruserstamp = otheruserstamp;
+        this.manual = manual;
     }
 
     public long getLocaluserstamp() {
@@ -79,5 +81,11 @@ public class Recipient {
         this.feelingIcon = feelingIcon;
     }
 
+    public Boolean getManual() {
+        return manual;
+    }
 
+    public void setManual(Boolean manual) {
+        this.manual = manual;
+    }
 }

@@ -28,28 +28,17 @@
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintBottom_toBottomOf="parent"
-            android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingTop="10dp"
-            android:paddingRight="30dp"
-            android:background="@drawable/rounded_bottom_corner_drawable"
-            android:backgroundTint="@color/darkButtonBackground"
-            android:paddingBottom="10dp"
-            android:text="Tap to close"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <CustomAttribute
                 motion:attributeName="text"
                 motion:customStringValue="Tap to close" />
 
-
-            <CustomAttribute
-                motion:attributeName="background"
-                motion:customColorValue="@color/darkbackground" />
-
             <CustomAttribute
                 motion:attributeName="backgroundColor"
-                motion:customColorValue="@color/darkbackground" />
+                motion:customColorValue="#171717" />
+
+
         </Constraint>
 
 
@@ -60,27 +49,43 @@
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent"
             android:alpha="1.0"
-            android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingTop="10dp"
-            android:paddingRight="30dp"
-            android:background="@color/darkButtonBackground"
-            android:backgroundTint="@color/darkButtonBackground"
-            android:paddingBottom="10dp"
-            android:text="Recipients"
             android:layout_width="match_parent"
             android:layout_height="0dp" />
 
 
         <Constraint
-            android:background="@color/colorBlack"
             android:id="@+id/recipients_recyclerview"
             android:layout_width="0dp"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toBottomOf="@id/recipients_text"
+            motion:layout_constraintBottom_toTopOf="@id/no_recipient_txt"
+            android:layout_height="0dp" />
+
+
+        <Constraint
+            android:id="@+id/not_recipients_recyclerview"
+            android:layout_width="0dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/no_recipient_txt"
             motion:layout_constraintBottom_toTopOf="@id/recipients"
             android:layout_height="0dp" />
+
+
+        <Constraint
+            android:id="@+id/no_recipient_txt"
+            android:text="Non Recipients"
+            android:alpha="1.0"
+            motion:layout_constraintTop_toBottomOf="@id/recipients_recyclerview"
+            motion:layout_constraintBottom_toTopOf="@id/not_recipients_recyclerview"
+            android:gravity="center"
+            android:paddingLeft="30dp"
+            android:paddingTop="10dp"
+            android:paddingRight="30dp"
+            android:paddingBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 
     </ConstraintSet>
@@ -89,26 +94,18 @@
 
         <Constraint
             android:id="@+id/recipients"
-            android:textStyle="bold"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintTop_toTopOf="parent"
-            android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingTop="10dp"
-            android:paddingRight="30dp"
-            android:background="@drawable/rounded_bottom_corner_drawable"
-            android:backgroundTint="@color/colorBlack"
-            android:paddingBottom="10dp"
-            android:text="Swipe down to see your recipients"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <CustomAttribute
                 motion:attributeName="text"
                 motion:customStringValue="Swipe down to see your recipients" />
+
             <CustomAttribute
-                motion:attributeName="background"
-                motion:customColorValue="@color/colorBlack" />
+                motion:attributeName="backgroundColor"
+                motion:customColorValue="#000000" />
 
 
         </Constraint>
@@ -119,16 +116,7 @@
             android:textStyle="bold"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            android:alpha="0.0"
-            android:gravity="center"
-            android:paddingLeft="30dp"
-            android:paddingTop="10dp"
-            android:paddingRight="30dp"
-            android:background="@color/darkButtonBackground"
-            android:backgroundTint="@color/darkButtonBackground"
-            android:paddingBottom="10dp"
-            android:text="Recipients"
+            motion:layout_constraintBottom_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="0dp" />
 

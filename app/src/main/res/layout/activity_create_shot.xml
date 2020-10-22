@@ -237,21 +237,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent" />
 
-    <TextView
+    <Button
         android:id="@+id/recipients"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:gravity="center"
-        android:paddingLeft="30dp"
         android:paddingTop="10dp"
-        android:paddingRight="30dp"
         android:background="@drawable/rounded_bottom_corner_drawable"
-        android:backgroundTint="@color/colorBlack"
+        android:backgroundTint="#000"
         android:paddingBottom="10dp"
         android:text="Swipe down to see your recipients"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -259,9 +257,9 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:alpha="0.0"
-        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:alpha="1.0"
+        android:gravity="left"
         android:paddingLeft="30dp"
         android:paddingTop="10dp"
         android:paddingRight="30dp"
@@ -275,6 +273,30 @@
     <androidx.recyclerview.widget.RecyclerView
         android:background="@color/darkButtonBackground"
         android:id="@+id/recipients_recyclerview"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="parent"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/no_recipient_txt"
+        android:text="Non Recipients"
+        android:alpha="1.0"
+        app:layout_constraintBottom_toTopOf="@id/not_recipients_recyclerview"
+        android:gravity="left"
+        android:paddingLeft="30dp"
+        android:paddingTop="10dp"
+        android:paddingRight="30dp"
+        android:background="@color/darkButtonBackground"
+        android:backgroundTint="@color/darkButtonBackground"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/darkButtonBackground"
+        android:id="@+id/not_recipients_recyclerview"
         android:layout_width="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

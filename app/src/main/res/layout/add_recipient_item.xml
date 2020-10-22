@@ -88,7 +88,8 @@
 
         app:layout_constraintEnd_toEndOf="@id/user_photo"
         app:layout_constraintStart_toStartOf="@id/user_photo"
-        tools:text="Add"
+        android:text="Add"
+        android:textStyle="bold"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@id/user_photo"
 

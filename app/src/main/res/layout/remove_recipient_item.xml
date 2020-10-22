@@ -17,6 +17,62 @@
         android:layout_width="100dp"
         android:layout_height="160dp" />
 
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@id/user_photo"
+        app:layout_constraintBottom_toTopOf="@id/remove_recipient"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        app:layout_constraintEnd_toEndOf="@id/user_photo"
+        app:layout_constraintStart_toStartOf="@id/user_photo"
+        tools:text="username"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/remove_recipient"
+
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/remove_recipient"
+        android:layout_width="0dp"
+        android:padding="4dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:background="@drawable/music_post_bottom_back"
+
+        app:layout_constraintEnd_toEndOf="@id/user_photo"
+        app:layout_constraintStart_toStartOf="@id/user_photo"
+        android:textColor="#fff"
+        android:text="Remove"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:id="@+id/post_ring"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="1.0"
+        android:background="@drawable/remove_recipient_item_ring"
+        android:rotation="180"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintRight_toRightOf="@id/user_photo"
+        app:layout_constraintTop_toTopOf="@id/user_photo" />
+
     <RelativeLayout
         android:id="@+id/emoji_holder_layout"
         app:layout_constraintTop_toTopOf="@id/user_photo"
@@ -55,46 +111,5 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/chat_user_gradient"
-        android:visibility="visible"
-        app:layout_constraintTop_toTopOf="@id/user_photo"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo" />
-
-    <TextView
-        android:id="@+id/remove_recipient"
-        android:layout_width="0dp"
-        android:visibility="gone"
-        android:padding="4dp"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:background="@drawable/music_post_bottom_back"
-
-        app:layout_constraintEnd_toEndOf="@id/user_photo"
-        app:layout_constraintStart_toStartOf="@id/user_photo"
-        android:textColor="#fff"
-        android:text="Remove"
-        android:textStyle="bold"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        app:layout_constraintEnd_toEndOf="@id/user_photo"
-        app:layout_constraintStart_toStartOf="@id/user_photo"
-        tools:text="username"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-
-        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

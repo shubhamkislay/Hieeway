@@ -13,17 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.hieeway.hieeway.CustomImageView;
-import com.hieeway.hieeway.Interface.RemoveRecipientListener;
-import com.hieeway.hieeway.Model.Post;
+import com.hieeway.hieeway.Interface.AddRecipientListener;
 import com.hieeway.hieeway.Model.Recipient;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.Utils.PostListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.RecipientListDiffUtilCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecipientAdapter extends RecyclerView.Adapter<RecipientAdapter.ViewHolder> {
+public class NoRecipientAdapter extends RecyclerView.Adapter<NoRecipientAdapter.ViewHolder> {
 
 
     private List<Recipient> recipientList = new ArrayList<>();
@@ -34,38 +32,30 @@ public class RecipientAdapter extends RecyclerView.Adapter<RecipientAdapter.View
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
-    final static int EXISTING = 0;
-    final static int ADDED = 1;
     Activity parentActivity;
-    RemoveRecipientListener removeRecipientListener;
+    AddRecipientListener addRecipientListener;
 
-    public RecipientAdapter(Activity activity, List<Recipient> recipientList) {
+    public NoRecipientAdapter(Activity activity, List<Recipient> recipientList) {
         this.context = (Context) activity;
         //this.recipientList = recipientList;
         this.parentActivity = activity;
-        this.removeRecipientListener = (RemoveRecipientListener) activity;
+        this.addRecipientListener = (AddRecipientListener) activity;
 
 
     }
 
     @NonNull
     @Override
-    public RecipientAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
+    public NoRecipientAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.add_recipient_item, parent, false);
 
         //profile_view.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-bold.otf"));
 
-        if (viewType == EXISTING) {
-            View view = LayoutInflater.from(context).inflate(R.layout.recipient_item, parent, false);
-            return new RecipientAdapter.ViewHolder(view);
-        } else {
-            View view = LayoutInflater.from(context).inflate(R.layout.remove_recipient_item, parent, false);
-            return new RecipientAdapter.ViewHolder(view);
-        }
+        return new NoRecipientAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipientAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NoRecipientAdapter.ViewHolder holder, int position) {
 
         Recipient recipient = recipientList.get(holder.getAdapterPosition());
 
@@ -119,17 +109,17 @@ public class RecipientAdapter extends RecyclerView.Adapter<RecipientAdapter.View
             }
 
         } catch (Exception e) {
+            //
         }
 
-        if (recipient.getManual()) {
-            holder.remove_recipient.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+        holder.add_recipient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    removeRecipientListener.removeFromRecipientList(recipient);
-                }
-            });
-        }
+                addRecipientListener.addtoRecipientList(recipient);
+
+            }
+        });
 
 
     }
@@ -137,15 +127,6 @@ public class RecipientAdapter extends RecyclerView.Adapter<RecipientAdapter.View
     @Override
     public int getItemCount() {
         return recipientList.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-
-        if (recipientList.get(position).getManual())
-            return ADDED;
-        else
-            return EXISTING;
     }
 
     public void updateList(List<Recipient> newListRecipients) {
@@ -164,9 +145,8 @@ public class RecipientAdapter extends RecyclerView.Adapter<RecipientAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView username, feeling_icon, emoji_icon, remove_recipient;
+        TextView username, feeling_icon, emoji_icon, add_recipient;
         CustomImageView user_photo;
-
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -175,7 +155,7 @@ public class RecipientAdapter extends RecyclerView.Adapter<RecipientAdapter.View
             feeling_icon = itemView.findViewById(R.id.feeling_icon);
             emoji_icon = itemView.findViewById(R.id.emoji_icon);
             user_photo = itemView.findViewById(R.id.user_photo);
-            remove_recipient = itemView.findViewById(R.id.remove_recipient);
+            add_recipient = itemView.findViewById(R.id.add_recipient);
 
 
         }
