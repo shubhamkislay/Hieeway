@@ -1365,7 +1365,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
         //nav_bar.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorBlack)));
 
         if (!chatFragmentActive) {
-            feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
+            feed_button_pressed.setBackgroundResource(R.drawable.dashboard);
 
             text_feed.setText("Home");
 
@@ -2251,7 +2251,7 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
 
                     feed_button_layout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.nav_darktheme_btn_active)));
 
-                    feed_button_pressed.setBackgroundResource(R.drawable.ic_feed);
+                    feed_button_pressed.setBackgroundResource(R.drawable.dashboard);
 
 
                     text_feed.setText("Home");

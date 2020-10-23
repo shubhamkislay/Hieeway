@@ -159,7 +159,7 @@
                     android:layout_width="@dimen/nav_button_active_size"
                     android:layout_height="@dimen/nav_button_active_size"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_feed"
+                    android:background="@drawable/dashboard"
                     android:backgroundTint="@color/colorPrimaryDark"
                     android:visibility="visible" />
 
@@ -168,7 +168,7 @@
                     android:layout_width="@dimen/nav_button_inactive_size"
                     android:layout_height="@dimen/nav_button_inactive_size"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_feed"
+                    android:background="@drawable/dashboard"
                     android:backgroundTint="@color/white"
                     android:visibility="gone" />
 

@@ -11,6 +11,7 @@
     <TextView
         android:id="@+id/text_msg"
         android:paddingBottom="70dp"
+        android:paddingTop="44dp"
         android:autoSizeMaxTextSize="@dimen/message_text_size"
         android:autoSizeMinTextSize="1dp"
         android:autoSizeStepGranularity="1sp"
@@ -237,17 +238,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent" />
 
+    <TextView
+        android:id="@+id/reach_txt"
+        android:text="Your shot would reach x % of your friends"
+        android:background="#000"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        app:layout_constraintBottom_toTopOf="@id/recipients"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/recipients"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:textAllCaps="false"
         android:gravity="center"
-        android:paddingTop="10dp"
+        android:paddingTop="20dp"
+        android:textColor="#7A7A7A"
         android:background="@drawable/rounded_bottom_corner_drawable"
         android:backgroundTint="#000"
-        android:paddingBottom="10dp"
+        android:paddingBottom="20dp"
         android:text="Swipe down to see your recipients"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -260,12 +272,12 @@
         app:layout_constraintBottom_toTopOf="parent"
         android:alpha="1.0"
         android:gravity="left"
-        android:paddingLeft="30dp"
+        android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="30dp"
+        android:textColor="#fff"
         android:background="@color/darkButtonBackground"
         android:backgroundTint="@color/darkButtonBackground"
-        android:paddingBottom="10dp"
         android:text="Recipients"
         android:layout_width="match_parent"
         android:layout_height="0dp" />
@@ -274,10 +286,22 @@
         android:background="@color/darkButtonBackground"
         android:id="@+id/recipients_recyclerview"
         android:layout_width="0dp"
+        android:paddingTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="parent"
         android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/recipient_des"
+        app:layout_constraintTop_toBottomOf="@id/recipients_text"
+        android:textColor="#535353"
+        android:paddingLeft="16dp"
+        android:textSize="10sp"
+        android:paddingRight="30dp"
+        android:text="Friends whom you have recently spoken to."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/no_recipient_txt"
@@ -285,12 +309,12 @@
         android:alpha="1.0"
         app:layout_constraintBottom_toTopOf="@id/not_recipients_recyclerview"
         android:gravity="left"
-        android:paddingLeft="30dp"
+        android:paddingLeft="16dp"
         android:paddingTop="10dp"
         android:paddingRight="30dp"
+        android:textColor="#fff"
         android:background="@color/darkButtonBackground"
         android:backgroundTint="@color/darkButtonBackground"
-        android:paddingBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -298,9 +322,21 @@
         android:background="@color/darkButtonBackground"
         android:id="@+id/not_recipients_recyclerview"
         android:layout_width="0dp"
+        android:paddingTop="36dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="parent"
         android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/no_recipient_des"
+        app:layout_constraintTop_toBottomOf="@id/no_recipient_txt"
+        android:textColor="#535353"
+        android:paddingLeft="16dp"
+        android:textSize="10sp"
+        android:paddingRight="30dp"
+        android:text="Friends whom you have not spoken to in a while. Adding them to recipients will send them a notification when you post your shot."
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
