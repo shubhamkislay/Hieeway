@@ -19,15 +19,18 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.NoRecipientAdapter;
 import com.hieeway.hieeway.Adapters.RecipientAdapter;
 import com.hieeway.hieeway.Interface.AddRecipientListener;
 import com.hieeway.hieeway.Interface.RemoveRecipientListener;
+import com.hieeway.hieeway.Model.DatabaseListener;
 import com.hieeway.hieeway.Model.Recipient;
 import com.hieeway.hieeway.Model.User;
 
@@ -54,6 +57,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     private SharedPreferences sharedPreferences;
     private List<Recipient> recipientList;
     private List<Recipient> notRecipientList;
+    private List<DatabaseListener> databaseListeners;
 
 
     @Override
@@ -65,6 +69,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         no_recipient_txt = findViewById(R.id.no_recipient_txt);
         recipients_text = findViewById(R.id.recipients_text);
 
+        databaseListeners = new ArrayList<>();
         recipientList = new ArrayList<>();
         notRecipientList = new ArrayList<>();
         recipients_recyclerview = findViewById(R.id.recipients_recyclerview);
@@ -165,47 +170,59 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     }
 
     private void fetchFeeling(Recipient recipient) {
-        FirebaseDatabase.getInstance().getReference("Users")
-                .child(recipient.getUserid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            User user = snapshot.getValue(User.class);
-                            recipient.setFeelingIcon(user.getFeelingIcon());
-                            recipient.setFeeling(user.getFeeling());
-                            recipient.setPhoto(user.getPhoto());
-
-                            Long tsLong = System.currentTimeMillis() / 1000;
-
-                            long localUserDiff = tsLong - recipient.getLocaluserstamp();
-                            long remoteUserDiff = tsLong - recipient.getOtheruserstamp();
 
 
-                            long localDiffHours = localUserDiff / (60 * 60 * 24 * 30);
-                            long otherDiffHours = remoteUserDiff / (60 * 60 * 24 * 30);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(recipient.getUserid());
 
-                            Log.i("localDiffHours", "" + localDiffHours);
-                            Log.i("otherDiffHours", "" + otherDiffHours);
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    User user = snapshot.getValue(User.class);
+                    recipient.setFeelingIcon(user.getFeelingIcon());
+                    recipient.setFeeling(user.getFeeling());
+                    recipient.setPhoto(user.getPhoto());
+
+                    Long tsLong = System.currentTimeMillis() / 1000;
+
+                    long localUserDiff = tsLong - recipient.getLocaluserstamp();
+                    long remoteUserDiff = tsLong - recipient.getOtheruserstamp();
 
 
-                            if (localDiffHours < 1 && otherDiffHours < 1) {
-                                recipient.setManual(false);
-                                recipientList.add(recipient);
-                                recipientAdapter.updateList(recipientList);
-                            } else {
-                                recipient.setManual(true);
-                                notRecipientList.add(recipient);
-                                noRecipientAdapter.updateList(notRecipientList);
-                            }
+                    long localDiffHours = localUserDiff / (60 * 60);
+                    long otherDiffHours = remoteUserDiff / (60 * 60);
+
+                    Log.i("localDiffHours", "" + localDiffHours);
+                    Log.i("otherDiffHours", "" + otherDiffHours);
+
+
+                    if (localDiffHours < 1 && otherDiffHours < 1) {
+                        recipient.setManual(false);
+                        if (!recipientList.contains(recipient) && !notRecipientList.contains(recipient)) {
+                            recipientList.add(recipient);
+                            recipientAdapter.updateList(recipientList);
+                        }
+                    } else {
+                        recipient.setManual(true);
+                        if (!recipientList.contains(recipient) && !notRecipientList.contains(recipient)) {
+                            notRecipientList.add(recipient);
+                            noRecipientAdapter.updateList(notRecipientList);
                         }
                     }
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
+            }
+        };
+
+        databaseReference.addValueEventListener(valueEventListener);
+        databaseListeners.add(new DatabaseListener(databaseReference, valueEventListener));
+
+
     }
 
     @Override
@@ -228,5 +245,20 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         notRecipientList.add(recipient);
         noRecipientAdapter.updateList(notRecipientList);
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        int i = 0;
+        for (DatabaseListener databaseListener : databaseListeners) {
+            try {
+                ++i;
+                databaseListener.getDatabaseReference().removeEventListener(databaseListener.getValueEventListener());
+                //Toast.makeText(this,"Removed Listener: "+i,Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                //
+            }
+        }
     }
 }

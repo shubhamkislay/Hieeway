@@ -1,5 +1,7 @@
 package com.hieeway.hieeway.Model;
 
+import androidx.annotation.Nullable;
+
 public class Recipient {
     private String username;
     private String userid;
@@ -87,5 +89,12 @@ public class Recipient {
 
     public void setManual(Boolean manual) {
         this.manual = manual;
+    }
+
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Recipient recipient = (Recipient) obj;
+        return this.getUserid().equals(recipient.getUserid());
     }
 }

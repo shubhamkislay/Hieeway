@@ -3345,26 +3345,29 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
         Long tsLong = System.currentTimeMillis() / 1000;
         final String ts = tsLong.toString();
 
-        DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
 
-        HashMap<String, Object> recipientHash = new HashMap<>();
+        DatabaseReference recipientSenderRef = FirebaseDatabase.getInstance().getReference("Recipient")
+                .child(curr_id)
+                .child(userIdChattingWith);
 
-        Recipient sendRecipient = new Recipient();
-        sendRecipient.setPhoto(userChattingWith_photo);
-        sendRecipient.setUserid(userIdChattingWith);
-        sendRecipient.setUsername(usernameUserChattingWith);
-        sendRecipient.setLocaluserstamp(tsLong);
+        HashMap<String, Object> recipientSenderHash = new HashMap<>();
+        recipientSenderHash.put("photo", userChattingWith_photo);
+        recipientSenderHash.put("userid", userIdChattingWith);
+        recipientSenderHash.put("username", usernameUserChattingWith);
+        recipientSenderHash.put("localuserstamp", tsLong);
+        recipientSenderRef.updateChildren(recipientSenderHash);
 
-        Recipient recieveRecipient = new Recipient();
-        recieveRecipient.setPhoto(currentUserPhoto);
-        recieveRecipient.setUserid(curr_id);
-        recieveRecipient.setOtheruserstamp(tsLong);
-        recieveRecipient.setUsername(currentUsername);
+        DatabaseReference recipientReceiverRef = FirebaseDatabase.getInstance().getReference("Recipient")
+                .child(userIdChattingWith)
+                .child(curr_id);
 
-        recipientHash.put("Recipient/" + userIdChattingWith + "/" + curr_id, recieveRecipient);
-        recipientHash.put("Recipient/" + curr_id + "/" + userIdChattingWith, sendRecipient);
+        HashMap<String, Object> recipientReceiverHash = new HashMap<>();
+        recipientReceiverHash.put("photo", currentUserPhoto);
+        recipientReceiverHash.put("userid", curr_id);
+        recipientReceiverHash.put("username", currentUsername);
+        recipientReceiverHash.put("otheruserstamp", tsLong);
+        recipientReceiverRef.updateChildren(recipientReceiverHash);
 
-        recipientRef.updateChildren(recipientHash);
 
         final HashMap<String, Object> timeStampHash = new HashMap<>();
         timeStampHash.put("timeStamp", ts);
@@ -5029,26 +5032,32 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     ChatStamp chatStamp = mutableData.getValue(ChatStamp.class);
 
                     if(chatStamp==null) {
-                        DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
 
-                        HashMap<String, Object> recipientHash = new HashMap<>();
+                        Long tsLong = System.currentTimeMillis() / 1000;
+                        final String ts = tsLong.toString();
 
-                        Recipient sendRecipient = new Recipient();
-                        sendRecipient.setPhoto(chatListItemCreationModel.getUserChattingWith_photo());
-                        sendRecipient.setUserid(sendMessageAsyncModel.getUserChattingWithId());
-                        sendRecipient.setUsername(chatListItemCreationModel.getUsernameUserChattingWith());
-                        sendRecipient.setLocaluserstamp(tsLong);
 
-                        Recipient recieveRecipient = new Recipient();
-                        recieveRecipient.setPhoto(currentUserPhoto);
-                        recieveRecipient.setUserid(sendMessageAsyncModel.getCurrentID());
-                        recieveRecipient.setOtheruserstamp(tsLong);
-                        recieveRecipient.setUsername(chatListItemCreationModel.getCurrentUserName());
+                        DatabaseReference recipientSenderRef = FirebaseDatabase.getInstance().getReference("Recipient")
+                                .child(sendMessageAsyncModel.getCurrentID())
+                                .child(userIdChattingWith);
 
-                        recipientHash.put("Recipient/" + sendMessageAsyncModel.getUserChattingWithId() + "/" + sendMessageAsyncModel.getCurrentID(), recieveRecipient);
-                        recipientHash.put("Recipient/" + sendMessageAsyncModel.getCurrentID() + "/" + sendMessageAsyncModel.getUserChattingWithId(), sendRecipient);
+                        HashMap<String, Object> recipientSenderHash = new HashMap<>();
+                        recipientSenderHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
+                        recipientSenderHash.put("userid", sendMessageAsyncModel.getUserChattingWithId());
+                        recipientSenderHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
+                        recipientSenderHash.put("localuserstamp", tsLong);
+                        recipientSenderRef.updateChildren(recipientSenderHash);
 
-                        recipientRef.updateChildren(recipientHash);
+                        DatabaseReference recipientReceiverRef = FirebaseDatabase.getInstance().getReference("Recipient")
+                                .child(userIdChattingWith)
+                                .child(sendMessageAsyncModel.getCurrentID());
+
+                        HashMap<String, Object> recipientReceiverHash = new HashMap<>();
+                        recipientReceiverHash.put("photo", currentUserPhoto);
+                        recipientReceiverHash.put("userid", sendMessageAsyncModel.getCurrentID());
+                        recipientReceiverHash.put("username", chatListItemCreationModel.getCurrentUserName());
+                        recipientReceiverHash.put("otheruserstamp", tsLong);
+                        recipientReceiverRef.updateChildren(recipientReceiverHash);
 
                         timeStampHash.put("timeStamp", ts);
                         timeStampHash.put("id", sendMessageAsyncModel.getUserChattingWithId());
@@ -5074,26 +5083,31 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
 
                     }
                     else {
-                        DatabaseReference recipientRef = FirebaseDatabase.getInstance().getReference();
+                        Long tsLong = System.currentTimeMillis() / 1000;
+                        final String ts = tsLong.toString();
 
-                        HashMap<String, Object> recipientHash = new HashMap<>();
 
-                        Recipient sendRecipient = new Recipient();
-                        sendRecipient.setPhoto(chatListItemCreationModel.getUserChattingWith_photo());
-                        sendRecipient.setUserid(sendMessageAsyncModel.getUserChattingWithId());
-                        sendRecipient.setUsername(chatListItemCreationModel.getUsernameUserChattingWith());
-                        sendRecipient.setLocaluserstamp(tsLong);
+                        DatabaseReference recipientSenderRef = FirebaseDatabase.getInstance().getReference("Recipient")
+                                .child(sendMessageAsyncModel.getCurrentID())
+                                .child(userIdChattingWith);
 
-                        Recipient recieveRecipient = new Recipient();
-                        recieveRecipient.setPhoto(currentUserPhoto);
-                        recieveRecipient.setUserid(sendMessageAsyncModel.getCurrentID());
-                        recieveRecipient.setOtheruserstamp(tsLong);
-                        recieveRecipient.setUsername(chatListItemCreationModel.getCurrentUserName());
+                        HashMap<String, Object> recipientSenderHash = new HashMap<>();
+                        recipientSenderHash.put("photo", chatListItemCreationModel.getUserChattingWith_photo());
+                        recipientSenderHash.put("userid", sendMessageAsyncModel.getUserChattingWithId());
+                        recipientSenderHash.put("username", chatListItemCreationModel.getUsernameUserChattingWith());
+                        recipientSenderHash.put("localuserstamp", tsLong);
+                        recipientSenderRef.updateChildren(recipientSenderHash);
 
-                        recipientHash.put("Recipient/" + sendMessageAsyncModel.getUserChattingWithId() + "/" + sendMessageAsyncModel.getCurrentID(), recieveRecipient);
-                        recipientHash.put("Recipient/" + sendMessageAsyncModel.getCurrentID() + "/" + sendMessageAsyncModel.getUserChattingWithId(), sendRecipient);
+                        DatabaseReference recipientReceiverRef = FirebaseDatabase.getInstance().getReference("Recipient")
+                                .child(userIdChattingWith)
+                                .child(sendMessageAsyncModel.getCurrentID());
 
-                        recipientRef.updateChildren(recipientHash);
+                        HashMap<String, Object> recipientReceiverHash = new HashMap<>();
+                        recipientReceiverHash.put("photo", currentUserPhoto);
+                        recipientReceiverHash.put("userid", sendMessageAsyncModel.getCurrentID());
+                        recipientReceiverHash.put("username", chatListItemCreationModel.getCurrentUserName());
+                        recipientReceiverHash.put("otheruserstamp", tsLong);
+                        recipientReceiverRef.updateChildren(recipientReceiverHash);
 
                         timeStampHash.put("timeStamp", ts);
                         timeStampHash.put("id", sendMessageAsyncModel.getUserChattingWithId());
