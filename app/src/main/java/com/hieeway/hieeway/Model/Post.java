@@ -18,6 +18,7 @@ public class Post implements Comparable<Post> {
     public String username;
     public String timeStamp;
     public String seenBy;
+    public boolean manual;
 
     public String getSeenBy() {
         return seenBy;
@@ -29,6 +30,14 @@ public class Post implements Comparable<Post> {
 
 
     public Post() {
+    }
+
+    public boolean isManual() {
+        return manual;
+    }
+
+    public void setManual(boolean manual) {
+        this.manual = manual;
     }
 
     public String getUserId() {

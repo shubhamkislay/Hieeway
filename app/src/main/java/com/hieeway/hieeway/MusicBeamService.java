@@ -366,6 +366,7 @@ public class MusicBeamService extends Service {
                                             post.setUserId(userId);
                                             post.setPostKey(postKey);
                                             post.setType("music");
+                                            post.setManual(false);
                                             post.setMediaUrl("default");
                                             post.setUsername(username);
                                             post.setMediaKey(postKey);

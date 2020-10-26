@@ -231,6 +231,10 @@ public class VideoPalAdapter extends RecyclerView.Adapter<VideoPalAdapter.ViewHo
 
     }
 
+    public void setYoutube_Url(String youtube_Url) {
+        this.youtube_Url = youtube_Url;
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

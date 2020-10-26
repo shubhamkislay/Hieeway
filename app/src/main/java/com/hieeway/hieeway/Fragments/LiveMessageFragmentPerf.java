@@ -324,7 +324,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private RelativeLayout live_exp_back;
     private RelativeLayout camera_access_layout;
     private Button camera_access_btn;
-    private TextView request_camera_message;
+    private TextView request_camera_message, receiver_message_fade, sender_message_fade;
     private String live;
     private FrameLayout youtube_api_player_view;
     private CloseLiveMessagingLoading closeLiveMessagingLoading;
@@ -491,9 +491,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         this.youtubeTitle = youtubeTitle;
         this.loadVideofromUrl = loadVideofromUrl;
 
-
         SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-
         curr_id = sharedPreferences.getString(USER_ID, "");
 
     }
@@ -529,6 +527,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         camera_access_btn = view.findViewById(R.id.camera_access_btn);
         camera_access_layout = view.findViewById(R.id.camera_access_layout);
         request_camera_message = view.findViewById(R.id.request_camera_message);
+        receiver_message_fade = view.findViewById(R.id.receiver_message_fade);
+        sender_message_fade = view.findViewById(R.id.sender_message_fade);
 
         messageBox = view.findViewById(R.id.message_box);
         youtube_layout = view.findViewById(R.id.youtube_layout);
@@ -946,35 +946,13 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         youtube_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // if (userPresent) {
-                youtubeBottomFragmentStateListener.setDrag(true);
-                //bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                youtube_web_view.setVisibility(View.VISIBLE);
+                Toast.makeText(getContext(), "Youtube_web_view visible", Toast.LENGTH_SHORT).show();
 
+                youtubeBottomFragmentStateListener.setDrag(true);
+                youtube_web_view.setVisibility(View.VISIBLE);
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_open);
                 youtube_web_view.setAnimation(animation);
                 messageBox.clearFocus();
-                //search_video_edittext.requestFocus();
-                //search_video_edittext.setCursorVisible(true);
-
-                //bottomSheetVisible = true;
-                if (isKeyboardOpen) {
-                    // youtube_layout.setVisibility(View.GONE);
-                }
-
-                /*new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //youtube_web_view.loadUrl(yoututbeHomeURL);
-
-                        youtube_web_view.loadUrl(youtubeUrl);
-                    }
-                },500);*/
-
-
-                /*} else {
-                    Toast.makeText(getContext(), usernameChattingWith + " has not joined yet.", Toast.LENGTH_SHORT).show();
-                }*/
             }
         });
 
@@ -1386,7 +1364,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                             live_video_control_btn_lay.setVisibility(View.VISIBLE);
                             calling_text_layout.setVisibility(View.GONE);
-                            youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
+                            //youtube_button.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorWhite)));
                             //youtube_button.setEnabled(true);
                         }
                     } catch (Exception e) {
@@ -1496,7 +1474,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                         mYouTubePlayer.loadVideo(youtubeID, youtubeSynSec);
                         mYouTubePlayer.play();
-                        sync_video_layout.setVisibility(View.VISIBLE);
+                        sync_video_layout.setVisibility(View.GONE);
                         youtube_player_view.setVisibility(View.VISIBLE);
                         youtube_layout.setVisibility(View.VISIBLE);
                         // seekRef.removeValue();
@@ -1504,7 +1482,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         //  Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_LONG).show();
 
                         loadWhenInitialised = true;
-                        sync_video_layout.setVisibility(View.VISIBLE);
+                        sync_video_layout.setVisibility(View.GONE);
                         youtube_player_view.setVisibility(View.VISIBLE);
                         youtube_layout.setVisibility(View.VISIBLE);
 
@@ -1695,6 +1673,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
         updatePresenceRefUser.onDisconnect()
                 .updateChildren(disconnectHash);*/
+
                     updatePresenceRef.onDisconnect()
                             .updateChildren(disconnectHash);
 
@@ -1776,7 +1755,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         customUiController.autoUpdateControlView();
                         customUiController.setYoutube_player_seekbarVisibility(true);
                         youtube_player_view.setVisibility(View.VISIBLE);
-                        sync_video_layout.setVisibility(View.INVISIBLE);
+                        sync_video_layout.setVisibility(View.GONE);
                         customUiController.setBufferingProgress(View.GONE);
                         customUiController.setPlayPauseBtn(View.VISIBLE);
                     } else {
@@ -2020,6 +1999,11 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
 
                     liveMessagingViewModel.updateLiveMessage(EMPTY_STRING);
                     senderTextView.setText(EMPTY_STRING);
+                    sender_message_fade.setTranslationY(0);
+                    sender_message_fade.setAlpha(1.0f);
+                    sender_message_fade.setText(messageBox.getText());
+                    sender_message_fade.animate().translationY(-500).alpha(0.0f).setDuration(3000);
+
                     messageBox.setText(EMPTY_STRING);
                     showCurrentUserTypingAnimation = false;
 
@@ -2394,7 +2378,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
             videoQuery.setId(videoID);
 
             sync_video_layout.setAlpha(1.0f);
-            sync_video_layout.setVisibility(View.VISIBLE);
+            sync_video_layout.setVisibility(View.GONE);
             youtube_layout.setVisibility(View.VISIBLE);
             //youtube_api_player_view.setVisibility(View.VISIBLE);
             youtube_player_view.setVisibility(View.VISIBLE);
@@ -3300,6 +3284,13 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 public void run() {
 
                     if (receiverTextView.getText().toString().equals(receiverText)) {
+                        //Toast.makeText(getActivity(),""+receiverText,Toast.LENGTH_SHORT).show();
+                        receiver_message_fade.setTranslationY(0);
+                        receiver_message_fade.setAlpha(1.0f);
+                        receiver_message_fade.setText(receiverText);
+                        receiver_message_fade.animate().translationY(-500).alpha(0.0f).setDuration(3000);
+
+
                         receiverTextView.setText(EMPTY_STRING);
                         showOtherUserTypingAnimation = false;
                     }

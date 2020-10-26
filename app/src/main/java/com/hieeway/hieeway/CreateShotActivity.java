@@ -10,14 +10,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +39,17 @@ import com.hieeway.hieeway.Adapters.NoRecipientAdapter;
 import com.hieeway.hieeway.Adapters.RecipientAdapter;
 import com.hieeway.hieeway.Interface.AddRecipientListener;
 import com.hieeway.hieeway.Interface.RemoveRecipientListener;
+import com.hieeway.hieeway.Model.ChatMessageCompound;
 import com.hieeway.hieeway.Model.DatabaseListener;
+import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.MusicPost;
+import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.Recipient;
 import com.hieeway.hieeway.Model.User;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CreateShotActivity extends AppCompatActivity implements AddRecipientListener, RemoveRecipientListener {
@@ -50,6 +65,8 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
+
+    public static final String USERNAME = "username";
     private RecipientAdapter recipientAdapter;
     private NoRecipientAdapter noRecipientAdapter;
     StaggeredGridLayoutManager staggeredGridLayoutManager, staggeredGridLayoutManagerTwo;
@@ -58,6 +75,12 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     private List<Recipient> recipientList;
     private List<Recipient> notRecipientList;
     private List<DatabaseListener> databaseListeners;
+    private TextView text_msg;
+    private EditText message_box;
+    private Button sendButton;
+    private ImageView send_arrow;
+    private String username;
+    private String textMessage;
 
 
     @Override
@@ -69,11 +92,16 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         no_recipient_txt = findViewById(R.id.no_recipient_txt);
         recipients_text = findViewById(R.id.recipients_text);
 
+        text_msg = findViewById(R.id.text_msg);
+        message_box = findViewById(R.id.message_box);
+        send_arrow = findViewById(R.id.send_arrow);
+
         databaseListeners = new ArrayList<>();
         recipientList = new ArrayList<>();
         notRecipientList = new ArrayList<>();
         recipients_recyclerview = findViewById(R.id.recipients_recyclerview);
         not_recipients_recyclerview = findViewById(R.id.not_recipients_recyclerview);
+        sendButton = findViewById(R.id.send_button);
 
         recipients.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
         recipients_text.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -82,6 +110,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         sharedPreferences = this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         userID = sharedPreferences.getString(USER_ID, "");
+        username = sharedPreferences.getString(USERNAME, "");
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.darkButtonBackground));
 
@@ -144,6 +173,54 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         recipients_recyclerview.setItemAnimator(new DefaultItemAnimator());
         recipients_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);*/
 
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateArrow();
+                textMessage = message_box.getText().toString();
+            }
+        });
+
+        message_box.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                text_msg.setText("" + s.toString());
+                if (s.toString().length() > 0) {
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setEnabled(true);
+                } else {
+                    sendButton.setAlpha(0.15f);
+                    sendButton.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                text_msg.setText("" + s.toString());
+                if (s.toString().length() > 0) {
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setEnabled(true);
+                } else {
+                    sendButton.setAlpha(0.15f);
+                    sendButton.setEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                text_msg.setText("" + s.toString());
+                if (s.toString().length() > 0) {
+                    sendButton.setAlpha(1.0f);
+                    sendButton.setEnabled(true);
+                } else {
+                    sendButton.setAlpha(0.15f);
+                    sendButton.setEnabled(false);
+                }
+            }
+        });
+
 
         checkYourRecipients();
 
@@ -190,8 +267,8 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                     long remoteUserDiff = tsLong - recipient.getOtheruserstamp();
 
 
-                    long localDiffHours = localUserDiff / (60 * 60);
-                    long otherDiffHours = remoteUserDiff / (60 * 60);
+                    long localDiffHours = localUserDiff / (60 * 60 * 24 * 30);
+                    long otherDiffHours = remoteUserDiff / (60 * 60 * 24 * 30);
 
                     Log.i("localDiffHours", "" + localDiffHours);
                     Log.i("otherDiffHours", "" + otherDiffHours);
@@ -260,5 +337,160 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                 //
             }
         }
+    }
+
+    private void animateArrow() {
+        //send_arrow.setAlpha(1.0f);
+        /**
+         *
+         *Chain button and progress view get hidden when send button is pressed
+         */
+
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int displayHeight = size.y;
+
+        ObjectAnimator animatorY, alphaArrow, animatortextY, alphaText;
+        AnimatorSet animatorSet;
+
+
+        animatorY = ObjectAnimator.ofFloat(send_arrow, "translationY", -displayHeight - (displayHeight) / 3);
+        animatortextY = ObjectAnimator.ofFloat(text_msg, "translationY", -displayHeight - (displayHeight) / 3);
+        //  animatorY.setDuration(arrowAnimDuration);
+
+
+        alphaArrow = ObjectAnimator.ofFloat(send_arrow, "alpha", 1.0f, 0.02f);
+        alphaText = ObjectAnimator.ofFloat(text_msg, "alpha", 1.0f, 0.02f);
+        //  alphaArrow.setDuration(arrowAnimDuration);
+
+
+        //alphaArrow.setDuration(650);
+
+        sendButton.setAlpha(0.15f);
+        sendButton.setEnabled(false);
+
+        int arrowAnimDuration = 600;
+
+        send_arrow.setAlpha(1.0f);
+
+
+        animatorSet = new AnimatorSet();
+
+        animatorSet.setDuration(arrowAnimDuration);
+
+        animatorSet.playTogether(animatorY, alphaArrow, animatortextY, alphaText);
+
+        animatorSet.start();
+
+
+        /**
+         * calling the below two commented function results in a UI lag
+         */
+        /*resetMessageBox();
+        sendMessage(chatMessage);*/
+
+
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+                send_arrow.setAlpha(1.0f);
+
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+                /*if(imageLoaded)
+                    profile_pic.setBlur(0);*/
+
+                send_arrow.setTranslationY(0f);
+                text_msg.setTranslationY(0f);
+                text_msg.setAlpha(1.0f);
+
+                resetMessageBox();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        postShot();
+                    }
+                }, 250);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+                send_arrow.setTranslationY(0f);
+                send_arrow.setAlpha(0.0f);
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+    }
+
+    private void postShot() {
+
+        Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+        String postKey = FirebaseDatabase.getInstance().getReference("Post")
+                .child(userID).push().getKey();
+
+
+        Post post = new Post();
+        post.setUserId(userID);
+        post.setPostKey(postKey);
+        post.setType("message");
+        post.setMediaUrl(textMessage);
+        post.setUsername(username);
+        post.setMediaKey(postKey);
+        post.setTimeStamp(timeStamp.toString());
+        //postRef.child(postKey).updateChildren(postHash);
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> postHash = new HashMap<>();
+        postHash.put("MyPosts/" + userID + "/" + postKey, post);
+        databaseReference.updateChildren(postHash);
+
+        HashMap<String, Object> multiplePathUpdate = new HashMap<>();
+        /*FirebaseDatabase.getInstance()
+                .getReference("FriendList")
+                .child(userID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                Friend friend = dataSnapshot.getValue(Friend.class);
+                                multiplePathUpdate.put("Post/" + friend.getFriendId() + "/" + postKey, post);
+
+                            }
+                            databaseReference.updateChildren(multiplePathUpdate);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+        */
+
+        for (Recipient recipient : recipientList) {
+            post.setManual(recipient.getManual());
+            multiplePathUpdate.put("Post/" + recipient.getUserid() + "/" + postKey, post);
+        }
+        databaseReference.updateChildren(multiplePathUpdate);
+
+    }
+
+    private void resetMessageBox() {
+        message_box.setText("");
     }
 }

@@ -30,9 +30,11 @@ import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.GroupChatActivity;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
+import com.hieeway.hieeway.MusicPalActivity;
 import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
 import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.R;
+import com.hieeway.hieeway.YoutubeLiveVideoSelectionActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -228,6 +230,22 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                     @Override
                     public void onClick(View v) {
                         context.startActivity(new Intent(context, AddGroupDetailsActivity.class));
+                    }
+                });
+
+            } else if (myViewHolder.getAdapterPosition() == 1) {
+                myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        context.startActivity(new Intent(context, YoutubeLiveVideoSelectionActivity.class));
+                    }
+                });
+
+            } else if (myViewHolder.getAdapterPosition() == 2) {
+                myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        context.startActivity(new Intent(context, MusicPalActivity.class));
                     }
                 });
 

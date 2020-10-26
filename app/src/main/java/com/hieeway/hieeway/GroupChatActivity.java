@@ -21,6 +21,8 @@ import android.media.MediaRecorder;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -220,6 +222,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private boolean youtubeVisible = false;
     DatabaseReference groupMessageSendRef;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -403,6 +406,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
             }
         });
+
+
         itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
             @Override
@@ -768,6 +773,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
                 // Toast.makeText(parentActivity, EMPTY_STRING + url, Toast.LENGTH_SHORT).show();
 
+                Toast.makeText(GroupChatActivity.this, "URL: " + url, Toast.LENGTH_SHORT).show();
+
                 videoID = defaultVideoID;
                 if (!url.equals(yoututbeHomeURL))
                     getVideoIdFromYoutubeUrl(url);
@@ -1112,6 +1119,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     public void getVideoIdFromYoutubeUrl(String url) {
 
 
+        Toast.makeText(GroupChatActivity.this, "Called", Toast.LENGTH_SHORT).show();
         TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
 
         new Thread(new Runnable() {
@@ -1481,6 +1489,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     @Override
     protected void onStart() {
         super.onStart();
+
+        FirebaseDatabase.getInstance().goOffline();
+        FirebaseDatabase.getInstance().goOnline();
         seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                 .child(groupID);
 
@@ -1599,6 +1610,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             }
         };
         seekRef.addValueEventListener(seekValueEventListener);
+
         populateMessages();
 
 
@@ -1609,10 +1621,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         super.onStop();
         try {
             groupMessageSendRef.removeEventListener(valueEventListener);
+            seekRef.removeEventListener(seekValueEventListener);
         } catch (Exception e) {
             //
         }
-        seekRef.removeEventListener(seekValueEventListener);
 
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());

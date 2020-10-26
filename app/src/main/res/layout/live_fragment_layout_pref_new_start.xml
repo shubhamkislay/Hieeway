@@ -3,48 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent_layout"
-    android:elevation="20dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000">
-
-    <RelativeLayout
-        android:id="@+id/top_back"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#000"
-        app:layout_constraintBottom_toBottomOf="@+id/online_ring"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-
-        android:id="@+id/message_live_with"
-        style="@style/Theme.AppCompat"
-        android:theme="@style/Theme.AppCompat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/message_box_drawable"
-        android:backgroundTint="#1A1A1A"
-        android:fontFamily="sans-serif-black"
-        android:gravity="center"
-        android:paddingLeft="8dp"
-        android:paddingTop="4dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="4dp"
-        android:text="Live with user"
-        android:textAllCaps="false"
-        android:textColor="@color/textThemeColor"
-        android:textSize="10.5sp"
-        android:textStyle="bold"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:background="#000"
+    android:elevation="20dp">
 
     <Button
         android:id="@+id/back_button"
@@ -57,27 +19,6 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/username"
-        style="@style/Theme.AppCompat"
-        android:theme="@style/Theme.AppCompat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/back_button"
-        android:fontFamily="sans-serif-thin"
-        android:textColor="#fff"
-
-        android:textSize="22dp"
-        android:transitionName="nameTransitionCancel"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/back_button"
-        app:layout_constraintStart_toEndOf="@+id/back_button"
-        app:layout_constraintTop_toTopOf="@+id/back_button"
-        app:layout_constraintVertical_bias="0.37"
-        tools:layout_editor_absoluteX="50dp"
-        tools:text="username" />
 
     <Button
         android:id="@+id/online_ring"
@@ -93,93 +34,106 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.59000003" />
 
+
+    <RelativeLayout
+        android:id="@+id/youtube_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:layout_margin="2dp"
+        android:layout_weight="4"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/youtube_api_player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+
+        <RelativeLayout
+            android:id="@+id/sync_video_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:background="#000"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/sync_video_txt"
+                style="@style/Theme.AppCompat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="Syncing Video"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:theme="@style/Theme.AppCompat"
+                android:visibility="visible" />
+
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/pb"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_above="@id/sync_video_txt"
+                android:layout_centerHorizontal="true"
+                android:backgroundTint="@color/white"
+                app:SpinKit_Color="@color/white"
+                app:SpinKit_Style="Circle" />
+
+
+        </RelativeLayout>
+
+
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:id="@+id/youtube_player_view"
+            android:layout_width="150dp"
+            android:layout_height="75dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:background="@drawable/live_youtube_back"
+            android:hardwareAccelerated="true"
+            android:padding="4dp"
+            android:visibility="visible"
+            app:autoPlay="false"
+            app:showFullScreenButton="false"
+            app:showSeekBar="false"
+            app:showVideoCurrentTime="true"
+            app:showVideoDuration="true"
+            app:useWebUi="false" />
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/video_title"
+        android:text="Youtube Video Title"
+        android:padding="8dp"
+        android:background="@color/darkbackground"
+        app:layout_constraintTop_toTopOf="@id/youtube_layout"
+        app:layout_constraintBottom_toBottomOf="@id/youtube_layout"
+        app:layout_constraintLeft_toRightOf="@id/youtube_layout"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
     <LinearLayout
         android:id="@+id/message_space"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
-        android:layout_above="@id/bottom_panel"
-        android:layout_below="@id/top_bar"
         android:animateLayoutChanges="true"
         android:background="#000000"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
-        app:layout_constraintTop_toBottomOf="@+id/message_live_with">
-
-        <RelativeLayout
-            android:id="@+id/youtube_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_centerInParent="true"
-            android:layout_margin="2dp"
-            android:layout_weight="4"
-            android:visibility="gone">
-
-            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                android:id="@+id/youtube_player_view"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:background="@drawable/live_youtube_back"
-                android:hardwareAccelerated="true"
-                android:padding="4dp"
-                android:visibility="gone"
-                app:autoPlay="false"
-                app:showFullScreenButton="false"
-                app:showSeekBar="false"
-                app:showVideoCurrentTime="true"
-                app:showVideoDuration="true"
-                app:useWebUi="false" />
-
-
-            <FrameLayout
-                android:id="@+id/youtube_api_player_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone" />
-
-
-            <RelativeLayout
-                android:id="@+id/sync_video_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:background="#000"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/sync_video_txt"
-                    style="@style/Theme.AppCompat"
-                    android:layout_centerInParent="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center"
-                    android:theme="@style/Theme.AppCompat"
-                    android:text="Syncing Video"
-                    android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:visibility="visible" />
-
-
-                <com.github.ybq.android.spinkit.SpinKitView
-                    android:id="@+id/pb"
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
-                    android:layout_above="@id/sync_video_txt"
-                    android:layout_centerHorizontal="true"
-                    android:backgroundTint="@color/white"
-                    app:SpinKit_Color="@color/white"
-                    app:SpinKit_Style="Circle" />
-
-
-            </RelativeLayout>
-
-
-        </RelativeLayout>
+        app:layout_constraintTop_toBottomOf="@+id/youtube_layout">
 
 
         <LinearLayout
@@ -270,10 +224,9 @@
 
             <TextView
                 android:id="@+id/receiver_message"
-                android:layout_width="match_parent"
-
                 style="@style/Theme.AppCompat"
-                android:theme="@style/Theme.AppCompat"
+
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|start"
                 android:layout_marginStart="8dp"
@@ -292,11 +245,11 @@
                 android:textColor="#fff"
                 android:textColorHint="#fff"
                 android:textStyle="bold"
+                android:theme="@style/Theme.AppCompat"
                 app:autoSizeMaxTextSize="28dp"
                 app:autoSizeTextType="uniform"
                 tools:hint="Hi how are you doing is  evry thing allright with you ??"
                 tools:ignore="UnusedAttribute" />
-
         </LinearLayout>
 
 
@@ -316,23 +269,6 @@
                 android:layout_weight="2"
                 android:visibility="gone">
 
-                <SeekBar
-
-                    android:id="@+id/video_seekbar"
-                    android:layout_width="75dp"
-                    android:layout_height="50dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/message_send_seeing_background"
-                    android:max="1"
-                    android:min="0"
-                    android:padding="5dp"
-                    android:progressDrawable="@drawable/seek_style"
-                    android:splitTrack="false"
-                    android:thumb="@drawable/seekbar_thum"
-                    android:visibility="gone" />
-
                 <RelativeLayout
                     android:id="@+id/live_exp_back"
                     android:layout_width="match_parent"
@@ -340,40 +276,6 @@
                     android:layout_margin="2dp"
                     android:background="@drawable/gradient_wallpaper_list"
                     android:visibility="invisible" />
-
-                <com.ncorti.slidetoact.SlideToActView
-                    android:id="@+id/slideToActView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="8dp"
-                    android:elevation="6dp"
-                    app:animation_duration="250"
-                    app:area_margin="4dp"
-                    app:border_radius="28dp"
-                    app:complete_icon="@android:color/transparent"
-                    app:icon_margin="6dp"
-                    app:inner_color="@color/darkGrey"
-                    app:outer_color="@color/darkButtonBackground_accent"
-                    app:rotate_icon="true"
-                    app:slider_height="60dp"
-                    app:slider_icon="@drawable/ic_sentiment_satisfied_black_24dp"
-                    app:slider_icon_color="@color/colorPrimaryDark"
-                    app:slider_locked="false"
-                    app:text="Live Expression"
-                    app:text_color="#fff"
-                    app:text_size="14sp"
-                    app:text_style="bold" />
-
-                <com.github.ybq.android.spinkit.SpinKitView
-
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:elevation="10dp"
-                    android:visibility="gone"
-                    app:SpinKit_Color="@color/colorPrimaryDark"
-                    app:SpinKit_Style="Wave" />
 
                 <RelativeLayout
                     android:id="@+id/complete_icon"
@@ -401,6 +303,57 @@
                         android:rotation="180" />
                 </RelativeLayout>
 
+                <SeekBar
+
+                    android:id="@+id/video_seekbar"
+                    android:layout_width="75dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/message_send_seeing_background"
+                    android:max="1"
+                    android:min="0"
+                    android:padding="5dp"
+                    android:progressDrawable="@drawable/seek_style"
+                    android:splitTrack="false"
+                    android:thumb="@drawable/seekbar_thum"
+                    android:visibility="gone" />
+
+                <com.github.ybq.android.spinkit.SpinKitView
+
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:elevation="10dp"
+                    android:visibility="gone"
+                    app:SpinKit_Color="@color/colorPrimaryDark"
+                    app:SpinKit_Style="Wave" />
+
+                <com.ncorti.slidetoact.SlideToActView
+                    android:id="@+id/slideToActView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="8dp"
+                    android:elevation="6dp"
+                    app:animation_duration="250"
+                    app:area_margin="4dp"
+                    app:border_radius="28dp"
+                    app:complete_icon="@android:color/transparent"
+                    app:icon_margin="6dp"
+                    app:inner_color="@color/darkGrey"
+                    app:outer_color="@color/darkButtonBackground_accent"
+                    app:rotate_icon="true"
+                    app:slider_height="60dp"
+                    app:slider_icon="@drawable/ic_sentiment_satisfied_black_24dp"
+                    app:slider_icon_color="@color/colorPrimaryDark"
+                    app:slider_locked="false"
+                    app:text="Live Expression"
+                    app:text_color="#fff"
+                    app:text_size="14sp"
+                    app:text_style="bold" />
+
 
             </RelativeLayout>
 
@@ -414,17 +367,17 @@
 
                 <TextView
                     android:id="@+id/connecting_text"
+                    style="@style/Theme.AppCompat"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_centerHorizontal="true"
-                    style="@style/Theme.AppCompat"
-                    android:theme="@style/Theme.AppCompat"
                     android:layout_margin="5dp"
                     android:layout_weight="2"
                     android:gravity="center"
                     android:padding="5dp"
                     android:text="Initiating live expressions"
                     android:textColor="#fff"
+                    android:theme="@style/Theme.AppCompat"
                     android:visibility="visible" />
 
                 <com.github.ybq.android.spinkit.SpinKitView
@@ -451,6 +404,7 @@
 
                     <TextView
                         android:id="@+id/calling_text"
+                        style="@style/Theme.AppCompat"
                         android:layout_width="wrap_content"
                         android:layout_height="50dp"
                         android:layout_margin="5dp"
@@ -458,12 +412,11 @@
                         android:gravity="center"
                         android:paddingLeft="16dp"
                         android:paddingTop="5dp"
-                        style="@style/Theme.AppCompat"
-                        android:theme="@style/Theme.AppCompat"
                         android:paddingRight="16dp"
                         android:paddingBottom="5dp"
                         android:text="Asking user to join"
                         android:textColor="#fff"
+                        android:theme="@style/Theme.AppCompat"
                         android:visibility="visible" />
 
                     <com.github.ybq.android.spinkit.SpinKitView
@@ -493,13 +446,12 @@
             <TextView
                 android:id="@+id/sender_message"
 
+                style="@style/Theme.AppCompat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="right|end"
-                android:layout_marginStart="16dp"
 
-                style="@style/Theme.AppCompat"
-                android:theme="@style/Theme.AppCompat"
+                android:layout_marginStart="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_toLeftOf="@id/first_person_video"
                 android:layout_weight="1"
@@ -516,6 +468,7 @@
                 android:textColor="#fff"
                 android:textColorHint="#979797"
                 android:textStyle="bold"
+                android:theme="@style/Theme.AppCompat"
                 app:autoSizeMaxTextSize="28dp"
                 app:autoSizeTextType="uniform"
                 tools:hint="Hi how are you doing is  evry thing allright with you ??"
@@ -576,6 +529,14 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/top_back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#000"
+        app:layout_constraintBottom_toBottomOf="@+id/online_ring"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <RelativeLayout
         android:id="@+id/bottom_bar_back"
@@ -583,8 +544,8 @@
         android:layout_height="8dp"
         android:layout_alignParentBottom="true"
         android:layout_margin="2dp"
-        android:fitsSystemWindows="true"
         android:background="@drawable/gradient_faded_circle_dark_animation"
+        android:fitsSystemWindows="true"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintEnd_toEndOf="@+id/bottom_bar"
@@ -605,71 +566,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/receiver_message_fade"
-        android:layout_width="0dp"
-        style="@style/Theme.AppCompat"
-        android:theme="@style/Theme.AppCompat"
-        android:layout_height="200dp"
-        app:layout_constraintTop_toTopOf="@id/message_space"
-        app:layout_constraintLeft_toLeftOf="@id/message_space"
-        app:layout_constraintRight_toRightOf="@id/message_space"
-        android:layout_gravity="top|start"
-        android:layout_marginStart="26dp"
-
-        android:layout_marginEnd="16dp"
-        android:layout_toRightOf="@id/second_person_video"
-        android:autoSizeMinTextSize="1dp"
-        android:autoSizeStepGranularity="1sp"
-        android:background="@android:color/transparent"
-        android:backgroundTint="#000000"
-        android:breakStrategy="simple"
-        android:ellipsize="end"
-        android:alpha="0.0"
-        android:fontFamily="sans-serif-black"
-        android:gravity="left"
-        android:hyphenationFrequency="full"
-        android:paddingStart="8dp"
-        android:textColor="#fff"
-        android:textColorHint="#fff"
-        android:textStyle="bold"
-        app:autoSizeMaxTextSize="28dp"
-        app:autoSizeTextType="uniform"
-        tools:hint="Effect"
-        tools:ignore="UnusedAttribute" />
-
-    <TextView
-        android:id="@+id/sender_message_fade"
-        android:layout_width="0dp"
-        style="@style/Theme.AppCompat"
-        android:theme="@style/Theme.AppCompat"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="@id/message_space"
-
-        app:layout_constraintLeft_toLeftOf="@id/message_space"
-        app:layout_constraintRight_toRightOf="@id/message_space"
-        android:layout_gravity="top|start"
-        android:layout_marginEnd="26dp"
-        android:layout_marginStart="16dp"
-        android:layout_toRightOf="@id/second_person_video"
-        android:autoSizeMinTextSize="1dp"
-        android:autoSizeStepGranularity="1sp"
-        android:background="@android:color/transparent"
-        android:backgroundTint="#000000"
-        android:breakStrategy="simple"
-        android:ellipsize="end"
-        android:alpha="0.0"
-        android:fontFamily="sans-serif-black"
-        android:gravity="right|bottom"
-        android:hyphenationFrequency="full"
-        android:paddingStart="8dp"
-        android:textColor="#fff"
-        android:textColorHint="#fff"
-        android:textStyle="bold"
-        app:autoSizeMaxTextSize="28dp"
-        app:autoSizeTextType="uniform"
-        tools:hint="Effect"
-        tools:ignore="UnusedAttribute" />
 
     <RelativeLayout
         android:id="@+id/bottom_bar"
@@ -677,11 +573,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="0dp"
-        android:padding="4dp"
-
         android:background="@drawable/live_fragment_message_box_drawable"
 
         android:fitsSystemWindows="true"
+
+        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="8dp">
 
@@ -757,18 +653,6 @@
         android:visibility="gone">
 
 
-        <TextView
-            android:id="@+id/request_camera_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="16dp"
-            style="@style/Theme.AppCompat"
-            android:theme="@style/Theme.AppCompat"
-            android:gravity="center"
-            android:text="Live messaging requires camera to enable Live Expressions on demand"
-            android:textSize="16sp" />
-
         <Button
             android:id="@+id/camera_access_btn"
             android:layout_width="wrap_content"
@@ -781,11 +665,73 @@
             android:text="Allow Camera Access "
             android:textSize="12sp" />
 
+        <TextView
+            android:id="@+id/request_camera_message"
+            style="@style/Theme.AppCompat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="Live messaging requires camera to enable Live Expressions on demand"
+            android:textSize="16sp"
+            android:theme="@style/Theme.AppCompat" />
+
     </RelativeLayout>
 
-    <include layout="@layout/activity_web_view" />
+    <TextView
+
+        android:id="@+id/message_live_with"
+        style="@style/Theme.AppCompat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/message_box_drawable"
+        android:backgroundTint="#1A1A1A"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp"
+        android:text="Live with user"
+        android:textAllCaps="false"
+        android:textColor="@color/textThemeColor"
+        android:textSize="10.5sp"
+        android:textStyle="bold"
+        android:theme="@style/Theme.AppCompat"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/username"
+        style="@style/Theme.AppCompat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/back_button"
+        android:fontFamily="sans-serif-thin"
+        android:textColor="#fff"
+        android:textSize="22dp"
+
+        android:theme="@style/Theme.AppCompat"
+        android:transitionName="nameTransitionCancel"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/back_button"
+        app:layout_constraintStart_toEndOf="@+id/back_button"
+        app:layout_constraintTop_toTopOf="@+id/back_button"
+        app:layout_constraintVertical_bias="0.37"
+        tools:layout_editor_absoluteX="50dp"
+        tools:text="username" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="20dp">
@@ -794,6 +740,17 @@
             layout="@layout/spotify_search_dialog"
             android:visibility="visible" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <WebView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:elevation="20dp"
+        android:id="@+id/youtube_web_view"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

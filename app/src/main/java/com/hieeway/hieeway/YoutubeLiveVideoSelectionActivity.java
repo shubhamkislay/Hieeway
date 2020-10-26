@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -24,6 +25,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -75,6 +80,9 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
     private TextView youtube_url;
     private RelativeLayout youtube_video_view;
     private String youtube_Url;
+    WebView youtube_web_view;
+    private static String yoututbeHomeURL = "https://m.youtube.com/";
+    private boolean loaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +92,9 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         userID = sharedPreferences.getString(USER_ID, "");
-        try {
+        //try {
             if (userID.length() < 1) {
-                Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
+                Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "You are not logged in: " + userID, Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(YoutubeLiveVideoSelectionActivity.this, MainActivity.class));
                 finish();
             } else {
@@ -113,16 +121,87 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
                 video_thumbnail = findViewById(R.id.video_thumbnail);
                 youtube_url = findViewById(R.id.youtube_url);
 
+                youtube_web_view = findViewById(R.id.youtube_web_view);
+
+                youtube_web_view.getSettings().setJavaScriptEnabled(true);
+
+                WebSettings webSettings = youtube_web_view.getSettings();
+                webSettings.setPluginState(WebSettings.PluginState.ON);
+                webSettings.setJavaScriptEnabled(true);
+                webSettings.setUseWideViewPort(true);
+                webSettings.setLoadWithOverviewMode(true);
+
 
                 youtube_video_view = findViewById(R.id.youtube_video_view);
 
 
+                videoPalAdapter = new VideoPalAdapter(YoutubeLiveVideoSelectionActivity.this, userList, activity, youtube_Url);
+                friend_list_recyclerview.setAdapter(videoPalAdapter);
+
+
                 Bundle extras = getIntent().getExtras();
-                youtube_Url = extras.getString(Intent.EXTRA_TEXT);
+                try {
+                    youtube_Url = extras.getString(Intent.EXTRA_TEXT);
+                } catch (Exception e) {
+                    youtube_Url = null;
+                }
 
-                youtube_url.setText(youtube_Url);
+                if (youtube_Url != null) {
+                    youtube_url.setText(youtube_Url);
 
-                getVideoIdfromUrl(youtube_Url);
+                    getVideoIdfromUrl(youtube_Url);
+                } else {
+                    youtube_web_view.setVisibility(View.VISIBLE);
+                }
+
+
+                final WebViewClient webViewClient = new WebViewClient() {
+
+
+                    @Override
+                    public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+                        // Toast.makeText(parentActivity, EMPTY_STRING + url, Toast.LENGTH_SHORT).show();
+
+                        /*if(yoututbeHomeURL.equals(url))
+                            youtube_web_view.stopLoading();
+
+                        yoututbeHomeURL  = url;
+
+
+
+                        Toast.makeText(YoutubeLiveVideoSelectionActivity.this,"URL: "+url,Toast.LENGTH_SHORT).show();*/
+
+                        youtube_Url = url;
+                        videoPalAdapter.setYoutube_Url(youtube_Url);
+
+                        if (!url.equals(yoututbeHomeURL))
+
+                            getVideoIdfromUrl(url);
+
+
+                    }
+
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        super.onPageFinished(view, url);
+
+
+                    }
+
+           /* @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }*/
+
+                    @Override
+                    public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                        handler.proceed();
+                    }
+                };
+
+                //youtube_web_view.setWebChromeClient(new WebChromeClient());
+                youtube_web_view.setWebViewClient(webViewClient);
+                youtube_web_view.loadUrl(yoututbeHomeURL);
 
 
                 Window window = this.getWindow();
@@ -214,25 +293,18 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
                     }
                 });
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        populateWithFriends();
-                        videoPalAdapter = new VideoPalAdapter(YoutubeLiveVideoSelectionActivity.this, userList, activity, youtube_Url);
-                        friend_list_recyclerview.setAdapter(videoPalAdapter);
 
-                    }
-                }, 400);
             }
-        } catch (Exception e) {
-            Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "You are not logged in", Toast.LENGTH_SHORT).show();
+        //}
+        /*catch (Exception e) {
+            Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "You are not logged in: "+e.toString(), Toast.LENGTH_SHORT).show();
             startActivity(new Intent(YoutubeLiveVideoSelectionActivity.this, MainActivity.class));
             finish();
         }
+*/
 
 
-
-
+        populateWithFriends();
     }
 
     private void userStatusOnDiconnect() {
@@ -447,6 +519,15 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     video_thumbnail.setImageBitmap(task.getResult());
                     youtube_video_view.setVisibility(View.VISIBLE);
+
+                    try {
+                        youtube_web_view.stopLoading();
+                        /*youtube_web_view.loadUrl(yoututbeHomeURL);*/
+                        youtube_web_view.setVisibility(View.GONE);
+                        youtube_url.setText(yoututbeHomeURL);
+                    } catch (Exception e) {
+
+                    }
                 }
 
             }
@@ -457,6 +538,11 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
 
 
     private void getVideoIdfromUrl(String url) {
+
+        youtube_web_view.stopLoading();
+        youtube_web_view.setVisibility(View.GONE);
+
+        Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "Called", Toast.LENGTH_SHORT).show();
         TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
 
         new Thread(new Runnable() {
@@ -484,6 +570,8 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<String> task) {
                 if (task.isSuccessful()) {
                     setThumnailFromVideoId(task.getResult());
+
+
                 }
             }
         });

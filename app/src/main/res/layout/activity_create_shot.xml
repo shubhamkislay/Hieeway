@@ -11,6 +11,7 @@
     <TextView
         android:id="@+id/text_msg"
         android:paddingBottom="70dp"
+        android:fontFamily="sans-serif-black"
         android:paddingTop="44dp"
         android:autoSizeMaxTextSize="@dimen/message_text_size"
         android:autoSizeMinTextSize="1dp"
@@ -69,6 +70,7 @@
             android:layout_marginLeft="8dp"
 
 
+
             android:layout_marginEnd="12dp"
             android:layout_marginRight="12dp"
             android:layout_toLeftOf="@id/send_button_bck"
@@ -80,7 +82,7 @@
             android:hint=" "
             android:inputType="textEmailAddress|textNoSuggestions"
             android:maxHeight="150dp"
-            android:maxLength="80"
+            android:maxLength="240"
             android:minHeight="42dp"
 
             android:paddingLeft="12dp"
@@ -153,6 +155,7 @@
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
+
 
             android:layout_marginLeft="8dp"
 

@@ -40,6 +40,7 @@ import com.hieeway.hieeway.Model.ChatStamp;
 import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicFeedActivity;
+import com.hieeway.hieeway.OpenMessageShotActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.PostListDiffUtilCallback;
@@ -111,10 +112,23 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             return new PostViewHolder(view);
 
         } else if (viewType == TYP_TEXT) {
-            View view = LayoutInflater.from(context).inflate(R.layout.shots_post_item, parent, false);
+            View view = LayoutInflater.from(context).inflate(R.layout.music_post_item, parent, false);
 
+            Display display = activity.getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            float dispSize = size.x;
 
+            CustomImageView backItem = view.findViewById(R.id.user_photo);
+
+            backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
+
+            TextView type = view.findViewById(R.id.type);
+            type.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+            //backItem.getLayoutParams().height = (int) dispSize * 65 / 100;
             return new PostViewHolder(view);
+
         } else if (viewType == TYP_PHOTO) {
             View view = LayoutInflater.from(context).inflate(R.layout.shots_post_item, parent, false);
 
@@ -270,10 +284,23 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 });
 
 
+            } else if (post.getType().equals("message")) {
+                postViewHolder.by_beacon.setText("");
+                postViewHolder.type.setText(post.getType());
+                postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(activity, OpenMessageShotActivity.class);
+                        intent.putExtra("message", post.getMediaUrl());
+                        intent.putExtra("postKey", post.getPostKey());
+                        context.startActivity(intent);
+                    }
+                });
             } else {
                 postViewHolder.by_beacon.setText("");
                 postViewHolder.type.setText(post.getType());
             }
+
         }
 
 
@@ -385,6 +412,11 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         else*/
         if (position == 0)
             return TYP_CREATE;
+        else if (postList.get(position).getType().equals("message")) {
+            return TYP_TEXT;
+        } else if (postList.get(position).getType().equals("music"))
+            return TYP_MUSIC;
+
         else
             return TYP_MUSIC;
     }
