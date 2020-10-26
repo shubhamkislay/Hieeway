@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -60,6 +61,12 @@ import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.GroupMessageListDiffUtilCallback;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.protocol.client.CallResult;
 import com.spotify.protocol.types.Empty;
@@ -109,6 +116,22 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Palette.Swatch lightMutedSwatch;
     private Palette.Swatch darkMutedSwatch;
 
+    ImageLoader imageLoader = ImageLoader.getInstance();
+    ImageSize targetSize = new ImageSize(64, 64);
+    DisplayImageOptions options = new DisplayImageOptions.Builder()
+            .showImageOnLoading(R.drawable.no_profile) // resource or drawable// resource or drawable
+            .showImageOnFail(R.drawable.no_profile) // resource or drawable
+            .resetViewBeforeLoading(false)  // default
+            .delayBeforeLoading(500)
+            //.cacheInMemory(false) // default
+            .cacheOnDisk(true) // default
+            //.considerExifParams(false) // default
+            .imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2) // default
+            .bitmapConfig(Bitmap.Config.ARGB_8888) // default
+            .displayer(new SimpleBitmapDisplayer()) // default
+            .handler(new Handler()) // default
+            .build();
+
     public GroupMessageAdapter(Context context, List<GroupMessage> groupMessageList, String currentUserId, ScrollRecyclerViewListener scrollRecyclerViewListener, String groupID, SpotifyAppRemote appRemote, Activity activity) {
         this.context = context;
         this.groupMessageList.addAll(groupMessageList);
@@ -118,6 +141,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.groupID = groupID;
         this.appRemote = appRemote;
         this.spotifyRemoteConnectListener = (SpotifyRemoteConnectListener) activity;
+
+        imageLoader.init(ImageLoaderConfiguration.createDefault(context));
     }
 
 
@@ -443,11 +468,6 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             GroupVideoViewHolder groupVideoViewHolder = (GroupVideoViewHolder) holder;
             GroupMessage groupMessage = groupMessageList.get(groupVideoViewHolder.getAdapterPosition());
 
-            groupVideoViewHolder.song_name.setVisibility(View.GONE);
-            groupVideoViewHolder.spinkit_wave.setVisibility(View.VISIBLE);
-            groupVideoViewHolder.fetch_music_txt.setVisibility(View.VISIBLE);
-            groupVideoViewHolder.artist_name.setVisibility(View.GONE);
-            groupVideoViewHolder.song_art.setVisibility(View.INVISIBLE);
 
             if (groupMessage.getSenderId().equals(userID))
                 groupVideoViewHolder.username.setText("You played this video");
@@ -743,6 +763,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     }
                                 }
                             });
+
+
+                            //ImageLoader.getInstance().displayImage("https://img.youtube.com/vi/" + videoMessage.getYoutubeId() + "/0.jpg", song_art, options);
+
 
                             song_name.setVisibility(View.VISIBLE);
                             spinkit_wave.setVisibility(View.GONE);

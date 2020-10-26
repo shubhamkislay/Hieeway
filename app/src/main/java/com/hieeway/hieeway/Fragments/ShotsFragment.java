@@ -403,69 +403,74 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                sharedViewModel = ViewModelProviders.of(parentActivity).get(SharedViewModel.class);
 
-                sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
-                    @Override
-                    public void onChanged(@Nullable User user) {
+                try {
+                    sharedViewModel = ViewModelProviders.of(parentActivity).get(SharedViewModel.class);
 
-
-                        //  feeling_txt.setText(user.getFeeling());
-                        feelingNow = user.getFeeling();
-                        SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                        editor.putString(FEELING, feelingNow);
-                        editor.apply();
-
-                        try {
-                            if (!user.getFeelingIcon().equals("default")) {
-                                feelingNow = user.getFeeling();
-                                feeling_icon.setVisibility(View.GONE);
-                                emoji_icon.setText(user.getFeelingIcon());
-                                emoji_icon.setVisibility(View.VISIBLE);
+                    sharedViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+                        @Override
+                        public void onChanged(@Nullable User user) {
 
 
-                            } else {
-                                feeling_icon.setVisibility(View.GONE);
-                                emoji_icon.setVisibility(View.GONE);
+                            //  feeling_txt.setText(user.getFeeling());
+                            feelingNow = user.getFeeling();
+                            SharedPreferences sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
 
-                                feelingNow = user.getFeeling();
-                                switch (user.getFeeling()) {
-                                    case HAPPY:
-                                        feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
-                                        break;
-                                    case SAD:
-                                        feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
-                                        break;
-                                    case BORED:
-                                        feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
-                                        break;
-                                    case ANGRY:
-                                        feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
-                                        break;
-                                    case "excited":
-                                        feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
-                                        break;
-                                    case CONFUSED:
-                                        feeling_icon.setVisibility(View.VISIBLE);
-                                        feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
-                                        break;
+                            editor.putString(FEELING, feelingNow);
+                            editor.apply();
+
+                            try {
+                                if (!user.getFeelingIcon().equals("default")) {
+                                    feelingNow = user.getFeeling();
+                                    feeling_icon.setVisibility(View.GONE);
+                                    emoji_icon.setText(user.getFeelingIcon());
+                                    emoji_icon.setVisibility(View.VISIBLE);
+
+
+                                } else {
+                                    feeling_icon.setVisibility(View.GONE);
+                                    emoji_icon.setVisibility(View.GONE);
+
+                                    feelingNow = user.getFeeling();
+                                    switch (user.getFeeling()) {
+                                        case HAPPY:
+                                            feeling_icon.setVisibility(View.VISIBLE);
+                                            feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_happy));
+                                            break;
+                                        case SAD:
+                                            feeling_icon.setVisibility(View.VISIBLE);
+                                            feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_sad));
+                                            break;
+                                        case BORED:
+                                            feeling_icon.setVisibility(View.VISIBLE);
+                                            feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_bored));
+                                            break;
+                                        case ANGRY:
+                                            feeling_icon.setVisibility(View.VISIBLE);
+                                            feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_angry));
+                                            break;
+                                        case "excited":
+                                            feeling_icon.setVisibility(View.VISIBLE);
+                                            feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_excited));
+                                            break;
+                                        case CONFUSED:
+                                            feeling_icon.setVisibility(View.VISIBLE);
+                                            feeling_icon.setBackground(parentActivity.getResources().getDrawable(R.drawable.ic_emoticon_feeling_confused));
+                                            break;
+                                    }
                                 }
+
+                            } catch (Exception e) {
+                                //
                             }
 
-                        } catch (Exception e) {
-                            //
+
                         }
-
-
-                    }
-                });
+                    });
+                } catch (Exception e) {
+                    //
+                }
 
 
             }

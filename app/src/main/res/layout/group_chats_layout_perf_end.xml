@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hieeway.hieeway.SingleViewTouchableMotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="#000000"
-    app:layoutDescription="@xml/group_chats_layout_perf_scene">
+    android:layout_height="match_parent">
 
     <Button
 
@@ -22,8 +21,8 @@
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="4dp"
-        android:background="@color/nav_darktheme_btn_active"
+        android:layout_margin="4dp"
+        android:background="@drawable/message_box_drawable"
         android:backgroundTint="@color/nav_darktheme_btn_active"
         app:layout_constraintBottom_toBottomOf="@id/message_box"
         app:layout_constraintTop_toTopOf="@id/message_box" />
@@ -80,6 +79,7 @@
 
         app:layout_constraintTop_toTopOf="@id/message_box" />
 
+
     <Button
         android:id="@+id/spotify_btn"
         android:layout_width="32dp"
@@ -102,6 +102,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="12dp"
         android:layout_marginRight="12dp"
+        android:layout_marginBottom="10dp"
         android:layout_toLeftOf="@id/send_button"
         android:layout_toRightOf="@id/spotify_btn"
         android:background="@android:color/transparent"
@@ -137,13 +138,12 @@
         app:layout_constraintEnd_toEndOf="@+id/bottom_bar"
         app:layout_constraintTop_toTopOf="@+id/bottom_bar" />
 
-
     <ImageView
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/darkButtonBackground"
         android:backgroundTint="@color/darkButtonBackground"
+        android:background="@drawable/rounded_bottom_corner_drawable"
         android:padding="12dp"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -164,29 +164,19 @@
         app:layout_constraintLeft_toLeftOf="@id/bottom_bar"
         app:layout_constraintTop_toTopOf="@id/bottom_bar" />
 
-
     <RelativeLayout
-        android:id="@+id/relativeLayout10"
+        android:id="@+id/youtube_layout"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="0dp"
         android:layout_centerInParent="true"
+        android:layout_marginLeft="2dp"
         android:layout_marginTop="0dp"
-        android:background="@drawable/top_fade_dark_background"
+        android:layout_marginRight="2dp"
         android:elevation="10dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/youtube_layout" />
-
-
-    <RelativeLayout
-        android:id="@+id/relativeLayout11"
-        android:layout_width="match_parent"
-        android:layout_height="15dp"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="0dp"
-        android:background="@drawable/bottom_fade_dark_background"
-        android:elevation="10dp"
-        android:visibility="gone"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@id/youtube_player_view"
         app:layout_constraintBottom_toTopOf="@id/bottom_bar" />
+
 
     <TextView
         android:id="@+id/group_name"
@@ -206,28 +196,36 @@
         tools:text="Group name" />
 
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="20dp">
-
-        <include
-            layout="@layout/spotify_search_dialog"
-            android:visibility="visible" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_recycler_View"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="0dp"
         android:paddingTop="4dp"
-        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintBottom_toTopOf="@id/youtube_layout"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/youtube_layout" />
+        app:layout_constraintTop_toBottomOf="@id/top_bar" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/top_fade_dark_background"
+        android:elevation="10dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/top_bar" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:elevation="10dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/youtube_layout" />
 
     <com.devlomi.record_view.RecordButton
         android:id="@+id/record_button"
@@ -241,7 +239,6 @@
         app:layout_constraintEnd_toEndOf="@+id/bottom_bar"
         app:layout_constraintTop_toTopOf="@+id/bottom_bar"
         app:mic_icon="@drawable/recv_ic_mic_white" />
-
 
     <com.devlomi.record_view.RecordView
         android:id="@+id/record_view"
@@ -263,7 +260,6 @@
         app:slide_to_cancel_text="Slide To Cancel" />
 
 
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/group_icon"
         android:layout_width="60dp"
@@ -275,10 +271,20 @@
         app:layout_constraintTop_toTopOf="@id/top_bar"
         tools:src="@drawable/no_profile" />
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="20dp">
+
+        <include
+            layout="@layout/spotify_search_dialog"
+            android:visibility="visible" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
         android:id="@+id/youtube_player_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
         android:layout_alignParentTop="true"
         android:background="@drawable/live_youtube_back"
         android:hardwareAccelerated="true"
@@ -286,73 +292,38 @@
         android:paddingTop="4dp"
         android:paddingRight="4dp"
         android:paddingBottom="4dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:autoPlay="false"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
         app:showFullScreenButton="false"
         app:showSeekBar="false"
         app:showVideoCurrentTime="true"
         app:showVideoDuration="true"
         app:useWebUi="false" />
 
-    <RelativeLayout
-        android:id="@+id/youtube_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_centerInParent="true"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="2dp"
-        android:elevation="10dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/youtube_player_view"
-        app:layout_constraintTop_toBottomOf="@id/top_bar" />
-
     <TextView
-        android:id="@+id/video_title_txt"
-        android:textStyle="bold"
-        android:textColor="#fff"
-        android:layout_width="0dp"
-        android:visibility="visible"
-        android:textSize="12sp"
-        android:layout_height="0dp"
-        android:background="@color/darkbackground"
-        android:backgroundTint="@color/darkButtonBackground"
+        android:id="@+id/video_title"
+        android:text="Youtube Video Title"
         android:padding="8dp"
-        android:gravity="center_vertical"
-        android:text="Playing on YouTube"
-        tools:text="Youtube Video Title"
-        app:layout_constraintBottom_toBottomOf="@id/youtube_layout"
-        app:layout_constraintLeft_toRightOf="@id/youtube_player_view"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/youtube_layout" />
-
-    <TextView
-        android:id="@+id/swipe_up_txt"
-        android:text="Swipe up to expand"
-        android:gravity="left|bottom"
-        android:layout_marginLeft="8dp"
-        android:textSize="10sp"
-        android:textColor="#494949"
-        app:layout_constraintBottom_toBottomOf="@id/youtube_layout"
-        app:layout_constraintLeft_toRightOf="@id/youtube_player_view"
-        app:layout_constraintRight_toRightOf="parent"
+        android:background="@color/darkbackground"
         app:layout_constraintTop_toTopOf="@id/youtube_layout"
+        app:layout_constraintBottom_toBottomOf="@id/youtube_layout"
+        app:layout_constraintLeft_toRightOf="@id/youtube_player_view"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_width="0dp"
         android:layout_height="0dp" />
 
     <WebView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:elevation="20dp"
         android:id="@+id/youtube_web_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:elevation="20dp"
+        android:layout_height="match_parent"
         android:visibility="gone" />
 
 
-</com.hieeway.hieeway.SingleViewTouchableMotionLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -150,6 +150,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     public static final String SPOTIFY_TOKEN = "spotify_token";
     private static final String VIDEO_NODE = "GroupVideo";
     private static final String API_KEY = "AIzaSyDl7rYj9tB9Hn1gp_Oe4TUpEyGbTVYGrZc";
+    private TextView video_title;
 
 
     public static final String MUSIC_BEACON = "musicbeacon";
@@ -228,6 +229,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        video_title = findViewById(R.id.video_title_txt);
 
         recordView = (RecordView) findViewById(R.id.record_view);
         recordButton = (RecordButton) findViewById(R.id.record_button);
@@ -562,6 +565,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
                     try {
                         customUiController.setVideo_title(videoTitle);
+                        video_title.setText("" + videoTitle);
+                        //Toast.makeText(GroupChatActivity.this,"1. Video set: "+videoTitle,Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
 
                     }
@@ -1283,10 +1288,12 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     try {
                         youtubeTitle = task.getResult().getSnippet().getTitle();
                         if (youtubeTitle == null) {
-                            youtubeTitle = " ";
+                            youtubeTitle = "Playing on YouTube";
+
                         }
                     } catch (Exception e) {
-                        youtubeTitle = " ";
+                        youtubeTitle = "Playing on YouTube";
+
                     }
 
                     HashMap<String, Object> youtubeVideoHash = new HashMap<>();
@@ -1295,6 +1302,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     youtubeVideoHash.put(VIDEOTITLE_TAG, youtubeTitle);
                     youtubeVideoHash.put("timeStamp", timestamp.toString());
 
+                    //Toast.makeText(GroupChatActivity.this,"2. Video set: "+youtubeTitle,Toast.LENGTH_SHORT).show();
+
                     FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                             .child(groupID)
                             .updateChildren(youtubeVideoHash);
@@ -1302,6 +1311,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     YoutubeSync youtubeSync = new YoutubeSync();
                     youtubeSync.setYoutubeID(loadVideoID);
                     youtubeSync.setVideoTitle(youtubeTitle);
+
+
                     youtubeSync.setTimeStamp(timestamp.toString());
 
 
@@ -1487,7 +1498,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
                         } catch (Exception e) {
                             //
-                            videoTitle = " ";
+                            videoTitle = "Playing on YouTube";
                         }
 
 
@@ -1495,6 +1506,11 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
                             customUiController.setYoutube_player_seekbarVisibility(false);
                             customUiController.setVideo_title(videoTitle);
+                            video_title.setText("" + videoTitle);
+
+                            // Toast.makeText(GroupChatActivity.this,"3. Video set: "+videoTitle,Toast.LENGTH_SHORT).show();
+
+
                         } catch (Exception e) {
 
                             // Toast.makeText(parentActivity, "Error: " + e.toString(), Toast.LENGTH_SHORT).show();

@@ -83,15 +83,10 @@ public class CustomUiController implements YouTubePlayerListener {
         customPlayerUI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (playing)
-                    fadeViewHelper.toggleVisibility();
-
-
-
-
-                youtube_player_seekbar.setVisibility(View.VISIBLE);
-                youtube_player_seekbar.setAlpha(1.0f);
+                playUIClick(v);
             }
+
+
         });
 
 
@@ -100,8 +95,9 @@ public class CustomUiController implements YouTubePlayerListener {
             public void onClick(View v) {
 
                 //fadeViewHelper.toggleVisibility();
-                if (playing)
-                    updateControllView();
+
+                toggleView(v);
+
                 //youtube_player_seekbar.setAlpha(1.0f);
             }
         });
@@ -111,26 +107,9 @@ public class CustomUiController implements YouTubePlayerListener {
 
             @Override
             public void onClick(View v) {
-                if (playing) {
-                    youTubePlayer.pause();
-                    // video_title.setVisibility(View.GONE);
-                    play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.play_btn));
 
-                    play_pause_btn.animate().setDuration(300).alpha(1.0f);
-                    youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
-                    video_title.animate().setDuration(300).alpha(1.0f);
-                    text_back.animate().setDuration(300).alpha(1.0f);
-                    text_back_two.animate().setDuration(300).alpha(1.0f);
-                    playing = false;
+                play(v);
 
-                } else {
-                    youTubePlayer.play();
-                    //video_title.setVisibility(View.VISIBLE);
-                    play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.pause_btn));
-                    playing = true;
-
-
-                }
             }
         });
 
@@ -240,6 +219,15 @@ public class CustomUiController implements YouTubePlayerListener {
         });*/
 
 
+    }
+
+    private void playUIClick(View v) {
+        if (playing)
+            fadeViewHelper.toggleVisibility();
+
+
+        youtube_player_seekbar.setVisibility(View.VISIBLE);
+        youtube_player_seekbar.setAlpha(1.0f);
     }
 
 
@@ -355,4 +343,35 @@ public class CustomUiController implements YouTubePlayerListener {
     public void onVideoLoadedFraction(YouTubePlayer youTubePlayer, float v) {
 
     }
+
+
+    public void play(View view) {
+        if (playing) {
+            youTubePlayer.pause();
+            // video_title.setVisibility(View.GONE);
+            play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.play_btn));
+
+            play_pause_btn.animate().setDuration(300).alpha(1.0f);
+            youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
+            video_title.animate().setDuration(300).alpha(1.0f);
+            text_back.animate().setDuration(300).alpha(1.0f);
+            text_back_two.animate().setDuration(300).alpha(1.0f);
+            playing = false;
+
+        } else {
+            youTubePlayer.play();
+            //video_title.setVisibility(View.VISIBLE);
+            play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.pause_btn));
+            playing = true;
+
+
+        }
+    }
+
+    public void toggleView(View view) {
+        if (playing)
+            updateControllView();
+    }
+
+
 }
