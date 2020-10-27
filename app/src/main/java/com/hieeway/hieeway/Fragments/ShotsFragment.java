@@ -518,12 +518,15 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                 myGroupList.add(friend3);
 
                 if (snapshot.exists()) {
+                    List<MyGroup> sortedGroupList = new ArrayList<>();
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         MyGroup myGroup = dataSnapshot.getValue(MyGroup.class);
-                        myGroupList.add(myGroup);
+                        sortedGroupList.add(myGroup);
                     }
 
+                    Collections.sort(sortedGroupList, Collections.<MyGroup>reverseOrder());
                     //userList = myGroupList;
+                    myGroupList.addAll(sortedGroupList);
                     groupsAdapter.updateList(myGroupList);
                     if (!alreadyScrolled) {
                         groups_recyclerview.scrollToPosition(0);
@@ -532,6 +535,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
 
                 } else {
+
 
                     groupsAdapter.updateList(myGroupList);
                 }

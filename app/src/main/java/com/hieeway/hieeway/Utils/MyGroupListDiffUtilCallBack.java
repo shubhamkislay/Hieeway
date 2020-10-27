@@ -39,7 +39,13 @@ public class MyGroupListDiffUtilCallBack extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return mNewList.get(newItemPosition).getGroupName().equals(mOldList.get(oldItemPosition).getGroupName())
-                && mNewList.get(newItemPosition).getIcon().equals(mOldList.get(oldItemPosition).getIcon());
+        try {
+            return mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp())
+                    && mNewList.get(newItemPosition).getGroupName().equals(mOldList.get(oldItemPosition).getGroupName())
+                    && mNewList.get(newItemPosition).getIcon().equals(mOldList.get(oldItemPosition).getIcon());
+        } catch (Exception e) {
+            return mNewList.get(newItemPosition).getGroupName().equals(mOldList.get(oldItemPosition).getGroupName())
+                    && mNewList.get(newItemPosition).getIcon().equals(mOldList.get(oldItemPosition).getIcon());
+        }
     }
 }

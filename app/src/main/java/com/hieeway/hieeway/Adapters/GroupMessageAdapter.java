@@ -468,6 +468,12 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             GroupVideoViewHolder groupVideoViewHolder = (GroupVideoViewHolder) holder;
             GroupMessage groupMessage = groupMessageList.get(groupVideoViewHolder.getAdapterPosition());
 
+            groupVideoViewHolder.song_name.setVisibility(View.GONE);
+            groupVideoViewHolder.spinkit_wave.setVisibility(View.VISIBLE);
+            groupVideoViewHolder.fetch_music_txt.setVisibility(View.VISIBLE);
+            groupVideoViewHolder.artist_name.setVisibility(View.GONE);
+            groupVideoViewHolder.song_art.setVisibility(View.INVISIBLE);
+
 
             if (groupMessage.getSenderId().equals(userID))
                 groupVideoViewHolder.username.setText("You played this video");

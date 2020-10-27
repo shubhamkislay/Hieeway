@@ -76,6 +76,7 @@ import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
 import com.hieeway.hieeway.Interface.SpotifyRemoteConnectListener;
 import com.hieeway.hieeway.Interface.SpotifySongSelectedListener;
 import com.hieeway.hieeway.Model.ChatMessage;
+import com.hieeway.hieeway.Model.GroupMember;
 import com.hieeway.hieeway.Model.GroupMessage;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.SpotiySearchItem;
@@ -773,7 +774,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
                 // Toast.makeText(parentActivity, EMPTY_STRING + url, Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(GroupChatActivity.this, "URL: " + url, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(GroupChatActivity.this, "URL: " + url, Toast.LENGTH_SHORT).show();
 
                 videoID = defaultVideoID;
                 if (!url.equals(yoututbeHomeURL))
@@ -1119,7 +1120,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     public void getVideoIdFromYoutubeUrl(String url) {
 
 
-        Toast.makeText(GroupChatActivity.this, "Called", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(GroupChatActivity.this, "Called", Toast.LENGTH_SHORT).show();
         TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
 
         new Thread(new Runnable() {
@@ -1395,6 +1396,33 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
             }
         });
+
+        HashMap<String, Object> updateGroupTimeHash = new HashMap<>();
+        FirebaseDatabase.getInstance().getReference("GroupMembers")
+                .child(groupID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
+
+                                updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/" + groupID + "/timeStamp", timestamp.toString());
+
+
+                            }
+
+                            FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
     }
 
 
@@ -1431,6 +1459,36 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
                 }
             });
+
+            HashMap<String, Object> updateGroupTimeHash = new HashMap<>();
+            FirebaseDatabase.getInstance().getReference("GroupMembers")
+                    .child(groupID)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
+
+                                    //updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/"+groupID+"/timeStamp/",timestamp.toString());
+                                    FirebaseDatabase.getInstance().getReference("MyGroup")
+                                            .child(groupMember.getId())
+                                            .child(groupID)
+                                            .child("timeStamp")
+                                            .setValue(timestamp.toString());
+
+
+                                }
+
+                                //FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
 
             message_box.setText("");
         }
@@ -1692,6 +1750,32 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
             }
         });
+
+        HashMap<String, Object> updateGroupTimeHash = new HashMap<>();
+        FirebaseDatabase.getInstance().getReference("GroupMembers")
+                .child(groupID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
+
+                                updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/" + groupID + "/timeStamp", timestamp.toString());
+
+
+                            }
+
+                            FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
     }
 
     @Override

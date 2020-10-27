@@ -33,4 +33,6 @@ public class GroupMember {
     public void setPhoto(String photo) {
         this.photo = photo;
     }
+
+
 }

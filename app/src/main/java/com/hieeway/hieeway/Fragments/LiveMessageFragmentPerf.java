@@ -94,6 +94,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.SpotifySearchAdapter;
 import com.hieeway.hieeway.CameraRequestDialog;
@@ -379,6 +380,8 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
     private EditText search_video_edittext;
     private List<SpotiySearchItem> spotiySearchItemList;
     private PlayerUiController playerUiController;
+    private boolean readyToResetFadeSenderFade = true;
+    private boolean readyToResetFadeReceiverFade = true;
 
 
     /**
@@ -946,8 +949,6 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
         youtube_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "Youtube_web_view visible", Toast.LENGTH_SHORT).show();
-
                 youtubeBottomFragmentStateListener.setDrag(true);
                 youtube_web_view.setVisibility(View.VISIBLE);
                 Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.youtube_webview_open);
@@ -2001,8 +2002,18 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                     senderTextView.setText(EMPTY_STRING);
                     sender_message_fade.setTranslationY(0);
                     sender_message_fade.setAlpha(1.0f);
-                    sender_message_fade.setText(messageBox.getText());
-                    sender_message_fade.animate().translationY(-500).alpha(0.0f).setDuration(3000);
+                    //Toast.makeText(getActivity(),"Setting text: "+messageBox.getText(),Toast.LENGTH_SHORT).show();
+                    if (readyToResetFadeSenderFade || !messageBox.getText().equals(EMPTY_STRING)) {
+                        readyToResetFadeSenderFade = false;
+                        sender_message_fade.setText(messageBox.getText());
+                        sender_message_fade.animate().translationY(-500).alpha(0.0f).setDuration(3000);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                readyToResetFadeSenderFade = true;
+                            }
+                        }, 3200);
+                    }
 
                     messageBox.setText(EMPTY_STRING);
                     showCurrentUserTypingAnimation = false;
@@ -2635,7 +2646,7 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 editor.putString(SPOTIFY_TOKEN, response.getAccessToken());
                 editor.apply();
                 spotifyToken = response.getAccessToken();
-                Toast.makeText(parentActivity, "Connected to Spotify: " + response.getAccessToken(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(parentActivity, "Connected to Spotify :)", Toast.LENGTH_SHORT).show();
                 youtubeBottomFragmentStateListener.setDrag(true);
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 if (search_video_edittext.getText().toString().length() > 0)
@@ -3284,11 +3295,22 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                 public void run() {
 
                     if (receiverTextView.getText().toString().equals(receiverText)) {
-                        //Toast.makeText(getActivity(),""+receiverText,Toast.LENGTH_SHORT).show();
+
                         receiver_message_fade.setTranslationY(0);
                         receiver_message_fade.setAlpha(1.0f);
-                        receiver_message_fade.setText(receiverText);
-                        receiver_message_fade.animate().translationY(-500).alpha(0.0f).setDuration(3000);
+
+
+                        if (readyToResetFadeReceiverFade || !receiverText.equals(EMPTY_STRING)) {
+                            readyToResetFadeReceiverFade = false;
+                            receiver_message_fade.setText(receiverText);
+                            receiver_message_fade.animate().translationY(500).alpha(0.0f).setDuration(3000);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    readyToResetFadeReceiverFade = true;
+                                }
+                            }, 3200);
+                        }
 
 
                         receiverTextView.setText(EMPTY_STRING);

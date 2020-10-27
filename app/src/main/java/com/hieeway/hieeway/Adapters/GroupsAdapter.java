@@ -4,9 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.Group;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -15,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +47,10 @@ import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
+import java.sql.Timestamp;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHolder> {
 
@@ -57,6 +64,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     private int selectedIndex = 0;
     private Boolean seeAllBtn = false;
     private SeeAllGroupItemsListener seeAllGroupItemsListener;
+    private SharedPreferences sharedPreferences;
+    public static final String SHARED_PREFS = "sharedPrefs";
     private int currentViewCount = 0;
     ImageLoader imageLoader = ImageLoader.getInstance();
     ImageSize targetSize = new ImageSize(64, 64);
@@ -82,6 +91,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         this.seeAllGroupItemsListener = seeAllGroupItemsListener;
 
         imageLoader.init(ImageLoaderConfiguration.createDefault(context));
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         //refreshedList = new ArrayList<>();
         /*
@@ -214,6 +224,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                 @Override
                 public void onClick(View v) {
                     //Toast.makeText(context, "Opening Group chat...", Toast.LENGTH_SHORT).show();
+                    myViewHolder.back_item.setVisibility(View.INVISIBLE);
 
                     Intent intent = new Intent(context, GroupChatActivity.class);
                     intent.putExtra("groupID", myGroup.getGroupID());
@@ -223,6 +234,22 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                     context.startActivity(intent);
                 }
             });
+
+            MyGroup group = new MyGroup();
+            group.setIcon("asdf");
+            group.setGroupName("fasdf");
+            group.setGroupID("fasdf");
+            group.setTimeStamp(sharedPreferences.getString(myGroup.getGroupID(), ""));
+
+
+            if (myGroup.compareTo(group) >= 0) {
+                //Toast.makeText(context,"Visible",Toast.LENGTH_SHORT).show();
+                myViewHolder.back_item.setVisibility(View.VISIBLE);
+            } else {
+                //Toast.makeText(context,"Invisible",Toast.LENGTH_SHORT).show();
+                myViewHolder.back_item.setVisibility(View.INVISIBLE);
+            }
+
 
         } else {
             if (myViewHolder.getAdapterPosition() == 0) {
@@ -291,7 +318,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
         myGroupList.addAll(newListChatStamp);
 
 
-/*        refreshedList.clear();
+        /*        refreshedList.clear();
         MyGroup friend1 = new MyGroup();
         MyGroup friend2 = new MyGroup();
         MyGroup friend3 = new MyGroup();
@@ -336,6 +363,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         CustomCircularView prof_pic;
         TextView username;
+        RelativeLayout back_item;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -343,6 +371,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
             prof_pic = itemView.findViewById(R.id.user_photo);
             username = itemView.findViewById(R.id.username);
+            back_item = itemView.findViewById(R.id.back_item);
 
 
         }

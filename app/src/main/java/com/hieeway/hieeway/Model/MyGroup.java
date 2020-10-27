@@ -1,9 +1,10 @@
 package com.hieeway.hieeway.Model;
 
-public class MyGroup {
+public class MyGroup implements Comparable<MyGroup> {
     private String groupID;
     private String icon;
     private String groupName;
+    private String timeStamp;
 
     public MyGroup() {
     }
@@ -12,6 +13,14 @@ public class MyGroup {
         this.groupID = groupID;
         this.icon = icon;
         this.groupName = groupName;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getGroupID() {
@@ -37,4 +46,17 @@ public class MyGroup {
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
+
+    @Override
+    public int compareTo(MyGroup o) {
+
+        try {
+            return this.getTimeStamp().compareTo(o.getTimeStamp());
+        } catch (Exception e) {
+            return 0;
+        }
+
+    }
+
+
 }

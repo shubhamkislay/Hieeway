@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:gravity="center"
+
+        android:drawable="@drawable/group_item_ring_back">
+
+
+    </item>
+
+    <item
+        android:gravity="center"
+        android:right="2dp"
+        android:left="2dp"
+        android:top="2dp"
+        android:bottom="2dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/darkButtonBackground" />
+
+
+        </shape>
+    </item>
+
+
+</layer-list>

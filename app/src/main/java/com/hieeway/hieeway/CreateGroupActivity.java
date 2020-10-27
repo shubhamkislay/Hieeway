@@ -42,6 +42,7 @@ import com.hieeway.hieeway.Interface.FriendsSelectedListener;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -259,6 +260,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
 
         groupRef.updateChildren(groupHash);
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
 
         DatabaseReference myGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
                 .child(userID)
@@ -290,8 +293,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             hashMap.put("id", friend.getFriendId());
             hashMap.put("username", friend.getUsername());
             hashMap.put("photo", friend.getFriendId());
-            hashMap.put("activePhoto", friend.getActivePhoto());
-            hashMap.put("live", "no");
+            //hashMap.put("activePhoto", friend.getActivePhoto());
+            //hashMap.put("live", "no");
 
             memRef.child(memRef.push().getKey())
                     .updateChildren(hashMap);
@@ -304,6 +307,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             ghashMap.put("icon", icon);
             ghashMap.put("groupID", groupID);
             ghashMap.put("groupName", groupName);
+            ghashMap.put("timeStamp", timestamp.toString());
 
             mGroup.updateChildren(ghashMap);
 
@@ -311,11 +315,12 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
 
         //Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(CreateGroupActivity.this, GroupChatActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("groupID", groupID);
         intent.putExtra("groupName", groupName);
         intent.putExtra("icon", icon);
         startActivity(intent);
+        finish();
     }
 
     private void userStatusOnDiconnect() {

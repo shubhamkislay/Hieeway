@@ -121,6 +121,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
             intent.putExtra("groupID", groupID);
             intent.putExtra("groupName", group_name.getText().toString());
             startActivity(intent);
+            finish();
         } else {
             group_name.setError("Group name should be 3-30 characters");
         }

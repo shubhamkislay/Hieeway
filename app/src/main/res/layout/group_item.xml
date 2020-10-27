@@ -20,20 +20,35 @@
         android:gravity="center"
         android:maxLines="1"
         android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="@id/user_photo"
-        app:layout_constraintStart_toStartOf="@id/user_photo"
-        app:layout_constraintTop_toBottomOf="@id/user_photo"
+        app:layout_constraintEnd_toEndOf="@id/back_item"
+        app:layout_constraintStart_toStartOf="@id/back_item"
+        app:layout_constraintTop_toBottomOf="@id/back_item"
         tools:text='sky' />
+
+    <RelativeLayout
+        android:id="@+id/back_item"
+        android:background="@drawable/layer_group_item_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        android:layout_width="64dp"
+        android:layout_height="64dp" />
 
 
     <com.hieeway.hieeway.CustomCircularView
         android:id="@+id/user_photo"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+
         android:scaleType="centerCrop"
+        tools:src="@drawable/no_profile"
         android:transitionName="imageTransition"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/back_item"
+        app:layout_constraintStart_toStartOf="@id/back_item"
+        app:layout_constraintBottom_toBottomOf="@id/back_item"
+        app:layout_constraintTop_toTopOf="@id/back_item" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
