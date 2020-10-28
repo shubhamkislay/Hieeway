@@ -5,6 +5,9 @@ public class MyGroup implements Comparable<MyGroup> {
     private String icon;
     private String groupName;
     private String timeStamp;
+    private String sender;
+    private String type;
+    private String key;
 
     public MyGroup() {
     }
@@ -13,6 +16,30 @@ public class MyGroup implements Comparable<MyGroup> {
         this.groupID = groupID;
         this.icon = icon;
         this.groupName = groupName;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getTimeStamp() {

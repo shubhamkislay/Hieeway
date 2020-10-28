@@ -122,6 +122,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                     sendFeelingNotification(remoteMessage);
                 else if (remoteMessage.getData().get("type").equals("postMessage"))
                     sendShotNotification(remoteMessage);
+                else if (remoteMessage.getData().get("type").equals("groupMessage"))
+                    sendGroupNotification(remoteMessage);
 
                 if (/* Check if data needs to be processed by long running job */ true) {
                     // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
@@ -897,6 +899,98 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setSound(defaultSoundUri)/*
                             .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())*/;
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        }
+
+
+    }
+
+    private void sendGroupNotification(RemoteMessage remoteMessage) {
+        context = this;
+        Intent intent;
+
+        int id = MyApplication.NotificationID.getID();
+
+
+        String messageType = remoteMessage.getData().get("msgType");
+        if (messageType.equals("youtube"))
+            messageType = remoteMessage.getData().get("username") + " is watching a video on " + remoteMessage.getData().get("groupName");
+        else if (messageType.equals("text"))
+            messageType = remoteMessage.getData().get("username") + " messaged on " + remoteMessage.getData().get("groupName");
+        else if (messageType.equals("music"))
+            messageType = remoteMessage.getData().get("username") + " added a song on " + remoteMessage.getData().get("groupName");
+        else if (messageType.equals("created"))
+            messageType = remoteMessage.getData().get("username") + " created the group " + remoteMessage.getData().get("groupName");
+
+        try {
+            bitmap = Glide.with(this)
+                    .asBitmap()
+                    .load(remoteMessage.getData().get("userPhoto").replace("s96-c", "s384-c"))
+                    .submit(512, 512)
+                    .get();
+
+            /*bitmap = BitmapFactory.decodeResource(getResources(),
+                    R.drawable.profile_pic);*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder;
+
+        NotificationChannel notificationChannel;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel =
+                    new NotificationChannel("ch_nm", "CHART", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setVibrationPattern(new long[]{300, 300, 300});
+
+            if (defaultSoundUri != null) {
+                AudioAttributes att = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+                notificationChannel.setSound(defaultSoundUri, att);
+            }
+
+
+            notificationManager.createNotificationChannel(notificationChannel);
+
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, notificationChannel.getId())
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("groupName"))
+                            .setContentText(messageType)
+                            //.setCont
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri);
+            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
+
+            notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
+        } else {
+            notificationBuilder =
+                    new NotificationCompat.Builder(context, CHANNEL_1_ID)
+                            .setSmallIcon(R.drawable.ic_stat_hieeway_arrow_title_bar)
+                            //.setCustomContentView(collapsedView)
+                            .setContentTitle(remoteMessage.getData().get("groupName"))
+                            .setContentText(messageType)
+                            //.setCont
+                            .setColor(getResources().getColor(R.color.colorPrimaryDark))
+                            .setColorized(true)
+                            .setLargeIcon(bitmap)
+                            //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri);
+            //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
 
             notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
         }

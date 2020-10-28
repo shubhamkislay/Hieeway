@@ -250,6 +250,8 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
     }
 
     private void createGroup() {
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("Groups")
                 .child(groupID);
 
@@ -257,10 +259,12 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
         groupHash.put("icon", icon);
         groupHash.put("groupID", groupID);
         groupHash.put("groupName", groupName);
+        groupHash.put("timeStamp", timestamp.toString());
+        groupHash.put("sender", userID);
+        groupHash.put("key", groupID);
+        groupHash.put("type", "created");
 
         groupRef.updateChildren(groupHash);
-
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
 
         DatabaseReference myGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
@@ -278,6 +282,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
         userMap.put("id", userID);
         userMap.put("username", currentUsername);
         userMap.put("photo", currentPhoto);
+
 
 
         userRef.child(userRef.push().getKey())
@@ -307,7 +312,11 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             ghashMap.put("icon", icon);
             ghashMap.put("groupID", groupID);
             ghashMap.put("groupName", groupName);
+            ghashMap.put("key", groupID);
             ghashMap.put("timeStamp", timestamp.toString());
+            ghashMap.put("sender", userID);
+            ghashMap.put("type", "created");
+
 
             mGroup.updateChildren(ghashMap);
 

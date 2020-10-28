@@ -67,6 +67,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
     private SharedPreferences sharedPreferences;
     public static final String SHARED_PREFS = "sharedPrefs";
     private int currentViewCount = 0;
+    private String userID;
     ImageLoader imageLoader = ImageLoader.getInstance();
     ImageSize targetSize = new ImageSize(64, 64);
     DisplayImageOptions options = new DisplayImageOptions.Builder()
@@ -84,7 +85,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
             .build();
 
 
-    public GroupsAdapter(List<MyGroup> myGroupList, Context context, SeeAllGroupItemsListener seeAllGroupItemsListener) {
+    public GroupsAdapter(List<MyGroup> myGroupList, Context context, SeeAllGroupItemsListener seeAllGroupItemsListener, String userID) {
         this.myGroupList = myGroupList;
 
         this.context = context;
@@ -92,6 +93,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
         imageLoader.init(ImageLoaderConfiguration.createDefault(context));
         sharedPreferences = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        this.userID = userID;
 
         //refreshedList = new ArrayList<>();
         /*
@@ -244,7 +246,8 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
             if (myGroup.compareTo(group) >= 0) {
                 //Toast.makeText(context,"Visible",Toast.LENGTH_SHORT).show();
-                myViewHolder.back_item.setVisibility(View.VISIBLE);
+                if (!myGroup.getSender().equals(userID))
+                    myViewHolder.back_item.setVisibility(View.VISIBLE);
             } else {
                 //Toast.makeText(context,"Invisible",Toast.LENGTH_SHORT).show();
                 myViewHolder.back_item.setVisibility(View.INVISIBLE);

@@ -522,8 +522,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
 
 
                 if (currentItem != 8) {
-                    Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_bottom_to_top);
-                    Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_bottom_to_top);
+                    Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_bottom_to_top_flipper);
+                    Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_bottom_to_top_flipper);
                     view_flipper.setInAnimation(enterAnimation);
                     view_flipper.setOutAnimation(exitAnimation);
 
@@ -602,8 +602,8 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
             public void onClick(View v) {
 
 
-                Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_top_to_bottom);
-                Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_top_to_bottom);
+                Animation enterAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.enter_top_to_bottom_flipper);
+                Animation exitAnimation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.exit_top_to_bottom_flipper);
                 view_flipper.setInAnimation(enterAnimation);
                 view_flipper.setOutAnimation(exitAnimation);
 

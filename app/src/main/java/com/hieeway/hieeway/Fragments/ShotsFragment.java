@@ -181,7 +181,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             userList.add(friend2);
             userList.add(friend3);
 
-            groupsAdapter = new GroupsAdapter(userList, getActivity(), this);
+            groupsAdapter = new GroupsAdapter(userList, getActivity(), this, userID);
 
 
             Display display = getActivity().getWindowManager().getDefaultDisplay();

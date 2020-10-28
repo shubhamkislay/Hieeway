@@ -54,6 +54,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -222,6 +223,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private ItemTouchHelper itemTouchHelper;
     private boolean youtubeVisible = false;
     DatabaseReference groupMessageSendRef;
+    private DatabaseReference connectedRef;
+    private boolean connected = true;
 
 
     @Override
@@ -1398,6 +1401,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         });
 
         HashMap<String, Object> updateGroupTimeHash = new HashMap<>();
+
         FirebaseDatabase.getInstance().getReference("GroupMembers")
                 .child(groupID)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -1407,12 +1411,20 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
 
-                                updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/" + groupID + "/timeStamp", timestamp.toString());
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("sender", userID);
+                                hashMap.put("type", "youtube");
+                                hashMap.put("timeStamp", timestamp.toString());
+                                //updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/"+groupID+"/timeStamp/",timestamp.toString());
+                                FirebaseDatabase.getInstance().getReference("MyGroup")
+                                        .child(groupMember.getId())
+                                        .child(groupID)
+                                        .updateChildren(hashMap);
 
 
                             }
 
-                            FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
+                            //FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
                         }
                     }
 
@@ -1424,7 +1436,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
     }
-
 
     private void sendMessage() {
 
@@ -1447,6 +1458,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             groupMessageHash.put("sentStatus", "sending");
             groupMessageHash.put("username", currentUsername);
             groupMessageHash.put("type", "text");
+
             //groupMessageHash.put("mediaID", "none");
 
 
@@ -1470,12 +1482,16 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
 
+                                    HashMap<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("sender", userID);
+                                    hashMap.put("type", "text");
+                                    hashMap.put("key", messageId);
+                                    hashMap.put("timeStamp", timestamp.toString());
                                     //updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/"+groupID+"/timeStamp/",timestamp.toString());
                                     FirebaseDatabase.getInstance().getReference("MyGroup")
                                             .child(groupMember.getId())
                                             .child(groupID)
-                                            .child("timeStamp")
-                                            .setValue(timestamp.toString());
+                                            .updateChildren(hashMap);
 
 
                                 }
@@ -1548,8 +1564,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     protected void onStart() {
         super.onStart();
 
-        FirebaseDatabase.getInstance().goOffline();
-        FirebaseDatabase.getInstance().goOnline();
+
         seekRef = FirebaseDatabase.getInstance().getReference(VIDEO_NODE)
                 .child(groupID);
 
@@ -1671,7 +1686,42 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         populateMessages();
 
+        checkPresence();
 
+
+    }
+
+    private void checkPresence() {
+        connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+
+
+        ValueEventListener presenceEventListner = new ValueEventListener() {
+
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                boolean connectedToDB = snapshot.getValue(Boolean.class);
+                connected = connectedToDB;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Log.w(TAG, "Listener was cancelled");
+            }
+        };
+
+        connectedRef.addValueEventListener(presenceEventListner);
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!connected) {
+                    FirebaseDatabase.getInstance().goOffline();
+                    FirebaseDatabase.getInstance().goOnline();
+                }
+            }
+        }, 5000);
     }
 
     @Override
@@ -1761,12 +1811,21 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
 
-                                updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/" + groupID + "/timeStamp", timestamp.toString());
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("sender", userID);
+                                hashMap.put("type", "music");
+                                hashMap.put("key", musicKey);
+                                hashMap.put("timeStamp", timestamp.toString());
+                                //updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/"+groupID+"/timeStamp/",timestamp.toString());
+                                FirebaseDatabase.getInstance().getReference("MyGroup")
+                                        .child(groupMember.getId())
+                                        .child(groupID)
+                                        .updateChildren(hashMap);
 
 
                             }
 
-                            FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
+                            //FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
                         }
                     }
 
