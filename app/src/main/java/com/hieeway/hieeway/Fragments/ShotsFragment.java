@@ -666,12 +666,20 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                         } else {
                             postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
                         }*/
+                        Long tsLong = System.currentTimeMillis() / 1000;
+                        long localUserDiff = tsLong - post.getPostTime();
 
+                        long localDiffHours = localUserDiff / (60 * 60 * 24);
 
-                        if (!postList.contains(post))
-                            postList.add(post);
-                        else
-                            postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
+                        if (localDiffHours < 1) {
+                            if (!postList.contains(post))
+                                postList.add(post);
+                            else
+                                postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
+                        } else {
+                            postRefs.child(post.getPostKey()).removeValue();
+                        }
+
 
                         //Toast.makeText(parentActivity,"Post added",Toast.LENGTH_SHORT).show();
 

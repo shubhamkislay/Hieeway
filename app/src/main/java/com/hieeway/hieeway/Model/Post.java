@@ -19,6 +19,7 @@ public class Post implements Comparable<Post> {
     public String timeStamp;
     public String seenBy;
     public boolean manual;
+    private long postTime;
 
     public String getSeenBy() {
         return seenBy;
@@ -58,6 +59,14 @@ public class Post implements Comparable<Post> {
 
     public String getType() {
         return type;
+    }
+
+    public long getPostTime() {
+        return postTime;
+    }
+
+    public void setPostTime(long postTime) {
+        this.postTime = postTime;
     }
 
     public void setType(String type) {

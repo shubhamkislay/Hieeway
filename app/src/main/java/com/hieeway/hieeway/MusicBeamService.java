@@ -351,6 +351,7 @@ public class MusicBeamService extends Service {
                                         if (!sharedPreferences.getString(LAST_SPOTIFY_ID, "default").equals(songId)) {
 
                                             Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+                                            Long tsLong = System.currentTimeMillis() / 1000;
                                             String postKey = FirebaseDatabase.getInstance().getReference("Post")
                                                     .child(userId).push().getKey();
 
@@ -370,6 +371,7 @@ public class MusicBeamService extends Service {
                                             post.setMediaUrl("default");
                                             post.setUsername(username);
                                             post.setMediaKey(postKey);
+                                            post.setPostTime(tsLong);
                                             post.setTimeStamp(timeStamp.toString());
                                             //postRef.child(postKey).updateChildren(postHash);
                                             editor.putString(LAST_SPOTIFY_ID, songId);

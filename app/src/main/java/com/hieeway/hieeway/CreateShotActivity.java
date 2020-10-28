@@ -439,6 +439,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     private void postShot() {
 
         Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+        Long tsLong = System.currentTimeMillis() / 1000;
         String postKey = FirebaseDatabase.getInstance().getReference("Post")
                 .child(userID).push().getKey();
 
@@ -449,6 +450,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         post.setType("message");
         post.setMediaUrl(textMessage);
         post.setUsername(username);
+        post.setPostTime(tsLong);
         post.setMediaKey(postKey);
         post.setTimeStamp(timeStamp.toString());
         //postRef.child(postKey).updateChildren(postHash);

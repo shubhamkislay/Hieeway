@@ -908,9 +908,19 @@ public class MyMessagingService extends FirebaseMessagingService {
 
     private void sendGroupNotification(RemoteMessage remoteMessage) {
         context = this;
+
         Intent intent;
+        intent = new Intent(this, GroupChatActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("groupID", remoteMessage.getData().get("groupID"));
+        intent.putExtra("groupName", remoteMessage.getData().get("groupName"));
+        intent.putExtra("icon", remoteMessage.getData().get("groupPhoto"));
 
         int id = MyApplication.NotificationID.getID();
+
+        PendingIntent pendingIntent;
+        pendingIntent = PendingIntent.getActivity(this, id /* Request code */, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         String messageType = remoteMessage.getData().get("msgType");
@@ -972,7 +982,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setLargeIcon(bitmap)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                             .setAutoCancel(true)
-                            .setSound(defaultSoundUri);
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent);
             //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
 
             notificationManager.notify(id/* ID of notification */, notificationBuilder.build());
@@ -989,7 +1000,8 @@ public class MyMessagingService extends FirebaseMessagingService {
                             .setLargeIcon(bitmap)
                             //.addAction(R.drawable.ic_action_chat_bubble,"Open",null)
                             .setAutoCancel(true)
-                            .setSound(defaultSoundUri);
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent);
             //.setStyle(new androidx.media.app.NotificationCompat.MediaStyle());
 
             notificationManager.notify(id/* ID of notification */, notificationBuilder.build());

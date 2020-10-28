@@ -3299,11 +3299,18 @@ public class LiveMessageFragmentPerf extends Fragment implements LiveMessageRequ
                         receiver_message_fade.setTranslationY(0);
                         receiver_message_fade.setAlpha(1.0f);
 
+                        int translationYInt = 0;
+                        if (youtube_layout.getVisibility() == View.VISIBLE)
+                            translationYInt = 500;
+                        else
+                            translationYInt = 500;
+
 
                         if (readyToResetFadeReceiverFade || !receiverText.equals(EMPTY_STRING)) {
                             readyToResetFadeReceiverFade = false;
                             receiver_message_fade.setText(receiverText);
-                            receiver_message_fade.animate().translationY(500).alpha(0.0f).setDuration(3000);
+
+                            receiver_message_fade.animate().translationY(translationYInt).alpha(0.0f).setDuration(3000);
                             new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {

@@ -43,7 +43,7 @@
         android:layout_height="54dp"
 
         android:scaleType="centerCrop"
-        tools:src="@drawable/no_profile"
+        tools:src="@drawable/groups_image"
         android:transitionName="imageTransition"
         app:layout_constraintEnd_toEndOf="@id/back_item"
         app:layout_constraintStart_toStartOf="@id/back_item"

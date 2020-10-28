@@ -329,13 +329,20 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                                 @Override
                                                 public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
-                                                    final Matrix matrix = user_photo.getImageMatrix();
-                                                    final float imageWidth = resource.getIntrinsicWidth();
-                                                    final int screenWidth = context.getResources().getDisplayMetrics().widthPixels / 2;
-                                                    final float scaleRatio = screenWidth / imageWidth;
-                                                    // matrix.postScale(scaleRatio, scaleRatio);
-                                                    matrix.postScale(1, 1);
-                                                    user_photo.setImageMatrix(matrix);
+                                                    if (user.getPhoto().contains("https://firebasestorage")) {
+                                                        final Matrix matrix = user_photo.getImageMatrix();
+                                                        final float imageWidth = resource.getIntrinsicWidth();
+                                                        final int screenWidth = context.getResources().getDisplayMetrics().widthPixels / 2;
+                                                        final float scaleRatio = screenWidth / imageWidth;
+                                                        // matrix.postScale(scaleRatio, scaleRatio);
+                                                        matrix.postScale(1, 1);
+                                                        user_photo.setImageMatrix(matrix);
+
+
+                                                    } else {
+                                                        user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                                                    }
 
 
                                                     return false;

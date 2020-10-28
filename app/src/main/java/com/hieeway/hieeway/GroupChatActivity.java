@@ -316,7 +316,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         if (!iconUrl.equals("default"))
             Glide.with(this).load(iconUrl).into(icon);
         else
-            Glide.with(this).load(getDrawable(R.drawable.no_profile)).into(icon);
+            Glide.with(this).load(getDrawable(R.drawable.groups_image)).into(icon);
         groupName.setText(groupNameTxt);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -946,7 +946,20 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         GroupMessage groupMessage = dataSnapshot.getValue(GroupMessage.class);
 
                         //Toast.makeText(GroupChatActivity.this,"Added: " +groupMessage.getMessageText(),Toast.LENGTH_SHORT).show();
-                        groupMessageList.add(groupMessage);
+
+
+                        Long tsLong = System.currentTimeMillis() / 1000;
+                        long localUserDiff = tsLong - groupMessage.getMessageTime();
+
+                        long localDiffHours = localUserDiff / (60 * 60 * 24);
+
+                        if (localDiffHours < 1)
+                            groupMessageList.add(groupMessage);
+                        else {
+                            groupMessageSendRef.child(groupMessage.getMessageId()).removeValue();
+                        }
+
+
                         messages += 1;
                     }
 
@@ -1352,8 +1365,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private void sendVideoMessage(YoutubeSync youtubeSync, String url) {
 
 
-
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Long tsLong = System.currentTimeMillis() / 1000;
 
         String messageId = groupMessageSendRef.push().getKey();
 
@@ -1387,6 +1400,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         groupMessageHash.put("sentStatus", "sending");
         groupMessageHash.put("username", currentUsername);
         groupMessageHash.put("type", "video");
+        groupMessageHash.put("messageTime", tsLong);
         groupMessageHash.put("mediaID", videoKey);
 
 
@@ -1445,6 +1459,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            Long tsLong = System.currentTimeMillis() / 1000;
 
             String messageId = groupMessageSendRef.push().getKey();
 
@@ -1457,7 +1472,9 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             groupMessageHash.put("photo", userPhoto);
             groupMessageHash.put("sentStatus", "sending");
             groupMessageHash.put("username", currentUsername);
+            groupMessageHash.put("messageTime", tsLong);
             groupMessageHash.put("type", "text");
+
 
             //groupMessageHash.put("mediaID", "none");
 
@@ -1734,6 +1751,17 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             //
         }
 
+        try {
+            youtube_player_view.removeYouTubePlayerListener(abstractYouTubePlayerListener);
+            getLifecycle().removeObserver(youtube_player_view);
+            // destoryLiveFragment();
+            //leaveChannel();
+            // Log.v(VIDEO_CHECK_TAG,"onDestroyView"+ " called");
+        } catch (Exception e) {
+
+            //  Log.v(VIDEO_CHECK_TAG, "onDestroyView Err"+ e.toString());
+        }
+
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         editor.putString(groupID, timestamp.toString());
@@ -1751,9 +1779,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
 
 
-
-
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Long tsLong = System.currentTimeMillis() / 1000;
 
         String messageId = groupMessageSendRef.push().getKey();
 
@@ -1786,8 +1813,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         groupMessageHash.put("timeStamp", timestamp.toString());
         groupMessageHash.put("photo", userPhoto);
         groupMessageHash.put("sentStatus", "sending");
+        groupMessageHash.put("messageTime", tsLong);
         groupMessageHash.put("username", currentUsername);
         groupMessageHash.put("type", "song");
+
         groupMessageHash.put("mediaID", musicKey);
 
 

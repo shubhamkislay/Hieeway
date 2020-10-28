@@ -10,6 +10,7 @@ public class GroupMessage {
     private String username;
     private String type;
     private String mediaID;
+    private long messageTime;
 
     public GroupMessage() {
     }
@@ -84,5 +85,13 @@ public class GroupMessage {
 
     public void setMediaID(String mediaID) {
         this.mediaID = mediaID;
+    }
+
+    public long getMessageTime() {
+        return messageTime;
+    }
+
+    public void setMessageTime(long messageTime) {
+        this.messageTime = messageTime;
     }
 }

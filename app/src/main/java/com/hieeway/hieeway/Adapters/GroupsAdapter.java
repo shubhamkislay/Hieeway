@@ -219,7 +219,7 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
 
                 ImageLoader.getInstance().displayImage(myGroup.getIcon(), myViewHolder.prof_pic, options);
             } else
-                imageLoader.displayImage("drawable://" + R.drawable.no_profile, myViewHolder.prof_pic);
+                imageLoader.displayImage("drawable://" + R.drawable.groups_image, myViewHolder.prof_pic);
             myViewHolder.username.setText(myGroup.getGroupName());
 
             myViewHolder.prof_pic.setOnClickListener(new View.OnClickListener() {

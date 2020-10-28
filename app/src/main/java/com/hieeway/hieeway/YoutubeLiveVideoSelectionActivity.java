@@ -524,7 +524,7 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
                         youtube_web_view.stopLoading();
                         /*youtube_web_view.loadUrl(yoututbeHomeURL);*/
                         youtube_web_view.setVisibility(View.GONE);
-                        youtube_url.setText(yoututbeHomeURL);
+                        youtube_url.setText(youtube_Url);
                     } catch (Exception e) {
 
                     }
@@ -539,10 +539,8 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
 
     private void getVideoIdfromUrl(String url) {
 
-        youtube_web_view.stopLoading();
-        youtube_web_view.setVisibility(View.GONE);
 
-        Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "Called", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(YoutubeLiveVideoSelectionActivity.this, "Called", Toast.LENGTH_SHORT).show();
         TaskCompletionSource<String> stringTaskCompletionSource = new TaskCompletionSource<>();
 
         new Thread(new Runnable() {
@@ -570,6 +568,10 @@ public class YoutubeLiveVideoSelectionActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<String> task) {
                 if (task.isSuccessful()) {
                     setThumnailFromVideoId(task.getResult());
+                    if (!task.getResult().equals("default")) {
+                        youtube_web_view.stopLoading();
+                        youtube_web_view.setVisibility(View.GONE);
+                    }
 
 
                 }
