@@ -618,14 +618,14 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         DatabaseReference postRefs = FirebaseDatabase.getInstance().getReference("Post")
                 .child(friendId);
 
-        List<Post> refreshPostList = new ArrayList<>();
+
 
         postRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 postList.clear();
-                refreshPostList.clear();
+                List<Post> refreshPostList = new ArrayList<>();
 
                 Post postDummy = new Post();
                 postDummy.setMediaKey(postRefs.push().getKey());
