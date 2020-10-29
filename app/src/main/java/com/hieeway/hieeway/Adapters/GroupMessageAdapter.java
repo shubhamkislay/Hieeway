@@ -248,6 +248,26 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().height = (int) height/2;*/
 
             return new GroupMessageAdapter.GroupPhotoViewHolder(view);
+        } else if (viewType == VIDEO_RECEIVED) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_video_item_receive, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupPhotoViewHolder(view);
+        } else if (viewType == VIDEO_SENT) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_video_item_sent, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupPhotoViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_sending_layout, parent, false);
 
@@ -616,6 +636,84 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 else {
                     Glide.with(context).load(getRealPathFromURI(Uri.parse(groupMessage.getMediaID()))).apply(requestImageOptions).into(viewHolder.photo);
+                    viewHolder.photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
+            } else
+                Glide.with(context).load(context.getDrawable(R.drawable.loading_default)).apply(requestImageOptions).into(viewHolder.photo);
+
+
+        } else if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("video")) {
+
+
+            GroupPhotoViewHolder viewHolder = (GroupPhotoViewHolder) holder;
+            GroupMessage groupMessage = groupMessageList.get(viewHolder.getAdapterPosition());
+
+            viewHolder.setIsRecyclable(false);
+
+            //viewHolder.user_photo.setVisibility(View.INVISIBLE);
+
+            if (groupMessage.getSenderId().equals(userID))
+                viewHolder.username.setVisibility(View.GONE);
+            else
+                viewHolder.username.setText(groupMessage.getUsername());
+
+
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                Date parsedDate = dateFormat.parse(groupMessage.getTimeStamp());
+
+
+                Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+
+                PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+                String ago = prettyTime.format(parsedDate);
+                // S is the millisecond
+                // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");/*  dd MMM YYYY*/
+
+
+                viewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+
+                //holder.timestamp.setText(""+height);
+
+
+                //sendMessageViewHolder.timestamp.setText("" + ago);
+
+            } catch (Exception e) { //this generic but you can control another types of exception
+                // look the origin of excption
+                viewHolder.timestamp.setVisibility(View.INVISIBLE);
+
+            }
+
+
+            RequestOptions requestOptions = new RequestOptions();
+            //requestOptions.override(100, 100);
+            requestOptions.placeholder(context.getDrawable(R.drawable.ic_image_24dp));
+            //requestOptions.circleCrop();
+            //requestOptions.centerCrop();
+            //requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+            RequestOptions requestImageOptions = new RequestOptions();
+            //requestImageOptions.override(125, 200);
+            requestImageOptions.placeholder(context.getDrawable(R.drawable.loading_default));
+
+            //viewHolder.message_view.setText(groupMessage.getMessageText());
+            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(viewHolder.user_photo);
+
+            if (!groupMessage.getMediaID().equals("default")) {
+
+                if (groupMessage.getSentStatus().equals("sent")) {
+                    //Glide.with(context).load(groupMessage.getMediaID()).apply(requestImageOptions).into(viewHolder.photo);
+
+                    long thumb = viewHolder.getAdapterPosition() * 1000;
+                    RequestOptions options = new RequestOptions().frame(thumb);
+                    Glide.with(context).load(groupMessage.getMediaID()).apply(options).into(viewHolder.photo);
+                } else {
+                    // Glide.with(context).load(getRealPathFromURI(Uri.parse(groupMessage.getMediaID()))).apply(requestImageOptions).into(viewHolder.photo);
+
+
+                    long thumb = viewHolder.getAdapterPosition() * 1000;
+                    RequestOptions options = new RequestOptions().frame(thumb);
+                    Glide.with(context).load(getRealPathFromURI(Uri.parse(groupMessage.getMediaID()))).apply(options).into(viewHolder.photo);
                     viewHolder.photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 }
             } else

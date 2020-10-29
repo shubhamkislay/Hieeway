@@ -995,7 +995,11 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                         if (localDiffHours < 1)
                             groupMessageList.add(groupMessage);
                         else {
-                            groupMessageSendRef.child(groupMessage.getMessageId()).removeValue();
+                            try {
+                                groupMessageSendRef.child(groupMessage.getMessageId()).removeValue();
+                            } catch (Exception e) {
+                                //
+                            }
                         }
 
 
@@ -1772,15 +1776,15 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         connectedRef.addValueEventListener(presenceEventListner);
 
 
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!connected) {
+                //if (!connected) {
                     FirebaseDatabase.getInstance().goOffline();
                     FirebaseDatabase.getInstance().goOnline();
-                }
+               // }
             }
-        }, 5000);
+        }, 5000);*/
     }
 
     @Override

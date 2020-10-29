@@ -10,11 +10,11 @@
 
     <com.hieeway.hieeway.CustomImageView
         android:id="@+id/photo"
-        android:layout_width="wrap_content"
+        android:layout_width="175dp"
         android:layout_height="wrap_content"
-        app:layout_constraintWidth_max="300dp"
+        app:layout_constraintHeight_max="300dp"
         android:visibility="visible"
-        android:scaleType="fitStart"
+        android:scaleType="fitCenter"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="40dp"
@@ -58,6 +58,15 @@
         app:layout_constraintBottom_toBottomOf="@id/photo"
         tools:text="00:00" />
 
+    <Button
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintEnd_toEndOf="@id/photo"
+        android:background="@drawable/play_btn"
+        android:backgroundTint="@color/white"
+        app:layout_constraintStart_toStartOf="@id/photo"
+        app:layout_constraintTop_toTopOf="@id/photo" />
 
     <com.hieeway.hieeway.CustomImageView
         android:id="@+id/user_photo"

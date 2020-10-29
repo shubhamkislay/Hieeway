@@ -306,6 +306,7 @@ public class SendMediaService extends Service {
                     contentTitle = "Uploading Video";
                 else {
                     contentTitle = "Uploading Photo";
+                }
 
 
                     DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
@@ -330,8 +331,6 @@ public class SendMediaService extends Service {
 
                     groupMessageSendRef.child(postKey).updateChildren(groupMessageHash);
 
-
-                }
 
                 pIntentlogin = PendingIntent.getService(this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -1237,20 +1236,8 @@ public class SendMediaService extends Service {
 
 
                         HashMap<String, Object> groupMessageHash = new HashMap<>();
-                        groupMessageHash.put("messageText", "");
-                        groupMessageHash.put("senderId", currentUserID);
-                        groupMessageHash.put("messageId", postKey);
-                        groupMessageHash.put("timeStamp", timestamp.toString());
-                        groupMessageHash.put("photo", currentUserPhoto);
                         groupMessageHash.put("sentStatus", "sent");
-                        groupMessageHash.put("username", currentUsername);
-                        groupMessageHash.put("messageTime", tsLong);
                         groupMessageHash.put("mediaID", mUri);
-                        groupMessageHash.put("type", type);
-
-
-                        //groupMessageHash.put("mediaID", "none");
-
 
                         groupMessageSendRef.child(postKey).updateChildren(groupMessageHash);
 
