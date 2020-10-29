@@ -107,6 +107,11 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
     String currentUserPhoto;
     String otherUserPublicKeyID;
     String currentUserPublicKeyID;
+    String requestType;
+    String currentUserID;
+    String groupID;
+    String groupName;
+    String icon;
 
 
     String currentPhotoPath;
@@ -192,22 +197,36 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
 
         final Intent intent = getIntent();
 
-        userChattingWithId = intent.getStringExtra("userChattingWithId");
-        usernameChattingWith = intent.getStringExtra("usernameChattingWith");
-        userphotoUrl = intent.getStringExtra("userphotoUrl");
-        currentUserPhoto = intent.getStringExtra("currentUserPhoto");
-        currentUsername = intent.getStringExtra("currentUsername");
-        otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
-        currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
-        activePhoto = intent.getStringExtra("activePhoto");
-        currentUserActivePhoto = intent.getStringExtra("activePhoto");
+        requestType = intent.getStringExtra("requestType");
+        if (requestType.equals("shot")) {
+            currentUserID = intent.getStringExtra("currentUserID");
+            currentUsername = intent.getStringExtra("currentUsername");
+        } else if (requestType.equals("message")) {
+            userChattingWithId = intent.getStringExtra("userChattingWithId");
+            usernameChattingWith = intent.getStringExtra("username");
+            userphotoUrl = intent.getStringExtra("userphoto");
+            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+            currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
+            currentUsername = intent.getStringExtra("currentUsername");
+            otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+            activePhoto = intent.getStringExtra("activePhoto");
+            currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
 
-        senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userChattingWithId);
 
-        receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
-                .child(userChattingWithId).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            senderChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userChattingWithId);
 
+            receiverChatCreateRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                    .child(userChattingWithId).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        } else if (requestType.equals("group")) {
+            currentUserID = intent.getStringExtra("currentUserID");
+            currentUsername = intent.getStringExtra("currentUsername");
+            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+            groupID = intent.getStringExtra("groupID");
+            groupName = intent.getStringExtra("groupName");
+            icon = intent.getStringExtra("icon");
+        }
 
 
         action_send_pic_layout = findViewById(R.id.action_send_pic_layout);
@@ -221,11 +240,32 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(PhotoEditToolsActivity.this,CameraActivity.class);
+                if (requestType.equals("message")) {
 
-                intent.putExtra("userChattingWithId",userChattingWithId);
-                startActivity(intent);
-                finish();
+                    Intent intent = new Intent(PhotoEditToolsActivity.this, CameraActivity.class);
+
+                    intent.putExtra("userChattingWithId", userChattingWithId);
+                    startActivity(intent);
+                    finish();
+                } else if (requestType.equals("shot")) {
+                    Intent intent = new Intent(PhotoEditToolsActivity.this, CameraActivity.class);
+                    intent.putExtra("currentUsername", currentUsername);
+                    intent.putExtra("currentUserID", currentUserID);
+                    intent.putExtra("requestType", "shot");
+
+                    startActivity(intent);
+                    finish();
+                } else if (requestType.equals("group")) {
+                    //
+                    Intent intent = new Intent(PhotoEditToolsActivity.this, GroupChatActivity.class);
+                    intent.putExtra("groupID", groupID);
+                    intent.putExtra("groupName", groupName);
+                    intent.putExtra("icon", icon);
+
+                    startActivity(intent);
+                    finish();
+
+                }
             }
         });
 
@@ -274,33 +314,87 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
 
                         BitmapHelper.getInstance().setBitmap(saveBitmap);
 
-                        imageUri = getImageUri(PhotoEditToolsActivity.this,saveBitmap);
-                        databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                                .child(FirebaseAuth.getInstance()
-                                        .getCurrentUser()
-                                        .getUid())
-                                .child(CameraActivity.userChattingWithId);
+                        databaseReference = FirebaseDatabase.getInstance().getReference("Messages");
 
                         mKey = databaseReference.push().getKey();
 
+
+                        imageUri = getImageUri(PhotoEditToolsActivity.this, saveBitmap);
+
+
                         // createChatListItem(usernameChattingWith,userphotoUrl,currentUsername,currentUserPhoto);
-                        Intent intent1 = new Intent(PhotoEditToolsActivity.this, SendMediaService.class);
 
-                        intent1.putExtra("userChattingWithId", userChattingWithId);
-                        intent1.putExtra("imageUri", imageUri.toString());
-                        intent1.putExtra("usernameChattingWith", usernameChattingWith);
-                        intent1.putExtra("userphotoUrl", userphotoUrl);
-                        intent1.putExtra("currentUsername", currentUsername);
-                        intent1.putExtra("currentUserPhoto", currentUserPhoto);
-                        intent1.putExtra("activePhoto", activePhoto);
-                        intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
-                        intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
-                        intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
-                        intent1.putExtra("mKey", mKey);
-                        intent1.putExtra("type", "photo");
+                        if (requestType.equals("message")) {
+                            databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                                    .child(FirebaseAuth.getInstance()
+                                            .getCurrentUser()
+                                            .getUid())
+                                    .child(CameraActivity.userChattingWithId);
+
+                            mKey = databaseReference.push().getKey();
+                            Intent intent1 = new Intent(PhotoEditToolsActivity.this, SendMediaService.class);
+
+                            intent1.putExtra("userChattingWithId", userChattingWithId);
+                            intent1.putExtra("imageUri", imageUri.toString());
+                            intent1.putExtra("usernameChattingWith", usernameChattingWith);
+                            intent1.putExtra("userphotoUrl", userphotoUrl);
+                            intent1.putExtra("currentUsername", currentUsername);
+                            intent1.putExtra("currentUserPhoto", currentUserPhoto);
+                            intent1.putExtra("activePhoto", activePhoto);
+                            intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
+                            intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+                            intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+                            intent1.putExtra("mKey", mKey);
+                            intent1.putExtra("type", "photo");
+                            intent1.putExtra("requestType", "message");
 
 
-                        startService(intent1);
+                            startService(intent1);
+                        } else if (requestType.equals("shot")) {
+
+                            databaseReference = FirebaseDatabase.getInstance().getReference("Posts")
+                                    .child(currentUserID);
+
+                            mKey = databaseReference.push().getKey();
+
+
+                            Intent intent1 = new Intent(PhotoEditToolsActivity.this, SendMediaService.class);
+
+
+                            intent1.putExtra("imageUri", imageUri.toString());
+                            intent1.putExtra("currentUserID", currentUserID);
+                            intent1.putExtra("currentUsername", currentUsername);
+                            intent1.putExtra("mKey", mKey);
+                            intent1.putExtra("type", "photo");
+                            intent1.putExtra("requestType", "shot");
+
+                            startService(intent1);
+
+                        } else if (requestType.equals("group")) {
+
+                            databaseReference = FirebaseDatabase.getInstance().getReference("Posts")
+                                    .child(currentUserID);
+
+                            mKey = databaseReference.push().getKey();
+
+                            Intent intent1 = new Intent(PhotoEditToolsActivity.this, SendMediaService.class);
+
+
+                            intent1.putExtra("imageUri", imageUri.toString());
+                            intent1.putExtra("currentUserID", currentUserID);
+                            intent1.putExtra("currentUsername", currentUsername);
+                            intent1.putExtra("currentUserPhoto", currentUserPhoto);
+                            intent1.putExtra("groupID", groupID);
+                            intent1.putExtra("groupName", groupName);
+                            intent1.putExtra("icon", icon);
+                            intent1.putExtra("mKey", mKey);
+                            intent1.putExtra("type", "photo");
+                            intent1.putExtra("requestType", "group");
+
+                            startService(intent1);
+
+                        }
+
 
                         //  uploadImage();
 
@@ -461,7 +555,10 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
             @Override
             public void onClick(View v) {
 
-                image_selected_uri = getImageUri(PhotoEditToolsActivity.this,finalBitmap);
+                mKey = FirebaseDatabase.getInstance().getReference("Message").push().getKey();
+
+                image_selected_uri = getImageUri(PhotoEditToolsActivity.this, finalBitmap);
+
 
                 startCrop(image_selected_uri);
             }
@@ -487,7 +584,7 @@ public class PhotoEditToolsActivity extends AppCompatActivity implements Filters
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, mKey, null);
         // String pathAuidio = MediaStore.Audio.Media.CONTENT_TYPE(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }

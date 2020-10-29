@@ -41,28 +41,19 @@
         app:layout_constraintRight_toRightOf="@id/bottom_bar"
         app:layout_constraintTop_toTopOf="@id/message_box" />
 
-    <Button
-        android:id="@+id/camera_background"
+
+    <ImageButton
+        android:id="@+id/camera"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginLeft="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_camera_alt_white_24dp"
         android:background="@drawable/camera_background_drawable"
         app:layout_constraintBottom_toBottomOf="@id/message_box"
         app:layout_constraintLeft_toLeftOf="@id/bottom_bar"
         app:layout_constraintTop_toTopOf="@id/message_box" />
-
-    <Button
-        android:id="@+id/camera"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/ic_camera_alt_white_24dp"
-        android:backgroundTint="#fff"
-        app:layout_constraintBottom_toBottomOf="@id/camera_background"
-        app:layout_constraintLeft_toLeftOf="@id/camera_background"
-        app:layout_constraintRight_toRightOf="@id/camera_background"
-        app:layout_constraintTop_toTopOf="@id/camera_background" />
 
     <Button
         android:id="@+id/youtube_btn"
@@ -76,7 +67,7 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/message_box"
 
-        app:layout_constraintLeft_toRightOf="@id/camera_background"
+        app:layout_constraintLeft_toRightOf="@id/camera"
 
         app:layout_constraintTop_toTopOf="@id/message_box" />
 

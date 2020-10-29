@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -37,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.NoRecipientAdapter;
 import com.hieeway.hieeway.Adapters.RecipientAdapter;
+import com.hieeway.hieeway.Helper.RecipientListHelper;
 import com.hieeway.hieeway.Interface.AddRecipientListener;
 import com.hieeway.hieeway.Interface.RemoveRecipientListener;
 import com.hieeway.hieeway.Model.ChatMessageCompound;
@@ -81,6 +83,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     private ImageView send_arrow;
     private String username;
     private String textMessage;
+    private Button camera;
 
 
     @Override
@@ -95,6 +98,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         text_msg = findViewById(R.id.text_msg);
         message_box = findViewById(R.id.message_box);
         send_arrow = findViewById(R.id.send_arrow);
+        camera = findViewById(R.id.camera);
 
         databaseListeners = new ArrayList<>();
         recipientList = new ArrayList<>();
@@ -172,6 +176,23 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
         recipients_recyclerview.setDrawingCacheEnabled(true);
         recipients_recyclerview.setItemAnimator(new DefaultItemAnimator());
         recipients_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);*/
+
+
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                RecipientListHelper.getInstance().setRecipientList(recipientList);
+
+                Intent intent = new Intent(CreateShotActivity.this, CameraActivity.class);
+                intent.putExtra("currentUsername", username);
+                intent.putExtra("currentUserID", userID);
+                intent.putExtra("requestType", "shot");
+
+                startActivity(intent);
+
+            }
+        });
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override

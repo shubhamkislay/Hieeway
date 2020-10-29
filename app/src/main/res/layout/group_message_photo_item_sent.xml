@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="right"
+    android:padding="4dp">
+
+
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintWidth_max="300dp"
+        app:layout_constraintWidth_min="100dp"
+        android:visibility="visible"
+        android:scaleType="fitEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="40dp"
+        tools:src="@drawable/loading_default" />
+
+    <RelativeLayout
+        app:layout_constraintEnd_toEndOf="@id/photo"
+        app:layout_constraintStart_toStartOf="@id/photo"
+        app:layout_constraintTop_toTopOf="@id/photo"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        android:alpha="0.85"
+        android:background="@drawable/chat_user_gradient"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="username"
+        android:layout_marginTop="4dp"
+        android:textSize="@dimen/timestampsize"
+        app:layout_constraintEnd_toEndOf="@id/photo"
+        app:layout_constraintStart_toStartOf="@id/photo"
+        app:layout_constraintTop_toBottomOf="@id/user_photo" />
+
+    <TextView
+        android:id="@+id/timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:alpha="0.85"
+        android:gravity="right"
+        android:paddingBottom="4dp"
+        android:textSize="@dimen/timestampsize"
+        app:layout_constraintRight_toRightOf="@id/photo"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        tools:text="00:00" />
+
+
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/user_photo"
+        android:layout_width="40dp"
+        android:layout_height="70dp"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/profile_pic"
+        app:layout_constraintBottom_toTopOf="@id/photo"
+        app:layout_constraintEnd_toEndOf="@id/photo"
+        app:layout_constraintStart_toStartOf="@id/photo"
+        app:layout_constraintTop_toTopOf="@id/photo" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

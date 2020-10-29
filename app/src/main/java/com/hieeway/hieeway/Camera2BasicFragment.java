@@ -98,6 +98,8 @@ import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 
 import static android.app.Activity.RESULT_OK;
+import static com.hieeway.hieeway.CameraActivity.currentUserID;
+import static com.hieeway.hieeway.CameraActivity.requestType;
 
 
 public class Camera2BasicFragment extends Fragment
@@ -1302,38 +1304,78 @@ public class Camera2BasicFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
 
-            databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                    .child(FirebaseAuth.getInstance()
-                            .getCurrentUser()
-                            .getUid())
-                    .child(CameraActivity.userChattingWithId);
-
-            mKey = databaseReference.push().getKey();
 
             Uri videoUri = data.getData();
 
 
-            Intent playVideoIntent = new Intent(getActivity(), VideoUploadActivity.class);
+            if (requestType.equals("message")) {
+
+                databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                        .child(FirebaseAuth.getInstance()
+                                .getCurrentUser()
+                                .getUid())
+                        .child(CameraActivity.userChattingWithId);
+
+                mKey = databaseReference.push().getKey();
+
+                Intent playVideoIntent = new Intent(getActivity(), VideoUploadActivity.class);
 
 
-            playVideoIntent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
-            playVideoIntent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
-            playVideoIntent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
-            playVideoIntent.putExtra("activePhoto", CameraActivity.activePhoto);
-            playVideoIntent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
-            playVideoIntent.putExtra("videoUri", videoUri.toString());
-            playVideoIntent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
-            playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
-            playVideoIntent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
-            playVideoIntent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
-            playVideoIntent.putExtra("mKey", mKey);
+                playVideoIntent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
+                playVideoIntent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
+                playVideoIntent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+                playVideoIntent.putExtra("activePhoto", CameraActivity.activePhoto);
+                playVideoIntent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
+                playVideoIntent.putExtra("videoUri", videoUri.toString());
+                playVideoIntent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+                playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
+                playVideoIntent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
+                playVideoIntent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+                playVideoIntent.putExtra("mKey", mKey);
+                playVideoIntent.putExtra("requestType", requestType);
 
-            startActivity(playVideoIntent);
-            getActivity().finish();
+                startActivity(playVideoIntent);
+                getActivity().finish();
+            } else if (requestType.equals("shot")) {
+                databaseReference = FirebaseDatabase.getInstance().getReference("Post")
+                        .child(currentUserID);
+
+                mKey = databaseReference.push().getKey();
+                Intent playVideoIntent = new Intent(getActivity(), VideoUploadActivity.class);
 
 
+                playVideoIntent.putExtra("videoUri", videoUri.toString());
+                playVideoIntent.putExtra("currentUserID", CameraActivity.currentUserID);
+                playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
+                playVideoIntent.putExtra("mKey", mKey);
+                playVideoIntent.putExtra("requestType", requestType);
 
 
+                startActivity(playVideoIntent);
+                getActivity().finish();
+            } else if (requestType.equals("group")) {
+                databaseReference = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                        .child(currentUserID);
+
+                mKey = databaseReference.push().getKey();
+
+                Intent playVideoIntent = new Intent(getActivity(), VideoUploadActivity.class);
+
+
+                playVideoIntent.putExtra("videoUri", videoUri.toString());
+                playVideoIntent.putExtra("currentUserID", CameraActivity.currentUserID);
+                playVideoIntent.putExtra("currentUsername", CameraActivity.currentUsername);
+                playVideoIntent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+                playVideoIntent.putExtra("mKey", mKey);
+                playVideoIntent.putExtra("requestType", requestType);
+                playVideoIntent.putExtra("groupID", CameraActivity.groupID);
+                playVideoIntent.putExtra("groupName", CameraActivity.groupName);
+                playVideoIntent.putExtra("icon", CameraActivity.icon);
+
+                startActivity(playVideoIntent);
+                getActivity().finish();
+
+            }
 
 
         } else if (requestCode == REQUEST_PHOTO_CAPTURE && resultCode == RESULT_OK) {
@@ -1363,19 +1405,47 @@ public class Camera2BasicFragment extends Fragment
             //Uri photoUrl = data.getData();
             // CameraActivity.userphotoUrl = imageUri.toString();
             //videoView.setVideoURI(videoUri);
-            Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+            if (requestType.equals("message")) {
 
-            intent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
-            intent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
-            intent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
-            intent.putExtra("activePhoto", CameraActivity.activePhoto);
-            intent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
-            intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
-            intent.putExtra("currentUsername", CameraActivity.currentUsername);
-            intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
-            intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+                Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
 
-            startActivity(intent);
+                intent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
+                intent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
+                intent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+                intent.putExtra("activePhoto", CameraActivity.activePhoto);
+                intent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
+                intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+                intent.putExtra("currentUsername", CameraActivity.currentUsername);
+                intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
+                intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+                intent.putExtra("requestType", CameraActivity.requestType);
+
+                startActivity(intent);
+            } else if (requestType.equals("shot")) {
+                Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+
+
+                intent.putExtra("currentUsername", CameraActivity.currentUsername);
+                intent.putExtra("currentUserID", CameraActivity.currentUserID);
+                intent.putExtra("requestType", CameraActivity.requestType);
+
+                startActivity(intent);
+            } else if (requestType.equals("group")) {
+
+                Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+
+
+                intent.putExtra("currentUsername", CameraActivity.currentUsername);
+                intent.putExtra("currentUserID", CameraActivity.currentUserID);
+                intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+                intent.putExtra("requestType", CameraActivity.requestType);
+                intent.putExtra("groupID", CameraActivity.groupID);
+                intent.putExtra("groupName", CameraActivity.groupName);
+                intent.putExtra("icon", CameraActivity.icon);
+
+                startActivity(intent);
+
+            }
             // getActivity().finish();
 
         }
@@ -1396,22 +1466,49 @@ public class Camera2BasicFragment extends Fragment
             Toast.makeText(getContext(),"Photo Loading..",Toast.LENGTH_SHORT).show();
 
         }
-        else
-        {
-            Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+        else {
+            if (requestType.equals("message")) {
+
+                Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+
+                intent.putExtra("userChattingWithId", CameraActivity.userChattingWithId);
+                intent.putExtra("usernameChattingWith", CameraActivity.usernameChattingWith);
+                intent.putExtra("userphotoUrl", CameraActivity.userphotoUrl);
+                intent.putExtra("activePhoto", CameraActivity.activePhoto);
+                intent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
+                intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+                intent.putExtra("currentUsername", CameraActivity.currentUsername);
+                intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
+                intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+                intent.putExtra("requestType", CameraActivity.requestType);
+
+                startActivity(intent);
+            } else if (requestType.equals("shot")) {
+                Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
 
 
-            intent.putExtra("userChattingWithId",CameraActivity.userChattingWithId);
-            intent.putExtra("usernameChattingWith",CameraActivity.usernameChattingWith);
-            intent.putExtra("userphotoUrl",CameraActivity.userphotoUrl);
-            intent.putExtra("activePhoto", CameraActivity.activePhoto);
-            intent.putExtra("currentUserActivePhoto", CameraActivity.currentUserActivePhoto);
-            intent.putExtra("currentUserPhoto",CameraActivity.currentUserPhoto);
-            intent.putExtra("currentUsername",CameraActivity.currentUsername);
-            intent.putExtra("currentUserPublicKeyID", CameraActivity.currentUserPublicKeyID);
-            intent.putExtra("otherUserPublicKeyID", CameraActivity.otherUserPublicKeyID);
+                intent.putExtra("currentUsername", CameraActivity.currentUsername);
+                intent.putExtra("currentUserID", CameraActivity.currentUserID);
+                intent.putExtra("requestType", CameraActivity.requestType);
 
-            startActivity(intent);
+                startActivity(intent);
+            } else if (requestType.equals("group")) {
+
+                Intent intent = new Intent(getActivity(), PhotoEditToolsActivity.class);
+
+
+                intent.putExtra("currentUsername", CameraActivity.currentUsername);
+                intent.putExtra("currentUserID", CameraActivity.currentUserID);
+                intent.putExtra("requestType", CameraActivity.requestType);
+                intent.putExtra("currentUserPhoto", CameraActivity.currentUserPhoto);
+                intent.putExtra("groupID", CameraActivity.groupID);
+                intent.putExtra("groupName", CameraActivity.groupName);
+                intent.putExtra("icon", CameraActivity.icon);
+
+                startActivity(intent);
+
+            }
+
             // getActivity().finish();
         }
 

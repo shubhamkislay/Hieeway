@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="@id/back_item"
         app:layout_constraintStart_toStartOf="@id/back_item"
         app:layout_constraintTop_toBottomOf="@id/username"
-        tools:src="@drawable/no_profile" />
+        tools:src="@drawable/loading_default" />
 
     <ImageView
         android:id="@+id/spotify_back"

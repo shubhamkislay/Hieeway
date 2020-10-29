@@ -39,6 +39,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -135,9 +136,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private RelativeLayout equi_five;
     private RecordView recordView;
     private RecordButton recordButton;
-    private Button camera_background;
     private EditText message_box;
-    private Button camera;
+    private ImageButton camera;
     public static final String SHARED_PREFS = "sharedPrefs";
     private boolean isDisablerecord_button = false;
     private Button send_button;
@@ -241,7 +241,6 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         recordView = (RecordView) findViewById(R.id.record_view);
         recordButton = (RecordButton) findViewById(R.id.record_button);
-        camera_background = findViewById(R.id.camera_background);
         message_box = findViewById(R.id.message_box);
         youtube_button = findViewById(R.id.youtube_btn);
         youtube_web_view = findViewById(R.id.youtube_web_view);
@@ -324,6 +323,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         message_recycler_View.setLayoutManager(linearLayoutManager);
 
+
         message_recycler_View.scrollToPosition(groupMessageList.size() - 1);
 
 
@@ -339,6 +339,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                 GroupChatActivity.this);
 
         //groupMessageAdapter.setHasStableIds(true);
+
 
         message_recycler_View.setAdapter(groupMessageAdapter);
 
@@ -667,7 +668,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             @Override
             public void onClick(View v) {
 
-                /*if (ContextCompat.checkSelfPermission(GroupChatActivity.this, Manifest.permission.CAMERA)
+                if (ContextCompat.checkSelfPermission(GroupChatActivity.this, Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED ||
                         ContextCompat.checkSelfPermission(GroupChatActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
                                 != PackageManager.PERMISSION_GRANTED ||
@@ -676,34 +677,27 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     requestAllPermissions();
 
 
-                else
-                {
+                else {
                     Intent intent = new Intent(GroupChatActivity.this, CameraActivity.class);
 
                     // ephemeralMessageViewModel.createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
-                    if (currentUsername != null && currentUserPhoto != null && currentUserActivePhoto != null) {
-
-                        intent.putExtra("userChattingWithId", userIdChattingWith);
-                        intent.putExtra("userphoto", photo);
-                        intent.putExtra("activePhoto", activePhoto);
-                        intent.putExtra("username", usernameChattingWith);
-                        intent.putExtra("currentUsername", currentUsername);
-                        intent.putExtra("currentUserPhoto", currentUserPhoto);
-                        intent.putExtra("currentUserActivePhoto", currentUserActivePhoto);
-                        intent.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
-                        intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
-                        intent.putExtra("otherUserPublicKey", otherUserPublicKey);
-                        intent.putExtra("currentUserPublicKey", currentUserPublicKey);
 
 
+                    intent.putExtra("currentUserPhoto", userPhoto);
+                    intent.putExtra("currentUserID", userID);
+                    intent.putExtra("currentUsername", currentUsername);
+                    intent.putExtra("requestType", "group");
+                    intent.putExtra("groupID", groupID);
+                    intent.putExtra("groupName", groupNameTxt);
+                    intent.putExtra("icon", iconUrl);
 
-                        // intent.putExtra("userChattingWithId", currentUserPhoto);
+
+                    // intent.putExtra("userChattingWithId", currentUserPhoto);
 
 
-                        startActivity(intent);
-                    } else
-                        Toast.makeText(GroupChatActivity.this, "Getting user details", Toast.LENGTH_SHORT).show();
-                }*/
+                    startActivity(intent);
+
+                }
             }
         });
 
@@ -824,7 +818,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             public void onAnimationEnd() {
                 // Log.d("RecordView", "Basket Animation Finished");
                 camera.setVisibility(View.VISIBLE);
-                camera_background.setVisibility(View.VISIBLE);
+                //camera_background.setVisibility(View.VISIBLE);
                 message_box.setVisibility(View.VISIBLE);
 
                 //message_box_behind.setVisibility(View.VISIBLE);
@@ -932,6 +926,51 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     }
 
 
+    private void requestAllPermissions() {
+
+        Dexter.withActivity(GroupChatActivity.this)
+                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+
+                        if (report.areAllPermissionsGranted()) {
+                            Intent intent = new Intent(GroupChatActivity.this, CameraActivity.class);
+
+                            // ephemeralMessageViewModel.createChatListItem(usernameChattingWith, photo, currentUsername, currentUserPhoto);
+
+                            intent.putExtra("currentUserPhoto", userPhoto);
+                            intent.putExtra("currentUserID", userID);
+                            intent.putExtra("currentUsername", currentUsername);
+                            intent.putExtra("requestType", "group");
+                            intent.putExtra("groupID", groupID);
+                            intent.putExtra("groupName", groupNameTxt);
+                            intent.putExtra("icon", iconUrl);
+
+
+                            // intent.putExtra("userChattingWithId", currentUserPhoto);
+
+
+                            startActivity(intent);
+
+                        } else {
+                            Toast.makeText(GroupChatActivity.this, "Permission not given!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+
+                        token.continuePermissionRequest();
+
+                        // Toast.makeText(parentActivity, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    }
+                }).check();
+    }
+
     private void populateMessages() {
 
 
@@ -997,6 +1036,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
     }
+
 
     public void findSpotifySong(String songName) {
         String filteredSongName = songName.replaceAll(" ", "%20");
@@ -1341,10 +1381,12 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     youtubeSync.setTimeStamp(timestamp.toString());
 
 
-                    sendVideoMessage(youtubeSync, url);
+                    sendYoutubeMessage(youtubeSync, url);
 
 
                 }
+
+
             });
 
 
@@ -1362,7 +1404,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
     }
 
-    private void sendVideoMessage(YoutubeSync youtubeSync, String url) {
+    private void sendYoutubeMessage(YoutubeSync youtubeSync, String url) {
 
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -1399,7 +1441,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         groupMessageHash.put("photo", userPhoto);
         groupMessageHash.put("sentStatus", "sending");
         groupMessageHash.put("username", currentUsername);
-        groupMessageHash.put("type", "video");
+        groupMessageHash.put("type", "youtube");
         groupMessageHash.put("messageTime", tsLong);
         groupMessageHash.put("mediaID", videoKey);
 

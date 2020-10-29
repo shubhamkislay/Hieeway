@@ -836,6 +836,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                     intent.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
                     intent.putExtra("otherUserPublicKey", otherUserPublicKey);
                     intent.putExtra("currentUserPublicKey", currentUserPublicKey);
+                        intent.putExtra("requestType", "message");
 
 
 

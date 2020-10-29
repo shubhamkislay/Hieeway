@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -73,6 +75,7 @@ import com.spotify.protocol.types.Empty;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -96,6 +99,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int SONG_RECEIVED = 4;
     private static final int VIDEO_SENT = 5;
     private static final int VIDEO_RECEIVED = 6;
+    private static final int YOUTUBE_SENT = 7;
+    private static final int YOUTUBE_RECEIVED = 8;
+    private static final int PHOTO_SENT = 9;
+    private static final int PHOTO_RECEIVED = 10;
     public String userID;
     private Context context;
     private List<GroupMessage> groupMessageList = new ArrayList<>();
@@ -201,7 +208,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().height = (int) height/2;*/
 
             return new GroupMessageAdapter.GroupSongViewHolder(view);
-        } else if (viewType == VIDEO_SENT) {
+        } else if (viewType == YOUTUBE_SENT) {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_youtube_item_sent, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
@@ -210,8 +217,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().width = (int) height;
             user_photo.getLayoutParams().height = (int) height/2;*/
 
-            return new GroupMessageAdapter.GroupVideoViewHolder(view);
-        } else if (viewType == VIDEO_RECEIVED) {
+            return new GroupMessageAdapter.GroupYoutubeViewHolder(view);
+        } else if (viewType == YOUTUBE_RECEIVED) {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_youtube_item_receive, parent, false);
 
             /*TextView relative_layout = view.findViewById(R.id.message_view);
@@ -220,7 +227,27 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             user_photo.getLayoutParams().width = (int) height;
             user_photo.getLayoutParams().height = (int) height/2;*/
 
-            return new GroupMessageAdapter.GroupVideoViewHolder(view);
+            return new GroupMessageAdapter.GroupYoutubeViewHolder(view);
+        } else if (viewType == PHOTO_RECEIVED) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_photo_item_receive, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupPhotoViewHolder(view);
+        } else if (viewType == PHOTO_SENT) {
+            View view = LayoutInflater.from(context).inflate(R.layout.group_message_photo_item_sent, parent, false);
+
+            /*TextView relative_layout = view.findViewById(R.id.message_view);
+            int height = relative_layout.getHeight();
+            CustomImageView user_photo = view.findViewById(R.id.user_photo);
+            user_photo.getLayoutParams().width = (int) height;
+            user_photo.getLayoutParams().height = (int) height/2;*/
+
+            return new GroupMessageAdapter.GroupPhotoViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.group_message_sending_layout, parent, false);
 
@@ -258,6 +285,18 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return VIDEO_SENT;
             else
                 return VIDEO_RECEIVED;
+
+        } else if (groupMessage.getType().equals("photo")) {
+            if (groupMessage.getSenderId().equals(userID))
+                return PHOTO_SENT;
+            else
+                return PHOTO_RECEIVED;
+
+        } else if (groupMessage.getType().equals("youtube")) {
+            if (groupMessage.getSenderId().equals(userID))
+                return YOUTUBE_SENT;
+            else
+                return YOUTUBE_RECEIVED;
 
         } else {
             if (groupMessage.getSenderId().equals(userID)) {
@@ -463,22 +502,22 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 groupSongViewHolder.timestamp.setVisibility(View.INVISIBLE);
 
             }
-        } else if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("video")) {
+        } else if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("youtube")) {
 
-            GroupVideoViewHolder groupVideoViewHolder = (GroupVideoViewHolder) holder;
-            GroupMessage groupMessage = groupMessageList.get(groupVideoViewHolder.getAdapterPosition());
+            GroupYoutubeViewHolder GroupYoutubeViewHolder = (GroupYoutubeViewHolder) holder;
+            GroupMessage groupMessage = groupMessageList.get(GroupYoutubeViewHolder.getAdapterPosition());
 
-            groupVideoViewHolder.song_name.setVisibility(View.GONE);
-            groupVideoViewHolder.spinkit_wave.setVisibility(View.VISIBLE);
-            groupVideoViewHolder.fetch_music_txt.setVisibility(View.VISIBLE);
-            groupVideoViewHolder.artist_name.setVisibility(View.GONE);
-            groupVideoViewHolder.song_art.setVisibility(View.INVISIBLE);
+            GroupYoutubeViewHolder.song_name.setVisibility(View.GONE);
+            GroupYoutubeViewHolder.spinkit_wave.setVisibility(View.VISIBLE);
+            GroupYoutubeViewHolder.fetch_music_txt.setVisibility(View.VISIBLE);
+            GroupYoutubeViewHolder.artist_name.setVisibility(View.GONE);
+            GroupYoutubeViewHolder.song_art.setImageDrawable(context.getDrawable(R.drawable.loading_youtube));
 
 
             if (groupMessage.getSenderId().equals(userID))
-                groupVideoViewHolder.username.setText("You played this video");
+                GroupYoutubeViewHolder.username.setText("You played this video");
             else
-                groupVideoViewHolder.username.setText(groupMessage.getUsername() + " played the video");
+                GroupYoutubeViewHolder.username.setText(groupMessage.getUsername() + " played the video");
 
 
             try {
@@ -495,7 +534,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");/*  dd MMM YYYY*/
 
 
-                groupVideoViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+                GroupYoutubeViewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
 
                 //holder.timestamp.setText(""+height);
 
@@ -503,19 +542,112 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 //sendMessageViewHolder.timestamp.setText("" + ago);
 
                 fetchVideo(groupMessage,
-                        groupVideoViewHolder.song_name,
-                        groupVideoViewHolder.artist_name,
-                        groupVideoViewHolder.song_art,
-                        groupVideoViewHolder.spinkit_wave,
-                        groupVideoViewHolder.fetch_music_txt);
+                        GroupYoutubeViewHolder.song_name,
+                        GroupYoutubeViewHolder.artist_name,
+                        GroupYoutubeViewHolder.song_art,
+                        GroupYoutubeViewHolder.spinkit_wave,
+                        GroupYoutubeViewHolder.fetch_music_txt);
 
             } catch (Exception e) {
-                groupVideoViewHolder.timestamp.setVisibility(View.INVISIBLE);
+                GroupYoutubeViewHolder.timestamp.setVisibility(View.INVISIBLE);
 
             }
+        } else if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("photo")) {
+
+
+            GroupPhotoViewHolder viewHolder = (GroupPhotoViewHolder) holder;
+            GroupMessage groupMessage = groupMessageList.get(viewHolder.getAdapterPosition());
+
+            viewHolder.setIsRecyclable(false);
+
+            //viewHolder.user_photo.setVisibility(View.INVISIBLE);
+
+            if (groupMessage.getSenderId().equals(userID))
+                viewHolder.username.setVisibility(View.GONE);
+            else
+                viewHolder.username.setText(groupMessage.getUsername());
+
+
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                Date parsedDate = dateFormat.parse(groupMessage.getTimeStamp());
+
+
+                Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
+
+                PrettyTime prettyTime = new PrettyTime(Locale.getDefault());
+                String ago = prettyTime.format(parsedDate);
+                // S is the millisecond
+                // SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy' 'HH:mm:ss:S");
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");/*  dd MMM YYYY*/
+
+
+                viewHolder.timestamp.setText("" + simpleDateFormat.format(timestamp));
+
+                //holder.timestamp.setText(""+height);
+
+
+                //sendMessageViewHolder.timestamp.setText("" + ago);
+
+            } catch (Exception e) { //this generic but you can control another types of exception
+                // look the origin of excption
+                viewHolder.timestamp.setVisibility(View.INVISIBLE);
+
+            }
+
+
+            RequestOptions requestOptions = new RequestOptions();
+            //requestOptions.override(100, 100);
+            requestOptions.placeholder(context.getDrawable(R.drawable.ic_image_24dp));
+            //requestOptions.circleCrop();
+            //requestOptions.centerCrop();
+            //requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL);
+            RequestOptions requestImageOptions = new RequestOptions();
+            //requestImageOptions.override(125, 200);
+            requestImageOptions.placeholder(context.getDrawable(R.drawable.loading_default));
+
+            //viewHolder.message_view.setText(groupMessage.getMessageText());
+            Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(viewHolder.user_photo);
+
+            if (!groupMessage.getMediaID().equals("default")) {
+
+                if (groupMessage.getSentStatus().equals("sent"))
+                    Glide.with(context).load(groupMessage.getMediaID()).apply(requestImageOptions).into(viewHolder.photo);
+
+                else {
+                    Glide.with(context).load(getRealPathFromURI(Uri.parse(groupMessage.getMediaID()))).apply(requestImageOptions).into(viewHolder.photo);
+                    viewHolder.photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                }
+            } else
+                Glide.with(context).load(context.getDrawable(R.drawable.loading_default)).apply(requestImageOptions).into(viewHolder.photo);
+
+
         }
 
 
+    }
+
+    public String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = context.getContentResolver().query(contentURI, null,
+                null, null, null);
+
+        if (cursor == null) { // Source is Dropbox or other similar local file
+            // path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            try {
+                int idx = cursor
+                        .getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+                result = cursor.getString(idx);
+            } catch (Exception e) {
+                //AppLog.handleException(ImageHelper.class.getName(), e);
+                result = "";
+            }
+            cursor.close();
+        }
+        return result;
     }
 
     private void fetchSong(GroupMessage groupMessage,
@@ -728,6 +860,8 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                }
                            });
 */
+
+
                             TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
 
                             new Thread(new Runnable() {
@@ -941,7 +1075,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public class GroupVideoViewHolder extends RecyclerView.ViewHolder {
+    public class GroupYoutubeViewHolder extends RecyclerView.ViewHolder {
 
         CircleImageView user_photo;
         TextView timestamp, username;
@@ -951,7 +1085,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         TextView fetch_music_txt;
 
 
-        public GroupVideoViewHolder(@NonNull View itemView) {
+        public GroupYoutubeViewHolder(@NonNull View itemView) {
             super(itemView);
 
             user_photo = itemView.findViewById(R.id.user_photo);
@@ -962,6 +1096,24 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             song_name = itemView.findViewById(R.id.song_name);
             artist_name = itemView.findViewById(R.id.artist_name);
             spinkit_wave = itemView.findViewById(R.id.spinkit_wave);
+
+
+        }
+    }
+
+    public class GroupPhotoViewHolder extends RecyclerView.ViewHolder {
+
+        CustomImageView user_photo, photo;
+        TextView timestamp, username;
+
+
+        public GroupPhotoViewHolder(@NonNull View itemView) {
+            super(itemView);
+
+            user_photo = itemView.findViewById(R.id.user_photo);
+            photo = itemView.findViewById(R.id.photo);
+            timestamp = itemView.findViewById(R.id.timestamp);
+            username = itemView.findViewById(R.id.username);
 
 
         }

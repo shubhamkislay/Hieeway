@@ -23,27 +23,48 @@ public class CameraActivity extends AppCompatActivity {
     public static String otherUserPublicKey;
     public static String currentUserPublicKey;
     public static String activePhoto;
+    public static String currentUserID;
+    public static String requestType;
+    public static String groupID;
+    public static String groupName;
+    public static String icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        Intent intent  = getIntent();
+        Intent intent = getIntent();
         userStatusOnDiconnect();
 
-        userChattingWithId = intent.getStringExtra("userChattingWithId");
-        usernameChattingWith = intent.getStringExtra("username");
-        userphotoUrl = intent.getStringExtra("userphoto");
-        currentUserPhoto = intent.getStringExtra("currentUserPhoto");
-        currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
-        currentUsername = intent.getStringExtra("currentUsername");
-        otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
-        activePhoto = intent.getStringExtra("activePhoto");
-        currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
-        otherUserPublicKey = intent.getStringExtra("otherUserPublicKey");
-        currentUserPublicKey = intent.getStringExtra("currentUserPublicKey");
 
+        requestType = intent.getStringExtra("requestType");
+        if (requestType.equals("shot")) {
+            currentUserID = intent.getStringExtra("currentUserID");
+            currentUsername = intent.getStringExtra("currentUsername");
+        } else if (requestType.equals("message")) {
+            userChattingWithId = intent.getStringExtra("userChattingWithId");
+            usernameChattingWith = intent.getStringExtra("username");
+            userphotoUrl = intent.getStringExtra("userphoto");
+            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+            currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
+            currentUsername = intent.getStringExtra("currentUsername");
+            otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+            activePhoto = intent.getStringExtra("activePhoto");
+            currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
+            otherUserPublicKey = intent.getStringExtra("otherUserPublicKey");
+            currentUserPublicKey = intent.getStringExtra("currentUserPublicKey");
+        } else if (requestType.equals("group")) {
+
+
+            groupID = intent.getStringExtra("groupID");
+            groupName = intent.getStringExtra("groupName");
+            icon = intent.getStringExtra("icon");
+
+            currentUserID = intent.getStringExtra("currentUserID");
+            currentUsername = intent.getStringExtra("currentUsername");
+            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+        }
 
 
         if (null == savedInstanceState) {

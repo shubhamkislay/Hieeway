@@ -27,6 +27,11 @@ public class VideoUploadActivity extends AppCompatActivity {
     private boolean encrpted = false;
     private String activePhoto;
     private String currentUserActivePhoto;
+    private String requestType;
+    private String currentUserID;
+    String groupID;
+    String groupName;
+    String icon;
 
 
     @Override
@@ -39,16 +44,32 @@ public class VideoUploadActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         videoUri = Uri.parse(intent.getStringExtra("videoUri"));
-        userChattingWithId = intent.getStringExtra("userChattingWithId");
-        currentUserPhoto = intent.getStringExtra("currentUserPhoto");
-        currentUsername = intent.getStringExtra("currentUsername");
-        userphotoUrl = intent.getStringExtra("userphotoUrl");
-        currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
-        otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
-        activePhoto = intent.getStringExtra("activePhoto");
-        currentUserActivePhoto = intent.getStringExtra("activePhoto");
-        usernameChattingWith = intent.getStringExtra("usernameChattingWith");
-        mKey = intent.getStringExtra("mKey");
+        requestType = intent.getStringExtra("requestType");
+
+        if (requestType.equals("message")) {
+            userChattingWithId = intent.getStringExtra("userChattingWithId");
+            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+            currentUsername = intent.getStringExtra("currentUsername");
+            userphotoUrl = intent.getStringExtra("userphotoUrl");
+            currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
+            otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+            activePhoto = intent.getStringExtra("activePhoto");
+            currentUserActivePhoto = intent.getStringExtra("activePhoto");
+            usernameChattingWith = intent.getStringExtra("usernameChattingWith");
+            mKey = intent.getStringExtra("mKey");
+        } else if (requestType.equals("shot")) {
+            currentUserID = intent.getStringExtra("currentUserID");
+            currentUsername = intent.getStringExtra("currentUsername");
+            mKey = intent.getStringExtra("mKey");
+        } else if (requestType.equals("group")) {
+            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+            currentUserID = intent.getStringExtra("currentUserID");
+            currentUsername = intent.getStringExtra("currentUsername");
+            mKey = intent.getStringExtra("mKey");
+            groupID = intent.getStringExtra("groupID");
+            groupName = intent.getStringExtra("groupName");
+            icon = intent.getStringExtra("icon");
+        }
         send_video_btn = findViewById(R.id.send_video_btn);
 
         // MediaController controller = new MediaController(this);
@@ -76,24 +97,52 @@ public class VideoUploadActivity extends AppCompatActivity {
     }
 
     private void sendVideo() {
-        Intent intent1 = new Intent(this, SendMediaService.class);
-        intent1.putExtra("userChattingWithId", userChattingWithId);
-        intent1.putExtra("imageUri", videoUri.toString());
-        //intent1.putExtra("encrptedVide", videoUri.toString());
-        
-        intent1.putExtra("usernameChattingWith", usernameChattingWith);
-        intent1.putExtra("userphotoUrl", userphotoUrl);
-        intent1.putExtra("currentUsername", currentUsername);
-        intent1.putExtra("currentUserPhoto", currentUserPhoto);
-        intent1.putExtra("activePhoto", activePhoto);
-        intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
-        intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
-        intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
-        intent1.putExtra("mKey", mKey);
-        intent1.putExtra("type", "video");
 
+        if (requestType.equals("message")) {
+            Intent intent1 = new Intent(this, SendMediaService.class);
+            intent1.putExtra("userChattingWithId", userChattingWithId);
+            intent1.putExtra("imageUri", videoUri.toString());
+            //intent1.putExtra("encrptedVide", videoUri.toString());
 
-        startService(intent1);
+            intent1.putExtra("usernameChattingWith", usernameChattingWith);
+            intent1.putExtra("userphotoUrl", userphotoUrl);
+            intent1.putExtra("currentUsername", currentUsername);
+            intent1.putExtra("currentUserPhoto", currentUserPhoto);
+            intent1.putExtra("activePhoto", activePhoto);
+            intent1.putExtra("currentUserActivePhoto", currentUserActivePhoto);
+            intent1.putExtra("currentUserPublicKeyID", currentUserPublicKeyID);
+            intent1.putExtra("otherUserPublicKeyID", otherUserPublicKeyID);
+            intent1.putExtra("mKey", mKey);
+            intent1.putExtra("type", "video");
+            intent1.putExtra("requestType", requestType);
+
+            startService(intent1);
+        } else if (requestType.equals("shot")) {
+            Intent intent1 = new Intent(this, SendMediaService.class);
+            intent1.putExtra("currentUserID", currentUserID);
+            intent1.putExtra("imageUri", videoUri.toString());
+            intent1.putExtra("currentUsername", currentUsername);
+            intent1.putExtra("mKey", mKey);
+            intent1.putExtra("type", "video");
+            intent1.putExtra("requestType", requestType);
+
+            startService(intent1);
+        } else if (requestType.equals("group")) {
+            Intent intent1 = new Intent(this, SendMediaService.class);
+            intent1.putExtra("currentUserID", currentUserID);
+            intent1.putExtra("imageUri", videoUri.toString());
+            intent1.putExtra("currentUserPhoto", currentUserPhoto);
+            intent1.putExtra("currentUsername", currentUsername);
+            intent1.putExtra("mKey", mKey);
+            intent1.putExtra("type", "video");
+            intent1.putExtra("requestType", requestType);
+            intent1.putExtra("groupID", groupID);
+            intent1.putExtra("groupName", groupName);
+            intent1.putExtra("icon", icon);
+
+            startService(intent1);
+        }
+
 
         finish();
 

@@ -26,11 +26,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hieeway.hieeway.Helper.RecipientListHelper;
 import com.hieeway.hieeway.Model.ChatStamp;
+import com.hieeway.hieeway.Model.GroupMember;
+import com.hieeway.hieeway.Model.Post;
+import com.hieeway.hieeway.Model.Recipient;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,6 +51,7 @@ import java.security.spec.KeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -83,6 +89,13 @@ public class SendMediaService extends Service {
     private String otherUserPublicKey;
     private String activePhoto;
     private String currentUserActivePhoto;
+    private String requestType;
+    private String currentUserID;
+    private List<Recipient> recipientList;
+    String groupID;
+    String groupName;
+    String icon;
+    private long tsLong;
 
     @Override
     public void onCreate() {
@@ -111,62 +124,139 @@ public class SendMediaService extends Service {
         } else {
 
             timestamp = new Timestamp(System.currentTimeMillis());
+            requestType = intent.getStringExtra("requestType");
+
+            if (requestType.equals("message")) {
+
+                imageUri = Uri.parse(intent.getStringExtra("imageUri"));
+                userChattingWithId = intent.getStringExtra("userChattingWithId");
+                usernameChattingWith = intent.getStringExtra("usernameChattingWith");
+                userphotoUrl = intent.getStringExtra("userphotoUrl");
+                currentUsername = intent.getStringExtra("currentUsername");
+                currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+                otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
+                currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
+                activePhoto = intent.getStringExtra("activePhoto");
+                currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
+                mKey = intent.getStringExtra("mKey");
+                type = intent.getStringExtra("type");
+
+                databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
+                        .child(FirebaseAuth.getInstance()
+                                .getCurrentUser()
+                                .getUid())
+                        .child(userChattingWithId);
+
+                receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
+                        .child(userChattingWithId)
+                        .child(FirebaseAuth.getInstance()
+                                .getCurrentUser()
+                                .getUid());
 
 
-            imageUri = Uri.parse(intent.getStringExtra("imageUri"));
-            userChattingWithId = intent.getStringExtra("userChattingWithId");
-            usernameChattingWith = intent.getStringExtra("usernameChattingWith");
-            userphotoUrl = intent.getStringExtra("userphotoUrl");
-            currentUsername = intent.getStringExtra("currentUsername");
-            currentUserPhoto = intent.getStringExtra("currentUserPhoto");
-            otherUserPublicKeyID = intent.getStringExtra("otherUserPublicKeyID");
-            currentUserPublicKeyID = intent.getStringExtra("currentUserPublicKeyID");
-            activePhoto = intent.getStringExtra("activePhoto");
-            currentUserActivePhoto = intent.getStringExtra("currentUserActivePhoto");
-            mKey = intent.getStringExtra("mKey");
-            type = intent.getStringExtra("type");
-
-            databaseReference = FirebaseDatabase.getInstance().getReference("Messages")
-                    .child(FirebaseAuth.getInstance()
-                            .getCurrentUser()
-                            .getUid())
-                    .child(userChattingWithId);
-
-            receiverReference = FirebaseDatabase.getInstance().getReference("Messages")
-                    .child(userChattingWithId)
-                    .child(FirebaseAuth.getInstance()
-                            .getCurrentUser()
-                            .getUid());
+                storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
 
+                Log.v("CurrentUserId", "" + currentUserPublicKeyID);
+                Log.v("OtherUserId", "" + otherUserPublicKeyID);
 
 
-            storageReference = FirebaseStorage.getInstance().getReference("uploads");
+                Log.v("SendMediaService", "Started");
+
+                stopSelfIntent = new Intent(this, SendMediaService.class);
+
+                stopSelfIntent.setAction(ACTION_STOP_SERVICE);
+                stopSelfIntent.putExtra("messageKey", mKey);
+                stopSelfIntent.putExtra("userChattingWithId", userChattingWithId);
+
+                //This is optional if you have more than one buttons and want to differentiate between two
 
 
-            Log.v("CurrentUserId", "" + currentUserPublicKeyID);
-            Log.v("OtherUserId", "" + otherUserPublicKeyID);
+                pIntentlogin = PendingIntent.getService(this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 
-            Log.v("SendMediaService", "Started");
-
-            stopSelfIntent = new Intent(this, SendMediaService.class);
-
-            stopSelfIntent.setAction(ACTION_STOP_SERVICE);
-            stopSelfIntent.putExtra("messageKey", mKey);
-            stopSelfIntent.putExtra("userChattingWithId", userChattingWithId);
-
-            //This is optional if you have more than one buttons and want to differentiate between two
-
-
-            pIntentlogin = PendingIntent.getService(this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                // getContactList();
+                if (type.equals("photo")) {
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
+                            .setContentTitle("Sending photo")
+                            .setSmallIcon(R.drawable.ic_image_24dp)
+                            .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
+                            // .setContentIntent(pendingIntent)
+                            .setProgress(0, 0, true)
+                            .build();
 
 
-            // getContactList();
-            if (type.equals("photo")) {
+                    startForeground(1, notification);
+
+                    // uploadImage();
+                    saveOriginalFile(imageUri);
+                } else if (type.equals("video")) {
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
+                            .setContentTitle("Sending video")
+                            .setSmallIcon(R.drawable.ic_videocam_black_24dp)
+                            .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
+                            // .setContentIntent(pendingIntent)
+                            .setProgress(0, 0, true)
+                            .build();
+
+
+                    startForeground(1, notification);
+
+                    // encrpytVideo();
+                    saveOriginalFile(imageUri);
+                } else if (type.equals("audio")) {
+                    Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
+                            .setContentTitle("Sending audio")
+                            .setSmallIcon(R.drawable.ic_mic_black_24dp)
+                            .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
+                            // .setContentIntent(pendingIntent)
+                            .setProgress(0, 0, true)
+                            .build();
+
+                    otherUserPublicKey = intent.getStringExtra("otherUserPublicKey");
+                    currentUserPublicKey = intent.getStringExtra("currentUserPublicKey");
+
+
+                    startForeground(1, notification);
+
+                    // encrpytVideo();
+                    saveOriginalFile(imageUri);
+                }
+
+            } else if (requestType.equals("shot")) {
+
+                recipientList = RecipientListHelper.getInstance().getRecipientList();
+                imageUri = Uri.parse(intent.getStringExtra("imageUri"));
+
+                currentUsername = intent.getStringExtra("currentUsername");
+                currentUserID = intent.getStringExtra("currentUserID");
+                mKey = intent.getStringExtra("mKey");
+                type = intent.getStringExtra("type");
+
+                databaseReference = FirebaseDatabase.getInstance().getReference("Post")
+                        .child(currentUserID);
+
+                String postKey = FirebaseDatabase.getInstance().getReference("Post")
+                        .child(currentUserID).push().getKey();
+
+
+                storageReference = FirebaseStorage.getInstance().getReference("uploads");
+
+
+                stopSelfIntent = new Intent(this, SendMediaService.class);
+
+                stopSelfIntent.setAction(ACTION_STOP_SERVICE);
+                stopSelfIntent.putExtra("messageKey", mKey);
+                stopSelfIntent.putExtra("userChattingWithId", "xyz");
+
+                //This is optional if you have more than one buttons and want to differentiate between two
+
+
+                pIntentlogin = PendingIntent.getService(this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
                 Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
-                        .setContentTitle("Sending photo")
-                        .setSmallIcon(R.drawable.ic_image_24dp)
+                        .setContentTitle("Posting your shot")
+                        .setSmallIcon(R.drawable.nav_hieeway_send_btn)
                         .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
                         // .setContentIntent(pendingIntent)
                         .setProgress(0, 0, true)
@@ -175,12 +265,79 @@ public class SendMediaService extends Service {
 
                 startForeground(1, notification);
 
-                // uploadImage();
-                saveOriginalFile(imageUri);
-            } else if (type.equals("video")) {
+                uploadShot(imageUri, postKey, type);
+
+            } else if (requestType.equals("group")) {
+
+                tsLong = System.currentTimeMillis() / 1000;
+
+                recipientList = RecipientListHelper.getInstance().getRecipientList();
+                imageUri = Uri.parse(intent.getStringExtra("imageUri"));
+
+                currentUsername = intent.getStringExtra("currentUsername");
+                currentUserID = intent.getStringExtra("currentUserID");
+                currentUserPhoto = intent.getStringExtra("currentUserPhoto");
+                mKey = intent.getStringExtra("mKey");
+                type = intent.getStringExtra("type");
+                groupID = intent.getStringExtra("groupID");
+                groupName = intent.getStringExtra("groupName");
+                icon = intent.getStringExtra("icon");
+
+                databaseReference = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                        .child(groupID);
+
+                String postKey = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                        .child(groupID).push().getKey();
+
+
+                storageReference = FirebaseStorage.getInstance().getReference("uploads");
+
+
+                stopSelfIntent = new Intent(this, SendMediaService.class);
+
+                stopSelfIntent.setAction(ACTION_STOP_SERVICE);
+                stopSelfIntent.putExtra("messageKey", mKey);
+                stopSelfIntent.putExtra("userChattingWithId", "xyz");
+
+                //This is optional if you have more than one buttons and want to differentiate between two
+
+                String contentTitle;
+                if (type.equals("video"))
+                    contentTitle = "Uploading Video";
+                else {
+                    contentTitle = "Uploading Photo";
+
+
+                    DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                            .child(groupID);
+
+
+                    HashMap<String, Object> groupMessageHash = new HashMap<>();
+                    groupMessageHash.put("messageText", "");
+                    groupMessageHash.put("senderId", currentUserID);
+                    groupMessageHash.put("messageId", postKey);
+                    groupMessageHash.put("timeStamp", timestamp.toString());
+                    groupMessageHash.put("photo", currentUserPhoto);
+                    groupMessageHash.put("sentStatus", "sending");
+                    groupMessageHash.put("username", currentUsername);
+                    groupMessageHash.put("messageTime", tsLong);
+                    groupMessageHash.put("mediaID", imageUri.toString());
+                    groupMessageHash.put("type", type);
+
+
+                    //groupMessageHash.put("mediaID", "none");
+
+
+                    groupMessageSendRef.child(postKey).updateChildren(groupMessageHash);
+
+
+                }
+
+                pIntentlogin = PendingIntent.getService(this, 0, stopSelfIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
                 Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
-                        .setContentTitle("Sending video")
-                        .setSmallIcon(R.drawable.ic_videocam_black_24dp)
+                        .setContentTitle(contentTitle)
+                        .setSmallIcon(R.drawable.nav_hieeway_send_btn)
                         .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
                         // .setContentIntent(pendingIntent)
                         .setProgress(0, 0, true)
@@ -189,121 +346,17 @@ public class SendMediaService extends Service {
 
                 startForeground(1, notification);
 
-                // encrpytVideo();
-                saveOriginalFile(imageUri);
-            } else if (type.equals("audio")) {
-                Notification notification = new NotificationCompat.Builder(this, CHANNEL_3_ID)
-                        .setContentTitle("Sending audio")
-                        .setSmallIcon(R.drawable.ic_mic_black_24dp)
-                        .addAction(R.drawable.ic_cancel_white_24dp, "Close", pIntentlogin)
-                        // .setContentIntent(pendingIntent)
-                        .setProgress(0, 0, true)
-                        .build();
+                uploadGroupMessage(imageUri, postKey, type);
 
-                otherUserPublicKey = intent.getStringExtra("otherUserPublicKey");
-                currentUserPublicKey = intent.getStringExtra("currentUserPublicKey");
-
-
-                startForeground(1, notification);
-
-                // encrpytVideo();
-                saveOriginalFile(imageUri);
             }
+
         }
 
 
         return START_NOT_STICKY;
     }
 
-    private void encrpytVideo() {
 
-        try {
-            //  AssetFileDescriptor videoAsset = getContentResolver().openAssetFileDescriptor(data.getData(), "r");
-            // FileInputStream fis = videoAsset.createInputStream();
-            // FileInputStream fis = new FileInputStream(getContentResolver().openFileDescriptor(videoUri, "r").getFileDescriptor());
-
-            // FileInputStream fis = new FileInputStream(String.valueOf(getContentResolver().acquireContentProviderClient(videoUri)));
-            inputStream = getContentResolver().openInputStream(imageUri);
-
-            File root = new File(Environment.getExternalStorageDirectory(), "Hieeway Videos");
-            if (!root.exists()) {
-                root.mkdirs();
-            }
-            final File outfile = new File(root, mKey + ".mp4");
-            fos = new FileOutputStream(outfile);
-
-
-            final Cipher cipher = Cipher.getInstance("AES");
-
-            // encrypt the plain text using the public key
-            KeyGenerator kgen = KeyGenerator.getInstance("AES");
-            SecretKey skey = kgen.generateKey();
-
-            cipher.init(Cipher.ENCRYPT_MODE, skey);
-
-
-            final String mediaKey = Base64.encodeToString(skey.getEncoded(), Base64.DEFAULT);
-
-
-            /**
-             * changing key in string form back to SecretKey object
-             *
-             * String seckey = publicKey;
-             * byte[] encodedKey     = Base64.decode(secKey, Base64.DEFAULT);
-             * SecretKey originalKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-             *
-             * */
-
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CipherInputStream cis = new CipherInputStream(inputStream, cipher);
-
-                        byte[] d = new byte[10 * 1024 * 1024];
-
-                        while (true) {
-
-
-                            if (!((read = inputStream.read(d)) != -1)) break;
-
-
-                            fos.write(d, 0, (char) read);
-                            fos.flush();
-
-
-                        }
-                        fos.close();
-                        encryptedUri = Uri.fromFile(outfile);
-                        /*String senderMediaKey = encryptRSAToString(mediaKey,CameraActivity.currentUserPublicKey);
-                        String receiverMediaKey = encryptRSAToString(mediaKey,CameraActivity.otherUserPublicKey);*/
-
-                        String senderMediaKey = encryptRSAToString(mediaKey, CameraActivity.currentUserPublicKey);
-                        String receiverMediaKey = encryptRSAToString(mediaKey, CameraActivity.otherUserPublicKey);
-
-                        uploadVideo(imageUri, senderMediaKey, receiverMediaKey);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-
-
-        } catch (FileNotFoundException e) {
-            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            //Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            // Toast.makeText(VideoUploadActivity.this,"Error message: "+e.toString(),Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-    }
 
     private void saveOriginalFile(Uri mediaIntentURI) {
         //checkVideoURI();
@@ -1023,6 +1076,234 @@ public class SendMediaService extends Service {
 
 
         } else {
+            // Toast.makeText(PhotoEditToolsActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
+        }
+    }
+
+    private void uploadShot(Uri mediaUri, String postKey, String type) {
+        Log.v("SendMediaService", "Uploading...");
+        imageUri = mediaUri;
+        if (imageUri != null) {
+
+
+            String extension = "default";
+            if (type.equals("photo"))
+                extension = ".jpg";
+            else if (type.equals("video"))
+                extension = ".mp4";
+
+            final StorageReference fileReference = storageReference.child(postKey + extension);
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task task) throws Exception {
+
+                    if (!task.isSuccessful()) {
+                        stopSelf();
+                        throw task.getException();
+
+                    }
+
+
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+
+                    if (task.isSuccessful()) {
+
+                        Log.v("SendMediaService", "Upload");
+
+                        Uri downloadUri = task.getResult();
+
+                        String mUri = downloadUri.toString();
+
+                        Timestamp timeStamp = new Timestamp(System.currentTimeMillis());
+                        Long tsLong = System.currentTimeMillis() / 1000;
+
+                        Post post = new Post();
+                        post.setUserId(currentUserID);
+                        post.setPostKey(postKey);
+                        post.setType(type);
+                        post.setMediaUrl(mUri);
+                        post.setUsername(currentUsername);
+                        post.setPostTime(tsLong);
+                        post.setMediaKey(postKey);
+                        post.setTimeStamp(timeStamp.toString());
+
+
+                        stopSelfIntent.putExtra("messageKey", postKey);
+
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+                        HashMap<String, Object> postHash = new HashMap<>();
+                        postHash.put("MyPosts/" + currentUserID + "/" + postKey, post);
+                        databaseReference.updateChildren(postHash);
+
+                        HashMap<String, Object> multiplePathUpdate = new HashMap<>();
+        /*FirebaseDatabase.getInstance()
+                .getReference("FriendList")
+                .child(userID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                Friend friend = dataSnapshot.getValue(Friend.class);
+                                multiplePathUpdate.put("Post/" + friend.getFriendId() + "/" + postKey, post);
+
+                            }
+                            databaseReference.updateChildren(multiplePathUpdate);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+        */
+
+                        for (Recipient recipient : recipientList) {
+                            post.setManual(recipient.getManual());
+                            multiplePathUpdate.put("Post/" + recipient.getUserid() + "/" + postKey, post);
+                        }
+                        databaseReference.updateChildren(multiplePathUpdate);
+                        stopSelf();
+
+
+                    } else {
+                        stopSelf();
+                        //Toast.makeText(getBaseContext(),"Uploading failed" ,Toast.LENGTH_SHORT).show();
+                        //  progressDialog.dismiss();
+                    }
+
+                }
+            });
+
+
+        } else {
+
+            stopSelf();
+            // Toast.makeText(PhotoEditToolsActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
+        }
+    }
+
+    private void uploadGroupMessage(Uri mediaUri, String postKey, String type) {
+        Log.v("SendMediaService", "Uploading...");
+        imageUri = mediaUri;
+        if (imageUri != null) {
+
+
+            String extension = "default";
+            if (type.equals("photo"))
+                extension = ".jpg";
+            else if (type.equals("video"))
+                extension = ".mp4";
+
+            final StorageReference fileReference = storageReference.child(postKey + extension);
+
+            uploadTask = fileReference.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task task) throws Exception {
+
+                    if (!task.isSuccessful()) {
+                        stopSelf();
+                        throw task.getException();
+
+                    }
+
+
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+
+
+                    if (task.isSuccessful()) {
+
+                        Log.v("SendMediaService", "Upload");
+
+                        Uri downloadUri = task.getResult();
+
+                        String mUri = downloadUri.toString();
+
+                        DatabaseReference groupMessageSendRef = FirebaseDatabase.getInstance().getReference("GroupMessage")
+                                .child(groupID);
+
+
+                        HashMap<String, Object> groupMessageHash = new HashMap<>();
+                        groupMessageHash.put("messageText", "");
+                        groupMessageHash.put("senderId", currentUserID);
+                        groupMessageHash.put("messageId", postKey);
+                        groupMessageHash.put("timeStamp", timestamp.toString());
+                        groupMessageHash.put("photo", currentUserPhoto);
+                        groupMessageHash.put("sentStatus", "sent");
+                        groupMessageHash.put("username", currentUsername);
+                        groupMessageHash.put("messageTime", tsLong);
+                        groupMessageHash.put("mediaID", mUri);
+                        groupMessageHash.put("type", type);
+
+
+                        //groupMessageHash.put("mediaID", "none");
+
+
+                        groupMessageSendRef.child(postKey).updateChildren(groupMessageHash);
+
+                        HashMap<String, Object> updateGroupTimeHash = new HashMap<>();
+                        FirebaseDatabase.getInstance().getReference("GroupMembers")
+                                .child(groupID)
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                GroupMember groupMember = dataSnapshot.getValue(GroupMember.class);
+
+                                                HashMap<String, Object> hashMap = new HashMap<>();
+                                                hashMap.put("sender", currentUserID);
+                                                hashMap.put("type", "text");
+                                                hashMap.put("key", postKey);
+                                                hashMap.put("timeStamp", timestamp.toString());
+                                                //updateGroupTimeHash.put("MyGroup/" + groupMember.getId() + "/"+groupID+"/timeStamp/",timestamp.toString());
+                                                FirebaseDatabase.getInstance().getReference("MyGroup")
+                                                        .child(groupMember.getId())
+                                                        .child(groupID)
+                                                        .updateChildren(hashMap);
+
+
+                                            }
+
+                                            //FirebaseDatabase.getInstance().getReference().setValue(updateGroupTimeHash);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+                        stopSelf();
+
+
+                    } else {
+                        stopSelf();
+                        //Toast.makeText(getBaseContext(),"Uploading failed" ,Toast.LENGTH_SHORT).show();
+                        //  progressDialog.dismiss();
+                    }
+
+                }
+            });
+
+
+        } else {
+
+            stopSelf();
             // Toast.makeText(PhotoEditToolsActivity.this,"No Image selected",Toast.LENGTH_SHORT ).show();
         }
     }
