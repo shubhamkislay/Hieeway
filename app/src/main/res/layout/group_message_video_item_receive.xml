@@ -10,14 +10,13 @@
 
     <com.hieeway.hieeway.CustomImageView
         android:id="@+id/photo"
-        android:layout_width="175dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHeight_max="300dp"
+        android:layout_width="125dp"
+        android:layout_height="200dp"
         android:visibility="visible"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="28dp"
         tools:src="@drawable/no_profile" />
 
     <RelativeLayout
@@ -59,8 +58,10 @@
         tools:text="00:00" />
 
     <Button
+        android:id="@+id/play_btn"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:alpha="0.5"
         app:layout_constraintBottom_toBottomOf="@id/photo"
         app:layout_constraintEnd_toEndOf="@id/photo"
         android:background="@drawable/play_btn"
@@ -68,10 +69,35 @@
         app:layout_constraintStart_toStartOf="@id/photo"
         app:layout_constraintTop_toTopOf="@id/photo" />
 
-    <com.hieeway.hieeway.CustomImageView
+    <RelativeLayout
+        android:id="@+id/post_ring"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:alpha="1.0"
+        android:background="@drawable/music_post_item_ring"
+        android:rotation="180"
+        android:scaleType="centerCrop"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
+        app:layout_constraintRight_toRightOf="@id/photo"
+        app:layout_constraintTop_toTopOf="@id/photo" />
+
+    <RelativeLayout
+        android:id="@+id/back_item"
+        android:background="@drawable/layer_group_item_back"
+        app:layout_constraintEnd_toEndOf="@id/user_photo"
+        app:layout_constraintStart_toStartOf="@id/user_photo"
+        app:layout_constraintTop_toTopOf="@id/user_photo"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+    <com.hieeway.hieeway.CustomCircularView
         android:id="@+id/user_photo"
         android:layout_width="40dp"
-        android:layout_height="70dp"
+        android:layout_height="40dp"
         android:scaleType="centerCrop"
         tools:src="@drawable/profile_pic"
         app:layout_constraintBottom_toTopOf="@id/photo"

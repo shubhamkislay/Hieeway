@@ -3,6 +3,7 @@ package com.hieeway.hieeway;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -225,6 +226,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     DatabaseReference groupMessageSendRef;
     private DatabaseReference connectedRef;
     private boolean connected = true;
+    private SingleViewTouchableMotionLayout motion_layout;
 
 
     @Override
@@ -248,6 +250,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         //sync_video_layout = findViewById(R.id.sync_video_layout);
         youtube_player_view = findViewById(R.id.youtube_player_view);
         youtube_layout = findViewById(R.id.youtube_layout);
+        motion_layout = findViewById(R.id.motion_layout);
+        motion_layout.transitionToEnd();
 
         youtube_web_view.getSettings().setJavaScriptEnabled(true);
 
@@ -408,6 +412,41 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
                 youtubeVisible = true;
+
+            }
+        });
+
+
+        motion_layout.setTransitionListener(new MotionLayout.TransitionListener() {
+            @Override
+            public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
+
+                try {
+                    customUiController.setLockView(false);
+                } catch (Exception e) {
+
+                }
+
+            }
+
+            @Override
+            public void onTransitionChange(MotionLayout motionLayout, int i, int i1, float v) {
+
+            }
+
+            @Override
+            public void onTransitionCompleted(MotionLayout motionLayout, int i) {
+
+                try {
+                    customUiController.autoUpdateControlView(true);
+                } catch (Exception e) {
+
+                }
+
+            }
+
+            @Override
+            public void onTransitionTrigger(MotionLayout motionLayout, int i, boolean b, float v) {
 
             }
         });
@@ -604,7 +643,11 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
                     if (customUiController != null) {
-                        customUiController.autoUpdateControlView();
+                        try {
+                            customUiController.autoUpdateControlView(false);
+                        } catch (Exception e) {
+
+                        }
                         customUiController.setYoutube_player_seekbarVisibility(true);
                         youtube_player_view.setVisibility(View.VISIBLE);
                         //sync_video_layout.setVisibility(View.INVISIBLE);

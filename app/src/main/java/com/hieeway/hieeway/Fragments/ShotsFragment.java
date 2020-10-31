@@ -672,7 +672,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                         long localDiffHours = localUserDiff / (60 * 60 * 24);
 
                         if (localDiffHours < 1) {
-                            if (!postList.contains(post))
+                            if (!postList.contains(post) || !post.getType().equals("music"))
                                 postList.add(post);
                             else
                                 postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());

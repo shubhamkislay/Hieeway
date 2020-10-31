@@ -47,7 +47,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.CustomImageView;
+import com.hieeway.hieeway.ExoPlayerActivity;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.Interface.ScrollRecyclerViewListener;
 import com.hieeway.hieeway.Interface.SpotifyRemoteConnectListener;
@@ -59,6 +61,7 @@ import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicMessage;
 import com.hieeway.hieeway.Model.VideoMessage;
 import com.hieeway.hieeway.Model.YoutubeSync;
+import com.hieeway.hieeway.PhotoViewActivity;
 import com.hieeway.hieeway.R;
 import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.FriendListDiffUtilCallback;
@@ -578,7 +581,6 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             GroupPhotoViewHolder viewHolder = (GroupPhotoViewHolder) holder;
             GroupMessage groupMessage = groupMessageList.get(viewHolder.getAdapterPosition());
 
-            viewHolder.setIsRecyclable(false);
 
             //viewHolder.user_photo.setVisibility(View.INVISIBLE);
 
@@ -629,6 +631,16 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             //viewHolder.message_view.setText(groupMessage.getMessageText());
             Glide.with(context).load(groupMessage.getPhoto()).apply(requestOptions).into(viewHolder.user_photo);
 
+            viewHolder.photo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, PhotoViewActivity.class);
+                    intent.putExtra("path", groupMessage.getMediaID());
+                    context.startActivity(intent);
+                }
+            });
+
+
             if (!groupMessage.getMediaID().equals("default")) {
 
                 if (groupMessage.getSentStatus().equals("sent"))
@@ -648,7 +660,6 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             GroupPhotoViewHolder viewHolder = (GroupPhotoViewHolder) holder;
             GroupMessage groupMessage = groupMessageList.get(viewHolder.getAdapterPosition());
 
-            viewHolder.setIsRecyclable(false);
 
             //viewHolder.user_photo.setVisibility(View.INVISIBLE);
 
@@ -707,6 +718,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     long thumb = viewHolder.getAdapterPosition() * 1000;
                     RequestOptions options = new RequestOptions().frame(thumb);
                     Glide.with(context).load(groupMessage.getMediaID()).apply(options).into(viewHolder.photo);
+                    viewHolder.photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 } else {
                     // Glide.with(context).load(getRealPathFromURI(Uri.parse(groupMessage.getMediaID()))).apply(requestImageOptions).into(viewHolder.photo);
 
@@ -718,6 +730,25 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             } else
                 Glide.with(context).load(context.getDrawable(R.drawable.loading_default)).apply(requestImageOptions).into(viewHolder.photo);
+
+
+            viewHolder.photo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ExoPlayerActivity.class);
+                    intent.putExtra("path", groupMessage.getMediaID());
+                    context.startActivity(intent);
+                }
+            });
+
+            viewHolder.play_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ExoPlayerActivity.class);
+                    intent.putExtra("path", groupMessage.getMediaID());
+                    context.startActivity(intent);
+                }
+            });
 
 
         }
@@ -1201,8 +1232,10 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public class GroupPhotoViewHolder extends RecyclerView.ViewHolder {
 
-        CustomImageView user_photo, photo;
+        CustomImageView photo;
+        CustomCircularView user_photo;
         TextView timestamp, username;
+        Button play_btn;
 
 
         public GroupPhotoViewHolder(@NonNull View itemView) {
@@ -1212,6 +1245,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             photo = itemView.findViewById(R.id.photo);
             timestamp = itemView.findViewById(R.id.timestamp);
             username = itemView.findViewById(R.id.username);
+            play_btn = itemView.findViewById(R.id.play_btn);
 
 
         }

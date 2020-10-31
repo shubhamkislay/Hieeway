@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_hieeway_circle"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".OpenMessageShotActivity"></activity>
+        <activity android:name=".PhotoViewActivity"></activity>
+        <activity android:name=".ExoPlayerActivity" />
+        <activity android:name=".OpenMessageShotActivity" />
         <activity
             android:name=".CreateShotActivity"
             android:screenOrientation="portrait"

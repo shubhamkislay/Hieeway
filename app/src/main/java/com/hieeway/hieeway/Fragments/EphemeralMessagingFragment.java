@@ -1667,7 +1667,8 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                                                                                             profile_pic.setImageResource(android.R.color.transparent);
 
 
-                                                                                            Glide.with(parentActivity).load(task.getResult())/*
+                                                                                            Glide.with(parentActivity).load(task.getResult())
+                                                                                                    /*
                                                                                 .apply(RequestOptions.skipMemoryCacheOf(true))
                                                                                 .apply(RequestOptions.diskCacheStrategyOf(DiskCacheStrategy.NONE))*/
                                                                                                     //.replace("s96-c", "s384-c")).transition(withCrossFade()).apply(new RequestOptions().override(width, height))

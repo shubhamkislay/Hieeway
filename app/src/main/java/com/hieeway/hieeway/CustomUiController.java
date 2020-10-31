@@ -49,6 +49,7 @@ public class CustomUiController implements YouTubePlayerListener {
     private boolean playing = true;
     private ProgressBar buffering_progress;
     private boolean displayPreview = false;
+    private boolean lockView = false;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -83,7 +84,8 @@ public class CustomUiController implements YouTubePlayerListener {
         customPlayerUI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playUIClick(v);
+                if (!lockView)
+                    playUIClick(v);
             }
 
 
@@ -96,7 +98,8 @@ public class CustomUiController implements YouTubePlayerListener {
 
                 //fadeViewHelper.toggleVisibility();
 
-                toggleView(v);
+                if (!lockView)
+                    toggleView(v);
 
                 //youtube_player_seekbar.setAlpha(1.0f);
             }
@@ -108,7 +111,8 @@ public class CustomUiController implements YouTubePlayerListener {
             @Override
             public void onClick(View v) {
 
-                play(v);
+                if (!lockView)
+                    play(v);
 
             }
         });
@@ -241,21 +245,24 @@ public class CustomUiController implements YouTubePlayerListener {
     }
 
     public void setPlayPauseBtn(int visible) {
-        play_pause_btn.setVisibility(visible);
+        if (!lockView)
+            play_pause_btn.setVisibility(visible);
     }
 
-    public void autoUpdateControlView() {
+
+    public void autoUpdateControlView(Boolean lockView) throws Exception {
         play_pause_btn.animate().setDuration(300).alpha(0.0f);
         youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
         video_title.animate().setDuration(300).alpha(0.0f);
         text_back.animate().setDuration(300).alpha(0.0f);
         text_back_two.animate().setDuration(300).alpha(0.0f);
         seekVisible = false;
+        this.lockView = false;
     }
 
 
     public void updateControllView() {
-        if (!seekVisible) {
+        if (!seekVisible && !lockView) {
             play_pause_btn.animate().setDuration(300).alpha(1.0f);
             youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
             video_title.animate().setDuration(300).alpha(1.0f);
@@ -287,7 +294,7 @@ public class CustomUiController implements YouTubePlayerListener {
     }
 
     public void setYoutube_player_seekbarVisibility(Boolean isVisible) {
-        if (isVisible)
+        if (isVisible && !lockView)
             youtube_player_seekbar.setVisibility(View.VISIBLE);
         else
             youtube_player_seekbar.setVisibility(View.GONE);
@@ -344,6 +351,9 @@ public class CustomUiController implements YouTubePlayerListener {
 
     }
 
+    public void setLockView(boolean lockView) {
+        this.lockView = false;
+    }
 
     public void play(View view) {
         if (playing) {
