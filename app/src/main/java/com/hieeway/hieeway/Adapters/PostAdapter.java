@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
@@ -106,7 +107,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             display.getSize(size);
             float dispSize = size.x;
 
-            CustomImageView backItem = view.findViewById(R.id.user_photo);
+            BlurImageView backItem = view.findViewById(R.id.photo);
 
             backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
 
@@ -124,7 +125,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             display.getSize(size);
             float dispSize = size.x;
 
-            CustomImageView backItem = view.findViewById(R.id.user_photo);
+            BlurImageView backItem = view.findViewById(R.id.photo);
 
             backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
 
@@ -287,6 +288,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 if (post.getType().equals("music")) {
 
 
+                    postViewHolder.back_text.setText("");
+                    postViewHolder.photo.setImageDrawable(context.getDrawable(R.drawable.headphone));
+
+
                 /*new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -306,7 +311,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 */
                     postViewHolder.type.setText("Music");
                     postViewHolder.by_beacon.setText("Music Beacon");
-                    postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
+                    postViewHolder.photo.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Toast.makeText(context, "Opening Music Item", Toast.LENGTH_SHORT).show();
@@ -323,9 +328,27 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
                 } else if (post.getType().equals("message")) {
+
+                    postViewHolder.photo.setImageDrawable(context.getDrawable(R.drawable.loading_default));
+                    postViewHolder.photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    postViewHolder.photo.setAlpha(0.0f);
+
+                    try {
+
+                        postViewHolder.back_text.setText(post.getMediaUrl());
+
+                        float radius = postViewHolder.back_text.getTextSize() / (5);
+
+                        BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
+                        postViewHolder.back_text.getPaint().setMaskFilter(filter);
+
+                    } catch (Exception e) {
+                        //
+                    }
+
                     postViewHolder.by_beacon.setText("");
                     postViewHolder.type.setText(post.getType());
-                    postViewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
+                    postViewHolder.photo.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(activity, OpenMessageShotActivity.class);
@@ -489,7 +512,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    private void getLatestProfilePic(String userId, CustomImageView user_photo) {
+    private void getLatestProfilePic(String userId, CircleImageView user_photo) {
 
         FirebaseDatabase.getInstance().getReference("Users")
                 .child(userId)
@@ -514,9 +537,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                                                     if (user.getPhoto().contains("https://firebasestorage")) {
                                                         final Matrix matrix = user_photo.getImageMatrix();
-                                                        final float imageWidth = resource.getIntrinsicWidth();
+                                                        /*final float imageWidth = resource.getIntrinsicWidth();
                                                         final int screenWidth = context.getResources().getDisplayMetrics().widthPixels / 2;
-                                                        final float scaleRatio = screenWidth / imageWidth;
+                                                        final float scaleRatio = screenWidth / imageWidth;*/
                                                         // matrix.postScale(scaleRatio, scaleRatio);
                                                         matrix.postScale(1, 1);
                                                         user_photo.setImageMatrix(matrix);
@@ -616,9 +639,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
 
-        private CustomImageView user_photo;
-        private TextView username, timestamp, type, by_beacon;
+        private CircleImageView user_photo;
+
+        private TextView username, timestamp, type, by_beacon, back_text;
         private RelativeLayout post_ring;
+        private BlurImageView photo;
+
 
        /* EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
                 equalizer_view_five, equalizer_view_six, equalizer_view_seven, equalizer_view_eight;*/
@@ -632,6 +658,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             type = itemView.findViewById(R.id.type);
             by_beacon = itemView.findViewById(R.id.by_beacon);
             post_ring = itemView.findViewById(R.id.post_ring);
+            photo = itemView.findViewById(R.id.photo);
+            back_text = itemView.findViewById(R.id.back_text);
 
             /*equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
 

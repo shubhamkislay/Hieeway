@@ -251,7 +251,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         youtube_player_view = findViewById(R.id.youtube_player_view);
         youtube_layout = findViewById(R.id.youtube_layout);
         motion_layout = findViewById(R.id.motion_layout);
-        motion_layout.transitionToEnd();
+        //motion_layout.transitionToEnd();
 
         youtube_web_view.getSettings().setJavaScriptEnabled(true);
 

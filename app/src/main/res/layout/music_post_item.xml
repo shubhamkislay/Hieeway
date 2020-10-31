@@ -7,15 +7,34 @@
     android:elevation="10dp"
     android:padding="3dp">
 
-    <com.hieeway.hieeway.CustomImageView
-        android:id="@+id/user_photo"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:scaleType="matrix"
+
+    <TextView
+        android:id="@+id/back_text"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:maxLength="50"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bottom_sheet_background_drawable"
+        android:backgroundTint="#3E3E3E"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        android:layout_margin="4dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/no_profile" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.jgabrielfreitas.core.BlurImageView
+        android:id="@+id/photo"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:padding="40dp"
+        android:alpha="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <RelativeLayout
@@ -26,10 +45,10 @@
         android:rotation="180"
         android:scaleType="centerCrop"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo" />
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
+        app:layout_constraintRight_toRightOf="@id/photo"
+        app:layout_constraintTop_toTopOf="@id/photo" />
 
 
 
@@ -134,12 +153,23 @@
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:rotation="180"
         android:background="@drawable/chat_user_gradient"
         android:visibility="visible"
-        app:layout_constraintTop_toTopOf="@id/user_photo"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo" />
+        app:layout_constraintTop_toTopOf="@id/photo"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
+        app:layout_constraintRight_toRightOf="@id/photo" />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/chat_user_gradient"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@id/photo"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
+        app:layout_constraintRight_toRightOf="@id/photo" />
 
     <TextView
 
@@ -154,22 +184,45 @@
         android:visibility="gone"
         android:scaleType="centerInside"
         android:src="@drawable/spotify_logo_rgb_white"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo" />
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
+        app:layout_constraintRight_toRightOf="@id/photo" />
 
     <TextView
         android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="sans-serif-thin"
         android:gravity="center"
         android:textColor="#fff"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
+        app:layout_constraintRight_toRightOf="@id/photo"
+        app:layout_constraintTop_toBottomOf="@id/user_photo"
         tools:text="username" />
+
+    <RelativeLayout
+        android:id="@+id/back_item"
+        android:background="@drawable/layer_group_item_back"
+        app:layout_constraintEnd_toEndOf="@id/user_photo"
+        app:layout_constraintStart_toStartOf="@id/user_photo"
+        app:layout_constraintTop_toTopOf="@id/user_photo"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/user_photo"
+        android:layout_width="64dp"
+        android:layout_height="64dp" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_photo"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/profile_pic" />
+
 
     <RelativeLayout
         android:id="@+id/post_ring"
@@ -180,10 +233,10 @@
         android:rotation="180"
         android:scaleType="centerCrop"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
-        app:layout_constraintRight_toRightOf="@id/user_photo"
-        app:layout_constraintTop_toTopOf="@id/user_photo" />
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/type"
@@ -193,7 +246,7 @@
         tools:text="Music"
         android:textColor="#fff"
         android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
         android:layout_height="wrap_content" />
 
     <TextView
@@ -203,7 +256,7 @@
         android:textSize="10sp"
         android:textColor="#939393"
         tools:text="Music Beacon"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -214,8 +267,8 @@
         android:layout_marginLeft="12dp"
         android:layout_marginBottom="8dp"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/user_photo"
-        app:layout_constraintLeft_toLeftOf="@id/user_photo"
+        app:layout_constraintBottom_toBottomOf="@id/photo"
+        app:layout_constraintLeft_toLeftOf="@id/photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -231,8 +284,8 @@
     android:padding="12dp"
     android:scaleType="centerInside"
     android:src="@drawable/spotify_logo_rgb_white"
-    app:layout_constraintBottom_toBottomOf="@id/user_photo"
-    app:layout_constraintLeft_toLeftOf="@id/user_photo"
-    app:layout_constraintRight_toRightOf="@id/user_photo" />-->
+    app:layout_constraintBottom_toBottomOf="@id/photo"
+    app:layout_constraintLeft_toLeftOf="@id/photo"
+    app:layout_constraintRight_toRightOf="@id/photo" />-->
 
 

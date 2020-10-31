@@ -128,4 +128,17 @@ public class PhotoViewActivity extends AppCompatActivity {
             //
         }
     }
+
+
+    /*@Override
+    public void onBackPressed() {
+
+        blast.animate().scaleX(500.0f).scaleY(500.0f).setDuration(350);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 350);
+    }*/
 }
