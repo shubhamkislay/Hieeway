@@ -88,44 +88,49 @@ public class PictureChangeDialog extends Dialog {
     private void removePicture(String picType) {
 
 
-        HashMap<String, Object> hashMap = new HashMap<>();
+        if (picType.equals("photo") || picType.equals("activePhoto")) {
 
-        hashMap.put(picType, "default");
-        FirebaseDatabase.getInstance().getReference("Users")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .updateChildren(hashMap);
+            HashMap<String, Object> hashMap = new HashMap<>();
+
+            hashMap.put(picType, "default");
+            FirebaseDatabase.getInstance().getReference("Users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .updateChildren(hashMap);
 
 
-        // Toast.makeText(context, "ImageUrl: "+imageUrl, Toast.LENGTH_LONG).show();
+            // Toast.makeText(context, "ImageUrl: "+imageUrl, Toast.LENGTH_LONG).show();
 
-        try {
+            try {
 
-            FirebaseStorage storage = FirebaseStorage.getInstance();
+                FirebaseStorage storage = FirebaseStorage.getInstance();
 
-            StorageReference storageRef = storage.getReferenceFromUrl(imageUrl);
+                StorageReference storageRef = storage.getReferenceFromUrl(imageUrl);
 
 // Create a reference to the file to delete
 
 
 // Delete the file
-            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // File deleted successfully
-                    // Toast.makeText(context, "Deleted image", Toast.LENGTH_LONG).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Uh-oh, an error occurred!
-                    // Toast.makeText(context, "Could'nt Delete image because " + exception.toString(), Toast.LENGTH_LONG).show();
-                }
-            });
+                storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // File deleted successfully
+                        // Toast.makeText(context, "Deleted image", Toast.LENGTH_LONG).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Uh-oh, an error occurred!
+                        // Toast.makeText(context, "Could'nt Delete image because " + exception.toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
 
-        } catch (Exception e) {
-            //
-            //Toast.makeText(context, "imageUrl: "+imageUrl+"\nCould'nt Delete image because " + e.toString(), Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                //
+                //Toast.makeText(context, "imageUrl: "+imageUrl+"\nCould'nt Delete image because " + e.toString(), Toast.LENGTH_LONG).show();
+            }
+
         }
+
 
         dismiss();
 

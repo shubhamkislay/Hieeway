@@ -35,7 +35,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.hieeway.hieeway.Adapters.FriendsAdapter;
 import com.hieeway.hieeway.Adapters.MusicPalAdapter;
 import com.hieeway.hieeway.Adapters.PeopleAdapter;
 import com.hieeway.hieeway.Model.Friend;

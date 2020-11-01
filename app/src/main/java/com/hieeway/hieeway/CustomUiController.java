@@ -1,6 +1,10 @@
 package com.hieeway.hieeway;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -49,7 +53,8 @@ public class CustomUiController implements YouTubePlayerListener {
     private boolean playing = true;
     private ProgressBar buffering_progress;
     private boolean displayPreview = false;
-    private boolean lockView = false;
+    AnimatorSet animatorSet;
+    ObjectAnimator playButtonAnimator, seekBarAnimation, titleAnimation, textBackAnimator, textBackTwoAnimator;
 
 
     @SuppressLint("ClickableViewAccessibility")
@@ -59,6 +64,8 @@ public class CustomUiController implements YouTubePlayerListener {
         this.youTubePlayer = youTubePlayer;
         this.context = context;
         youtube_player_seekbar = customPlayerUI.findViewById(R.id.youtube_player_seekbar);
+
+        animatorSet = new AnimatorSet();
 
         frameLayout = customPlayerUI.findViewById(R.id.view_container);
 
@@ -79,13 +86,48 @@ public class CustomUiController implements YouTubePlayerListener {
         buffering_progress = customPlayerUI.findViewById(R.id.buffering_progress);
 
 
+        animatorSet.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                if (!seekVisible) {
+                    youtube_player_seekbar.setAlpha(1.0f);
+                    video_title.setAlpha(1.0f);
+                    text_back.setAlpha(1.0f);
+                    text_back_two.setAlpha(1.0f);
+                    play_pause_btn.setAlpha(1.0f);
+                } else {
+                    youtube_player_seekbar.setAlpha(0.0f);
+                    video_title.setAlpha(0.0f);
+                    text_back.setAlpha(0.0f);
+                    text_back_two.setAlpha(0.0f);
+                    play_pause_btn.setAlpha(0.0f);
+                }
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
 
 
         customPlayerUI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!lockView)
-                    playUIClick(v);
+
+                playUIClick(v);
             }
 
 
@@ -98,8 +140,8 @@ public class CustomUiController implements YouTubePlayerListener {
 
                 //fadeViewHelper.toggleVisibility();
 
-                if (!lockView)
-                    toggleView(v);
+
+                toggleView();
 
                 //youtube_player_seekbar.setAlpha(1.0f);
             }
@@ -111,8 +153,8 @@ public class CustomUiController implements YouTubePlayerListener {
             @Override
             public void onClick(View v) {
 
-                if (!lockView)
-                    play(v);
+
+                play();
 
             }
         });
@@ -245,59 +287,136 @@ public class CustomUiController implements YouTubePlayerListener {
     }
 
     public void setPlayPauseBtn(int visible) {
-        if (!lockView)
+
             play_pause_btn.setVisibility(visible);
     }
 
 
     public void autoUpdateControlView(Boolean lockView) throws Exception {
-        play_pause_btn.animate().setDuration(300).alpha(0.0f);
+
+
+        playButtonAnimator = ObjectAnimator.ofFloat(play_pause_btn, "alpha", 1.0f, 0.0f);
+        seekBarAnimation = ObjectAnimator.ofFloat(youtube_player_seekbar, "alpha", 1.0f, 0.0f);
+        titleAnimation = ObjectAnimator.ofFloat(video_title, "alpha", 1.0f, 0.0f);
+        textBackAnimator = ObjectAnimator.ofFloat(text_back, "alpha", 1.0f, 0.0f);
+        textBackTwoAnimator = ObjectAnimator.ofFloat(text_back_two, "alpha", 1.0f, 0.0f);
+
+        try {
+
+            if (animatorSet.isRunning())
+                animatorSet.cancel();
+        } catch (Exception e) {
+            //
+        }
+
+        animatorSet.playTogether(playButtonAnimator, seekBarAnimation, titleAnimation, textBackAnimator, textBackTwoAnimator);
+        animatorSet.setDuration(300);
+        animatorSet.start();
+
+      /*  play_pause_btn.animate().setDuration(300).alpha(0.0f);
         youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
         video_title.animate().setDuration(300).alpha(0.0f);
         text_back.animate().setDuration(300).alpha(0.0f);
-        text_back_two.animate().setDuration(300).alpha(0.0f);
+        text_back_two.animate().setDuration(300).alpha(0.0f);*/
         seekVisible = false;
-        this.lockView = false;
+
     }
 
 
     public void updateControllView() {
-        if (!seekVisible && !lockView) {
-            play_pause_btn.animate().setDuration(300).alpha(1.0f);
+        if (!seekVisible) {
+            /*play_pause_btn.animate().setDuration(300).alpha(1.0f);
             youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
             video_title.animate().setDuration(300).alpha(1.0f);
             text_back.animate().setDuration(300).alpha(1.0f);
-            text_back_two.animate().setDuration(300).alpha(1.0f);
+            text_back_two.animate().setDuration(300).alpha(1.0f);*/
+
+            playButtonAnimator = ObjectAnimator.ofFloat(play_pause_btn, "alpha", 0.0f, 1.0f);
+            seekBarAnimation = ObjectAnimator.ofFloat(youtube_player_seekbar, "alpha", 0.0f, 1.0f);
+            titleAnimation = ObjectAnimator.ofFloat(video_title, "alpha", 0.0f, 1.0f);
+            textBackAnimator = ObjectAnimator.ofFloat(text_back, "alpha", 0.0f, 1.0f);
+            textBackTwoAnimator = ObjectAnimator.ofFloat(text_back_two, "alpha", 0.0f, 1.0f);
+
+            try {
+
+                if (animatorSet.isRunning())
+                    animatorSet.cancel();
+            } catch (Exception e) {
+                //
+            }
+
+
+            animatorSet.playTogether(playButtonAnimator, seekBarAnimation, titleAnimation, textBackAnimator, textBackTwoAnimator);
+            animatorSet.setDuration(300);
+            animatorSet.start();
+
             seekVisible = true;
 
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     if (playing) {
-                        play_pause_btn.animate().setDuration(300).alpha(0.0f);
+                        /*play_pause_btn.animate().setDuration(300).alpha(0.0f);
                         youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
                         video_title.animate().setDuration(300).alpha(0.0f);
                         text_back.animate().setDuration(300).alpha(0.0f);
-                        text_back_two.animate().setDuration(300).alpha(0.0f);
+                        text_back_two.animate().setDuration(300).alpha(0.0f);*/
+
+                        playButtonAnimator = ObjectAnimator.ofFloat(play_pause_btn, "alpha", 1.0f, 0.0f);
+                        seekBarAnimation = ObjectAnimator.ofFloat(youtube_player_seekbar, "alpha", 1.0f, 0.0f);
+                        titleAnimation = ObjectAnimator.ofFloat(video_title, "alpha", 1.0f, 0.0f);
+                        textBackAnimator = ObjectAnimator.ofFloat(text_back, "alpha", 1.0f, 0.0f);
+                        textBackTwoAnimator = ObjectAnimator.ofFloat(text_back_two, "alpha", 1.0f, 0.0f);
+
+                        try {
+
+                            if (animatorSet.isRunning())
+                                animatorSet.cancel();
+                        } catch (Exception e) {
+                            //
+                        }
+
+                        animatorSet.playTogether(playButtonAnimator, seekBarAnimation, titleAnimation, textBackAnimator, textBackTwoAnimator);
+                        animatorSet.setDuration(300);
+                        animatorSet.start();
                         seekVisible = false;
                     }
                 }
             }, 2000);
         } else {
-            play_pause_btn.animate().setDuration(300).alpha(0.0f);
+            /*play_pause_btn.animate().setDuration(300).alpha(0.0f);
             youtube_player_seekbar.animate().setDuration(300).alpha(0.0f);
             video_title.animate().setDuration(300).alpha(0.0f);
             text_back.animate().setDuration(300).alpha(0.0f);
-            text_back_two.animate().setDuration(300).alpha(0.0f);
+            text_back_two.animate().setDuration(300).alpha(0.0f);*/
+
+            playButtonAnimator = ObjectAnimator.ofFloat(play_pause_btn, "alpha", 1.0f, 0.0f);
+            seekBarAnimation = ObjectAnimator.ofFloat(youtube_player_seekbar, "alpha", 1.0f, 0.0f);
+            titleAnimation = ObjectAnimator.ofFloat(video_title, "alpha", 1.0f, 0.0f);
+            textBackAnimator = ObjectAnimator.ofFloat(text_back, "alpha", 1.0f, 0.0f);
+            textBackTwoAnimator = ObjectAnimator.ofFloat(text_back_two, "alpha", 1.0f, 0.0f);
+
+
+            try {
+
+                if (animatorSet.isRunning())
+                    animatorSet.cancel();
+            } catch (Exception e) {
+                //
+            }
+
+            animatorSet.playTogether(playButtonAnimator, seekBarAnimation, titleAnimation, textBackAnimator, textBackTwoAnimator);
+            animatorSet.setDuration(300);
+            animatorSet.start();
             seekVisible = false;
         }
     }
 
     public void setYoutube_player_seekbarVisibility(Boolean isVisible) {
-        if (isVisible && !lockView)
+       /* if (isVisible)
             youtube_player_seekbar.setVisibility(View.VISIBLE);
         else
-            youtube_player_seekbar.setVisibility(View.GONE);
+            youtube_player_seekbar.setVisibility(View.GONE);*/
     }
 
     @Override
@@ -352,35 +471,67 @@ public class CustomUiController implements YouTubePlayerListener {
     }
 
     public void setLockView(boolean lockView) {
-        this.lockView = false;
+        //
     }
 
-    public void play(View view) {
-        if (playing) {
-            youTubePlayer.pause();
-            // video_title.setVisibility(View.GONE);
-            play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.play_btn));
+    public void play() {
 
-            play_pause_btn.animate().setDuration(300).alpha(1.0f);
-            youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
-            video_title.animate().setDuration(300).alpha(1.0f);
-            text_back.animate().setDuration(300).alpha(1.0f);
-            text_back_two.animate().setDuration(300).alpha(1.0f);
-            playing = false;
+        try {
+            if (playing) {
+                youTubePlayer.pause();
+                // video_title.setVisibility(View.GONE);
+                play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.play_btn));
 
-        } else {
-            youTubePlayer.play();
-            //video_title.setVisibility(View.VISIBLE);
-            play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.pause_btn));
-            playing = true;
+                /*play_pause_btn.animate().setDuration(300).alpha(1.0f);
+                youtube_player_seekbar.animate().setDuration(300).alpha(1.0f);
+                video_title.animate().setDuration(300).alpha(1.0f);
+                text_back.animate().setDuration(300).alpha(1.0f);
+                text_back_two.animate().setDuration(300).alpha(1.0f);*/
+
+                playButtonAnimator = ObjectAnimator.ofFloat(play_pause_btn, "alpha", 0.0f, 1.0f);
+                seekBarAnimation = ObjectAnimator.ofFloat(youtube_player_seekbar, "alpha", 0.0f, 1.0f);
+                titleAnimation = ObjectAnimator.ofFloat(video_title, "alpha", 0.0f, 1.0f);
+                textBackAnimator = ObjectAnimator.ofFloat(text_back, "alpha", 0.0f, 1.0f);
+                textBackTwoAnimator = ObjectAnimator.ofFloat(text_back_two, "alpha", 0.0f, 1.0f);
 
 
+                try {
+
+                    if (animatorSet.isRunning())
+                        animatorSet.cancel();
+                } catch (Exception e) {
+                    //
+                }
+                animatorSet.playTogether(playButtonAnimator, seekBarAnimation, titleAnimation, textBackAnimator, textBackTwoAnimator);
+                animatorSet.setDuration(300);
+                animatorSet.start();
+
+                playing = false;
+
+            } else {
+                youTubePlayer.play();
+                //video_title.setVisibility(View.VISIBLE);
+                play_pause_btn.setBackground(context.getResources().getDrawable(R.drawable.pause_btn));
+                playing = true;
+
+
+            }
+        } catch (Exception e) {
+            //
         }
     }
 
-    public void toggleView(View view) {
+    public void toggleView() {
         if (playing)
             updateControllView();
+    }
+
+    public void setLayoutVisibility(int visibility) throws Exception {
+        //play_pause_btn.setVisibility(visibility);
+        youtube_player_seekbar.setVisibility(visibility);
+        video_title.setVisibility(visibility);
+        //text_back.setVisibility(visibility);
+        //text_back_two.setVisibility(visibility);
     }
 
 

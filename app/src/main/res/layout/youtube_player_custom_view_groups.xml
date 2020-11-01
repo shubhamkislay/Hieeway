@@ -1,0 +1,77 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_container"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/text_back"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/top_fade_dark_background" />
+
+    <RelativeLayout
+        android:visibility="visible"
+        android:id="@+id/text_back_two"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bottom_fade_dark_background" />
+
+
+    <RelativeLayout
+
+        android:id="@+id/toggle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:onClick="toggleView"
+        android:background="@android:color/transparent" />
+
+    <com.pierfrancescosoffritti.androidyoutubeplayer.core.ui.views.YouTubePlayerSeekBar
+        android:id="@+id/youtube_player_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="invisible"
+        android:scrollbarThumbHorizontal="@color/colorBlack"
+        android:scrollbarThumbVertical="@color/colorBlack"
+        android:elevation="20dp"
+        app:color="@color/colorPrimaryDark"
+        app:fontSize="16sp" />
+
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/buffering_progress"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:SpinKit_Style="Circle"
+
+        />
+
+
+    <RelativeLayout
+        android:id="@+id/play_pause_btn"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_gravity="center"
+        android:onClick="play"
+        android:visibility="invisible"
+        android:background="@drawable/pause_btn"
+        android:backgroundTint="#fff" />
+
+    <TextView
+        android:id="@+id/video_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:visibility="invisible"
+        android:maxLines="2"
+        android:padding="12sp"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        tools:text="Youtube video" />
+
+</FrameLayout>

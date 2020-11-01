@@ -74,13 +74,15 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
     private Activity activity;
     private List<Friend> mUsers;
     private RemoveFriendDialog removeFriendDialog;
+    private Boolean interact;
 
-    public FriendsAdapter(Context mContext, List<Friend> mUsers, Activity activity) {
+    public FriendsAdapter(Context mContext, List<Friend> mUsers, Activity activity, Boolean interact) {
 
 
         this.activity = activity;
         this.mUsers = mUsers;
         this.mContext = mContext;
+        this.interact = interact;
 
 
     }
@@ -116,119 +118,10 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
             viewHolder.username.setText(friend.getUsername());
 
-
             // viewHolder.username.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/samsungsharpsans-medium.otf"));
-
 
             viewHolder.progressBarOne.setVisibility(View.VISIBLE);
             viewHolder.progressBarTwo.setVisibility(View.VISIBLE);
-
-
-            checkUserChangeAccountChange(friend.getFriendId(), friend.getPhoto(), friend.getActivePhoto(), viewHolder.user_photo, viewHolder.username);
-
-
-            viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-
-                    //Unfriend and block options to be built here
-                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
-
-
-                    Vibrator vb = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-// Vibrate for 500 milliseconds
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        //deprecated in API 26
-                        vb.vibrate(50);
-                    }
-
-
-                    removeFriendDialog = new RemoveFriendDialog(mContext, friend.getFriendId(), friend.getUsername());
-
-                    removeFriendDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-                    removeFriendDialog.show();
-
-                    //  DeleteOptionsListener deleteOptionsListener;
-
-                    // deleteOptionsListener.setDeleteOptionsDialog(mContext,chatStamp,position,mChatStamps,activity,viewHolder);
-
-
-                    return true;
-
-                }
-            });
-
-            viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-
-                        // viewHolder.user_photo.setAlpha(0.4f);
-
-                        viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
-
-
-                    } else if (event.getAction() == MotionEvent.ACTION_UP) {
-
-                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
-
-
-                        //         viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
-
-
-                    } else {
-                        // viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
-
-
-                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
-                    }
-
-                    return false;
-                }
-
-            });
-
-
-        /*viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-
-
-                    viewHolder.user_photo.setAlpha(0.95f);
-                    viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
-
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-
-
-
-
-                            viewHolder.user_photo.animate().alpha(1.0f).setDuration(100);
-
-                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
-
-                }
-                else
-                {
-
-                            viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
-                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
-
-
-                }
-
-                return false;
-            }
-
-        });*/
-
 
             try {
                 if (friend.getPhoto().equals("default")) {
@@ -255,23 +148,23 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
 
                     // Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(chatStamp.getPhoto()).transition(withCrossFade()).into(viewHolder.user_photo);
                     try {
-                        Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(friend.getPhoto().replace("s96-c", "s384-c")).listener(new RequestListener<Drawable>() {
-                            @Override
-                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                return false;
-                            }
 
-                            @Override
-                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        if (!friend.getPhoto().equals("default"))
+                            Glide.with(mContext).setDefaultRequestOptions(requestOptions)
+                                    .load(friend.getPhoto().replace("s96-c", "s384-c"))
+                                    .listener(new RequestListener<Drawable>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                            return false;
+                                        }
 
-                                // viewHolder.progressBar.setVisibility(View.INVISIBLE);
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+
+                                            // viewHolder.progressBar.setVisibility(View.INVISIBLE);
 
                                 if (friend.getPhoto().contains("https://firebasestorage")) {
                                     final Matrix matrix = viewHolder.user_photo.getImageMatrix();
-                                    final float imageWidth = resource.getIntrinsicWidth();
-                                    final int screenWidth = mContext.getResources().getDisplayMetrics().widthPixels / 2;
-                                    //final float scaleRatio = screenWidth / imageWidth;
-                                    //matrix.postScale(scaleRatio, scaleRatio);
                                     matrix.postScale(1, 1);
                                     viewHolder.user_photo.setImageMatrix(matrix);
 
@@ -282,57 +175,141 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                                     viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                                     viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
                                 }
-                                return false;
-                            }
-                        }).transition(withCrossFade()).into(viewHolder.user_photo);
+                                            return false;
+                                        }
+                                    })
+                                    .transition(withCrossFade()).into(viewHolder.user_photo);
+                        else {
+                            viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                            viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+                            Glide.with(mContext).load(mContext.getDrawable(R.drawable.no_profile))
+                                    .into(viewHolder.user_photo);
+                            viewHolder.user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        }
+
                     }catch (Exception e) {
 
                         final Matrix matrix = viewHolder.user_photo.getImageMatrix();
                         matrix.postScale(1, 1);
                         viewHolder.user_photo.setImageMatrix(matrix);
                         viewHolder.user_photo.setImageDrawable(mContext.getDrawable(R.drawable.no_profile));
+
+                        viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+                        viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
                     }
                 }
             } catch (Exception e) {
                 Log.e("Null pointer exp", "Internet issue");
             }
 
-            viewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
+            viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);
+            checkUserChangeAccountChange(friend.getFriendId(), friend.getPhoto(), friend.getActivePhoto(), viewHolder.user_photo, viewHolder.username);
+
+            if (interact) {
+                viewHolder.user_photo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
 
-                    if (!viewHolder.username.getText().equals("User Unavailable")) {
+                        if (!viewHolder.username.getText().equals("User Unavailable")) {
 
               /*  viewHolder.progressBarOne.setVisibility(View.VISIBLE);
                 viewHolder.progressBarTwo.setVisibility(View.VISIBLE);*/
-                        viewHolder.user_photo.setAlpha(0.5f);
-                        viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                            viewHolder.user_photo.setAlpha(0.5f);
+                            viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
-                                intent.putExtra("username", friend.getUsername());
-                                intent.putExtra("userid", friend.getFriendId());
-                                intent.putExtra("photo", friend.getPhoto());
-                                intent.putExtra("activePhoto", friend.getActivePhoto());
-                                intent.putExtra("live", "no");
-                                mContext.startActivity(intent);
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Intent intent = new Intent(mContext, VerticalPageActivityPerf.class);
+                                    intent.putExtra("username", friend.getUsername());
+                                    intent.putExtra("userid", friend.getFriendId());
+                                    intent.putExtra("photo", friend.getPhoto());
+                                    intent.putExtra("activePhoto", friend.getActivePhoto());
+                                    intent.putExtra("live", "no");
+                                    mContext.startActivity(intent);
                         /*viewHolder.progressBarOne.setVisibility(View.INVISIBLE);
                         viewHolder.progressBarTwo.setVisibility(View.INVISIBLE);*/
-                                viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
-                                viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+                                    viewHolder.user_photo.animate().setDuration(100).alpha(1.0f);
+                                    viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
 
 
-                            }
-                        }, 50);
-                    } else {
-                        Toast.makeText(mContext, "This account is deleted", Toast.LENGTH_SHORT).show();
+                                }
+                            }, 50);
+                        } else {
+                            Toast.makeText(mContext, "This account is deleted", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
+                viewHolder.user_photo.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+
+
+                        //Unfriend and block options to be built here
+                        viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(100);
+
+
+                        Vibrator vb = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vb.vibrate(50);
+                        }
+
+
+                        removeFriendDialog = new RemoveFriendDialog(mContext, friend.getFriendId(), friend.getUsername());
+
+                        removeFriendDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                        removeFriendDialog.show();
+
+                        //  DeleteOptionsListener deleteOptionsListener;
+
+                        // deleteOptionsListener.setDeleteOptionsDialog(mContext,chatStamp,position,mChatStamps,activity,viewHolder);
+
+
+                        return true;
+
+                    }
+                });
+                viewHolder.user_photo.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+
+                            // viewHolder.user_photo.setAlpha(0.4f);
+
+                            viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
+
+                        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                            viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+
+                            //         viewHolder.user_photo.animate().alpha(1.0f).setDuration(50);
+
+
+                        } else {
+                            // viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
+
+
+                            viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+                        }
+
+                        return false;
                     }
 
-                }
-            });
+                });
+            }
+
         } catch (NullPointerException e) {
             //
         }
@@ -422,7 +399,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
-                TaskCompletionSource<Bitmap> bitmapTaskCompletionSource = new TaskCompletionSource<>();
+                TaskCompletionSource<String> bitmapTaskCompletionSource = new TaskCompletionSource<>();
 
 
                 new Thread(new Runnable() {
@@ -475,17 +452,17 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                                                 .submit(300, 300)
                                                 .get();
 
-                                        bitmapTaskCompletionSource.setResult(bitmap);
+                                        bitmapTaskCompletionSource.setResult(user.getPhoto().replace("s96-c", "s384-c"));
 
 
                                     } catch (Exception e) {
 
-                                        bitmapTaskCompletionSource.setResult(null);
+                                        bitmapTaskCompletionSource.setResult("default");
                                     }
 
                                 }
                                 if (user.getPhoto().equals("default")) {
-                                    bitmapTaskCompletionSource.setResult(null);
+                                    bitmapTaskCompletionSource.setResult("default");
                                 }
 
                             } catch (Exception e) {
@@ -497,10 +474,10 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                     }
                 }).start();
 
-                Task<Bitmap> bitmapTask = bitmapTaskCompletionSource.getTask();
-                bitmapTask.addOnCompleteListener(new OnCompleteListener<Bitmap>() {
+                Task<String> bitmapTask = bitmapTaskCompletionSource.getTask();
+                bitmapTask.addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
-                    public void onComplete(@NonNull Task<Bitmap> task) {
+                    public void onComplete(@NonNull Task<String> task) {
 
                         if (task.isSuccessful()) {
 
@@ -514,12 +491,22 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                                     @Override
                                     public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
 
-                                        final Matrix matrix = user_photo.getImageMatrix();
+                                       /* final Matrix matrix = user_photo.getImageMatrix();
                                         matrix.postScale(1, 1);
                                         //final float scaleRatio = screenWidth / imageWidth;
                                         //matrix.postScale(scaleRatio, scaleRatio);
 
-                                        user_photo.setImageMatrix(matrix);
+                                        user_photo.setImageMatrix(matrix);*/
+
+                                        if (task.getResult().contains("https://firebasestorage")) {
+                                            final Matrix matrix = user_photo.getImageMatrix();
+                                            matrix.postScale(1, 1);
+                                            user_photo.setImageMatrix(matrix);
+
+
+                                        } else {
+                                            user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                        }
 
 
                                         return false;
@@ -527,7 +514,7 @@ public class FriendsAdapter  extends RecyclerView.Adapter<FriendsAdapter.ViewHol
                                 }).into(user_photo);
                             } else {
                                 user_photo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                user_photo.setImageResource(R.drawable.bottom_sheet_background_drawable);
+                                user_photo.setImageResource(R.drawable.no_profile);
                             }
 
                         } else {

@@ -634,8 +634,13 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             viewHolder.photo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+
                     Intent intent = new Intent(context, PhotoViewActivity.class);
                     intent.putExtra("path", groupMessage.getMediaID());
+                    intent.putExtra("requestType", "group");
+                    intent.putExtra("postKey", groupMessage.getMessageId());
+                    intent.putExtra("otherUserId", groupMessage.getSenderId());
                     context.startActivity(intent);
                 }
             });
@@ -737,6 +742,9 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ExoPlayerActivity.class);
                     intent.putExtra("path", groupMessage.getMediaID());
+                    intent.putExtra("requestType", "group");
+                    intent.putExtra("postKey", groupMessage.getMessageId());
+                    intent.putExtra("otherUserId", groupMessage.getSenderId());
                     context.startActivity(intent);
                 }
             });
@@ -746,6 +754,9 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ExoPlayerActivity.class);
                     intent.putExtra("path", groupMessage.getMediaID());
+                    intent.putExtra("requestType", "group");
+                    intent.putExtra("postKey", groupMessage.getMessageId());
+                    intent.putExtra("otherUserId", groupMessage.getSenderId());
                     context.startActivity(intent);
                 }
             });

@@ -121,7 +121,7 @@ public class FriendListFagment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         try {
-            friendsAdapter = new FriendsAdapter(getContext(), userList, getActivity());
+            friendsAdapter = new FriendsAdapter(getContext(), userList, getActivity(), true);
             //chatMessageAdapter.setHasStableIds(true);
             friend_list_recyclerview.setAdapter(friendsAdapter);
         } catch (Exception e) {

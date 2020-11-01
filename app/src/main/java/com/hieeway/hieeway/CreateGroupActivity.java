@@ -38,6 +38,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.CreateGroupAdapter;
+import com.hieeway.hieeway.Helper.GroupMemberListHelper;
 import com.hieeway.hieeway.Interface.FriendsSelectedListener;
 import com.hieeway.hieeway.Model.Friend;
 import com.hieeway.hieeway.Model.User;
@@ -77,6 +78,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
     private String groupName, groupID, icon;
     private List<Friend> groupMembers;
     private String currentUsername, currentPhoto;
+    private String requestType;
 
 
     @Override
@@ -91,6 +93,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
         groupName = intent.getStringExtra("groupName");
         groupID = intent.getStringExtra("groupID");
         icon = intent.getStringExtra("icon");
+        requestType = intent.getStringExtra("requestType");
 
 
         userID = sharedPreferences.getString(USER_ID, "");
@@ -222,13 +225,26 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             }
         });
 
+        if (requestType.equals("add")) {
+            create_group_btn.setText("Add friends");
+        }
+
         create_group_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (groupMembers.size() > 1)
-                    createGroup();
-                else
-                    Toast.makeText(CreateGroupActivity.this, "A group should be of atleast 3 people including you", Toast.LENGTH_SHORT).show();
+
+                if (requestType.equals("add")) {
+                    if (groupMembers.size() > 0)
+                        addFriends();
+                    else
+                        Toast.makeText(CreateGroupActivity.this, "You have not selected any friend", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    if (groupMembers.size() > 1)
+                        createGroup();
+                    else
+                        Toast.makeText(CreateGroupActivity.this, "A group should be of atleast 3 people including you", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -248,6 +264,61 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             finish();
         }*/
     }
+
+    private void addFriends() {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        int friends = 1;
+
+        List<Friend> friendList = GroupMemberListHelper.getInstance().getGroupMemberList();
+
+        for (Friend friend : groupMembers) {
+
+            if (!friendList.contains(friend)) {
+
+                DatabaseReference memRef = FirebaseDatabase.getInstance().getReference("GroupMembers")
+                        .child(groupID);
+
+                HashMap<String, Object> hashMap = new HashMap<>();
+
+                hashMap.put("id", friend.getFriendId());
+                hashMap.put("username", friend.getUsername());
+                hashMap.put("photo", friend.getFriendId());
+                //hashMap.put("activePhoto", friend.getActivePhoto());
+                //hashMap.put("live", "no");
+
+                memRef.child(friend.getFriendId())
+                        .updateChildren(hashMap);
+
+                DatabaseReference mGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
+                        .child(friend.getFriendId())
+                        .child(groupID);
+
+                HashMap<String, Object> ghashMap = new HashMap<>();
+                ghashMap.put("icon", icon);
+                ghashMap.put("groupID", groupID);
+                ghashMap.put("groupName", groupName);
+                ghashMap.put("key", groupID);
+                ghashMap.put("timeStamp", timestamp.toString());
+                ghashMap.put("sender", userID);
+                ghashMap.put("type", "created");
+
+
+                mGroup.updateChildren(ghashMap);
+            }
+
+        }
+
+/*        //Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(CreateGroupActivity.this, GroupChatActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("groupName", groupName);
+        intent.putExtra("icon", icon);
+        startActivity(intent);*/
+        finish();
+    }
+
 
     private void createGroup() {
 
@@ -284,8 +355,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
         userMap.put("photo", currentPhoto);
 
 
-
-        userRef.child(userRef.push().getKey())
+        userRef.child(userID)
                 .updateChildren(userMap);
 
         int friends = 1;
@@ -301,7 +371,7 @@ public class CreateGroupActivity extends AppCompatActivity implements FriendsSel
             //hashMap.put("activePhoto", friend.getActivePhoto());
             //hashMap.put("live", "no");
 
-            memRef.child(memRef.push().getKey())
+            memRef.child(friend.getFriendId())
                     .updateChildren(hashMap);
 
             DatabaseReference mGroup = FirebaseDatabase.getInstance().getReference("MyGroup")

@@ -2,6 +2,7 @@ package com.hieeway.hieeway.Adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.Group;
@@ -11,8 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,7 +40,9 @@ import com.hieeway.hieeway.AddGroupDetailsActivity;
 import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.GroupChatActivity;
 import com.hieeway.hieeway.Interface.SeeAllGroupItemsListener;
+import com.hieeway.hieeway.LeaveGroupDialog;
 import com.hieeway.hieeway.MusicPalActivity;
+import com.hieeway.hieeway.RemoveFriendDialog;
 import com.hieeway.hieeway.Utils.MyGroupListDiffUtilCallBack;
 import com.hieeway.hieeway.Model.MyGroup;
 import com.hieeway.hieeway.R;
@@ -234,6 +242,27 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.MyViewHold
                     intent.putExtra("icon", myGroup.getIcon());
 
                     context.startActivity(intent);
+                }
+            });
+
+            myViewHolder.prof_pic.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    Vibrator vb = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        vb.vibrate(50);
+                    }
+
+                    LeaveGroupDialog leaveGroupDialog = new LeaveGroupDialog(context, myGroup.getGroupID(), userID);
+                    leaveGroupDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    leaveGroupDialog.show();
+
+                    return true;
                 }
             });
 

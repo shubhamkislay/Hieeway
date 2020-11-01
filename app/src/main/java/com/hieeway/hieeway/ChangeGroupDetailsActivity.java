@@ -1,9 +1,5 @@
 package com.hieeway.hieeway;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,29 +16,36 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.hieeway.hieeway.Fragments.ProfileFragment;
+import com.hieeway.hieeway.Helper.GroupMemberListHelper;
 import com.hieeway.hieeway.Interface.ChangePictureListener;
+import com.hieeway.hieeway.Model.Friend;
+import com.hieeway.hieeway.Model.GroupMember;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class AddGroupDetailsActivity extends AppCompatActivity implements ChangePictureListener {
+public class ChangeGroupDetailsActivity extends AppCompatActivity implements ChangePictureListener {
 
     private static final int PERMISSION_PICK_IMAGE = 1000;
     TextView page_title, add_group_icon;
@@ -50,19 +53,36 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     Button create_group_btn;
     EditText group_name;
     CircleImageView group_icon;
+    private String groupName;
+    private String groupID;
+    private String groupIcon;
     private String profilepic = "default";
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String USER_ID = "userid";
     private StorageReference storageReference;
     private StorageTask uploadTask;
-    private String groupID;
     private DatabaseReference groupRef;
+    private List<Friend> groupMemberList;
+    private String userID;
+    private static final int UPDATED_RESULT = 10;
+    private Intent resultIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_group_details);
+        setContentView(R.layout.activity_change_group_details);
+        resultIntent = new Intent();
 
         groupRef = FirebaseDatabase.getInstance().getReference("Groups");
-        groupID = groupRef.push().getKey();
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+
+        userID = sharedPreferences.getString(USER_ID, "");
+
+        Intent intent = getIntent();
+        groupName = intent.getStringExtra("groupName");
+        groupID = intent.getStringExtra("groupID");
+        groupIcon = intent.getStringExtra("icon");
 
         page_title = findViewById(R.id.page_title);
         add_group_icon = findViewById(R.id.add_group_icon);
@@ -72,6 +92,15 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
         group_icon = findViewById(R.id.group_icon);
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
 
+        groupMemberList = GroupMemberListHelper.getInstance().getGroupMemberList();
+
+
+        group_name.setText(groupName);
+
+        if (!groupIcon.equals("default"))
+            Glide.with(this)
+                    .load(groupIcon)
+                    .into(group_icon);
 
         try {
             page_title.setTypeface(Typeface.createFromAsset(this.getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -107,7 +136,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     }
 
     private void uploadImage() {
-        PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(AddGroupDetailsActivity.this, false, profilepic, AddGroupDetailsActivity.this, groupID);
+        PictureChangeDialog pictureChangeDialog = new PictureChangeDialog(ChangeGroupDetailsActivity.this, false, profilepic, ChangeGroupDetailsActivity.this, groupID);
         pictureChangeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         pictureChangeDialog.setCancelable(true);
         pictureChangeDialog.show();
@@ -116,16 +145,70 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     private void checkDetails() {
         if (group_name.getText().toString().length() > 2 && group_name.getText().toString().length() < 31) {
 
-            Intent intent = new Intent(AddGroupDetailsActivity.this, CreateGroupActivity.class);
+            /*Intent intent = new Intent(ChangeGroupDetailsActivity.this, CreateGroupActivity.class);
             intent.putExtra("icon", profilepic);
             intent.putExtra("groupID", groupID);
             intent.putExtra("groupName", group_name.getText().toString());
-            intent.putExtra("requestType", "create");
+            intent.putExtra("requestType","create");
             startActivity(intent);
-            finish();
+            finish();*/
+
+            groupName = group_name.getText().toString();
+
+
+            updateGroupDetail();
+
         } else {
             group_name.setError("Group name should be 3-30 characters");
         }
+    }
+
+    private void updateGroupDetail() {
+
+
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("Groups")
+                .child(groupID);
+
+        HashMap<String, Object> groupHash = new HashMap<>();
+        groupHash.put("groupName", groupName);
+
+        groupRef.updateChildren(groupHash);
+
+
+        DatabaseReference myGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
+                .child(userID)
+                .child(groupID);
+
+        myGroup.updateChildren(groupHash);
+
+
+        for (Friend friend : groupMemberList) {
+
+
+            DatabaseReference mGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
+                    .child(friend.getFriendId())
+                    .child(groupID);
+
+            HashMap<String, Object> ghashMap = new HashMap<>();
+            ghashMap.put("groupName", groupName);
+
+
+            mGroup.updateChildren(ghashMap);
+
+        }
+
+/*        //Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(CreateGroupActivity.this, GroupChatActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("groupName", groupName);
+        intent.putExtra("icon", icon);
+        startActivity(intent);*/
+
+        resultIntent.putExtra("groupName", groupName);
+
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     @Override
@@ -137,6 +220,42 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     public void removedPicture(Boolean active) {
 
         profilepic = "default";
+
+        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("Groups")
+                .child(groupID);
+
+        HashMap<String, Object> groupHash = new HashMap<>();
+        groupHash.put("icon", profilepic);
+
+        groupRef.updateChildren(groupHash);
+
+
+        for (Friend friend : groupMemberList) {
+
+
+            DatabaseReference mGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
+                    .child(friend.getFriendId())
+                    .child(groupID);
+
+            HashMap<String, Object> ghashMap = new HashMap<>();
+            ghashMap.put("icon", profilepic);
+
+            mGroup.updateChildren(ghashMap);
+        }
+
+/*        //Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(CreateGroupActivity.this, GroupChatActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("groupName", groupName);
+        intent.putExtra("icon", icon);
+        startActivity(intent);*/
+
+        Glide.with(this).load(getDrawable(R.drawable.groups_image)).into(group_icon);
+
+        resultIntent.putExtra("groupIcon", profilepic);
+
+
     }
 
     public void imageSelect() {
@@ -190,19 +309,49 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
 
 
                         profilepic = mUri;
-
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put("icon", mUri);
-                        map.put("groupID", groupID);
-                        groupRef.updateChildren(map);
-
                         progress_bar_one.setVisibility(View.GONE);
+
+                        DatabaseReference groupRef = FirebaseDatabase.getInstance().getReference("Groups")
+                                .child(groupID);
+
+                        HashMap<String, Object> groupHash = new HashMap<>();
+                        groupHash.put("icon", mUri);
+
+                        groupRef.updateChildren(groupHash);
+
+
+                        for (Friend friend : groupMemberList) {
+
+
+                            DatabaseReference mGroup = FirebaseDatabase.getInstance().getReference("MyGroup")
+                                    .child(friend.getFriendId())
+                                    .child(groupID);
+
+                            HashMap<String, Object> ghashMap = new HashMap<>();
+                            ghashMap.put("icon", mUri);
+
+                            mGroup.updateChildren(ghashMap);
+                        }
+
+/*        //Toast.makeText(CreateGroupActivity.this, "Group Created", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(CreateGroupActivity.this, GroupChatActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("groupName", groupName);
+        intent.putExtra("icon", icon);
+        startActivity(intent);*/
+
+                        resultIntent.putExtra("groupIcon", mUri);
 
 
                         //progressDialog.dismiss();
 
 
-                        Glide.with(AddGroupDetailsActivity.this).load(mUri).into(group_icon);
+                        try {
+                            Glide.with(ChangeGroupDetailsActivity.this).load(mUri).into(group_icon);
+                        } catch (Exception e) {
+                            //
+                        }
                             
                         
 
@@ -218,7 +367,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
                         registerUsernameEntryFragment.setUploadedImage(mUri);*/
 
                     } else {
-                        Toast.makeText(AddGroupDetailsActivity.this, "Uploading failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChangeGroupDetailsActivity.this, "Uploading failed", Toast.LENGTH_SHORT).show();
                         //progressDialog.dismiss();
                         // registerUsernameEntryFragment.setProgressVisibility(false);
                         progress_bar_one.setVisibility(View.GONE);
@@ -230,7 +379,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
 
 
         } else {
-            Toast.makeText(AddGroupDetailsActivity.this, "No Image selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ChangeGroupDetailsActivity.this, "No Image selected", Toast.LENGTH_SHORT).show();
             progress_bar_one.setVisibility(View.GONE);
 
         }
@@ -241,7 +390,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
     private String getExtension(Uri uri) {
 
 
-        ContentResolver contentResolver = AddGroupDetailsActivity.this.getContentResolver();
+        ContentResolver contentResolver = ChangeGroupDetailsActivity.this.getContentResolver();
 
         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
 
@@ -335,7 +484,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
          * Use the code below for a square image selection i.e. for profile pictures
          * uCrop.withAspectRatio(1.0f, 1.0f);**/
 
-        uCrop.start(AddGroupDetailsActivity.this);
+        uCrop.start(ChangeGroupDetailsActivity.this);
 
     }
 
@@ -360,7 +509,7 @@ public class AddGroupDetailsActivity extends AppCompatActivity implements Change
             //Toast.makeText(this, "Image cropped",Toast.LENGTH_SHORT).show();
 
             if (uploadTask != null && uploadTask.isInProgress()) {
-                Toast.makeText(AddGroupDetailsActivity.this, "Uploading...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChangeGroupDetailsActivity.this, "Uploading...", Toast.LENGTH_SHORT).show();
             } else {
 
                 uploadImage(resultUri);

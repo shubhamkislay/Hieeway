@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.usage.UsageEvents;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -47,6 +48,11 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class ExoPlayerActivity extends AppCompatActivity {
     PlayerView player_view;
@@ -60,6 +66,15 @@ public class ExoPlayerActivity extends AppCompatActivity {
     ProgressBar loading_video;
     ProgressBar determinateBar;
     ImageView blast;
+    String requestType;
+    String postKey;
+    private SharedPreferences sharedPreferences;
+    private String userID;
+    private String currentUsername;
+    private String otherUserId;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String USERNAME = "username";
+    public static final String USER_ID = "userid";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +88,31 @@ public class ExoPlayerActivity extends AppCompatActivity {
         blast = findViewById(R.id.blast);
 
 
+        try {
+            sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+            userID = sharedPreferences.getString(USER_ID, "");
+            currentUsername = sharedPreferences.getString(USERNAME, "");
+
+
+        } catch (NullPointerException e) {
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            try {
+                currentUsername = sharedPreferences.getString(USERNAME, "");
+            } catch (Exception ne) {
+                currentUsername = "";
+            }
+        }
+
+
         intent = getIntent();
         videoUri = intent.getStringExtra("path");
+        requestType = intent.getStringExtra("requestType");
+        postKey = intent.getStringExtra("postKey");
+        otherUserId = intent.getStringExtra("otherUserId");
         //sentStatus = intent.getStringExtra("sentStatus");
+
+        if (!requestType.equals("post"))
+            blast.setVisibility(View.INVISIBLE);
 
         TrackSelector trackSelector = new DefaultTrackSelector();
 
@@ -133,6 +170,31 @@ public class ExoPlayerActivity extends AppCompatActivity {
                         loading_video.setVisibility(View.INVISIBLE);
                         determinateBar.setMax((int) player.getDuration());
                         getPlayerPosition();
+
+                        FirebaseDatabase.getInstance().getReference("Post")
+                                .child(userID)
+                                .child(postKey)
+                                .removeValue();
+
+                        /**
+                         * Add code to delete post media from Firebase storage
+                         */
+
+                        HashMap<String, Object> postSeenHash = new HashMap<>();
+
+                        postSeenHash.put("username", currentUsername);
+                        //postSeenHash.put("photo", "default");
+
+                        DatabaseReference seenByRef = FirebaseDatabase
+                                .getInstance()
+                                .getReference("SeenBy")
+                                .child(otherUserId);
+
+                        seenByRef
+                                .child(postKey)
+                                .child(userID)
+                                .updateChildren(postSeenHash);
+
 
                     } else if (state == SimpleExoPlayer.STATE_BUFFERING)
                         loading_video.setVisibility(View.VISIBLE);
@@ -226,7 +288,6 @@ public class ExoPlayerActivity extends AppCompatActivity {
                     try {
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
                             determinateBar.setProgress((int) (player.getDuration() - player.getCurrentPosition()), true);
                         } else
                             determinateBar.setProgress((int) (player.getDuration() - player.getCurrentPosition()));

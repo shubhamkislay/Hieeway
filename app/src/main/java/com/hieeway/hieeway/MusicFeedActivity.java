@@ -68,6 +68,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     final String referrer = "adjust_campaign=com.hieeway.hieeway&adjust_tracker=ndjczk&utm_source=adjust_preinstall";
     final String appPackageName = "com.spotify.music";
     public static final String USER_ID = "userid";
+    public static final String USERNAME = "username";
     RecyclerView music_recyclerview;
     List<Music> userList;
     List<MusicPost> musicPostList;
@@ -96,6 +97,7 @@ public class MusicFeedActivity extends AppCompatActivity {
     private ValueEventListener musicFetchValueEventListener;
     private SharedPreferences sharedPreferences;
     private String userID;
+    private String currentUsername;
 
     @Override
     protected void onResume() {
@@ -126,10 +128,16 @@ public class MusicFeedActivity extends AppCompatActivity {
         try {
             sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
             userID = sharedPreferences.getString(USER_ID, "");
+            currentUsername = sharedPreferences.getString(USERNAME, "");
+
 
         } catch (NullPointerException e) {
             userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
+            try {
+                currentUsername = sharedPreferences.getString(USERNAME, "");
+            } catch (Exception ne) {
+                currentUsername = "";
+            }
         }
 
 
@@ -189,6 +197,7 @@ public class MusicFeedActivity extends AppCompatActivity {
 
         musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
                 userID,
+                currentUsername,
                 musicPostList,
                 MusicFeedActivity.this,
                 mSpotifyAppRemote,
@@ -204,6 +213,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                 new_update_lay.setVisibility(View.GONE);
                 musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
                         userID,
+                        currentUsername,
                         musicPostList,
                         MusicFeedActivity.this,
                         mSpotifyAppRemote,
@@ -246,6 +256,7 @@ public class MusicFeedActivity extends AppCompatActivity {
                 new_update_lay.setVisibility(View.GONE);
                 musicFeedAdapter = new MusicFeedAdapter(MusicFeedActivity.this,
                         userID,
+                        currentUsername,
                         musicPostList,
                         MusicFeedActivity.this,
                         mSpotifyAppRemote,

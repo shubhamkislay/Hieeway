@@ -141,6 +141,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private ImageButton camera;
     public static final String SHARED_PREFS = "sharedPrefs";
     private boolean isDisablerecord_button = false;
+    private static final int UPDATED_RESULT = 10;
     private Button send_button;
     private String groupID, groupNameTxt, iconUrl;
     private CircleImageView icon;
@@ -227,6 +228,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
     private DatabaseReference connectedRef;
     private boolean connected = true;
     private SingleViewTouchableMotionLayout motion_layout;
+    private ImageView top_bar;
 
 
     @Override
@@ -249,9 +251,10 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
         sync_video_txt = findViewById(R.id.sync_video_txt);
         //sync_video_layout = findViewById(R.id.sync_video_layout);
         youtube_player_view = findViewById(R.id.youtube_player_view);
+        top_bar = findViewById(R.id.top_bar);
         youtube_layout = findViewById(R.id.youtube_layout);
         motion_layout = findViewById(R.id.motion_layout);
-        //motion_layout.transitionToEnd();
+        motion_layout.transitionToEnd();
 
         youtube_web_view.getSettings().setJavaScriptEnabled(true);
 
@@ -268,6 +271,29 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         search_video_btn = findViewById(R.id.search_video_btn);
         back_btn = findViewById(R.id.back_btn);
+
+
+        top_bar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(GroupChatActivity.this, GroupInfoActivity.class);
+
+                intent.putExtra("groupName", groupNameTxt);
+                intent.putExtra("groupID", groupID);
+                intent.putExtra("groupIcon", iconUrl);
+
+                startActivityForResult(intent, UPDATED_RESULT);
+
+            }
+        });
+
+        video_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                motion_layout.transitionToStart();
+            }
+        });
 
         /*equlizer = findViewById(R.id.equlizer);
         equi_one = findViewById(R.id.equi_one);
@@ -421,10 +447,11 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             @Override
             public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
 
-                try {
-                    customUiController.setLockView(false);
-                } catch (Exception e) {
 
+                try {
+                    customUiController.setLayoutVisibility(View.VISIBLE);
+                } catch (Exception e) {
+                    //
                 }
 
             }
@@ -437,10 +464,20 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
             @Override
             public void onTransitionCompleted(MotionLayout motionLayout, int i) {
 
-                try {
-                    customUiController.autoUpdateControlView(true);
-                } catch (Exception e) {
 
+                if (i == motionLayout.getStartState()) {
+
+                    try {
+                        customUiController.setLayoutVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        //
+                    }
+                } else {
+                    try {
+                        customUiController.setLayoutVisibility(View.INVISIBLE);
+                    } catch (Exception e) {
+                        //
+                    }
                 }
 
             }
@@ -594,7 +631,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
         });
 
-        final View customUiView = youtube_player_view.inflateCustomPlayerUi(R.layout.youtube_player_custom_view);
+        final View customUiView = youtube_player_view.inflateCustomPlayerUi(R.layout.youtube_player_custom_view_groups);
 
 
         abstractYouTubePlayerListener = new AbstractYouTubePlayerListener() {
@@ -966,6 +1003,29 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
                     //Toast.makeText(GroupChatActivity.this, "Error " + response.getType().toString(), Toast.LENGTH_SHORT).show();
             }
         }
+
+        if (requestCode == UPDATED_RESULT && resultCode == RESULT_OK) {
+
+            if (data != null) {
+
+                for (String key : data.getExtras().keySet()) {
+
+
+                    if (key.equals("groupIcon")) {
+                        iconUrl = data.getStringExtra("groupIcon");
+
+                        if (!iconUrl.equals("default"))
+                            Glide.with(this).load(iconUrl).into(icon);
+                        else
+                            Glide.with(this).load(getResources().getDrawable(R.drawable.groups_image)).into(icon);
+                    } else if (key.equals("groupName")) {
+                        groupNameTxt = data.getStringExtra("groupName");
+                        groupName.setText(groupNameTxt);
+                    }
+                }
+            }
+
+        }
     }
 
 
@@ -1219,6 +1279,7 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
     }
+
 
     public void getVideoIdFromYoutubeUrl(String url) {
 

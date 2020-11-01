@@ -81,7 +81,7 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.edge_to_edge, viewGroup, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.select_friend_item, viewGroup, false);
         return new CreateGroupAdapter.ViewHolder(view);
     }
 
@@ -127,6 +127,9 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
                     if (!friend.getStatus().equals("selected")) {
                         viewHolder.user_photo.setAlpha(0.95f);
                         viewHolder.relativeLayout.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+                        viewHolder.selected_item.setVisibility(View.VISIBLE);
+                        //viewHolder.selected_item.animate().scaleX(0.95f).scaleY(0.95f).setDuration(0);
+
                         friend.setStatus("selected");
                         totalFriendsSelected += 1;
 
@@ -141,6 +144,9 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
 
                         viewHolder.user_photo.animate().setDuration(50).alpha(1.0f);
                         viewHolder.relativeLayout.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
+
+                        viewHolder.selected_item.setVisibility(View.INVISIBLE);
+                        viewHolder.selected_item.animate().scaleX(1.0f).scaleY(1.0f).setDuration(50);
                     }
 
                     friendsSelectedListener.setFriendCount(groupMembers);
@@ -263,7 +269,7 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
 
         public TextView username, count_message_text;
         // public CircleImageView user_photo;
-        public RelativeLayout counterBackgroundLayout;
+        public RelativeLayout counterBackgroundLayout, selected_item;
         public ProgressBar progressBar, progressBarOne, progressBarTwo;
         public ImageView user_photo;
         public RelativeLayout relativeLayout, chatbox_tem_Layout, count_message_layout;
@@ -289,6 +295,7 @@ public class CreateGroupAdapter extends RecyclerView.Adapter<CreateGroupAdapter.
             archiveBtn = itemView.findViewById(R.id.archive_btn);
             longMsgBtn = itemView.findViewById(R.id.long_msg_btn);
             delete_chat_head_btn = itemView.findViewById(R.id.delete_chat_head_btn);
+            selected_item = itemView.findViewById(R.id.selected_item);
 
 
         }

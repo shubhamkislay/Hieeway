@@ -92,10 +92,12 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private String photo;
     private String otherUid;
     private String username;
+    private String currentUsername;
 
 
     public MusicFeedAdapter(Context mContext
             , String userID
+            , String currentUsername
             , List<MusicPost> musicPostList
             , Activity activity
             , SpotifyAppRemote spotifyAppRemote
@@ -104,6 +106,7 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
             , String otherUid) {
         this.mContext = mContext;
         this.userID = userID;
+        this.currentUsername = currentUsername;
         this.musicPostList = musicPostList;
         this.spotifyAppRemote = spotifyAppRemote;
         this.activity = activity;
@@ -227,17 +230,16 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
         HashMap<String, Object> postSeenHash = new HashMap<>();
 
-        postSeenHash.put("username", username);
-        postSeenHash.put("photo", photo);
+        postSeenHash.put("userId", userID);
 
         DatabaseReference seenByRef = FirebaseDatabase
                 .getInstance()
                 .getReference("SeenBy")
-                .child(userID);
+                .child(otherUid);
 
         seenByRef
                 .child(musicPost.getPostKey())
-                .child(seenByRef.push().getKey())
+                .child(userID)
                 .updateChildren(postSeenHash);
 
 

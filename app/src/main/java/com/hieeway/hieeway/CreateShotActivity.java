@@ -24,7 +24,10 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -84,6 +87,8 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     private String username;
     private String textMessage;
     private Button camera;
+    private int totalRecipients;
+    private int calRecipients;
 
 
     @Override
@@ -248,16 +253,45 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
     }
 
     private void checkYourRecipients() {
+        totalRecipients = 0;
+        calRecipients = 0;
         FirebaseDatabase.getInstance().getReference("Recipient")
                 .child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Recipient recipient = dataSnapshot.getValue(Recipient.class);
                         fetchFeeling(recipient);
+                        totalRecipients += 1;
                     }
                 }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        LayoutInflater inflater = getLayoutInflater();
+                        View layout = inflater.inflate(R.layout.custom_toast,
+                                (ViewGroup) findViewById(R.id.toast_parent));
+
+                        Toast toast = new Toast(CreateShotActivity.this);
+
+
+                        TextView toast_message = layout.findViewById(R.id.toast_message);
+                        toast_message.setTypeface(Typeface.createFromAsset(getAssets(), "fonts/samsungsharpsans-bold.otf"));
+
+                        double percentage = (double) (calRecipients / totalRecipients) * 100;
+
+                        toast_message.setText("Your shot can reach " + percentage + "% of your friends.\nSwipe down to see your recipients");
+                        toast_message.setBackgroundTintList(getResources().getColorStateList(R.color.darkGrey));
+
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.setDuration(Toast.LENGTH_LONG);
+                        toast.setView(layout);
+                        toast.show();
+                    }
+                }, 3000);
             }
 
             @Override
@@ -288,8 +322,8 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                     long remoteUserDiff = tsLong - recipient.getOtheruserstamp();
 
 
-                    long localDiffHours = localUserDiff / (60 * 60 * 24 * 30);
-                    long otherDiffHours = remoteUserDiff / (60 * 60 * 24 * 30);
+                    long localDiffHours = localUserDiff / (60 * 60 * 24 /** 30*/);
+                    long otherDiffHours = remoteUserDiff / (60 * 60 * 24 /** 30*/);
 
                     Log.i("localDiffHours", "" + localDiffHours);
                     Log.i("otherDiffHours", "" + otherDiffHours);
@@ -298,6 +332,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                     if (localDiffHours < 1 && otherDiffHours < 1) {
                         recipient.setManual(false);
                         if (!recipientList.contains(recipient) && !notRecipientList.contains(recipient)) {
+                            calRecipients += 1;
                             recipientList.add(recipient);
                             recipientAdapter.updateList(recipientList);
                         }

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hieeway.hieeway.GroupInfoActivity">
+
+
+    <ImageView
+        android:id="@+id/group_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/profile_pic"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:scaleX="1.15"
+        android:scaleY="1.15"
+        app:layout_constraintHeight_max="400dp"
+        app:layout_constrainedHeight="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:background="@drawable/bottom_fade_dark_background"
+        app:layout_constraintTop_toTopOf="@id/group_icon"
+        app:layout_constraintBottom_toTopOf="@id/members_recyclerView"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout7"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="@drawable/top_fade_dark_background"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        app:layout_constraintTop_toTopOf="@id/group_icon" />
+
+    <TextView
+        android:id="@+id/group_name"
+        android:textSize="36sp"
+        android:fontFamily="sans-serif-black"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal|bottom"
+        android:layout_marginBottom="36dp"
+        android:text="Group Name"
+        app:layout_constraintBottom_toTopOf="@id/add_members_btn"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/members_recyclerView"
+        android:background="@color/colorBlack"
+        app:layout_constraintTop_toBottomOf="@id/group_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <Button
+        android:id="@+id/add_members_btn"
+        android:background="@drawable/message_box_drawable"
+        android:backgroundTint="@color/darkGrey"
+        android:text="Add Members"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/members_recyclerView"
+        android:layout_marginBottom="12dp"
+        android:paddingLeft="46dp"
+        android:paddingRight="46dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/edit_group"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/layer_edit_profile"
+        android:layout_width="42dp"
+        android:layout_height="42dp" />
+
+    <Button
+        android:id="@+id/back_btn"
+        app:layout_constraintTop_toTopOf="@+id/edit_group"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_group"
+        android:background="@drawable/recv_ic_arrow"
+        android:backgroundTint="@color/white"
+        android:layout_width="42dp"
+        android:layout_height="42dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

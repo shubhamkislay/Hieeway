@@ -1,5 +1,9 @@
 package com.hieeway.hieeway.Model;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.C;
+
 public class Friend {
 
 
@@ -60,5 +64,12 @@ public class Friend {
 
     public void setActivePhoto(String activePhoto) {
         this.activePhoto = activePhoto;
+    }
+
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Friend o = (Friend) obj;
+        return this.getFriendId().equals(o.getFriendId());
     }
 }

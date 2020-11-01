@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/activity_group_info_scene"
+    tools:context="com.hieeway.hieeway.GroupInfoActivity">
+
+
+    <Button
+        android:id="@+id/edit_group"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/layer_edit_profile"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:background="@drawable/recv_ic_arrow"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/edit_group"
+
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edit_group" />
+
+
+    <ImageView
+        android:id="@+id/group_icon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        app:layout_constraintHeight_max="400dp"
+        android:scaleType="fitXY"
+        android:scaleX="1.15"
+        android:scaleY="1.15"
+        android:src="@drawable/groups_image"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout8"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bottom_fade_dark_background"
+        app:layout_constraintBottom_toTopOf="@id/members_recyclerView"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        app:layout_constraintTop_toTopOf="@id/group_icon" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout7"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:background="@drawable/top_fade_dark_background"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        app:layout_constraintTop_toTopOf="@id/group_icon" />
+
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="36dp"
+        android:fontFamily="sans-serif-black"
+        android:gravity="center_horizontal|bottom"
+        android:textColor="@color/white"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@id/add_members_btn"
+        app:layout_constraintLeft_toLeftOf="@id/group_icon"
+        app:layout_constraintRight_toRightOf="@id/group_icon"
+        android:text="Group Name" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/members_recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorBlack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/group_icon" />
+
+    <Button
+        android:textAllCaps="false"
+        android:id="@+id/add_members_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:visibility="invisible"
+        android:background="@drawable/message_box_drawable"
+        android:backgroundTint="@color/white"
+        android:paddingLeft="46dp"
+        android:paddingRight="46dp"
+        android:textColor="@color/darkGrey"
+        android:text="Add Members"
+        app:layout_constraintBottom_toTopOf="@id/members_recyclerView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

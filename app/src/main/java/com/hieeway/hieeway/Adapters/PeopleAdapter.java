@@ -92,7 +92,6 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
 
-
         try {
             final User user = mUsers.get(viewHolder.getAdapterPosition());
 
@@ -423,11 +422,7 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.ViewHolder
                 }
             });
         } catch (Exception e) {
-            //
         }
-
-
-
 
         }
 

@@ -354,6 +354,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             Intent intent = new Intent(activity, OpenMessageShotActivity.class);
                             intent.putExtra("message", post.getMediaUrl());
                             intent.putExtra("postKey", post.getPostKey());
+                            intent.putExtra("otherUserId", post.getUserId());
                             context.startActivity(intent);
                         }
                     });
@@ -459,6 +460,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         public void onClick(View v) {
                             Intent intent = new Intent(context, ExoPlayerActivity.class);
                             intent.putExtra("path", post.getMediaUrl());
+                            intent.putExtra("requestType", "shot");
+                            intent.putExtra("postKey", post.getPostKey());
+                            intent.putExtra("otherUserId", post.getUserId());
                             context.startActivity(intent);
                         }
                     });
@@ -499,6 +503,10 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         public void onClick(View v) {
                             Intent intent = new Intent(context, PhotoViewActivity.class);
                             intent.putExtra("path", post.getMediaUrl());
+                            intent.putExtra("requestType", "shot");
+                            intent.putExtra("postKey", post.getPostKey());
+                            intent.putExtra("otherUserId", post.getUserId());
+
                             context.startActivity(intent);
                         }
                     });
