@@ -123,6 +123,10 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
     AddFeelingFragmentListener addFeelingFragmentListener;
     private NavButtonTest parentActivity;
     private SharedViewModel sharedViewModel;
+    private DatabaseReference myGroupRefs;
+    private ValueEventListener groupValueEventListener;
+    private DatabaseReference postRefs;
+    private ValueEventListener postsValueEventListener;
 
     public ShotsFragment() {
 
@@ -382,13 +386,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                 }
             });
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    populateGroups();
-                    populatePosts(userID);
-                }
-            }, 350);
+
 
 
         }
@@ -504,8 +502,10 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         myGroupList.add(friend2);
         myGroupList.add(friend3);
 
-        DatabaseReference myGroupRefs = FirebaseDatabase.getInstance().getReference("MyGroup")
+        myGroupRefs = FirebaseDatabase.getInstance().getReference("MyGroup")
                 .child(userID);
+
+
         myGroupRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -548,12 +548,83 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
             }
         });
+
+
+        groupValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                myGroupList.clear();
+                MyGroup friend1 = new MyGroup("abc", "ijk", "xyz");
+                MyGroup friend2 = new MyGroup("xyz", "abc", "ijk");
+                MyGroup friend3 = new MyGroup("ijk", "xyz", "abc");
+                myGroupList.add(friend1);
+                myGroupList.add(friend2);
+                myGroupList.add(friend3);
+
+                if (snapshot.exists()) {
+                    List<MyGroup> sortedGroupList = new ArrayList<>();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        MyGroup myGroup = dataSnapshot.getValue(MyGroup.class);
+                        sortedGroupList.add(myGroup);
+                    }
+
+                    Collections.sort(sortedGroupList, Collections.<MyGroup>reverseOrder());
+                    //userList = myGroupList;
+                    myGroupList.addAll(sortedGroupList);
+                    groupsAdapter.updateList(myGroupList);
+                    if (!alreadyScrolled) {
+                        groups_recyclerview.scrollToPosition(0);
+                        alreadyScrolled = true;
+                    }
+
+
+                } else {
+
+
+                    groupsAdapter.updateList(myGroupList);
+                }
+
+                playArrowAnimation();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        myGroupRefs.addValueEventListener(groupValueEventListener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                populateGroups();
+                populatePosts(userID);
+            }
+        }, 350);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        try {
+            myGroupRefs.removeEventListener(groupValueEventListener);
+        } catch (Exception e) {
+
+        }
+
+        try {
+            postRefs.removeEventListener(postsValueEventListener);
+        } catch (Exception e) {
+            //
+        }
     }
 
     private void lookForPosts() {
@@ -615,12 +686,11 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
     private void populatePosts(String friendId) {
 
 
-        DatabaseReference postRefs = FirebaseDatabase.getInstance().getReference("Post")
+        postRefs = FirebaseDatabase.getInstance().getReference("Post")
                 .child(friendId);
 
 
-
-        postRefs.addValueEventListener(new ValueEventListener() {
+        postsValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -706,7 +776,8 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+        postRefs.addValueEventListener(postsValueEventListener);
 
     }
 

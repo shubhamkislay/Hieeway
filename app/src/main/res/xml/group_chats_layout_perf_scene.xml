@@ -110,26 +110,20 @@
             motion:layout_constraintBottom_toBottomOf="@id/youtube_player_view"
             motion:layout_constraintTop_toBottomOf="@id/top_bar" />
 
-        <Constraint xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:elevation="20dp"
-            android:id="@+id/youtube_web_view"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_height="match_parent"
-            app:visibilityMode="ignore" />
 
         <Constraint xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:elevation="20dp"
             android:id="@+id/youtube_web_view"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:visibilityMode="ignore" />
 
         <Constraint xmlns:android="http://schemas.android.com/apk/res/android"
@@ -195,10 +189,14 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:elevation="20dp"
             android:id="@+id/youtube_web_view"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:visibilityMode="ignore" />
 
         <Constraint xmlns:android="http://schemas.android.com/apk/res/android"

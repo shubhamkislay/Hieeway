@@ -1,60 +1,46 @@
 package com.hieeway.hieeway;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
-import android.app.usage.UsageEvents;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.PlayerMessage;
-import com.google.android.exoplayer2.Renderer;
-import com.google.android.exoplayer2.RenderersFactory;
-import com.google.android.exoplayer2.SeekParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.metadata.MetadataOutput;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.SeenByAdapter;
+import com.hieeway.hieeway.Model.SeenByUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class ExoPlayerActivity extends AppCompatActivity {
+public class MyShotExoPlayerActivity extends AppCompatActivity {
     PlayerView player_view;
     SimpleExoPlayer player;
     private String sentStatus;
@@ -75,26 +61,25 @@ public class ExoPlayerActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String USERNAME = "username";
     public static final String USER_ID = "userid";
-    public static final String PHOTO_URL = "photourl";
-    private String currentPhoto;
+    private MotionLayout motion_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exo_player);
+        setContentView(R.layout.activity_my_shots_exo_player);
 
 
         player_view = findViewById(R.id.player_view);
         loading_video = findViewById(R.id.loading_video);
         determinateBar = findViewById(R.id.determinateBar);
         blast = findViewById(R.id.blast);
+        motion_layout = findViewById(R.id.motion_layout);
 
 
         try {
             sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
             userID = sharedPreferences.getString(USER_ID, "");
             currentUsername = sharedPreferences.getString(USERNAME, "");
-            currentPhoto = sharedPreferences.getString(PHOTO_URL, "");
 
 
         } catch (NullPointerException e) {
@@ -126,6 +111,35 @@ public class ExoPlayerActivity extends AppCompatActivity {
         player_view.setPlayer(player);
 
 
+        motion_layout.addTransitionListener(new MotionLayout.TransitionListener() {
+            @Override
+            public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
+
+            }
+
+            @Override
+            public void onTransitionChange(MotionLayout motionLayout, int i, int i1, float v) {
+
+            }
+
+            @Override
+            public void onTransitionCompleted(MotionLayout motionLayout, int i) {
+
+                if (i == R.layout.activity_my_shots_exo_player_end) {
+                    player.pause();
+                } else {
+                    player.play();
+                }
+
+            }
+
+            @Override
+            public void onTransitionTrigger(MotionLayout motionLayout, int i, boolean b, float v) {
+
+            }
+        });
+
+
     }
 
     @SuppressLint("InlinedApi")
@@ -153,6 +167,49 @@ public class ExoPlayerActivity extends AppCompatActivity {
         if ((Util.SDK_INT < 24 || player == null)) {
             initializePlayer();
         }
+        addSeenByList();
+    }
+
+    private void addSeenByList() {
+
+
+        RecyclerView seen_recyclerview;
+        List<SeenByUser> stringList;
+        SharedPreferences sharedPreferences;
+        String currentUser;
+
+        sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+        currentUser = sharedPreferences.getString("userid", "");
+        stringList = new ArrayList<>();
+        seen_recyclerview = findViewById(R.id.seen_recyclerview);
+
+        seen_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        seen_recyclerview.setHasFixedSize(true);
+
+        FirebaseDatabase.getInstance().getReference("SeenBy")
+                .child(currentUser)
+                .child(postKey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            stringList.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                SeenByUser userName = snapshot.getValue(SeenByUser.class);
+                                stringList.add(userName);
+                            }
+
+                            SeenByAdapter seenByAdapter = new SeenByAdapter(MyShotExoPlayerActivity.this, stringList);
+                            seen_recyclerview.setAdapter(seenByAdapter);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
     }
 
     private void initializePlayer() {
@@ -186,7 +243,7 @@ public class ExoPlayerActivity extends AppCompatActivity {
                         HashMap<String, Object> postSeenHash = new HashMap<>();
 
                         postSeenHash.put("username", currentUsername);
-                        postSeenHash.put("photo", currentPhoto);
+                        //postSeenHash.put("photo", "default");
 
                         DatabaseReference seenByRef = FirebaseDatabase
                                 .getInstance()

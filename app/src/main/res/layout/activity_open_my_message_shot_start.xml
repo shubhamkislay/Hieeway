@@ -4,31 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBlack"
-    tools:context="com.hieeway.hieeway.PhotoViewActivity">
+    tools:context="com.hieeway.hieeway.OpenMessageShotActivity">
 
-
-
-    <com.hieeway.hieeway.CustomImageView
-        android:id="@+id/photo"
-        android:layout_margin="4dp"
+    <RelativeLayout
+        android:id="@+id/back_item"
+        android:background="@color/darkbackground"
         android:layout_width="match_parent"
-        tools:src="@drawable/loading_default"
-        android:background="@drawable/shotsfragmentshotscontainer"
-        android:backgroundTint="@color/darkButtonBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/blast"
-        android:layout_height="0dp" />
+        android:layout_height="match_parent" />
 
-    <com.github.ybq.android.spinkit.SpinKitView
-        android:id="@+id/loading_video"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+    <TextView
+        android:id="@+id/message"
+        tools:text="Your Message is here"
+        android:autoSizeTextType="uniform"
+        android:padding="12dp"
+        android:textColor="@color/white"
+        android:background="@color/colorBlack"
+        android:fontFamily="sans-serif-black"
+        android:autoSizeMinTextSize="12dp"
+        android:autoSizeMaxTextSize="80dp"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:SpinKit_Style="Wave" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/seen_recyclerview"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 
     <ProgressBar
         android:id="@+id/determinateBar"
@@ -46,9 +46,9 @@
         android:progressDrawable="@drawable/shot_progress"
         android:layout_height="1dp" />
 
+
     <ImageView
         android:id="@+id/blast"
-        android:visibility="visible"
         android:layout_width="18dp"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="4dp"
@@ -56,5 +56,21 @@
         android:layout_height="18dp"
         android:backgroundTint="@color/white"
         android:background="@drawable/bomb" />
+
+    <TextView
+        android:id="@+id/seen_by_txt"
+        app:layout_constraintBottom_toTopOf="@id/seen_recyclerview"
+        android:padding="12dp"
+        android:gravity="center"
+        android:text="Seen by"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/seen_recyclerview"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

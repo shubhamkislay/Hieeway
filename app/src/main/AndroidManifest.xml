@@ -154,6 +154,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChangeGroupDetailsActivity" />
+        <activity android:name=".OpenMyMessageShotActivity" />
+        <activity android:name=".MyShotExoPlayerActivity" />
+        <activity android:name=".MyPhotoViewActivity" />
+        <activity android:name=".MyMusicFeedActivity" />
 
         <receiver android:name="androidx.media.session.MediaButtonReceiver">
             <intent-filter>

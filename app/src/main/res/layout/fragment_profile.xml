@@ -133,7 +133,6 @@
                             android:textColor="#fff" />
                     </RelativeLayout>
 
-
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -365,8 +364,6 @@
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-
-
             <TextView
                 android:id="@+id/bio_txt_back"
                 android:layout_width="match_parent"
@@ -389,11 +386,6 @@
                 android:textStyle="bold|italic"
                 android:visibility="gone" />
 
-
-
-
-
-
             <TextView
                 android:id="@+id/bio_txt"
                 android:layout_width="match_parent"
@@ -413,9 +405,6 @@
                 android:layout_margin="24dp"
                 android:textStyle="bold|italic"
                 android:visibility="visible"/>
-
-
-
 
             <EditText
 

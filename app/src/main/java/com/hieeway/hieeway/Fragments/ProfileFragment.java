@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 
+import androidx.constraintlayout.motion.widget.MotionLayout;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -29,6 +30,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.palette.graphics.Palette;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -70,7 +77,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.MyShotsAdapter;
+import com.hieeway.hieeway.Adapters.PostAdapter;
 import com.hieeway.hieeway.FeelingDialog;
+import com.hieeway.hieeway.GridSpacingItemDecoration;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.AddFeelingFragmentListener;
 import com.hieeway.hieeway.Interface.ChangePictureListener;
@@ -80,6 +91,7 @@ import com.hieeway.hieeway.Interface.FeelingListener;
 import com.hieeway.hieeway.Interface.ImageSelectionCropListener;
 import com.hieeway.hieeway.MainActivity;
 import com.hieeway.hieeway.Model.Music;
+import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.User;
 import com.hieeway.hieeway.MusicBeamService;
 import com.hieeway.hieeway.NavButtonTest;
@@ -111,6 +123,8 @@ import static com.hieeway.hieeway.NavButtonTest.USER_PHOTO;
 import static com.hieeway.hieeway.NavButtonTest.CURR_USER_ID;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -124,19 +138,20 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private SharedViewModel sharedViewModel;
 
     ImageView profile_pic_background, center_dp;
-    Button logoutBtn, uploadActivityButton;
+    //Button logoutBtn, uploadActivityButton;
     final static String HAPPY = "happy";
     final static String BORED = "bored";
     final static String EXCITED = "excited";
     final static String SAD = "sad";
     final static String CONFUSED = "confused";
     final static String ANGRY = "angry";
-    TextView username, name, feeling_icon, feeling_txt, bio_txt, emoji_icon;
+    public static final String USER_ID = "userid";
+    TextView username, name, feeling_icon, feeling_txt, bio_txt, emoji_icon, my_shots_txt;
     FeelingDialog feelingDialog;
     ImageSelectionCropListener imageSelectionCropListener;
     AddFeelingFragmentListener addFeelingFragmentListener;
     String feelingNow = null;
-    EditText change_nio_edittext;
+
     ProgressBar upload_progress;
     String bio = "";
     Boolean continue_blinking = false;
@@ -209,6 +224,15 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
     private SharedPreferences sharedPreferences;
     private String activePhoto;
     private View view;
+    private RecyclerView shots_recyclerView;
+    private List<Post> postList;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private MyShotsAdapter myShotsAdapter;
+    private String userID;
+    private DatabaseReference postRefs;
+    private ValueEventListener postsListener;
+    private MotionLayout motion_layout;
+    private boolean addListnerToPoulate = false;
 
     public ProfileFragment() {
 
@@ -218,6 +242,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         this.changePictureListener = (ChangePictureListener) activity;
         this.activity = (NavButtonTest) activity;
     }
+
     /*
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -252,6 +277,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         sharedPreferences = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
 
         visibility = sharedPreferences.getBoolean(VISIBILITY, false);
         musicbeacon = sharedPreferences.getBoolean(MUSIC_BEACON, false);
@@ -363,12 +389,20 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
         /*Intent intent1 = new Intent(activity, MusicBeamService.class);
         activity.startService(intent1);*/
+
             }
         }, 500);
 
 
+        if (addListnerToPoulate)
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //populatePosts();
 
-
+                    populatePosts();
+                }
+            }, 350);
 
 
     }
@@ -383,17 +417,31 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             return view;
 
         else {
+
+            try {
+                userID = sharedPreferences.getString(USER_ID, "");
+
+            } catch (NullPointerException e) {
+                userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            }
+
             Display display = activity.getWindowManager().getDefaultDisplay();
             size = new Point();
             display.getSize(size);
             displayHeight = size.y;
             displayWidth = size.x;
 
+            postList = new ArrayList<>();
 
-            view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+            view = inflater.inflate(R.layout.fragment_profile_perf, container, false);
 
             music_layout = view.findViewById(R.id.music_layout);
 
+            my_shots_txt = view.findViewById(R.id.my_shots_txt);
+
+            motion_layout = view.findViewById(R.id.motion_layout);
 
             upload_active_progress = view.findViewById(R.id.upload_active_progress);
 
@@ -430,11 +478,12 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             music_loading_layout = view.findViewById(R.id.music_loading_layout);
             connect_spotify_layout = view.findViewById(R.id.connect_spotify_layout);
             connect_spotify_text = view.findViewById(R.id.connect_spotify_text);
+            shots_recyclerView = view.findViewById(R.id.shots_recyclerView);
 
 
             name = view.findViewById(R.id.name);
-            logoutBtn = view.findViewById(R.id.logout_btn);
-            uploadActivityButton = view.findViewById(R.id.change_activity);
+            //logoutBtn = view.findViewById(R.id.logout_btn);
+            //uploadActivityButton = view.findViewById(R.id.change_activity);
             feeling_icon = view.findViewById(R.id.feeling_icon);
             bottom_sheet_dialog_layout = view.findViewById(R.id.bottom_sheet_dialog_layout);
             top_fade = view.findViewById(R.id.top_fade);
@@ -442,7 +491,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             overlay_fade = view.findViewById(R.id.overlay_fade);
 
             feeling_txt = view.findViewById(R.id.feeling_txt);
-            change_nio_edittext = view.findViewById(R.id.change_nio_edittext);
+
             bio_txt = view.findViewById(R.id.bio_txt);
             edit_profile_option_btn = view.findViewById(R.id.edit_profile_option_btn);
             connect_spotify = view.findViewById(R.id.connect_spotify);
@@ -470,6 +519,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
             connect_spotify_text.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
+            my_shots_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
             music_loading_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
             name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
             feeling_txt.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
@@ -482,13 +532,50 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             song_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-bold.otf"));
             artist_name.setTypeface(Typeface.createFromAsset(activity.getAssets(), "fonts/samsungsharpsans-medium.otf"));
 
-            uploadActivityButton.setOnClickListener(new View.OnClickListener() {
+            motion_layout.addTransitionListener(new MotionLayout.TransitionListener() {
+                @Override
+                public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
+
+                }
+
+                @Override
+                public void onTransitionChange(MotionLayout motionLayout, int i, int i1, float v) {
+
+                }
+
+                @Override
+                public void onTransitionCompleted(MotionLayout motionLayout, int i) {
+
+                    if (i == R.layout.fragment_profile_perf_end) {
+
+                        populatePosts();
+                        addListnerToPoulate = true;
+
+                        // Toast.makeText(activity,"Ended Transition",Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        addListnerToPoulate = false;
+                        try {
+                            postRefs.removeEventListener(postsListener);
+                        } catch (Exception e) {
+                            //
+                        }
+                    }
+                }
+
+                @Override
+                public void onTransitionTrigger(MotionLayout motionLayout, int i, boolean b, float v) {
+
+                }
+            });
+
+            /*uploadActivityButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     imageSelectionCropListener.imageSelect(false);
                 }
-            });
+            });*/
             song_name.setSelected(true);
             artist_name.setSelected(true);
 
@@ -614,7 +701,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             });
 
 
-            logoutBtn.setOnClickListener(new View.OnClickListener() {
+            /*logoutBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     HashMap<String, Object> hashMap = new HashMap<>();
@@ -642,7 +729,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
                 }
-            });
+            });*/
 
 
             center_dp.setOnClickListener(new View.OnClickListener() {
@@ -693,12 +780,14 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
 
                     if (!bottomSheetDialogVisible) {
+
                 /*
 
                 change_nio_edittext.setText(bio_txt.getText().toString());
                 bio_txt.setVisibility(View.GONE);
                 change_nio_edittext.setVisibility(View.VISIBLE);
                 change_nio_edittext.setEnabled(true);*/
+
                         if (bio_txt.getText().toString().length() < 1)
                             editBioFragmentListener.setEditBioChange(false, bio_txt.getText().toString());
                     }
@@ -977,6 +1066,52 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 */
 
 
+            int spanCount; // 3 columns
+            int spacing = 0; // 50px
+            boolean includeEdge = true;
+
+            if (displayWidth >= 1920)
+                spanCount = 2;
+
+            else if (displayWidth >= 1080)
+                spanCount = 2;
+
+            else if (displayWidth >= 500)
+                spanCount = 2;
+            else
+                spanCount = 1;
+
+            staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2, LinearLayoutManager.VERTICAL);
+
+
+            LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
+
+
+            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
+
+            //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+            shots_recyclerView.setLayoutManager(staggeredGridLayoutManager);
+            shots_recyclerView.setHasFixedSize(true);
+            shots_recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+
+
+            RecyclerView.ItemAnimator animator = shots_recyclerView.getItemAnimator();
+            if (animator instanceof SimpleItemAnimator) {
+                ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+            }
+
+
+            shots_recyclerView.setItemViewCacheSize(20);
+            shots_recyclerView.setDrawingCacheEnabled(true);
+            shots_recyclerView.setItemAnimator(new DefaultItemAnimator());
+            shots_recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+            myShotsAdapter = new MyShotsAdapter(postList, activity, userID);
+            myShotsAdapter.setHasStableIds(true);
+
+            shots_recyclerView.setAdapter(myShotsAdapter);
+
+
             if (!blinking) {
                 blinking = true;
                 startBlinking();
@@ -1213,6 +1348,60 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                     }
                 });
+    }
+
+    private void populatePosts() {
+
+
+        postRefs = FirebaseDatabase.getInstance().getReference("MyPosts")
+                .child(userID);
+
+
+        postsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                postList.clear();
+
+                if (snapshot.exists()) {
+
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        Post post = dataSnapshot.getValue(Post.class);
+                        Long tsLong = System.currentTimeMillis() / 1000;
+                        long localUserDiff = tsLong - post.getPostTime();
+
+                        long localDiffHours = localUserDiff / (60 * 60 * 24);
+
+                        if (localDiffHours < 1) {
+                            if (!postList.contains(post) || !post.getType().equals("music"))
+                                postList.add(post);
+                            else
+                                postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
+
+                            //postList.add(post);
+                        } else {
+                            postRefs.child(post.getPostKey()).removeValue();
+                        }
+
+                    }
+
+                    Collections.sort(postList, Collections.<Post>reverseOrder());
+                    myShotsAdapter.updateList(postList);
+                } else {
+                    myShotsAdapter.updateList(postList);
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+
+        postRefs.addValueEventListener(postsListener);
+
     }
 
     private void startBlinking() {
@@ -1726,6 +1915,12 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         } catch (Exception e) {
             //
         }*/
+
+        try {
+            postRefs.removeEventListener(postsListener);
+        } catch (Exception e) {
+
+        }
     }
 
     @Override

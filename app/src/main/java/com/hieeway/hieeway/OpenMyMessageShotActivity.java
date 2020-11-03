@@ -1,7 +1,5 @@
 package com.hieeway.hieeway;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,19 +12,30 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.motion.widget.MotionLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.hieeway.hieeway.Adapters.SeenByAdapter;
+import com.hieeway.hieeway.Model.SeenByUser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class OpenMessageShotActivity extends AppCompatActivity {
+public class OpenMyMessageShotActivity extends AppCompatActivity {
 
 
     TextView message;
     public static final String SHARED_PREFS = "sharedPrefs";
-    public static final String USERNAME = "username";
     public static final String USER_ID = "userid";
-    public static final String PHOTO_URL = "photourl";
     private SharedPreferences sharedPreferences;
     private String userID;
     ProgressBar determinateBar;
@@ -35,34 +44,35 @@ public class OpenMessageShotActivity extends AppCompatActivity {
     String postKey;
     private int maxValue;
     private boolean paused = false;
-    private String currentPhoto;
     private String currentUsername;
     private String otherUserId;
+    private MotionLayout motion_layout_parent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_open_message_shot);
+        setContentView(R.layout.activity_open_my_message_shot);
         sharedPreferences = this.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
         userID = sharedPreferences.getString(USER_ID, "");
-        currentUsername = sharedPreferences.getString(USERNAME, "");
-        currentPhoto = sharedPreferences.getString(PHOTO_URL, "");
         Intent intent = getIntent();
         message = findViewById(R.id.message);
         determinateBar = findViewById(R.id.determinateBar);
         blast = findViewById(R.id.blast);
+        motion_layout_parent = findViewById(R.id.motion_layout_parent);
+
         messageText = intent.getStringExtra("message");
         postKey = intent.getStringExtra("postKey");
         otherUserId = intent.getStringExtra("otherUserId");
+
 
         maxValue = messageText.length() * 75 + 1250;
         determinateBar.setMax(maxValue);
         updateProgress();
 
         message.setText("" + messageText);
-        deleteShot(postKey);
+        //deleteShot(postKey);
 
         message.setOnTouchListener(new View.OnTouchListener() {
             @SuppressLint("ClickableViewAccessibility")
@@ -89,6 +99,39 @@ public class OpenMessageShotActivity extends AppCompatActivity {
         });
 
 
+        motion_layout_parent.addTransitionListener(new MotionLayout.TransitionListener() {
+            @Override
+            public void onTransitionStarted(MotionLayout motionLayout, int i, int i1) {
+
+            }
+
+            @Override
+            public void onTransitionChange(MotionLayout motionLayout, int i, int i1, float v) {
+
+            }
+
+            @Override
+            public void onTransitionCompleted(MotionLayout motionLayout, int i) {
+
+                if (i == R.layout.activity_open_my_message_shot_end) {
+                    paused = true;
+                } else {
+                    paused = false;
+                }
+
+
+            }
+
+            @Override
+            public void onTransitionTrigger(MotionLayout motionLayout, int i, boolean b, float v) {
+
+            }
+        });
+
+
+        addSeenByList();
+
+
     }
 
     private void deleteShot(String postKey) {
@@ -105,7 +148,6 @@ public class OpenMessageShotActivity extends AppCompatActivity {
 
         HashMap<String, Object> postSeenHash = new HashMap<>();
         postSeenHash.put("username", currentUsername);
-        postSeenHash.put("photo", currentPhoto);
 
         //postSeenHash.put("photo", "default");
         DatabaseReference seenByRef = FirebaseDatabase
@@ -118,6 +160,48 @@ public class OpenMessageShotActivity extends AppCompatActivity {
                 .child(userID)
                 .updateChildren(postSeenHash);
 
+
+    }
+
+    private void addSeenByList() {
+
+
+        RecyclerView seen_recyclerview;
+        List<SeenByUser> stringList;
+        SharedPreferences sharedPreferences;
+        String currentUser;
+
+        sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
+        currentUser = sharedPreferences.getString("userid", "");
+        stringList = new ArrayList<>();
+        seen_recyclerview = findViewById(R.id.seen_recyclerview);
+
+        seen_recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        seen_recyclerview.setHasFixedSize(true);
+
+        FirebaseDatabase.getInstance().getReference("SeenBy")
+                .child(currentUser)
+                .child(postKey)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            stringList.clear();
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                SeenByUser userName = snapshot.getValue(SeenByUser.class);
+                                stringList.add(userName);
+                            }
+
+                            SeenByAdapter seenByAdapter = new SeenByAdapter(OpenMyMessageShotActivity.this, stringList);
+                            seen_recyclerview.setAdapter(seenByAdapter);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
     }
 

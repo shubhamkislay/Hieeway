@@ -3,7 +3,6 @@ package com.hieeway.hieeway.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -14,7 +13,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,8 +36,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,13 +43,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CustomCircularView;
-import com.hieeway.hieeway.Model.ChatStamp;
+import com.hieeway.hieeway.Interface.MyMusicFeedItemListener;
 import com.hieeway.hieeway.Model.Like;
-import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicPost;
-import com.hieeway.hieeway.Model.PostSeen;
 import com.hieeway.hieeway.R;
-import com.hieeway.hieeway.Utils.ChatStampListDiffUtilCallback;
 import com.hieeway.hieeway.Utils.MusicFeedListDiffUtilCallback;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
@@ -69,18 +62,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.content.Context.MODE_PRIVATE;
-
-public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.ViewHolder> {
+public class MyMusicFeedAdapter extends RecyclerView.Adapter<MyMusicFeedAdapter.ViewHolder> {
 
     private static final int REQUEST_CODE = 1337;
     private static final String REDIRECT_URI = "http://10.0.2.2:8888/callback";
     private static final String CLIENT_ID = "79c53faf8b67451b9adf996d40285521";
-    public static final String PHOTO_URL = "photourl";
-    public static final String SHARED_PREFS = "sharedPrefs";
-    private SharedPreferences sharedPreferences;
     public SpotifyAppRemote spotifyAppRemote;
     List<MusicPost> musicPostList = new ArrayList<>();
     Activity activity;
@@ -97,12 +83,12 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
     private String userID;
     private String photo;
     private String otherUid;
-    private String currentPhoto;
     private String username;
     private String currentUsername;
+    private MyMusicFeedItemListener myMusicFeedItemListener;
 
 
-    public MusicFeedAdapter(Context mContext
+    public MyMusicFeedAdapter(Context mContext
             , String userID
             , String currentUsername
             , List<MusicPost> musicPostList
@@ -120,23 +106,17 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         this.photo = photo;
         this.username = username;
         this.otherUid = otherUid;
+        this.myMusicFeedItemListener = (MyMusicFeedItemListener) activity;
 
         this.musicPostList = new ArrayList<>();
         musicPostList.clear();
-
-        try {
-            sharedPreferences = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-            currentPhoto = sharedPreferences.getString(PHOTO_URL, "");
-        } catch (Exception e) {
-            currentPhoto = "default";
-        }
 
     }
 
     @NonNull
     @Override
-    public MusicFeedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.spotify_status_item, parent, false);
+    public MyMusicFeedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.my_spotify_status_item, parent, false);
 
 
         ConnectionParams connectionParams =
@@ -177,91 +157,20 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
 
         songName.getLayoutParams().width = (int) (displayHeight * 100) / 250;
         artistName.getLayoutParams().width = (int) (displayHeight * 100) / 250;
-        
-        
-        
 
-        return new MusicFeedAdapter.ViewHolder(view);
+
+        return new MyMusicFeedAdapter.ViewHolder(view);
     }
 
     @Override
     public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
         // super.onViewAttachedToWindow(holder);
         MusicPost musicPost = musicPostList.get(holder.getAdapterPosition());
-
-        /**
-         * Below code plays the songs as soon as it is visible on the screen
-         */
-
-        /*try {
-            spotifyAppRemote.getPlayerApi().play(musicPost.getSpotifyId()).setResultCallback(new CallResult.ResultCallback<Empty>() {
-                @Override
-                public void onResult(Empty empty) {
-                    Toast.makeText(mContext, "Playing \"" + musicPost.getSpotifySong() + "\"", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        } catch (Exception e) {
-            Toast.makeText(mContext, "Cannot play this song", Toast.LENGTH_SHORT).show();
-
-        }*/
-
-        /*HashMap<String, Object> postSeenHash = new HashMap<>();
-
-
-       String updateSeen = null;
-
-        //updateSeen.add(userID);
-        try {
-            updateSeen = musicPost.getSeenBy();
-            if (!musicPost.getSeenBy().contains(userID))
-                updateSeen = musicPost.getSeenBy()+"/-/"+userID;
-            else if(updateSeen==null) {
-                updateSeen = userID;
-            }
-        }catch (Exception e)
-        {
-            updateSeen = userID;
-        }
-        postSeenHash.put("seenBy",updateSeen);*/
-
-        FirebaseDatabase.getInstance().getReference("MusicPost")
-                .child(userID)
-                .child(musicPost.getPostKey())
-                .removeValue();
-        //.updateChildren(postSeenHash);
-
-                /*.child("seenBy")
-                .setValue(updateSeen);*/
-
-        FirebaseDatabase.getInstance().getReference("Post")
-                .child(userID)
-                .child(musicPost.getPostKey())
-                .removeValue();
-        //.updateChildren(postSeenHash);
-               /* .child("seenBy")
-                .setValue(updateSeen);*/
-
-        HashMap<String, Object> postSeenHash = new HashMap<>();
-
-        postSeenHash.put("photo", currentPhoto);
-        postSeenHash.put("username", currentUsername);
-
-        DatabaseReference seenByRef = FirebaseDatabase
-                .getInstance()
-                .getReference("SeenBy")
-                .child(otherUid);
-
-        seenByRef
-                .child(musicPost.getPostKey())
-                .child(userID)
-                .updateChildren(postSeenHash);
-
-
+        myMusicFeedItemListener.loadForPostKey(musicPost.getPostKey());
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MusicFeedAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyMusicFeedAdapter.ViewHolder holder, int position) {
         MusicPost musicPost = musicPostList.get(holder.getAdapterPosition());
 
 
@@ -579,7 +488,6 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
                         }
 
 
-
                     }
                 });
 
@@ -781,7 +689,6 @@ public class MusicFeedAdapter extends RecyclerView.Adapter<MusicFeedAdapter.View
         //colors
         RelativeLayout darkVibrantLay, lightVibrantLay, vibrantLay, darkMutedLay, lightMutedLay, mutedLay, dominantLay, spotify_icon, open_spotify_lay;
         TextView dm_txt, dv_txt, lm_txt, lv_txt, v_txt, m_txt, do_txt, open_spotify_text;
-
 
 
         public ViewHolder(@NonNull View itemView) {

@@ -267,7 +267,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                         totalRecipients += 1;
                     }
                 }
-
+/*
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -291,7 +291,7 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                         toast.setView(layout);
                         toast.show();
                     }
-                }, 3000);
+                }, 3000);*/
             }
 
             @Override
@@ -322,8 +322,8 @@ public class CreateShotActivity extends AppCompatActivity implements AddRecipien
                     long remoteUserDiff = tsLong - recipient.getOtheruserstamp();
 
 
-                    long localDiffHours = localUserDiff / (60 * 60 * 24 /** 30*/);
-                    long otherDiffHours = remoteUserDiff / (60 * 60 * 24 /** 30*/);
+                    long localDiffHours = localUserDiff / (60 * 60 * 24 * 30);
+                    long otherDiffHours = remoteUserDiff / (60 * 60 * 24 * 30);
 
                     Log.i("localDiffHours", "" + localDiffHours);
                     Log.i("otherDiffHours", "" + otherDiffHours);

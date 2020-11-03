@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:background="@android:color/transparent"
+    tools:context=".Fragments.ProfileFragment">
+
+    <ImageView
+        android:id="@+id/profile_pic_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleY="1.15"
+        android:scaleX="1.15"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/layer_list_splash_logo" />
+
+    <RelativeLayout
+        android:id="@+id/overlay_fade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.25"
+        android:background="@color/colorBlack"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:id="@+id/bottom_fade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:alpha="1.0"
+        android:background="@drawable/status_bar_fade" />
+
+    <RelativeLayout
+        android:id="@+id/top_fade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:alpha="1.0"
+        android:layout_gravity="bottom"
+        android:rotation="180"
+        android:background="@drawable/status_bar_fade" />
+
+    <Button
+        android:id="@+id/edit_profile_option_btn"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        app:layout_constraintTop_toTopOf="parent"
+
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="16dp"
+
+        android:layout_marginRight="16dp"
+
+        android:background="@drawable/layer_edit_profile"
+        android:padding="8dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text=""
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/edit_settings_option_btn"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+
+        android:layout_marginTop="16dp"
+
+        android:background="@drawable/layer_edit_settungs"
+        android:padding="8dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:text=""
+        android:visibility="visible" />
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/upload_active_progress"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/top_menu"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="36dp"
+        android:visibility="gone"
+        app:SpinKit_Style="Wave" />
+
+
+    <RelativeLayout
+        android:id="@+id/top_menu"
+        app:layout_constraintBottom_toTopOf="@id/feeling_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/feeling_txt"
+        android:padding="2dp">
+
+
+        <RelativeLayout
+            android:id="@+id/emoji_holder_layout"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/message_counter_drawable"
+            android:backgroundTint="#0F0F0F"
+            android:visibility="visible">
+
+
+            <TextView
+                android:id="@+id/feeling_icon"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/ic_emoticon_feeling_happy"
+                android:backgroundTint="@color/colorPrimaryDark" />
+
+            <TextView
+                android:id="@+id/emoji_icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="2.5dp"
+                android:gravity="center"
+                android:textSize="32sp"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/ring_blinker_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/ring_back"
+                android:backgroundTint="#FFFFFF" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/feeling_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/music_layout"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
+        android:text="Happy"
+        android:textColor="#fff"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+
+    <RelativeLayout
+
+        android:id="@+id/music_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/music_layout_profile_back"
+        app:layout_constraintHeight_min="225dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/pic_box"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/music_loading_layout"
+            android:layout_width="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/music_loading_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/music_loading"
+                android:gravity="center"
+                android:text="fetching your music"
+                android:textColor="#fff" />
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/music_loading"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                app:SpinKit_Color="@color/colorPrimaryDark"
+                app:SpinKit_Style="Wave" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/spotify_icon"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="2dp"
+                android:background="#000"
+                android:padding="24dp"
+                android:src="@drawable/spotify_icon_rgb_green"
+                android:visibility="invisible" />
+
+
+            <ImageView
+                android:id="@+id/spotify_cover"
+                android:layout_width="125dp"
+                android:layout_height="125dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="2dp"
+                android:scaleType="fitXY" />
+
+
+            <TextView
+                android:id="@+id/song_name"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/spotify_cover"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginRight="4dp"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="#fff"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/artist_name"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/song_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:ellipsize="marquee"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="#fff"
+                android:textSize="10sp"
+                android:visibility="visible"
+                tools:text="Charlie Puth" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/connect_spotify_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:id="@+id/connect_spotify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/message_box_drawable"
+                android:backgroundTint="#1DB954"
+                android:padding="4dp"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="32dp"
+                    android:layout_centerInParent="true"
+                    android:paddingTop="2dp"
+                    android:paddingRight="4dp"
+                    android:paddingBottom="2dp"
+                    android:src="@drawable/spotify_logo_rgb_white" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/connect_spotify_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/connect_spotify"
+                android:layout_margin="12dp"
+                android:gravity="center"
+                android:text="Connect with spotify app to add and listen to live music status"
+                android:textColor="#fff"
+                android:textSize="12dp" />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        app:layout_constraintTop_toBottomOf="@id/music_layout"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        tools:text="name"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        app:layout_constraintTop_toBottomOf="@id/name"
+        android:id="@+id/username"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        tools:text="username"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/bio_txt_back"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/username"
+        app:layout_constraintBottom_toTopOf="@id/my_shots_txt"
+        android:layout_margin="24dp"
+        android:layout_marginTop="24dp"
+        android:alpha="0.35"
+        android:autoLink="web"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
+        android:background="@drawable/message_box_reply_drawable"
+        android:backgroundTint="#000"
+        android:breakStrategy="high_quality"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:textStyle="bold|italic"
+        android:visibility="gone" />
+
+
+    <TextView
+        android:id="@+id/bio_txt"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/username"
+        app:layout_constraintBottom_toTopOf="@id/my_shots_txt"
+        android:layout_marginTop="24dp"
+        android:padding="16dp"
+        android:gravity="center"
+        android:autoLink="web"
+        android:autoSizeMaxTextSize="18sp"
+        android:autoSizeMinTextSize="12sp"
+        android:autoSizeTextType="uniform"
+        android:breakStrategy="high_quality"
+        android:hint="Bio"
+        android:textColor="#333333"
+        android:textSize="15sp"
+        android:layout_margin="24dp"
+        android:textStyle="bold|italic"
+        android:visibility="visible" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/relay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.75"
+            android:background="#000"
+            android:visibility="gone" />
+
+
+        <include layout="@layout/dialog_edit_profile" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/shots_recyclerView"
+        app:layout_constraintTop_toBottomOf="parent"
+        android:backgroundTint="@color/darkButtonBackground"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+
+    <TextView
+        android:id="@+id/my_shots_txt"
+        android:text="Tap to see your shots"
+        android:gravity="center|top"
+        android:visibility="visible"
+        android:paddingBottom="64dp"
+        android:paddingTop="12dp"
+        android:background="@drawable/shotsfragmentshotscontainer"
+        android:backgroundTint="@color/darkButtonBackground"
+        app:layout_constraintBottom_toTopOf="@id/shots_recyclerView"
+        app:layout_constraintTop_toTopOf="@id/shots_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <RelativeLayout
+
+        android:id="@+id/pic_box"
+        app:layout_constraintTop_toTopOf="@id/music_layout"
+        app:layout_constraintBottom_toBottomOf="@id/music_layout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/music_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <com.hieeway.hieeway.CustomImageView
+            android:id="@+id/center_dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:adjustViewBounds="true"
+            android:maxWidth="100dp"
+            android:maxHeight="200dp"
+            android:minWidth="50dp"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/layer_list_splash_logo"
+            android:minHeight="200dp" />
+
+        <ProgressBar
+            android:id="@+id/upload_progress"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--
+    -->

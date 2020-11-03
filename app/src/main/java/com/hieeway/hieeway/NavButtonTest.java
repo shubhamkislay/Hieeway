@@ -1081,7 +1081,11 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
             }
         }
 
-        return super.dispatchTouchEvent(event);
+        try {
+            return super.dispatchTouchEvent(event);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public Palette createPaletteSync(Bitmap bitmap) {

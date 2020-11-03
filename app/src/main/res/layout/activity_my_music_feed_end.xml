@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000"
+
+    tools:context="com.hieeway.hieeway.MusicFeedActivity">
+
+    <RelativeLayout
+        android:id="@+id/back_item"
+        android:background="@color/darkbackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/child_parent_layout"
+        android:layout_width="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="300dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/music_recyclerview"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <RelativeLayout
+            android:id="@+id/no_music_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/darkButtonBackground"
+            android:visibility="gone">
+
+            <LinearLayout
+
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginBottom="16dp"
+                    android:src="@drawable/ic_check_circle_black_24dp" />
+
+                <TextView
+                    android:id="@+id/no_music_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:gravity="center"
+                    android:text="You're all Caught Up.\nClick the button on the top right corner\nto pair your music wih your friends"
+                    android:textColor="#fff"
+                    android:textSize="12sp"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/new_update_lay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/circle"
+            android:backgroundTint="#fff"
+            android:elevation="10dp"
+            android:visibility="gone">
+
+            <ImageButton
+
+                android:id="@+id/new_update"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle"
+                android:backgroundTint="#fff"
+                android:src="@drawable/ic_swipe_arrow_up_black_24dp"
+                android:textColor="#000" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/music_pal_lay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="32dp"
+            android:layout_marginRight="8dp"
+            android:backgroundTint="#fff"
+            android:padding="4dp"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/music_pal_back"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:alpha="0.33"
+                android:background="@drawable/circle"
+                android:backgroundTint="#000" />
+
+            <ImageButton
+
+                android:layout_width="50dp"
+                android:id="@+id/music_pal"
+                android:layout_height="50dp"
+                android:layout_centerInParent="true"
+                android:alpha="1.0"
+                android:background="@mipmap/ic_musicpair"
+                android:elevation="10dp"
+                android:textColor="#000" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:visibility="visible"
+            android:id="@+id/loading_feed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000">
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/wave"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:visibility="invisible"
+                android:layout_marginBottom="32dp"
+                android:layout_centerInParent="true"
+                app:SpinKit_Color="@color/colorPrimaryDark"
+                app:SpinKit_Style="Wave" />
+
+            <RelativeLayout
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_above="@id/seeing_music_txt"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:alpha="1.0"
+                android:background="@drawable/headphone_large" />
+
+
+            <TextView
+                android:id="@+id/seeing_music_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/wave"
+
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:gravity="center"
+                android:text="Song's you listened"
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+            <TextView
+                android:visibility="invisible"
+                android:id="@+id/connecting_spotify_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="42dp"
+                android:gravity="center"
+                android:text="Connecting to Spotify..."
+                android:textColor="#fff"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/connecting_error_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="16dp"
+                android:background="@drawable/message_box_drawable"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:text="Trouble Connecting?"
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/connection_issue_hint"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                android:background="#000"
+                android:gravity="center_vertical"
+                android:text="1. Check if Spotify Connect and Music Beacon are checked from the settings page\n
+\n2. Close and restart spotify app and try to play a song to see if is working fine.
+\n\n3. Come back and try to start again."
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/seen_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorBlack"
+        app:layout_constraintBottom_toTopOf="@id/seen_by_txt"
+        app:layout_constraintTop_toBottomOf="@id/child_parent_layout" />
+
+    <TextView
+        android:id="@+id/seen_by_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:visibility="visible"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Seen by"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

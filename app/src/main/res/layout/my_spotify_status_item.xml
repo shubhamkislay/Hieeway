@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_height="match_parent"
+    android:background="#000"
+
+    android:fitsSystemWindows="true">
+
+    <RelativeLayout
+        android:id="@+id/layout_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.0"
+        android:background="#000" />
+
+    <RelativeLayout
+        android:id="@+id/fade_back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="1.0"
+        android:background="@drawable/bottom_fade_dark_background"
+        android:backgroundTint="#131313" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/top_bar"
+        android:visibility="gone"
+        android:layout_height="84dp"
+        android:paddingTop="24dp"
+        android:layout_margin="8dp">
+
+
+        <com.hieeway.hieeway.CustomCircularView
+            android:id="@+id/profile_pic"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="matrix"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            tools:src="@drawable/no_profile" />
+
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/profile_pic"
+            android:fontFamily="sans-serif-thin"
+            android:layout_above="@id/time"
+            android:gravity="center"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            tools:text="Username" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_toRightOf="@id/profile_pic"
+            android:textColor="#A6FFFFFF"
+            android:textSize="12sp"
+            tools:text="5 mins ago" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/song_meta"
+        android:layout_below="@id/top_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+
+            <RelativeLayout
+                android:id="@+id/darkVibrant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/dv_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="DV"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lightVibrant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/lv_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="LV"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/vibrant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/v_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="V"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/darkMuted"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/dm_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="DM"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lightMuted"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/lm_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="LM"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/muted"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/m_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="M"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/dominant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#000">
+
+
+                <TextView
+                    android:id="@+id/do_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="DO"
+                    android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/song_meta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/song_art"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:alpha="1.0"
+            android:layout_centerHorizontal="true"
+            android:scaleType="centerInside"
+            android:src="#000" />
+
+        <TextView
+            android:id="@+id/song_name"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/song_art"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:ellipsize="marquee"
+            android:gravity="left"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            tools:text="Song Name" />
+
+        <TextView
+            android:id="@+id/artist_name"
+            android:layout_width="300dp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:gravity="left"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:layout_below="@id/song_name"
+            android:textSize="14sp"
+            tools:text="Artist" />
+
+        <com.dd.ShadowLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/artist_name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            app:sl_cornerRadius="56dp"
+            app:sl_dx="0dp"
+            app:sl_dy="0dp"
+            app:sl_shadowColor="#20000000"
+            app:sl_shadowRadius="4dp">
+
+            <RelativeLayout
+
+                android:id="@+id/open_spotify_lay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/message_box_drawable"
+                android:backgroundTint="#000"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="8dp">
+
+                <RelativeLayout
+                    android:id="@+id/spotify_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/spotify_white_icon" />
+
+                <TextView
+                    android:id="@+id/open_spotify_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/spotify_icon"
+                    android:text="Open in Spotify"
+                    android:textColor="#fff" />
+
+            </RelativeLayout>
+        </com.dd.ShadowLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/song_meta">
+
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <com.dd.ShadowLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="24dp"
+                    app:sl_cornerRadius="56dp"
+                    app:sl_dx="0dp"
+                    app:sl_dy="0dp"
+                    app:sl_shadowColor="#20000000"
+                    app:sl_shadowRadius="4dp">
+
+
+                    <RelativeLayout
+                        android:id="@+id/play_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ic_play_circle_filled_black_24dp"
+                        android:backgroundTint="@color/colorWhite"
+                        android:elevation="50dp"
+                        android:padding="4dp">
+
+                        <ImageButton
+                            android:id="@+id/play_btn"
+
+                            android:layout_width="85dp"
+                            android:layout_height="85dp"
+                            android:layout_centerVertical="true"
+                            android:background="@android:color/transparent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/ic_play_circle_filled_black_24dp" />
+
+                    </RelativeLayout>
+                </com.dd.ShadowLayout>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <com.dd.ShadowLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="24dp"
+                    app:sl_cornerRadius="56dp"
+                    app:sl_dx="0dp"
+                    app:sl_dy="0dp"
+                    app:sl_shadowColor="#20000000"
+                    app:sl_shadowRadius="8dp">
+
+
+                    <RelativeLayout
+                        android:id="@+id/like_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_play_circle_filled_black_24dp"
+                        android:backgroundTint="@color/colorWhite"
+                        android:elevation="50dp"
+                        android:padding="11dp">
+
+                        <RelativeLayout
+                            android:id="@+id/like_btn_back"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:background="@drawable/circle" />
+
+                        <Button
+                            android:id="@+id/like_btn"
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/heart_full"
+                            android:backgroundTint="#DDDDDD" />
+
+                    </RelativeLayout>
+
+                </com.dd.ShadowLayout>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/foreground_lay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.0" />
+</RelativeLayout>
