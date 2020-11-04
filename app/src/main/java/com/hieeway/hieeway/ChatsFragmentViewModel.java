@@ -3,6 +3,8 @@ package com.hieeway.hieeway;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
+
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class ChatsFragmentViewModel extends ViewModel {
     private List<ChatStamp> userList = new ArrayList();
@@ -35,17 +39,19 @@ public class ChatsFragmentViewModel extends ViewModel {
     private DatabaseReference usersRef;
     private UserListLiveData userListLiveData;
     public List<ChatStamp> chatStampList;
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String USER_ID = "userid";
+    private String userID;
 
 
     public ChatsFragmentViewModel() {
 
-       // usersRef = FirebaseDatabase.getInstance().getReference("Users");
+        // usersRef = FirebaseDatabase.getInstance().getReference("Users");
         usersRef = FirebaseDatabase.getInstance().getReference("ChatList")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
-
-       // readUsers();
+        // readUsers();
         userListLiveData = new UserListLiveData(usersRef);
 
         chatStampList = new ArrayList<>();

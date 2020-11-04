@@ -243,7 +243,7 @@
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/timestamp"
         android:layout_marginLeft="12dp"
-        tools:text="Music"
+        android:text="Music"
         android:textColor="#fff"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="@id/photo"
@@ -255,7 +255,7 @@
         android:layout_marginLeft="12dp"
         android:textSize="10sp"
         android:textColor="#939393"
-        tools:text="Music Beacon"
+        android:text="Music Beacon"
         app:layout_constraintLeft_toLeftOf="@id/photo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

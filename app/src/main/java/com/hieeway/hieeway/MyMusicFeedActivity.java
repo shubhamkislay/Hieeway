@@ -34,6 +34,7 @@ import com.hieeway.hieeway.Adapters.MyMusicFeedAdapter;
 import com.hieeway.hieeway.Adapters.SeenByAdapter;
 import com.hieeway.hieeway.Helper.SpotifyRemoteHelper;
 import com.hieeway.hieeway.Interface.MyMusicFeedItemListener;
+import com.hieeway.hieeway.Model.DatabaseListener;
 import com.hieeway.hieeway.Model.Music;
 import com.hieeway.hieeway.Model.MusicPost;
 import com.hieeway.hieeway.Model.SeenByUser;
@@ -90,6 +91,7 @@ public class MyMusicFeedActivity extends AppCompatActivity implements MyMusicFee
     private SharedPreferences sharedPreferences;
     private String userID;
     private String currentUsername;
+    private List<DatabaseListener> databaseListeners = new ArrayList<>();
 
     @Override
     protected void onResume() {
@@ -802,9 +804,19 @@ public class MyMusicFeedActivity extends AppCompatActivity implements MyMusicFee
         } catch (Exception e) {
             //
         }
-
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            for (DatabaseListener databaseListener : databaseListeners) {
+                databaseListener.getDatabaseReference().removeEventListener(databaseListener.getValueEventListener());
+            }
+        } catch (Exception e) {
+            //
+        }
+    }
 
     @Override
     protected void onDestroy() {
@@ -838,31 +850,42 @@ public class MyMusicFeedActivity extends AppCompatActivity implements MyMusicFee
         seen_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         seen_recyclerview.setHasFixedSize(true);
 
-        FirebaseDatabase.getInstance().getReference("SeenBy")
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    stringList.clear();
+                    int count = 0;
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        SeenByUser userName = snapshot.getValue(SeenByUser.class);
+                        stringList.add(userName);
+                        ++count;
+                    }
+                    seen_by_txt.setText("Tap to See \nSeen by " + count);
+                    SeenByAdapter seenByAdapter = new SeenByAdapter(MyMusicFeedActivity.this, stringList);
+                    seen_recyclerview.setAdapter(seenByAdapter);
+                } else {
+                    seen_by_txt.setText("Tap to See \nSeen by " + 0);
+                    SeenByAdapter seenByAdapter = new SeenByAdapter(MyMusicFeedActivity.this, stringList);
+                    seen_recyclerview.setAdapter(seenByAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("SeenBy")
                 .child(currentUser)
-                .child(postKey)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            stringList.clear();
-                            int count = 0;
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                SeenByUser userName = snapshot.getValue(SeenByUser.class);
-                                stringList.add(userName);
-                                ++count;
-                            }
-                            seen_by_txt.setText("Tap to See \nSeen by " + count);
-                            SeenByAdapter seenByAdapter = new SeenByAdapter(MyMusicFeedActivity.this, stringList);
-                            seen_recyclerview.setAdapter(seenByAdapter);
-                        }
-                    }
+                .child(postKey);
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+        databaseReference.addValueEventListener(valueEventListener);
 
-                    }
-                });
+        DatabaseListener databaseListener = new DatabaseListener(databaseReference, valueEventListener);
+        databaseListeners.add(databaseListener);
+
 
     }
 }

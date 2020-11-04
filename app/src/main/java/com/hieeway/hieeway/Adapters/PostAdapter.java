@@ -3,6 +3,7 @@ package com.hieeway.hieeway.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -33,7 +34,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import com.hieeway.hieeway.CreateShotActivity;
+import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.ExoPlayerActivity;
 import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.User;
@@ -55,6 +58,9 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import jp.wasabeef.glide.transformations.BlurTransformation;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -64,11 +70,16 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYP_VIDEO = 3;
     private static final int TYP_YOUTUBE = 4;
     private static final int TYP_CREATE = 5;
+    private final SharedPreferences sharedPreferences;
     private List<Post> postList = new ArrayList<>();
     private Context context;
     private Activity activity;
     private String userId;
+    private String currentPhoto;
     ImageLoader imageLoader = ImageLoader.getInstance();
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String PHOTO_URL = "photourl";
+
     //ImageSize targetSize = new ImageSize(100, 200);
 
 
@@ -83,6 +94,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } catch (Exception e) {
             //
         }
+        sharedPreferences = activity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        currentPhoto = sharedPreferences.getString(PHOTO_URL, "default");
     }
 
     @NonNull
@@ -134,7 +147,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             display.getSize(size);
             float dispSize = size.x;
 
-            BlurImageView backItem = view.findViewById(R.id.photo);
+            ImageView backItem = view.findViewById(R.id.photo);
 
             backItem.getLayoutParams().height = (int) dispSize * 75 / 100;
 
@@ -186,6 +199,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             PostMessageHolder postMessageHolder = (PostMessageHolder) holder;
             Post post = postList.get(postMessageHolder.getAdapterPosition());
 
+            postMessageHolder.username.setText(post.getUsername());
             /**
              * Timestamp
              */
@@ -273,6 +287,8 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             PostPhotoViewHolder postPhotoViewHolder = (PostPhotoViewHolder) holder;
             Post post = postList.get(postPhotoViewHolder.getAdapterPosition());
+
+
             postPhotoViewHolder.username.setText(post.getUsername());
 
             /**
@@ -295,6 +311,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             Glide.with(context)
                     .load(post.getMediaUrl())
+                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 3)))
                     .addListener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -309,8 +326,9 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                                 @Override
                                 public void run() {
                                     try {
-                                        postPhotoViewHolder.photo.setBlur(5);
+
                                         postPhotoViewHolder.photo.animate().alpha(1.0f).setDuration(750);
+                                        //postPhotoViewHolder.photo.setBlur(5);
                                     } catch (Exception e) {
                                         //
                                     }
@@ -335,7 +353,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             });
         } else if (postList.get(holder.getAdapterPosition()).getType().equals("video")) {
-            PostPhotoViewHolder postVideoViewHolder = (PostPhotoViewHolder) holder;
+            PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
             Post post = postList.get(postVideoViewHolder.getAdapterPosition());
             postVideoViewHolder.username.setText(post.getUsername());
 
@@ -405,6 +423,16 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             });
         } else {
             PostViewCreateHolder postViewCreateHolder = (PostViewCreateHolder) holder;
+
+
+            if (!currentPhoto.equals("default"))
+                Glide.with(context)
+                        .load(currentPhoto)
+                        .into(postViewCreateHolder.user_photo);
+            else {
+
+            }
+
             postViewCreateHolder.create_shot_txt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -600,7 +628,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private CircleImageView user_photo;
         private TextView username, timestamp, type, by_beacon;
         private RelativeLayout post_ring;
-        private BlurImageView photo;
+        private ImageView photo;
         private ConstraintLayout parent_layout;
 
 
@@ -646,10 +674,12 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class PostViewCreateHolder extends RecyclerView.ViewHolder {
 
         private TextView create_shot_txt;
+        private CustomImageView user_photo;
 
         public PostViewCreateHolder(@NonNull View itemView) {
             super(itemView);
             create_shot_txt = itemView.findViewById(R.id.create_shot_txt);
+            user_photo = itemView.findViewById(R.id.user_photo);
         }
     }
 

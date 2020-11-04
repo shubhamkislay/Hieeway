@@ -847,32 +847,40 @@ public class NavButtonTest extends AppCompatActivity implements ChatStampSizeLis
                     USER_NAME = user.getUsername();
                     USER_PHOTO = user.getPhoto();
 
-                    if (!user.getPhoto().equals("default")) {
-                        try {
-                            //  Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnPressed);
-                            //Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnUnpressed);
+                    try {
 
-                            bitmap = Glide.with(NavButtonTest.this)
-                                    .asBitmap()
-                                    .load(user.getPhoto())
-                                    .submit(100, 100)
-                                    .get();
+                        if (!user.getPhoto().equals("default")) {
+                            try {
+                                //  Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnPressed);
+                                //Glide.with(NavButtonTest.this).load(user.getPhoto()).into(profileBtnUnpressed);
 
-                            // profileFragment.setBitmap(bitmap);
+                                bitmap = Glide.with(NavButtonTest.this)
+                                        .asBitmap()
+                                        .load(user.getPhoto())
+                                        .submit(100, 100)
+                                        .get();
 
-                            source.setResult(bitmap);
+                                // profileFragment.setBitmap(bitmap);
+
+                                source.setResult(bitmap);
 
 
-                        } catch (Exception e) {
+                            } catch (Exception e) {
 
-                            source.setException(e);
+                                source.setException(e);
+
+                            }
+                        } else {
+                            //profileBtnPressed.setImageResource(R.drawable.no_profile);
+                            //profileBtnUnpressed.setImageResource(R.drawable.no_profile);
+                            source.setException(new NullPointerException());
 
                         }
-                    } else {
-                        //profileBtnPressed.setImageResource(R.drawable.no_profile);
-                        //profileBtnUnpressed.setImageResource(R.drawable.no_profile);
-                        source.setException(new NullPointerException());
-
+                    } catch (Exception e) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(NavButtonTest.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     }
 
 

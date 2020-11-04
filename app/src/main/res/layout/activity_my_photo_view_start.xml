@@ -20,7 +20,7 @@
         android:layout_marginStart="-12dp"
         android:rotation="180"
         android:progress="100"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintTop_toTopOf="@id/blast"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/blast"

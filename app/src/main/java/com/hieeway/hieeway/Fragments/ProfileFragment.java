@@ -415,8 +415,8 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         // Inflate the layout for this fragment
 
 
-        /*if (view != null)
-            return view;*/
+        if (view != null)
+            return view;
 
         // else {
 

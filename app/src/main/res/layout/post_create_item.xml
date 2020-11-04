@@ -2,10 +2,43 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:elevation="10dp"
     android:padding="3dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <com.hieeway.hieeway.CustomImageView
+        android:id="@+id/user_photo"
+        tools:src="@drawable/profile_pic"
+        android:alpha="0.3"
+        android:scaleType="centerCrop"
+        android:layout_margin="2dp"
+        app:layout_constraintLeft_toLeftOf="@id/item_back"
+        app:layout_constraintRight_toRightOf="@id/item_back"
+        app:layout_constraintTop_toTopOf="@id/item_back"
+        app:layout_constraintBottom_toBottomOf="@id/item_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <RelativeLayout
+        android:background="@drawable/chat_user_gradient"
+        app:layout_constraintLeft_toLeftOf="@id/item_back"
+        app:layout_constraintRight_toRightOf="@id/item_back"
+        app:layout_constraintTop_toTopOf="@id/item_back"
+        app:layout_constraintBottom_toBottomOf="@id/item_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+    <RelativeLayout
+        android:rotation="180"
+        android:background="@drawable/chat_user_gradient"
+        app:layout_constraintLeft_toLeftOf="@id/item_back"
+        app:layout_constraintRight_toRightOf="@id/item_back"
+        app:layout_constraintTop_toTopOf="@id/item_back"
+        app:layout_constraintBottom_toBottomOf="@id/item_back"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
 
     <RelativeLayout
         android:id="@+id/item_back"

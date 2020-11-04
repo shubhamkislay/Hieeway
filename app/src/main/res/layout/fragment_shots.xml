@@ -249,6 +249,20 @@
             android:layout_width="match_parent"
             android:layout_height="70dp">
 
+
+            <RelativeLayout
+                android:id="@+id/chats_back"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:visibility="invisible"
+                android:layout_alignParentRight="true"
+                android:layout_margin="10dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/layer_group_item_back"
+                android:padding="12dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/nav_hieeway_send_btn" />
+
             <ImageButton
                 android:id="@+id/chats"
                 android:layout_width="42dp"
@@ -258,11 +272,10 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/nav_btn_back_drawable"
                 android:backgroundTint="@color/nav_darktheme_btn_active_light"
-                android:elevation="10dp"
                 android:padding="12dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/nav_hieeway_send_btn"
-                app:elevation="10dp" />
+                android:src="@drawable/nav_hieeway_send_btn" />
+
 
             <ImageButton
                 android:id="@+id/feelings"
@@ -329,6 +342,22 @@
 
 
             </RelativeLayout>
+
+            <TextView
+                android:layout_margin="4dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/layer_group_item_back"
+                android:id="@+id/chat_pending"
+                app:elevation="20dp"
+                android:padding="4dp"
+                android:visibility="invisible"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-black"
+                android:gravity="center"
+                android:backgroundTint="@color/darkbackground"
+                tools:text="10"
+                android:layout_width="32dp"
+                android:layout_height="32dp" />
 
         </RelativeLayout>
 

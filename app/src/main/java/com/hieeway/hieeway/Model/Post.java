@@ -126,9 +126,14 @@ public class Post implements Comparable<Post> {
     @Override
     public boolean equals(@Nullable Object obj) {
         Post o = (Post) obj;
-        return this.getType().equals(o.getType())
-                && this.getUsername().equals(o.getUsername())
-                && this.getMediaUrl().equals(o.getMediaUrl())
-                && this.getTimeStamp().equals(o.getTimeStamp());
+
+        if (o.getType().equals("music"))
+            return this.getType().equals(o.getType());
+
+        else
+            return this.getType().equals(o.getType())
+                    && this.getUsername().equals(o.getUsername())
+                    && this.getMediaUrl().equals(o.getMediaUrl())
+                    && this.getTimeStamp().equals(o.getTimeStamp());
     }
 }

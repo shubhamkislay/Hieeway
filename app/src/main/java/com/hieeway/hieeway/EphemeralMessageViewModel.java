@@ -325,103 +325,14 @@ public class EphemeralMessageViewModel extends ViewModel {
 
     public void setChatPending(final Boolean chatPending) {
 
-
-        senderChatCreateRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (dataSnapshot.exists()) {
-                            HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
-                            timeStampHashReceiver.put("chatPending", chatPending);
-
-
-                            senderChatCreateRef.updateChildren(timeStampHashReceiver);
-                        }
-                    }
-                }).start();
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
+        timeStampHashReceiver.put("chatPending", chatPending);
+        senderChatCreateRef.updateChildren(timeStampHashReceiver);
 
 
     }
 
-    public void createChatListItem(final String usernameUserChattingWith, final String userChattingWith_photo, final String currentUserName, final String currentUserPhoto) {
 
-        Long tsLong = System.currentTimeMillis() / 1000;
-        final String ts = tsLong.toString();
-
-        final HashMap<String, Object> timeStampHash = new HashMap<>();
-
-        final HashMap<String, Object> timeStampHashReceiver = new HashMap<>();
-
-
-        senderChatCreateRef.runTransaction(new Transaction.Handler() {
-            @NonNull
-            @Override
-            public Transaction.Result doTransaction(@NonNull MutableData mutableData) {
-
-                ChatStamp chatStamp = mutableData.getValue(ChatStamp.class);
-
-                if (chatStamp == null) {
-
-                    timeStampHash.put("timeStamp", ts);
-                    timeStampHash.put("id", userChattingWithId);
-                    timeStampHash.put("username", usernameUserChattingWith);
-                    timeStampHash.put("photo", userChattingWith_photo);
-                    timeStampHash.put("seen", "notseen");
-                    timeStampHash.put("chatPending", false);
-                    timeStampHash.put("gemCount", 2);
-
-                    timeStampHashReceiver.put("timeStamp", ts);
-                    timeStampHashReceiver.put("id", currentUser);
-                    timeStampHashReceiver.put("username", currentUserName);
-                    timeStampHashReceiver.put("photo", currentUserPhoto);
-                    timeStampHashReceiver.put("seen", "notseen");
-                    timeStampHashReceiver.put("chatPending", true);
-                    timeStampHashReceiver.put("gemCount", 2);
-                    senderChatCreateRef.updateChildren(timeStampHash);
-                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
-
-                } else {
-                    timeStampHash.put("timeStamp", ts);
-                    timeStampHash.put("id", userChattingWithId);
-                    timeStampHash.put("username", usernameUserChattingWith);
-                    timeStampHash.put("photo", userChattingWith_photo);
-                    timeStampHash.put("seen", "notseen");
-                    timeStampHash.put("chatPending", false);
-
-                    timeStampHashReceiver.put("timeStamp", ts);
-                    timeStampHashReceiver.put("id", currentUser);
-                    timeStampHashReceiver.put("username", currentUserName);
-                    timeStampHashReceiver.put("photo", currentUserPhoto);
-                    timeStampHashReceiver.put("seen", "notseen");
-                    timeStampHashReceiver.put("chatPending", true);
-
-                    senderChatCreateRef.updateChildren(timeStampHash);
-                    receiverChatCreateRef.updateChildren(timeStampHashReceiver);
-
-                }
-
-                return null;
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError databaseError, boolean b, @Nullable DataSnapshot dataSnapshot) {
-
-            }
-        });
-
-
-    }
 
     public class MessageLiveData extends LiveData<List<ChatMessage>>
     {

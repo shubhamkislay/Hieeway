@@ -9,12 +9,15 @@
     android:padding="3dp">
 
 
-    <com.jgabrielfreitas.core.BlurImageView
+    <ImageView
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:padding="4dp"
-        android:alpha="1.0"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:alpha="0.0"
         android:scaleType="centerCrop"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -116,7 +119,7 @@
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/timestamp"
         android:layout_marginLeft="12dp"
-        tools:text="photo"
+        android:text="photo"
         android:textColor="#fff"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="@id/photo"

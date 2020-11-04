@@ -54,6 +54,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.Adapters.GroupsAdapter;
 import com.hieeway.hieeway.Adapters.PostAdapter;
 import com.hieeway.hieeway.ChatParentActivity;
+import com.hieeway.hieeway.ChatsFragmentViewModel;
 import com.hieeway.hieeway.FeelingDialog;
 import com.hieeway.hieeway.FriendListFragmentViewModel;
 import com.hieeway.hieeway.GridSpacingItemDecoration;
@@ -127,6 +128,15 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
     private ValueEventListener groupValueEventListener;
     private DatabaseReference postRefs;
     private ValueEventListener postsValueEventListener;
+    private TextView chat_pending;
+    private RelativeLayout chats_back;
+    private DatabaseReference chatPendingReference;
+    private ValueEventListener chatPendingListener;
+    public List<ChatStamp> chatStampList;
+
+
+    private ChatsFragmentViewModel chatsFragmentViewModel;
+
 
     public ShotsFragment() {
 
@@ -153,26 +163,29 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
 
             feeds_recyclerview = view.findViewById(R.id.feeds_recyclerview);
-            feed_title = view.findViewById(R.id.feed_title);
-            groups_title = view.findViewById(R.id.groups_title);
-            shots_title = view.findViewById(R.id.shots_title);
-            groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
-            chats = view.findViewById(R.id.chats);
-            see_all_btn = view.findViewById(R.id.see_all_btn);
-            feeling_icon = view.findViewById(R.id.feeling_icon);
-            emoji_icon = view.findViewById(R.id.emoji_icon);
-            emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
-            new_shot_btn = view.findViewById(R.id.new_shot_btn);
+        feed_title = view.findViewById(R.id.feed_title);
+        groups_title = view.findViewById(R.id.groups_title);
+        shots_title = view.findViewById(R.id.shots_title);
+        groups_recyclerview = view.findViewById(R.id.groups_recyclerview);
+        chats = view.findViewById(R.id.chats);
+        see_all_btn = view.findViewById(R.id.see_all_btn);
+        feeling_icon = view.findViewById(R.id.feeling_icon);
+        emoji_icon = view.findViewById(R.id.emoji_icon);
+        emoji_holder_layout = view.findViewById(R.id.emoji_holder_layout);
+        new_shot_btn = view.findViewById(R.id.new_shot_btn);
+        chat_pending = view.findViewById(R.id.chat_pending);
+        chats_back = view.findViewById(R.id.chats_back);
 
-            try {
-                sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        try {
+            sharedPreferences = parentActivity.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
 
-                userID = sharedPreferences.getString(USER_ID, "");
-                feelingNow = sharedPreferences.getString(FEELING, "happy");
-            } catch (NullPointerException e) {
-                userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                feelingNow = "happy";
-            }
+            userID = sharedPreferences.getString(USER_ID, "");
+            feelingNow = sharedPreferences.getString(FEELING, "happy");
+        } catch (NullPointerException e) {
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            feelingNow = "happy";
+        }
+
 
 
             userList = new ArrayList<>();
@@ -389,6 +402,33 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
                 }
             });
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    chatsFragmentViewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(ChatsFragmentViewModel.class);
+                    chatsFragmentViewModel.getAllUser().observe(getViewLifecycleOwner(), new Observer<List<ChatStamp>>() {
+                        @Override
+                        public void onChanged(@Nullable final List<ChatStamp> chatStamps) {
+
+                            int pendingChats = 0;
+
+                            for (ChatStamp chatStamp : chatStamps) {
+                                if (chatStamp.getChatPending())
+                                    ++pendingChats;
+                            }
+
+
+                        }
+                    });
+                } catch (Exception e) {
+                    //Toast.makeText(getContext(), "Handler Error: " + e.toString(), Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }, 500);
 
 
         // }
@@ -613,6 +653,60 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
         populatePosts(userID);
 
+        chatPendingReference = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(userID);
+
+        chatStampList = new ArrayList<>();
+        chatPendingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chatStampList.clear();
+                int chatsPending = 0;
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                        ChatStamp chatStamp = snapshot.getValue(ChatStamp.class);
+
+                        if (chatStamp.getChatPending())
+                            ++chatsPending;
+
+
+                    }
+
+                    //Toast.makeText(parentActivity,"Chats Pending: "+chatsPending,Toast.LENGTH_SHORT).show();
+
+                    if (chatsPending > 0) {
+
+                        chats_back.setVisibility(View.VISIBLE);
+                        chat_pending.setVisibility(View.VISIBLE);
+
+
+                        if (chatsPending <= 10)
+                            chat_pending.setText("" + chatsPending);
+                        else
+                            chat_pending.setText("" + chatsPending);
+
+                    } else {
+                        chats_back.setVisibility(View.INVISIBLE);
+                        chat_pending.setVisibility(View.INVISIBLE);
+                    }
+
+
+                } else {
+                    chat_pending.setVisibility(View.INVISIBLE);
+                    chats_back.setVisibility(View.INVISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        chatPendingReference.addValueEventListener(chatPendingListener);
+
     }
 
     @Override
@@ -630,6 +724,13 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         } catch (Exception e) {
             //
         }
+
+        try {
+            chatPendingReference.removeEventListener(chatPendingListener);
+        } catch (Exception e) {
+
+        }
+
     }
 
 

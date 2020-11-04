@@ -47,6 +47,8 @@ public class OpenMyMessageShotActivity extends AppCompatActivity {
     private String currentUsername;
     private String otherUserId;
     private MotionLayout motion_layout_parent;
+    private DatabaseReference seenByReference;
+    private ValueEventListener seenByValueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,32 +181,38 @@ public class OpenMyMessageShotActivity extends AppCompatActivity {
 
         seen_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         seen_recyclerview.setHasFixedSize(true);
-
-        FirebaseDatabase.getInstance().getReference("SeenBy")
+        seenByReference = FirebaseDatabase.getInstance().getReference("SeenBy")
                 .child(currentUser)
-                .child(postKey)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            stringList.clear();
-                            int count = 0;
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                SeenByUser userName = snapshot.getValue(SeenByUser.class);
-                                stringList.add(userName);
-                                count++;
-                            }
-                            seen_by_txt.setText("Seen by " + count);
-                            SeenByAdapter seenByAdapter = new SeenByAdapter(OpenMyMessageShotActivity.this, stringList);
-                            seen_recyclerview.setAdapter(seenByAdapter);
-                        }
-                    }
+                .child(postKey);
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
+        seenByValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    stringList.clear();
+                    int count = 0;
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        SeenByUser userName = snapshot.getValue(SeenByUser.class);
+                        stringList.add(userName);
+                        count++;
                     }
-                });
+                    seen_by_txt.setText("Seen by " + count);
+                    SeenByAdapter seenByAdapter = new SeenByAdapter(OpenMyMessageShotActivity.this, stringList);
+                    seen_recyclerview.setAdapter(seenByAdapter);
+                } else {
+                    seen_by_txt.setText("Seen by " + 0);
+                    SeenByAdapter seenByAdapter = new SeenByAdapter(OpenMyMessageShotActivity.this, stringList);
+                    seen_recyclerview.setAdapter(seenByAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        seenByReference.addValueEventListener(seenByValueEventListener);
 
     }
 
@@ -241,6 +249,17 @@ public class OpenMyMessageShotActivity extends AppCompatActivity {
                     }
                 }
             }, 100);
+        } catch (Exception e) {
+            //
+        }
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            seenByReference.removeEventListener(seenByValueEventListener);
         } catch (Exception e) {
             //
         }

@@ -5080,6 +5080,7 @@ public class EphemeralMessagingFragment extends Fragment implements MessageRunni
                         timeStampHashReceiver.put("seen", "notseen");
                         timeStampHashReceiver.put("chatPending",true);
                         timeStampHashReceiver.put("gemCount",2);
+
                         chatListItemCreationModel.getSenderChatCreateRef().updateChildren(timeStampHash);
                         chatListItemCreationModel.getReceiverChatCreateRef().updateChildren(timeStampHashReceiver);
 

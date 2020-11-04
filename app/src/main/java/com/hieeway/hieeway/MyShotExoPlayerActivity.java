@@ -63,6 +63,8 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
     public static final String USERNAME = "username";
     public static final String USER_ID = "userid";
     private MotionLayout motion_layout;
+    private DatabaseReference seenByReference;
+    private ValueEventListener seenByValueEventListener;
 
 
     @Override
@@ -216,6 +218,40 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
                     }
                 });
 
+        seenByReference = FirebaseDatabase.getInstance().getReference("SeenBy")
+                .child(currentUser)
+                .child(postKey);
+
+        seenByValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    stringList.clear();
+                    int count = 0;
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        SeenByUser userName = snapshot.getValue(SeenByUser.class);
+                        stringList.add(userName);
+                        ++count;
+                    }
+                    seen_by_txt.setText("Seen by " + count);
+                    SeenByAdapter seenByAdapter = new SeenByAdapter(MyShotExoPlayerActivity.this, stringList);
+                    seen_recyclerview.setAdapter(seenByAdapter);
+                } else {
+                    seen_by_txt.setText("Seen by " + 0);
+                    SeenByAdapter seenByAdapter = new SeenByAdapter(MyShotExoPlayerActivity.this, stringList);
+                    seen_recyclerview.setAdapter(seenByAdapter);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        seenByReference.addValueEventListener(seenByValueEventListener);
+
+
     }
 
     private void initializePlayer() {
@@ -333,6 +369,12 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
         if (Util.SDK_INT >= 24) {
             releasePlayer();
         }
+
+        try {
+            seenByReference.removeEventListener(seenByValueEventListener);
+        } catch (Exception e) {
+            //
+        }
     }
 
     private void releasePlayer() {
@@ -368,4 +410,6 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
             //
         }
     }
+
+
 }
