@@ -380,6 +380,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+
         if (groupMessageList.get(holder.getAdapterPosition()).getType().equals("text")) {
 
 

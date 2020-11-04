@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -62,6 +63,7 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
     public static final String USERNAME = "username";
     public static final String USER_ID = "userid";
     private MotionLayout motion_layout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,10 +180,12 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences;
         String currentUser;
 
+
         sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
         currentUser = sharedPreferences.getString("userid", "");
         stringList = new ArrayList<>();
         seen_recyclerview = findViewById(R.id.seen_recyclerview);
+        TextView seen_by_txt = findViewById(R.id.seen_by_txt);
 
         seen_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         seen_recyclerview.setHasFixedSize(true);
@@ -194,11 +198,13 @@ public class MyShotExoPlayerActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             stringList.clear();
+                            int count = 0;
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 SeenByUser userName = snapshot.getValue(SeenByUser.class);
                                 stringList.add(userName);
+                                ++count;
                             }
-
+                            seen_by_txt.setText("Seen by " + count);
                             SeenByAdapter seenByAdapter = new SeenByAdapter(MyShotExoPlayerActivity.this, stringList);
                             seen_recyclerview.setAdapter(seenByAdapter);
                         }

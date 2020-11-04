@@ -1,5 +1,6 @@
 package com.hieeway.hieeway.Utils;
 
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.hieeway.hieeway.Model.ChatStamp;
@@ -37,11 +38,19 @@ public class PostListDiffUtilCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return //mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp()) &&
+        /*return //mNewList.get(newItemPosition).getTimeStamp().equals(mOldList.get(oldItemPosition).getTimeStamp()) &&
                 mNewList.get(newItemPosition).getType().equals(mOldList.get(oldItemPosition).getType())
-                        && mNewList.get(newItemPosition).getMediaKey().equals(mOldList.get(oldItemPosition).getMediaKey())
+                        //&& mNewList.get(newItemPosition).getMediaKey().equals(mOldList.get(oldItemPosition).getMediaKey())
                         && mNewList.get(newItemPosition).getUserId().equals(mOldList.get(oldItemPosition).getUserId())
+                        &&mNewList.get(newItemPosition).getType().equals(mOldList.get(oldItemPosition).getType())
                         && mNewList.get(newItemPosition).getMediaUrl().equals(mOldList.get(oldItemPosition).getMediaUrl())
-                        && mNewList.get(newItemPosition).getUsername().equals(mOldList.get(oldItemPosition).getUsername());
+                        && mNewList.get(newItemPosition).getUsername().equals(mOldList.get(oldItemPosition).getUsername());*/
+        return mNewList.get(newItemPosition).equals(mOldList.get(oldItemPosition));
+    }
+
+    @Nullable
+    @Override
+    public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+        return super.getChangePayload(oldItemPosition, newItemPosition);
     }
 }

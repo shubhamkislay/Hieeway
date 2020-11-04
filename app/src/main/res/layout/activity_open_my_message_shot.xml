@@ -53,6 +53,7 @@
         android:id="@+id/blast"
         android:layout_width="18dp"
         android:layout_height="18dp"
+        android:visibility="invisible"
         android:layout_marginRight="4dp"
         android:background="@drawable/bomb"
         android:backgroundTint="@color/white"

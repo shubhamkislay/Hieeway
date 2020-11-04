@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -184,6 +185,7 @@ public class MyPhotoViewActivity extends AppCompatActivity {
         currentUser = sharedPreferences.getString("userid", "");
         stringList = new ArrayList<>();
         seen_recyclerview = findViewById(R.id.seen_recyclerview);
+        TextView seen_by_txt = findViewById(R.id.seen_by_txt);
 
         seen_recyclerview.setLayoutManager(new LinearLayoutManager(this));
         seen_recyclerview.setHasFixedSize(true);
@@ -196,11 +198,14 @@ public class MyPhotoViewActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             stringList.clear();
+                            int count = 0;
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 SeenByUser userName = snapshot.getValue(SeenByUser.class);
                                 stringList.add(userName);
+                                ++count;
                             }
 
+                            seen_by_txt.setText("Seen by " + count);
                             SeenByAdapter seenByAdapter = new SeenByAdapter(MyPhotoViewActivity.this, stringList);
                             seen_recyclerview.setAdapter(seenByAdapter);
                         }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.hieeway.hieeway.CustomCircularView;
 import com.hieeway.hieeway.CustomImageView;
 import com.hieeway.hieeway.Interface.AddRecipientListener;
 import com.hieeway.hieeway.Model.Recipient;
@@ -79,7 +80,7 @@ public class SeenByAdapter extends RecyclerView.Adapter<SeenByAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView username;
-        CircleImageView user_photo;
+        CustomCircularView user_photo;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -20,6 +20,7 @@ public class Post implements Comparable<Post> {
     public String seenBy;
     public boolean manual;
     private long postTime;
+    private boolean visibility = false;
 
     public String getSeenBy() {
         return seenBy;
@@ -105,6 +106,14 @@ public class Post implements Comparable<Post> {
         this.timeStamp = timeStamp;
     }
 
+    public boolean isVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
+    }
+
     @Override
     public int compareTo(Post o) {
         try {
@@ -117,6 +126,9 @@ public class Post implements Comparable<Post> {
     @Override
     public boolean equals(@Nullable Object obj) {
         Post o = (Post) obj;
-        return this.getUserId().equals(o.getUserId()) && this.getType().equals(o.getType());
+        return this.getType().equals(o.getType())
+                && this.getUsername().equals(o.getUsername())
+                && this.getMediaUrl().equals(o.getMediaUrl())
+                && this.getTimeStamp().equals(o.getTimeStamp());
     }
 }

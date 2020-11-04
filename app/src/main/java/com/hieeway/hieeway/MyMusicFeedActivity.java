@@ -828,6 +828,7 @@ public class MyMusicFeedActivity extends AppCompatActivity implements MyMusicFee
         List<SeenByUser> stringList;
         SharedPreferences sharedPreferences;
         String currentUser;
+        TextView seen_by_txt = findViewById(R.id.seen_by_txt);
 
         sharedPreferences = getSharedPreferences("sharedPrefs", MODE_PRIVATE);
         currentUser = sharedPreferences.getString("userid", "");
@@ -845,11 +846,13 @@ public class MyMusicFeedActivity extends AppCompatActivity implements MyMusicFee
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             stringList.clear();
+                            int count = 0;
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 SeenByUser userName = snapshot.getValue(SeenByUser.class);
                                 stringList.add(userName);
+                                ++count;
                             }
-
+                            seen_by_txt.setText("Tap to See \nSeen by " + count);
                             SeenByAdapter seenByAdapter = new SeenByAdapter(MyMusicFeedActivity.this, stringList);
                             seen_recyclerview.setAdapter(seenByAdapter);
                         }

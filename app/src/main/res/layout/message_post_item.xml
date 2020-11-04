@@ -36,7 +36,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -50,106 +49,6 @@
         app:layout_constraintRight_toRightOf="@id/photo"
         app:layout_constraintTop_toTopOf="@id/photo" />
 
-
-
-
-
-
-
-
-
-
-
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view"
-        android:layout_width="0dp"
-        android:layout_height="12dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_three"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view_two" />
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_two"
-        android:layout_width="0dp"
-        android:layout_height="31dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_three"
-        android:layout_width="0dp"
-        android:layout_height="41dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_four"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view" />
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_four"
-        android:layout_width="0dp"
-        android:layout_height="17dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_five"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view_three" />
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_five"
-        android:layout_width="0dp"
-        android:layout_height="45dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_six"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view_four" />
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_six"
-        android:layout_width="0dp"
-        android:layout_height="25dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_seven"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view_five" />
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_seven"
-        android:layout_width="0dp"
-        android:layout_height="37dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/equalizer_view_eight"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view_six" />
-
-
-    <es.claucookie.miniequalizerlibrary.EqualizerView
-        android:id="@+id/equalizer_view_eight"
-        android:layout_width="0dp"
-        android:layout_height="25dp"
-        app:animDuration="3500"
-        android:visibility="gone"
-        app:foregroundColor="@color/equilizer_color"
-        app:layout_constraintBottom_toTopOf="@id/back_bottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/equalizer_view_seven" />
-
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -167,23 +66,6 @@
         android:background="@drawable/chat_user_gradient"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="@id/photo"
-        app:layout_constraintBottom_toBottomOf="@id/photo"
-        app:layout_constraintLeft_toLeftOf="@id/photo"
-        app:layout_constraintRight_toRightOf="@id/photo" />
-
-    <TextView
-
-        android:id="@+id/back_bottom"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:background="@drawable/music_post_bottom_back"
-        android:backgroundTint="@color/nav_darktheme_btn_active"
-        android:padding="12dp"
-        android:text="Music"
-        android:gravity="center"
-        android:visibility="gone"
-        android:scaleType="centerInside"
-        android:src="@drawable/spotify_logo_rgb_white"
         app:layout_constraintBottom_toBottomOf="@id/photo"
         app:layout_constraintLeft_toLeftOf="@id/photo"
         app:layout_constraintRight_toRightOf="@id/photo" />
@@ -223,7 +105,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/profile_pic" />
 
-
     <RelativeLayout
         android:id="@+id/post_ring"
         android:layout_width="0dp"
@@ -243,22 +124,12 @@
         android:layout_width="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/timestamp"
         android:layout_marginLeft="12dp"
-        tools:text="Music"
+        tools:text="message"
         android:textColor="#fff"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="@id/photo"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/by_beacon"
-        app:layout_constraintBottom_toTopOf="@id/type"
-        android:layout_marginLeft="12dp"
-        android:textSize="10sp"
-        android:textColor="#939393"
-        tools:text="Music Beacon"
-        app:layout_constraintLeft_toLeftOf="@id/photo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/timestamp"
@@ -274,18 +145,5 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--<ImageButton
-
-    android:id="@+id/back_bottom"
-    android:layout_width="0dp"
-    android:layout_height="50dp"
-    android:background="@drawable/music_post_bottom_back"
-    android:padding="12dp"
-    android:scaleType="centerInside"
-    android:src="@drawable/spotify_logo_rgb_white"
-    app:layout_constraintBottom_toBottomOf="@id/photo"
-    app:layout_constraintLeft_toLeftOf="@id/photo"
-    app:layout_constraintRight_toRightOf="@id/photo" />-->
 
 

@@ -148,7 +148,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         if (view != null)
             return view;
 
-        else {
+       // else {
             view = inflater.inflate(R.layout.fragment_shots, container, false);
 
 
@@ -256,48 +256,51 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
 
             staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2, LinearLayoutManager.VERTICAL);
+        //staggeredGridLayoutManager.setReverseLayout(true);
+
+            /*LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
 
 
-            LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
-
-
-            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
+            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);*/
 
             //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
             feeds_recyclerview.setLayoutManager(staggeredGridLayoutManager);
             feeds_recyclerview.setHasFixedSize(true);
+
             feeds_recyclerview.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
+        /**changed code here
 
-            RecyclerView.ItemAnimator animator = feeds_recyclerview.getItemAnimator();
-            if (animator instanceof SimpleItemAnimator) {
-                ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-            }
+         /*RecyclerView.ItemAnimator animator = feeds_recyclerview.getItemAnimator();
+         if (animator instanceof SimpleItemAnimator) {
+         ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+         }*/
+
+        /**
+
+         /*feeds_recyclerview.setItemViewCacheSize(20);
+         feeds_recyclerview.setDrawingCacheEnabled(true);
+         feeds_recyclerview.setItemAnimator(new DefaultItemAnimator());
+         feeds_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);*/
 
 
-            feeds_recyclerview.setItemViewCacheSize(20);
-            feeds_recyclerview.setDrawingCacheEnabled(true);
-            feeds_recyclerview.setItemAnimator(new DefaultItemAnimator());
-            feeds_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-
-            Post post = new Post();
-            post.setMediaKey("xyz");
-            post.setMediaUrl("xyz");
-            post.setPostKey("xyz");
-            post.setTimeStamp("xyz");
-            post.setType("xyz");
-            post.setUsername("xyz");
-            post.setUserId(userID);
+        Post post = new Post();
+        post.setMediaKey("xyz");
+        post.setMediaUrl("xyz");
+        post.setPostKey("xyz");
+        post.setTimeStamp("xyz");
+        post.setType("create");
+        post.setUsername("xyz");
+        post.setUserId(userID);
 
             postList.add(post);
 
             postAdapter = new PostAdapter(postList, parentActivity, userID);
-            postAdapter.setHasStableIds(true);
-
+        //postAdapter.setHasStableIds(true);
             feeds_recyclerview.setAdapter(postAdapter);
 
 
-            LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext());
             horizontalLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
             horizontalLayoutManager.setStackFromEnd(false);
 
@@ -318,6 +321,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             groups_recyclerview.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
             groups_recyclerview.setAdapter(groupsAdapter);
             groups_recyclerview.scrollToPosition(0);
+
 
 
             chats.setOnTouchListener(new View.OnTouchListener() {
@@ -387,9 +391,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             });
 
 
-
-
-        }
+        // }
         return view;
     }
 
@@ -506,7 +508,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                 .child(userID);
 
 
-        myGroupRefs.addValueEventListener(new ValueEventListener() {
+       /* myGroupRefs.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 myGroupList.clear();
@@ -549,7 +551,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             }
         });
 
-
+*/
         groupValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -600,13 +602,16 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
     public void onResume() {
         super.onResume();
 
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 populateGroups();
-                populatePosts(userID);
+
             }
         }, 350);
+
+        populatePosts(userID);
 
     }
 
@@ -627,61 +632,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
         }
     }
 
-    private void lookForPosts() {
 
-
-        postList.clear();
-
-        Post post = new Post();
-        post.setMediaKey("xyz");
-        post.setMediaUrl("xyz");
-        post.setPostKey("xyz");
-        post.setTimeStamp("xyz");
-        post.setType("xyz");
-        post.setUsername("xyz");
-        post.setUserId(userID);
-
-        postList.add(post);
-
-
-        DatabaseReference friendsRef = FirebaseDatabase.getInstance().getReference("FriendList")
-                .child(userID);
-
-        friendsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        Friend friend = dataSnapshot.getValue(Friend.class);
-                        if (friend.getStatus().equals("friends"))
-                            populatePosts(friend.getFriendId());
-                    }
-
-                    /*new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            *//*postAdapter = new PostAdapter(postList,parentActivity,userID);
-                            feeds_recyclerview.setAdapter(postAdapter);*//*
-                            //postAdapter.updateList(postList);
-                            Toast.makeText(parentActivity,"Size: "+postList.size(),Toast.LENGTH_SHORT).show();
-                        }
-                    },5000);*/
-
-
-                    lastPost = true;
-                } else {
-                    Toast.makeText(parentActivity, "FriendList doesnot exists", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-    }
 
     private void populatePosts(String friendId) {
 
@@ -694,7 +645,8 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                postList.clear();
+                List<Post> initialList = new ArrayList<>();
+                //initialList.clear();
                 List<Post> refreshPostList = new ArrayList<>();
 
                 Post postDummy = new Post();
@@ -702,7 +654,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                 postDummy.setMediaUrl("xyz");
                 postDummy.setPostKey(postRefs.push().getKey());
                 postDummy.setTimeStamp("xyz");
-                postDummy.setType("xyz");
+                postDummy.setType("create");
                 postDummy.setUsername("xyz");
                 postDummy.setUserId("xyz");
 
@@ -710,42 +662,20 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
 
                 if (snapshot.exists()) {
 
-                    /*List<Post> postToRemoveList = new ArrayList<>();
-                    for (Post postToRemove : postList) {
-                        if (postToRemove.getUserId().equals(friendId))
-                            postToRemoveList.add(postToRemove);
-                    }
-
-                    postList.removeAll(postToRemoveList);*/
-
-
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Post post = dataSnapshot.getValue(Post.class);
 
-                        /**
-                         * Fan in code below
-                         */
-                        /*if (!postList.contains(post)) {
-                            try {
-                                if (!post.getSeenBy().contains(userID))
-                                    postList.add(post);
-                            }catch (Exception e)
-                            {
-                                postList.add(post);
-                            }
-                        } else {
-                            postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
-                        }*/
                         Long tsLong = System.currentTimeMillis() / 1000;
                         long localUserDiff = tsLong - post.getPostTime();
 
                         long localDiffHours = localUserDiff / (60 * 60 * 24);
 
                         if (localDiffHours < 1) {
-                            if (!postList.contains(post) || !post.getType().equals("music"))
-                                postList.add(post);
-                            else
-                                postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
+                            if (!initialList.contains(post))
+                                initialList.add(post);
+
+                            else if (post.getType().equals("music"))
+                                initialList.get(initialList.indexOf(post)).setTimeStamp(post.getTimeStamp());
                         } else {
                             postRefs.child(post.getPostKey()).removeValue();
                         }
@@ -756,17 +686,23 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
                     }
 
                     //if(lastPost)
-                    Collections.sort(postList, Collections.<Post>reverseOrder());
+                    Collections.sort(initialList, Collections.<Post>reverseOrder());
+                    refreshPostList.addAll(initialList);
 
-                    refreshPostList.addAll(postList);
-
+                    //postAdapter = new PostAdapter(refreshPostList,parentActivity,userID);
+                    //feeds_recyclerview.setAdapter(postAdapter);
+                    //Toast.makeText(parentActivity,"List updated "+refreshPostList.size(),Toast.LENGTH_SHORT).show();
                     postAdapter.updateList(refreshPostList);
+                    //feeds_recyclerview.scrollToPosition(0);
                     //Toast.makeText(parentActivity,"Post Size: "+postList.size(),Toast.LENGTH_SHORT).show();
                     /*postAdapter = new PostAdapter(postList,parentActivity,userID);
                     feeds_recyclerview.setAdapter(postAdapter);*/
 
                 } else {
                     postAdapter.updateList(refreshPostList);
+
+                    /*postAdapter = new PostAdapter(refreshPostList,parentActivity,userID);
+                    feeds_recyclerview.setAdapter(postAdapter);*/
                 }
 
 
@@ -778,6 +714,7 @@ public class ShotsFragment extends Fragment implements SeeAllGroupItemsListener,
             }
         };
         postRefs.addValueEventListener(postsValueEventListener);
+
 
     }
 

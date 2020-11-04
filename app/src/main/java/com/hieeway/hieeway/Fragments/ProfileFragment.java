@@ -394,15 +394,17 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         }, 500);
 
 
-        if (addListnerToPoulate)
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //populatePosts();
+        //if (addListnerToPoulate)
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //populatePosts();
 
-                    populatePosts();
-                }
-            }, 350);
+
+            }
+        }, 350);
+
+        populatePosts();
 
 
     }
@@ -413,18 +415,18 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
         // Inflate the layout for this fragment
 
 
-        if (view != null)
-            return view;
+        /*if (view != null)
+            return view;*/
 
-        else {
+        // else {
 
-            try {
-                userID = sharedPreferences.getString(USER_ID, "");
+        try {
+            userID = sharedPreferences.getString(USER_ID, "");
 
-            } catch (NullPointerException e) {
-                userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } catch (NullPointerException e) {
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-            }
+        }
 
             Display display = activity.getWindowManager().getDefaultDisplay();
             size = new Point();
@@ -548,18 +550,24 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                     if (i == R.layout.fragment_profile_perf_end) {
 
-                        populatePosts();
+                        //populatePosts();
+
                         addListnerToPoulate = true;
 
+                        try {
+
+                        } catch (Exception e) {
+                            //
+                        }
                         // Toast.makeText(activity,"Ended Transition",Toast.LENGTH_SHORT).show();
 
                     } else {
                         addListnerToPoulate = false;
-                        try {
+                        /*try {
                             postRefs.removeEventListener(postsListener);
                         } catch (Exception e) {
                             //
-                        }
+                        }*/
                     }
                 }
 
@@ -980,7 +988,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                 }
             });
 
-
 /*
         change_nio_edittext.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -1014,8 +1021,6 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             }
         });
 */
-
-
 /*
         change_nio_edittext.addTextChangedListener(new TextWatcher() {
             @Override
@@ -1084,40 +1089,37 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
             staggeredGridLayoutManager = new StaggeredGridLayoutManager(/*spanCount*/2, LinearLayoutManager.VERTICAL);
 
 
-            LinearLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount);
 
-
-            gridLayoutManager.setOrientation(RecyclerView.VERTICAL);
 
             //gridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
             shots_recyclerView.setLayoutManager(staggeredGridLayoutManager);
-            shots_recyclerView.setHasFixedSize(true);
-            shots_recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+        shots_recyclerView.setHasFixedSize(true);
+        shots_recyclerView.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
 
-            RecyclerView.ItemAnimator animator = shots_recyclerView.getItemAnimator();
+            /*RecyclerView.ItemAnimator animator = shots_recyclerView.getItemAnimator();
             if (animator instanceof SimpleItemAnimator) {
                 ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-            }
+            }*/
 
 
-            shots_recyclerView.setItemViewCacheSize(20);
-            shots_recyclerView.setDrawingCacheEnabled(true);
-            shots_recyclerView.setItemAnimator(new DefaultItemAnimator());
-            shots_recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        //shots_recyclerView.setItemViewCacheSize(20);
+        //shots_recyclerView.setDrawingCacheEnabled(true);
+        //shots_recyclerView.setItemAnimator(new DefaultItemAnimator());
+        //shots_recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
 
-            myShotsAdapter = new MyShotsAdapter(postList, activity, userID);
-            myShotsAdapter.setHasStableIds(true);
+        myShotsAdapter = new MyShotsAdapter(postList, activity, userID);
+        //myShotsAdapter.setHasStableIds(true);
 
-            shots_recyclerView.setAdapter(myShotsAdapter);
+        shots_recyclerView.setAdapter(myShotsAdapter);
 
 
-            if (!blinking) {
+        if (!blinking) {
                 blinking = true;
                 startBlinking();
             }
             return view;
-        }
+        //}
     }
 
     public void onFragmentActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -1365,6 +1367,7 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                 if (snapshot.exists()) {
 
+
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         Post post = dataSnapshot.getValue(Post.class);
                         Long tsLong = System.currentTimeMillis() / 1000;
@@ -1373,9 +1376,10 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
                         long localDiffHours = localUserDiff / (60 * 60 * 24);
 
                         if (localDiffHours < 1) {
-                            if (!postList.contains(post) || !post.getType().equals("music"))
+                            if (!postList.contains(post))
                                 postList.add(post);
-                            else
+
+                            else if (post.getType().equals("music"))
                                 postList.get(postList.indexOf(post)).setTimeStamp(post.getTimeStamp());
 
                             //postList.add(post);
@@ -1385,8 +1389,11 @@ public class ProfileFragment extends Fragment implements FeelingListener, EditPr
 
                     }
 
+                    //Toast.makeText(activity,"List: "+postList.size(),Toast.LENGTH_SHORT).show();
                     Collections.sort(postList, Collections.<Post>reverseOrder());
                     myShotsAdapter.updateList(postList);
+                    //shots_recyclerView.smoothScrollToPosition(0);
+
                 } else {
                     myShotsAdapter.updateList(postList);
                 }

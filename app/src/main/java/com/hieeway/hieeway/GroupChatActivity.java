@@ -551,6 +551,8 @@ public class GroupChatActivity extends AppCompatActivity implements ScrollRecycl
 
 
             }
+
+
 /*
             @Override
             public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
