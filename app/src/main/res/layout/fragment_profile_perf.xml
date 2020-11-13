@@ -380,7 +380,7 @@
         android:text="Tap to see your shots"
         android:gravity="center|top"
         android:visibility="visible"
-        android:textColor="#22596A"
+        android:textColor="#555555"
         android:paddingBottom="64dp"
         android:paddingTop="12dp"
         android:background="@drawable/shotsfragmentshotscontainer"

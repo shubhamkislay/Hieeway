@@ -98,6 +98,7 @@
         android:id="@+id/user_photo"
         android:layout_width="54dp"
         android:layout_height="54dp"
+        android:visibility="visible"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         app:layout_constraintLeft_toLeftOf="parent"

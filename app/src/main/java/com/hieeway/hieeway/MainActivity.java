@@ -2014,9 +2014,11 @@ public class MainActivity extends AppCompatActivity implements GoogleButtonListe
         if (!changeActivity)
             if (fragment_number == 0) {
                 highlights_layout.setVisibility(View.GONE);
-                get_started.setVisibility(View.VISIBLE);
-                terms_policy_txt.setVisibility(View.VISIBLE);
-                why_hieeway_btn.setVisibility(View.VISIBLE);
+                if (view_flipper.getVisibility() == View.GONE || view_flipper.getVisibility() == View.INVISIBLE) {
+                    get_started.setVisibility(View.VISIBLE);
+                    terms_policy_txt.setVisibility(View.VISIBLE);
+                    why_hieeway_btn.setVisibility(View.VISIBLE);
+                }
             }
     }
 

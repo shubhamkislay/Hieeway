@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BlurMaskFilter;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +41,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hieeway.hieeway.CreateShotActivity;
 import com.hieeway.hieeway.CustomImageView;
+import com.hieeway.hieeway.DeleteOptionsDialog;
+import com.hieeway.hieeway.DeletePostDialog;
 import com.hieeway.hieeway.ExoPlayerActivity;
 import com.hieeway.hieeway.Model.Post;
 import com.hieeway.hieeway.Model.User;
@@ -75,7 +82,9 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private Context context;
     private Activity activity;
     private String userId;
+    private DeletePostDialog deletePostDialog;
     ImageLoader imageLoader = ImageLoader.getInstance();
+    boolean clicked = false;
     //ImageSize targetSize = new ImageSize(100, 200);
 
 
@@ -193,7 +202,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             PostMessageHolder postMessageHolder = (PostMessageHolder) holder;
             Post post = postList.get(postMessageHolder.getAdapterPosition());
 
-            postMessageHolder.username.setText(post.getUsername());
+            //postMessageHolder.username.setText(post.getUsername());
 
             /**
              * Timestamp
@@ -219,9 +228,9 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
              */
             try {
                 postMessageHolder.back_text.setText(post.getMediaUrl());
-                float radius = postMessageHolder.back_text.getTextSize() / (5);
+                /*float radius = postMessageHolder.back_text.getTextSize() / (5);
                 BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
-                postMessageHolder.back_text.getPaint().setMaskFilter(filter);
+                postMessageHolder.back_text.getPaint().setMaskFilter(filter);*/
 
             } catch (Exception e) {
             }
@@ -236,13 +245,50 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     context.startActivity(intent);
                 }
             });
-            getLatestProfilePic(post.getUserId(), postMessageHolder.user_photo);
+
+            postMessageHolder.photo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    if (!clicked) {
+
+                        clicked = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clicked = false;
+                            }
+                        }, 1000);
+
+                        Vibrator vb = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vb.vibrate(50);
+                        }
+
+                        deletePostDialog = new DeletePostDialog(context, post.getPostKey(), userId);
+                        deletePostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        deletePostDialog.show();
+
+
+                    }
+
+
+                    return true;
+                }
+            });
+            postMessageHolder.user_photo.setVisibility(View.GONE);
+            postMessageHolder.back_item.setVisibility(View.GONE);
+
         } else if (postList.get(holder.getAdapterPosition()).getType().equals("music")) {
             PostMusicViewHolder postMusicViewHolder = (PostMusicViewHolder) holder;
             Post post = postList.get(postMusicViewHolder.getAdapterPosition());
 
             postMusicViewHolder.photo.setImageDrawable(context.getDrawable(R.drawable.headphone));
-            postMusicViewHolder.username.setText(post.getUsername());
+            //postMusicViewHolder.username.setText(post.getUsername());
 
             /**
              * Timestamp
@@ -277,13 +323,49 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                 }
             });
-            getLatestProfilePic(post.getUserId(), postMusicViewHolder.user_photo);
+
+            postMusicViewHolder.photo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (!clicked) {
+
+                        clicked = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clicked = false;
+                            }
+                        }, 1000);
+
+                        Vibrator vb = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vb.vibrate(50);
+                        }
+
+                        deletePostDialog = new DeletePostDialog(context, post.getPostKey(), userId);
+                        deletePostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        deletePostDialog.show();
+
+
+                    }
+
+
+                    return true;
+                }
+            });
+            //getLatestProfilePic(post.getUserId(), postMusicViewHolder.user_photo);
+            postMusicViewHolder.user_photo.setVisibility(View.GONE);
+            postMusicViewHolder.back_item.setVisibility(View.GONE);
         } else if (postList.get(holder.getAdapterPosition()).getType().equals("photo")) {
 
             PostPhotoViewHolder postPhotoViewHolder = (PostPhotoViewHolder) holder;
             Post post = postList.get(postPhotoViewHolder.getAdapterPosition());
 
-            postPhotoViewHolder.username.setText(post.getUsername());
+            //postPhotoViewHolder.username.setText(post.getUsername());
 
             /**
              * Timestamp
@@ -301,11 +383,14 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             /**
              * User photo
              */
-            getLatestProfilePic(post.getUserId(), postPhotoViewHolder.user_photo);
+            //getLatestProfilePic(post.getUserId(), postPhotoViewHolder.user_photo);
+
+            postPhotoViewHolder.user_photo.setVisibility(View.GONE);
+            postPhotoViewHolder.back_item.setVisibility(View.GONE);
 
             Glide.with(context)
                     .load(post.getMediaUrl())
-                    .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 3)))
+                    // .apply(RequestOptions.bitmapTransform(new BlurTransformation(20, 3)))
                     .addListener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -345,10 +430,45 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     context.startActivity(intent);
                 }
             });
+
+            postPhotoViewHolder.photo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    if (!clicked) {
+
+                        clicked = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clicked = false;
+                            }
+                        }, 1000);
+
+                        Vibrator vb = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vb.vibrate(50);
+                        }
+
+                        deletePostDialog = new DeletePostDialog(context, post.getPostKey(), userId);
+                        deletePostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        deletePostDialog.show();
+
+
+                    }
+
+
+                    return true;
+                }
+            });
         } else if (postList.get(holder.getAdapterPosition()).getType().equals("video")) {
             PostVideoViewHolder postVideoViewHolder = (PostVideoViewHolder) holder;
             Post post = postList.get(postVideoViewHolder.getAdapterPosition());
-            postVideoViewHolder.username.setText(post.getUsername());
+            //postVideoViewHolder.username.setText(post.getUsername());
 
             /**
              * Timestamp
@@ -367,7 +487,10 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
              * User photo
              */
 
-            getLatestProfilePic(post.getUserId(), postVideoViewHolder.user_photo);
+            //getLatestProfilePic(post.getUserId(), postVideoViewHolder.user_photo);
+
+            postVideoViewHolder.user_photo.setVisibility(View.GONE);
+            postVideoViewHolder.back_item.setVisibility(View.GONE);
 
             long thumb = position * 1000;
             RequestOptions options = new RequestOptions().frame(thumb);
@@ -414,7 +537,40 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     context.startActivity(intent);
                 }
             });
+            postVideoViewHolder.photo.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (!clicked) {
+
+                        clicked = true;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                clicked = false;
+                            }
+                        }, 1000);
+
+                        Vibrator vb = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+// Vibrate for 500 milliseconds
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vb.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                        } else {
+                            //deprecated in API 26
+                            vb.vibrate(50);
+                        }
+
+                        deletePostDialog = new DeletePostDialog(context, post.getPostKey(), userId);
+                        deletePostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        deletePostDialog.show();
+
+
+                    }
+
+                    return true;
+                }
+            });
         } else {
+
             PostViewCreateHolder postViewCreateHolder = (PostViewCreateHolder) holder;
             postViewCreateHolder.create_shot_txt.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -422,7 +578,9 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     activity.startActivity(new Intent(activity, CreateShotActivity.class));
                 }
             });
+
         }
+
 
     }
 
@@ -544,9 +702,11 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private CircleImageView user_photo;
 
         private TextView username, timestamp, type, by_beacon, back_text;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private BlurImageView photo;
         private ConstraintLayout parent_layout;
+        
+
 
 
        /* EqualizerView equalizer, equalizer_view_two, equalizer_view_three, equalizer_view_four,
@@ -564,6 +724,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             photo = itemView.findViewById(R.id.photo);
             back_text = itemView.findViewById(R.id.back_text);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
             /*equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
 
@@ -583,7 +744,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private CircleImageView user_photo;
 
         private TextView username, timestamp, type, back_text;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private BlurImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -599,6 +760,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             photo = itemView.findViewById(R.id.photo);
             back_text = itemView.findViewById(R.id.back_text);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
         }
     }
@@ -607,7 +769,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private CircleImageView user_photo;
         private TextView username, timestamp, type, by_beacon;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private ImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -622,6 +784,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             post_ring = itemView.findViewById(R.id.post_ring);
             photo = itemView.findViewById(R.id.photo);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
 
         }
@@ -631,7 +794,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private CircleImageView user_photo;
         private TextView username, timestamp, type, by_beacon;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private BlurImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -646,6 +809,7 @@ public class MyShotsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             post_ring = itemView.findViewById(R.id.post_ring);
             photo = itemView.findViewById(R.id.photo);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
 
         }

@@ -564,7 +564,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private CircleImageView user_photo;
 
         private TextView username, timestamp, type, by_beacon, back_text;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private BlurImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -584,6 +584,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             photo = itemView.findViewById(R.id.photo);
             back_text = itemView.findViewById(R.id.back_text);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
             /*equalizer = (EqualizerView) itemView.findViewById(R.id.equalizer_view);
 
@@ -603,7 +604,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private CircleImageView user_photo;
 
         private TextView username, timestamp, type, back_text;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private BlurImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -619,6 +620,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             photo = itemView.findViewById(R.id.photo);
             back_text = itemView.findViewById(R.id.back_text);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
         }
     }
@@ -627,7 +629,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private CircleImageView user_photo;
         private TextView username, timestamp, type, by_beacon;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private ImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -642,6 +644,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             post_ring = itemView.findViewById(R.id.post_ring);
             photo = itemView.findViewById(R.id.photo);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
 
         }
@@ -651,7 +654,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private CircleImageView user_photo;
         private TextView username, timestamp, type, by_beacon;
-        private RelativeLayout post_ring;
+        private RelativeLayout post_ring, back_item;
         private BlurImageView photo;
         private ConstraintLayout parent_layout;
 
@@ -666,6 +669,7 @@ public class PostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             post_ring = itemView.findViewById(R.id.post_ring);
             photo = itemView.findViewById(R.id.photo);
             parent_layout = itemView.findViewById(R.id.parent_layout);
+            back_item = itemView.findViewById(R.id.back_item);
 
 
         }
